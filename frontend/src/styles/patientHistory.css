@@ -1,0 +1,64 @@
+.patient-history {
+  padding: var(--padding-medium);
+  background-color: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+}
+
+.search-bar {
+  margin-bottom: var(--padding-medium);
+  text-align: center;
+}
+
+.search-bar input {
+  padding: var(--padding-small);
+  font-size: var(--font-size-body);
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.patient-summary {
+  margin-bottom: var(--padding-medium);
+}
+
+.patient-summary h3 {
+  font-size: var(--font-size-title);
+}
+
+.visit-history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.visit-history th,
+.visit-history td {
+  padding: var(--padding-small);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.visit-history th {
+  background-color: var(--primary-bg);
+}
+
+.visit-history button {
+  padding: 5px 10px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.visit-history button:hover {
+  background-color: var(--primary-hover);
+}
+
+.expanded-visit-details {
+  padding: var(--padding-medium);
+  background-color: var(--white);
+  margin-top: var(--padding-medium);
+  border-radius: var(--border-radius);
+}
