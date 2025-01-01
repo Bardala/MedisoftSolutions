@@ -9,13 +9,14 @@ const Sidebar = ({ loggedInUser, setSelectedOption }) => {
           { label: "Daily Reports", link: "/reports" },
           { label: "Settings", link: "/settings" },
           { label: "Patient Profile", link: "/patient-profile" },
+          { label: "Monthly Reports", link: "/monthly-reports" },
         ]
       : [
           { label: "Add New Patient", link: "/add-patient" },
           { label: "View Patient List", link: "/patient-list" },
           { label: "Manage Roles", link: "/roles" },
           { label: "Record Payments", link: "/payments" },
-          { label: "Financial Reports", link: "/reports" },
+          { label: "Daily Financial Report", link: "/reports" },
         ];
 
   return (

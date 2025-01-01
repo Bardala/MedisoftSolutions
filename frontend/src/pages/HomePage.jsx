@@ -5,25 +5,16 @@ import AddPatient from "../components/AddPatient";
 import PatientList from "../components/PatientList";
 import ManageRoles from "../components/ManageRoles";
 import RecordPayments from "../components/RecordPayments";
-import FinancialReports from "../components/FinancialComponents";
+import DailyFinancialReport from "../components/DailyFinancialReport";
 
 import PatientProfile from "../components/PatientProfile";
-import Reports from "../components/Reports";
+import DailyDentistReport from "../components/DailyDentistReport";
 import Settings from "../components/Settings";
+import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
+import { patients } from "../db/patientDb";
 
 const HomePage = ({ loggedInUser }) => {
   const [selectedOption, setSelectedOption] = useState("");
-
-  const dentistPatient = {
-    name: "Jane Smith",
-    phone: "987-654-3210",
-    medicalHistory: "Allergic to penicillin, Asthma",
-    procedures: "Teeth cleaning, Root canal treatment",
-    payments: "Pending",
-    lastVisit: "2024-12-15",
-    notes:
-      "Patient experiences anxiety during dental procedures. Recommended to use nitrous oxide for relaxation.",
-  };
 
   const renderContent =
     loggedInUser === "Doctor"
@@ -32,11 +23,13 @@ const HomePage = ({ loggedInUser }) => {
             case "/patients":
               return <PatientList />;
             case "/reports":
-              return <Reports />;
+              return <DailyDentistReport />;
             case "/settings":
               return <Settings />;
             case "/patient-profile":
-              return <PatientProfile patient={dentistPatient} />;
+              return <PatientProfile patient={patients[0]} />;
+            case "/monthly-reports":
+              return <MonthlyDoctorReports />;
             default:
               return (
                 <h1 className="welcome-message">
@@ -56,7 +49,7 @@ const HomePage = ({ loggedInUser }) => {
             case "/payments":
               return <RecordPayments />;
             case "/reports":
-              return <FinancialReports />;
+              return <DailyFinancialReport />;
             default:
               return (
                 <h1 className="welcome-message">

@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/financialComponents.css";
 import { payments } from "../paymentsDb";
 
-const FinancialReports = () => {
+const DailyFinancialReport = () => {
   const dailyRevenue = payments.reduce(
     (total, payment) => total + payment.amount,
     0,
@@ -16,7 +16,7 @@ const FinancialReports = () => {
 
   return (
     <div className="card-container">
-      <h2>Financial Reports</h2>
+      <h2>Daily Financial Report</h2>
       <div className="stats">
         <p>Total Daily Revenue: ${stats.dailyRevenue}</p>
         <p>Total Patients: {stats.totalPatients}</p>
@@ -26,6 +26,7 @@ const FinancialReports = () => {
           <tr>
             <th>Patient Name</th>
             <th>Amount Paid</th>
+            <th>Time</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@ const FinancialReports = () => {
             <tr key={index}>
               <td>{payment.name}</td>
               <td>${payment.amount}</td>
+              <td>{payment.time}</td>
             </tr>
           ))}
         </tbody>
@@ -41,4 +43,4 @@ const FinancialReports = () => {
   );
 };
 
-export default FinancialReports;
+export default DailyFinancialReport;

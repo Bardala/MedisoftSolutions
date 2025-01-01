@@ -1,12 +1,8 @@
 import React from "react";
 import "../styles/cardComponents.css";
+import { patientsList } from "../db/patientDb";
 
 const PatientList = () => {
-  const patients = [
-    { name: "John Doe", phone: "1234567890", visits: 5 },
-    { name: "Jane Smith", phone: "9876543210", visits: 3 },
-  ];
-
   return (
     <div className="card-container">
       <h2>Patient List</h2>
@@ -20,7 +16,7 @@ const PatientList = () => {
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient, index) => (
+          {patientsList.map((patient, index) => (
             <tr key={index}>
               <td>{patient.name}</td>
               <td>{patient.phone}</td>
