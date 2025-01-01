@@ -27,6 +27,8 @@ const HomePage = ({ loggedInUser }) => {
               return <DailyDentistReport />;
             case "/settings":
               return <Settings />;
+            case "/patient-history":
+              return <PatientHistory patient={patientsHistory} />;
             case "/patient-profile":
               return <PatientProfile patient={patients[0]} />;
             case "/monthly-reports":
