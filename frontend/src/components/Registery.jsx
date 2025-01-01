@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "../styles/patientHistory.css";
+import "../styles/registry.css";
 import { patientsHistory } from "../db/patientDb";
 
-const PatientHistory = () => {
+const Registry = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPatients, setFilteredPatients] = useState(patientsHistory);
   const [expandedVisit, setExpandedVisit] = useState(null);
@@ -156,4 +156,4 @@ const PatientHistory = () => {
   );
 };
 
-export default PatientHistory;
+export default Registry;

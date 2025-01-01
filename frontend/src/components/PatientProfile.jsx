@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PatientProfile = ({ patient }) => {
+const CurrentPatientProfile = ({ patient }) => {
   const [notes, setNotes] = useState("");
 
   const handleSave = () => {
@@ -9,7 +9,7 @@ const PatientProfile = ({ patient }) => {
 
   return (
     <div className="card-container">
-      <h2>Patient Profile</h2>
+      <h2>Current Patient Profile Summary</h2>
       <p>
         <strong>Name:</strong> {patient.name}
       </p>
@@ -38,4 +38,4 @@ const PatientProfile = ({ patient }) => {
   );
 };
 
-export default PatientProfile;
+export default CurrentPatientProfile;

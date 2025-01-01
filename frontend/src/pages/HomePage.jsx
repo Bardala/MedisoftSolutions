@@ -12,7 +12,7 @@ import DailyDentistReport from "../components/DailyDentistReport";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
 import { patientsHistory, patients } from "../db/patientDb";
-import PatientHistory from "../components/PatientHistory";
+import Registry from "../components/Registery";
 
 const HomePage = ({ loggedInUser }) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -28,7 +28,7 @@ const HomePage = ({ loggedInUser }) => {
             case "/settings":
               return <Settings />;
             case "/patient-history":
-              return <PatientHistory patient={patientsHistory} />;
+              return <Registry patient={patientsHistory} />;
             case "/patient-profile":
               return <PatientProfile patient={patients[0]} />;
             case "/monthly-reports":
@@ -52,7 +52,7 @@ const HomePage = ({ loggedInUser }) => {
             case "/payments":
               return <RecordPayments />;
             case "/patient-history":
-              return <PatientHistory patient={patientsHistory} />;
+              return <Registry patient={patientsHistory} />;
             case "/reports":
               return <DailyFinancialReport />;
             default:
