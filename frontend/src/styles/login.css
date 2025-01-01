@@ -1,0 +1,132 @@
+.login-page {
+  text-align: center;
+  padding: var(--padding-large);
+  background: linear-gradient(to bottom, var(--secondary-bg), var(--primary-bg));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: var(--font-size-title);
+  font-weight: bold;
+  color: var(--secondary-color);
+  margin-bottom: var(--padding-large);
+}
+
+.roles {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  margin-bottom: var(--padding-large);
+}
+
+.role-card {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--padding-medium);
+  text-align: center;
+  cursor: pointer;
+  background: var(--white);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 200px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.role-card.selected {
+  border-color: var(--primary-color);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-medium);
+}
+
+.role-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 15px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.password-section {
+  margin-top: 30px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.password-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+}
+
+.submit-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  padding: 12px 25px;
+  font-size: 18px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .roles {
+    gap: 30px;
+  }
+
+  .role-card {
+    width: 160px;
+    height: 200px;
+  }
+
+  .role-icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .password-section {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--font-size-welcome);
+  }
+
+  .role-card {
+    width: 140px;
+    height: 180px;
+  }
+
+  .role-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .password-input {
+    font-size: var(--font-size-body);
+  }
+
+  .submit-button {
+    font-size: var(--font-size-body);
+    padding: 10px 20px;
+  }
+}

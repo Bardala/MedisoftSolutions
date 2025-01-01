@@ -1,0 +1,26 @@
+.financial-reports {
+  padding: var(--padding-medium);
+  background-color: var(--secondary-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+}
+
+.stats {
+  margin-bottom: var(--padding-medium);
+}
+
+.stats p {
+  font-size: var(--font-size-body);
+  margin-bottom: var(--padding-small);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+}

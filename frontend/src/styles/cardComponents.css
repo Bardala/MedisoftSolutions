@@ -1,0 +1,107 @@
+/* Global adjustments for card containers */
+.card-container {
+  /* color: var(--primary-color); */
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  padding: var(--padding-medium);
+  margin: var(--padding-medium) auto;
+  width: 90%;
+  max-width: 800px;
+}
+
+/* General form styling */
+form input,
+form textarea,
+form button {
+  width: calc(100% - var(--padding-small) * 2);
+  padding: var(--padding-small);
+  margin: var(--padding-small) auto;
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--font-size-body);
+}
+
+form button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--padding-medium) 0;
+}
+
+table th,
+table td {
+  text-align: left;
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+}
+
+table th {
+  background-color: var(--secondary-bg);
+}
+
+table tbody tr:nth-child(odd) {
+  background-color: var(--primary-bg);
+}
+
+table tbody tr:hover {
+  background-color: #eef;
+}
+
+/* Manage Roles specific styles */
+.priority {
+  background-color: #ffefef;
+  font-weight: bold;
+}
+
+.add-patient input,
+.add-patient button {
+  display: inline-block;
+  margin: var(--padding-small) 5px;
+  width: calc(50% - 15px);
+}
+
+/* Financial Reports Stats */
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--padding-medium) 0;
+}
+
+.stats p {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: var(--primary-bg);
+  padding: var(--padding-small);
+  border-radius: 4px;
+}
+
+/* Record Payments Form */
+.record-payments form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.record-payments form input {
+  flex: 1;
+  margin-right: var(--padding-small);
+}
+
+.record-payments form button {
+  width: auto;
+  flex: none;
+}

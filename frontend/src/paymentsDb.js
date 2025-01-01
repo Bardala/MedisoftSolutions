@@ -1,0 +1,16 @@
+export const payments = [
+  { name: "John Doe", amount: 500 },
+  { name: "Jane Smith", amount: 1000 },
+  { name: "Alice Johnson", amount: 750 },
+  { name: "Bob Brown", amount: 1200 },
+  { name: "Charlie Davis", amount: 300 },
+  { name: "Diana Evans", amount: 950 },
+  { name: "Ethan Foster", amount: 1100 },
+  { name: "Fiona Green", amount: 600 },
+  { name: "George Harris", amount: 850 },
+  { name: "Hannah Irving", amount: 400 },
+  { name: "Ian Jackson", amount: 1300 },
+  { name: "Julia King", amount: 700 },
+  { name: "Kevin Lee", amount: 900 },
+  { name: "Laura Martinez", amount: 1050 },
+];

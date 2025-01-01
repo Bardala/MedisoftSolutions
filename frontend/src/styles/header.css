@@ -1,0 +1,46 @@
+.header {
+  width: 70%;
+  background-color: var(--primary-color);
+  padding: var(--padding-medium);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin: 0 auto;
+  /* Center the header */
+}
+
+.header-content {
+  width: 100%;
+  /* Let the content take up the full width of the header */
+  max-width: 100%;
+  /* Ensure it takes up the entire 50% width */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+}
+
+.username {
+  font-size: var(--font-size-body);
+  font-weight: bold;
+}
+
+.logout-button {
+  background-color: var(--white);
+  color: var(--primary-color);
+  border: none;
+  padding: var(--padding-small) var(--padding-medium);
+  font-size: var(--font-size-body);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--primary-hover);
+  color: var(--white);
+}
