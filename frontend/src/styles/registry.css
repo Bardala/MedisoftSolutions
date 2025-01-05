@@ -1,13 +1,15 @@
+/* Base Styles */
 .patient-history {
   padding: var(--padding-medium);
   background-color: var(--secondary-bg);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-light);
 }
 
 .search-bar {
   margin-bottom: var(--padding-medium);
   text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .search-bar input {
@@ -19,23 +21,50 @@
   border: 1px solid var(--border-color);
 }
 
+/* Patient Summary */
 .patient-summary {
   margin-bottom: var(--padding-medium);
+  padding: var(--padding-small);
+  background-color: var(--primary-bg);
+  border-radius: var(--border-radius);
 }
 
-.patient-summary h3 {
-  font-size: var(--font-size-title);
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-bottom: var(--padding-small);
 }
 
+.tabs button {
+  flex: 1;
+  padding: var(--padding-small);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: var(--font-size-body);
+  background-color: var(--primary-color);
+  color: var(--white);
+  margin-right: var(--padding-extra-small);
+}
+
+.tabs button.active {
+  background-color: var(--primary-hover);
+}
+
+.tabs button:last-child {
+  margin-right: 0;
+}
+
+/* Visit History */
 .visit-history table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: var(--padding-small);
 }
 
 .visit-history th,
 .visit-history td {
   padding: var(--padding-small);
-  text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -44,7 +73,7 @@
 }
 
 .visit-history button {
-  padding: 5px 10px;
+  padding: var(--padding-extra-small) var(--padding-small);
   background-color: var(--primary-color);
   color: var(--white);
   border: none;
@@ -57,8 +86,26 @@
 }
 
 .expanded-visit-details {
-  padding: var(--padding-medium);
+  padding: var(--padding-small);
   background-color: var(--white);
-  margin-top: var(--padding-medium);
   border-radius: var(--border-radius);
+  margin-top: var(--padding-small);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .patient-summary p {
+    font-size: var(--font-size-small);
+  }
+
+  .visit-history table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .visit-history th,
+  .visit-history td {
+    font-size: var(--font-size-small);
+  }
 }

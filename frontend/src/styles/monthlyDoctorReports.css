@@ -67,3 +67,36 @@
   margin-bottom: 10px;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 10px;
+  }
+
+  .summary-card,
+  .chart-card,
+  .advice-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .calendar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+  }
+
+  .calendar-day {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  .chart-card h3,
+  .advice-card h3,
+  .summary-card h3 {
+    font-size: 1.2em;
+  }
+
+  .advice-card p {
+    font-size: 0.9em;
+  }
+}

@@ -1,7 +1,7 @@
 /* Global adjustments for card containers */
 .card-container {
   /* color: var(--primary-color); */
-  background-color: var(--white);
+  background-color: var(--primary-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-light);
   padding: var(--padding-medium);
@@ -104,4 +104,93 @@ table tbody tr:hover {
 .record-payments form button {
   width: auto;
   flex: none;
+}
+
+/* Responsive Adjustments for Small Screens */
+@media screen and (max-width: 768px) {
+
+  /* General card container adjustments */
+  .card-container {
+    width: 100%;
+    padding: var(--padding-small);
+    margin: var(--padding-small) 0;
+    box-shadow: none;
+    /* Reduce shadow for cleaner appearance */
+  }
+
+  /* Form styling adjustments */
+  form input,
+  form textarea,
+  form button {
+    width: 100%;
+    padding: var(--padding-small);
+    font-size: var(--font-size-small);
+    /* Adjust font size for better readability */
+    margin: var(--padding-small) 0;
+  }
+
+  form button {
+    padding: var(--padding-small);
+    font-size: var(--font-size-body);
+  }
+
+  /* Table adjustments */
+  table {
+    font-size: var(--font-size-small);
+    overflow-x: auto;
+    /* Allow horizontal scrolling for wide tables */
+    display: block;
+    /* Ensure tables don’t break layout */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+  }
+
+  table th,
+  table td {
+    padding: var(--padding-small);
+    font-size: var(--font-size-body);
+  }
+
+  /* Manage Roles specific styles */
+  .add-patient input,
+  .add-patient button {
+    display: block;
+    width: 100%;
+    /* Full width for small screens */
+    margin: var(--padding-small) 0;
+  }
+
+  /* Financial Reports Stats */
+  .stats {
+    flex-direction: column;
+    align-items: stretch;
+    /* Stack stats vertically */
+    gap: var(--padding-small);
+    /* Add spacing between items */
+  }
+
+  .stats p {
+    text-align: center;
+    /* Center align text for better focus */
+    font-size: var(--font-size-body);
+    /* Adjust font size */
+    padding: var(--padding-small);
+  }
+
+  /* Record Payments Form */
+  .record-payments form {
+    flex-direction: column;
+    /* Stack inputs and button vertically */
+    align-items: stretch;
+    gap: var(--padding-small);
+    /* Add spacing between elements */
+  }
+
+  .record-payments form input,
+  .record-payments form button {
+    width: 100%;
+    /* Full width for small screens */
+    margin: 0;
+    /* Remove extra margins */
+  }
 }

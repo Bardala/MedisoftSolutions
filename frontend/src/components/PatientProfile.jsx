@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/cardComponents.css";
 
 const CurrentPatientProfile = ({ patient }) => {
   const [notes, setNotes] = useState("");

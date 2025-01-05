@@ -21,11 +21,19 @@
   color: var(--white);
 }
 
-.user-photo {
+/* .header-user-photo {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: var(--padding-small);
+} */
+
+.header-user-photo {
+  display: none;
+}
+
+.header-icons {
+  display: none;
 }
 
 .username {
@@ -47,4 +55,25 @@
 .logout-button:hover {
   background-color: var(--primary-hover);
   color: var(--white);
+}
+
+@media screen and (max-width: 768px) {
+  .header-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .header-icons>* {
+    margin: 0 var(--padding-small);
+  }
+
+  .username {
+    display: none;
+  }
+
+  .header-user-photo {
+    border-radius: 50%;
+    margin-right: var(--padding-small);
+  }
 }

@@ -31,6 +31,32 @@
   --border-radius: 8px;
 }
 
+:root.dark-mode {
+  --primary-bg: #1a1a2e;
+  --primary-color: #4a90e2;
+  --primary-hover: #357ac4;
+
+  --secondary-bg: #16213e;
+  --secondary-color: #e6e6e6;
+
+  --border-color: #444;
+  --white: #e6e6e6;
+  --black: #000;
+
+  --font-size-title: 32px;
+  --font-size-body: 16px;
+  --font-size-welcome: 24px;
+
+  --padding-large: 40px;
+  --padding-medium: 20px;
+  --padding-small: 10px;
+
+  --shadow-light: 0px 4px 10px rgba(255, 255, 255, 0.2);
+  --shadow-medium: 0px 6px 15px rgba(255, 255, 255, 0.25);
+
+  --border-radius: 8px;
+}
+
 body {
   background-color: var(--primary-bg);
   color: var(--secondary-color);
@@ -45,6 +71,16 @@ body {
   /* Prevent the background image from repeating */
   background-attachment: fixed;
   /* Make the background image fixed when scrolling */
+}
+
+body,
+.home,
+.dashboard-summary,
+.summary-item,
+.quick-actions,
+.action-btn,
+.notifications {
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 h1,
@@ -69,31 +105,6 @@ p {
   max-width: 1200px;
 }
 
-/* :root {
-  --primary-bg: #1a1a2e;
-  --primary-color: #4a90e2;
-  --primary-hover: #357ac4;
-
-  --secondary-bg: #16213e;
-  --secondary-color: #e6e6e6;
-
-  --border-color: #444;
-  --white: #e6e6e6;
-  --black: #000;
-
-  --font-size-title: 32px;
-  --font-size-body: 16px;
-  --font-size-welcome: 24px;
-
-  --padding-large: 40px;
-  --padding-medium: 20px;
-  --padding-small: 10px;
-
-  --shadow-light: 0px 4px 10px rgba(255, 255, 255, 0.2);
-  --shadow-medium: 0px 6px 15px rgba(255, 255, 255, 0.25);
-
-  --border-radius: 8px;
-} */
 
 .main-app {
   display: flex;
@@ -140,6 +151,7 @@ p {
   display: flex;
   flex: 1;
   margin: var(--padding-medium);
+  margin-left: 40px;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-light);
   background-color: var(--white);

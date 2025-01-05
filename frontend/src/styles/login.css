@@ -9,6 +9,14 @@
   align-items: center;
 }
 
+.logo {
+  width: 150px;
+  /* Adjust as needed */
+  height: auto;
+  /* Maintain aspect ratio */
+  margin-bottom: var(--padding-medium);
+}
+
 .title {
   font-size: var(--font-size-title);
   font-weight: bold;

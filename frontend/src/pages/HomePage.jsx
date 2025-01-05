@@ -8,11 +8,12 @@ import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
 
 import PatientProfile from "../components/PatientProfile";
+import Home from "../components/Home";
 import DailyDentistReport from "../components/DailyDentistReport";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
 import { patientsHistory, patients } from "../db/patientDb";
-import Registry from "../components/Registery";
+import Registry from "../components/Registry";
 
 const HomePage = ({ loggedInUser }) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -21,6 +22,8 @@ const HomePage = ({ loggedInUser }) => {
     loggedInUser === "Doctor"
       ? () => {
           switch (selectedOption) {
+            case "/":
+              return <Home />;
             case "/patients":
               return <PatientList />;
             case "/reports":
@@ -34,15 +37,13 @@ const HomePage = ({ loggedInUser }) => {
             case "/monthly-reports":
               return <MonthlyDoctorReports />;
             default:
-              return (
-                <h1 className="welcome-message">
-                  Welcome to the {loggedInUser} Dashboard!
-                </h1>
-              );
+              return <Home />;
           }
         }
       : () => {
           switch (selectedOption) {
+            case "/":
+              return <Home />;
             case "/add-patient":
               return <AddPatient />;
             case "/patient-list":
@@ -56,24 +57,23 @@ const HomePage = ({ loggedInUser }) => {
             case "/reports":
               return <DailyFinancialReport />;
             default:
-              return (
-                <h1 className="welcome-message">
-                  Welcome to the {loggedInUser} Dashboard!
-                </h1>
-              );
+              return <Home />;
           }
         };
 
   return (
-    <div className="home-page-container">
-      {loggedInUser && <Header username={loggedInUser} />}
-      <div className="dashboard">
-        <Sidebar
-          loggedInUser={loggedInUser}
-          setSelectedOption={setSelectedOption}
-        />
-
-        <div className="home-content">{renderContent()}</div>
+    <div>
+      {loggedInUser && (
+        <Header username={loggedInUser} setSelectedOption={setSelectedOption} />
+      )}
+      <Sidebar
+        loggedInUser={loggedInUser}
+        setSelectedOption={setSelectedOption}
+      />
+      <div className="home-page-container">
+        <div className="dashboard">
+          <div className="home-content">{renderContent()}</div>
+        </div>
       </div>
     </div>
   );

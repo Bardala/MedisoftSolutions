@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState } from "react";
 const LoginContext = createContext();
 
 // Create a provider component
-// Create a provider component
 export const LoginProvider = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState(
     localStorage.getItem("loggedInUser"),

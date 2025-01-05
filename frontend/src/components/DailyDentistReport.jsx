@@ -15,22 +15,23 @@ const DailyDentistReport = () => {
   };
 
   return (
-    <div className="card-container">
-      <h2>Daily Reports</h2>
-      <p>
-        <strong>Patients Today:</strong> {stats.patientsToday}
-      </p>
-      <p>
-        <strong>Most Common Procedure:</strong> {stats.mostCommonProcedure}
-      </p>
-      <p>
-        <strong>Total Revenue:</strong> ${stats.totalRevenue}
-      </p>
+    <div>
+      <div className="card-container">
+        <h2>Daily Reports</h2>
+        <p>
+          <strong>Patients Today:</strong> {stats.patientsToday}
+        </p>
+        <p>
+          <strong>Most Common Procedure:</strong> {stats.mostCommonProcedure}
+        </p>
+        <p>
+          <strong>Total Revenue:</strong> ${stats.totalRevenue}
+        </p>
 
-      <button onClick={toggleDetails} className="details-button">
-        {showDetails ? "Hide Details" : "Click for Details"}
-      </button>
-
+        <button onClick={toggleDetails} className="details-button">
+          {showDetails ? "Hide Details" : "Click for Details"}
+        </button>
+      </div>
       {showDetails && <DailyFinancialReport />}
     </div>
   );

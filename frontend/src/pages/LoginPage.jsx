@@ -6,6 +6,9 @@ import dentistImage from "../images/dentist.jpg";
 import assistantImage from "../images/assistant.jpg";
 import { useLogin } from "../context/loginContext";
 
+const logoImage = "/dentalLogo.png";
+// const logoImage = "/dentalBackground.png";
+
 const LoginPage = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [password, setPassword] = useState("");
@@ -28,7 +31,13 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <h1 className="title">Welcome to the Clinic Management System</h1>
+      <img
+        src={logoImage}
+        alt="Dental Management System Logo"
+        className="logo"
+      />
+
+      <h1 className="title">Welcome to Dental Management System</h1>
       <div className="roles">
         <div
           className={`role-card ${selectedRole === "Doctor" ? "selected" : ""}`}

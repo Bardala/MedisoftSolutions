@@ -116,6 +116,28 @@ const MonthlyDentistReport = () => {
         </p>
       </div>
 
+      {/* Calendar View */}
+      <div className="calendar">
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1;
+          const date = new Date(currentYear, currentMonth, day);
+          const dayName = date.toLocaleString("en-US", { weekday: "short" });
+
+          return (
+            <div key={day} className="calendar-day">
+              <div className="date">
+                {dayName} {day}
+              </div>
+              <div className="day-data">
+                <p>{dailyReports[day]?.patientsToday || "-"}</p>
+                <p>{dailyReports[day]?.mostCommonProcedure || "-"}</p>
+                <p>${dailyReports[day]?.totalRevenue || "-"}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Weekly Statistics Card */}
       <div className="chart-card">
         <h3>Weekly Visits Statistics</h3>

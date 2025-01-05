@@ -1,0 +1,92 @@
+.settings-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: var(--padding-large);
+  background-color: var(--primary-bg);
+  transition: background-color 0.3s ease;
+}
+
+.card {
+  background-color: var(--primary-bg);
+  padding: var(--padding-medium);
+  box-shadow: var(--shadow-medium);
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.settings-title {
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+  margin-bottom: var(--padding-medium);
+}
+
+.input-group {
+  margin-bottom: var(--padding-small);
+  text-align: left;
+}
+
+.input-group label {
+  font-size: var(--font-size-body);
+  color: var(--secondary-color);
+}
+
+.input-group input {
+  width: 100%;
+  background-color: var(--secondary-bg);
+  padding: var(--padding-small);
+  margin-top: 5px;
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: var(--primary-color);
+}
+
+.message {
+  font-size: var(--font-size-body);
+  margin-top: 10px;
+}
+
+.message.success {
+  color: #4caf50;
+}
+
+.message.error {
+  color: #f44336;
+}
+
+.save-btn {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--padding-small) var(--padding-medium);
+  font-size: var(--font-size-body);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.save-btn.loading {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.dark-mode-toggle {
+  margin-top: var(--padding-medium);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

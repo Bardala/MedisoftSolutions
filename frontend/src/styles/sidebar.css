@@ -26,14 +26,93 @@
   letter-spacing: 1px;
 }
 
+/* .sidebar-user-photo-container {
+  text-align: center;
+  margin: 20px 0;
+} */
+
+.sidebar-user-photo-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.sidebar-user-photo {
+  /* width: 180px;
+  height: 180px; */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+  box-shadow: var(--shadow-small);
+}
+
+.sidebar-user-photo {
+  width: 180px;
+  /* Adjust size as needed */
+  height: 180px;
+  border-radius: 50%;
+  /* Makes the image circular */
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+  /* Optional border */
+  box-shadow: var(--shadow-small);
+  /* Optional shadow */
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: var(--padding-small);
+}
+
+.sidebar-item:hover {
+  background-color: var(--hover-color);
+  /* Adjust hover color */
+}
+
+.sidebar-icon {
+  margin-right: 10px;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  /* Increase icon size */
+  width: 24px;
+  height: 24px;
+  /* Explicitly control the SVG size */
+}
+
+.sidebar-link {
+  font-size: 14px;
+  color: var(--text-color);
+  /* Adjust text color */
+}
+
+.sidebar-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-home:hover {
+  background-color: var(--hover-color);
+}
+
+.sidebar-home-icon {
+  color: var(--primary-color);
+  font-size: 2rem;
+  /* Make the Home icon larger */
+  width: 32px;
+  height: 32px;
+}
+
 .sidebar-menu {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.sidebar-item {
-  margin-bottom: var(--padding-small);
 }
 
 .sidebar-link {
@@ -74,24 +153,6 @@
 
 @media screen and (max-width: 768px) {
   .sidebar {
-    position: static;
-    width: 100%;
-    height: auto;
-    box-shadow: none;
-    margin-bottom: var(--padding-large);
-  }
-
-  .sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .sidebar-item {
-    margin: var(--padding-small) 0;
-  }
-
-  .sidebar-title {
-    text-align: center;
+    display: none;
   }
 }
