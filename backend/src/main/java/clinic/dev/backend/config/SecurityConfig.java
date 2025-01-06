@@ -34,11 +34,11 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-
-            // ?The next two lines will be removed after enabling authentication
-            // .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
-            // .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-
+            .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/index.html").permitAll()
+            .requestMatchers(HttpMethod.GET, "/").permitAll()
+            .requestMatchers(HttpMethod.GET, "/login").permitAll()
+            .requestMatchers(HttpMethod.GET, "/home").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/healthz").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
@@ -73,5 +73,4 @@ public class SecurityConfig {
     authProvider.setPasswordEncoder(passwordEncoder);
     return authProvider;
   }
-
 }

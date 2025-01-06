@@ -1,7 +1,8 @@
 package clinic.dev.backend.controller;
 
+import clinic.dev.backend.dto.ResetPasswordRequest;
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.service.impl.UserService;
+import clinic.dev.backend.service.UserServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,37 +11,80 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
   @Autowired
-  private UserService userService;
+  private UserServiceBase userService;
 
-  // Create a new user
-  @PostMapping
-  public ResponseEntity<User> createUser(@RequestBody User user) {
-    User createdUser = userService.create(user);
-    return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+  @GetMapping("/health")
+  public ResponseEntity<String> health() {
+    return new ResponseEntity<>("User controller is healthy", HttpStatus.OK);
   }
 
-  // Get a user by ID
-  @GetMapping("/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable Long id) {
-    User user = userService.getById(id);
-    return new ResponseEntity<>(user, HttpStatus.OK);
-  }
-
-  // Get all users
   @GetMapping
   public ResponseEntity<List<User>> getAllUsers() {
     List<User> users = userService.getAll();
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
-  // Update an existing user
+  @GetMapping("/{id}")
+  public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    User user = userService.getById(id);
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @GetMapping("/username/{username}")
+  public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    User user = userService.getByUsername(username);
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @GetMapping("/phone/{phone}")
+  public ResponseEntity<User> getUserByPhone(@PathVariable String phone) {
+    User user = userService.getByPhone(phone);
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @GetMapping("/role/{role}")
+  public ResponseEntity<List<User>> getUsersByRole(@PathVariable String role) {
+    List<User> users = userService.getByRole(role);
+    return new ResponseEntity<>(users, HttpStatus.OK);
+  }
+
   @PutMapping("/{id}")
   public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
     User user = userService.update(updatedUser);
     return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
+    userService.deleteById(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/username/{username}")
+  public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+    userService.deleteByUsername(username);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/phone/{phone}")
+  public ResponseEntity<Void> deleteUserByPhone(@PathVariable String phone) {
+    userService.deleteByPhone(phone);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/all")
+  public ResponseEntity<Void> deleteAllUsers() {
+    userService.deleteAll();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("/reset-password")
+  public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+    userService.resetPassword(request.getUsername(), request.getNewPassword());
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

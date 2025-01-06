@@ -10,6 +10,8 @@ import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.UserRepo;
 
+import java.util.Optional;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -17,14 +19,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   private UserRepo userRepo;
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepo.findByUsername(username);
-
-    if (user == null) {
-      throw new UsernameNotFoundException(ErrorMsg.USER_NOT_FOUND_WITH_USERNAME + username);
-    }
-
-    return user;
+  public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+    return loadUserByIdentifier(identifier);
   }
 
+  public UserDetails loadUserByIdentifier(String identifier) throws UsernameNotFoundException {
+    Optional<User> user = userRepo.findByUsername(identifier);
+
+    if (!user.isPresent()) {
+      try {
+        user = userRepo.findByPhone(identifier);
+      } catch (NumberFormatException e) {
+        throw new UsernameNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
+      }
+    }
+
+    return user.orElseThrow(() -> new UsernameNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST));
+  }
 }

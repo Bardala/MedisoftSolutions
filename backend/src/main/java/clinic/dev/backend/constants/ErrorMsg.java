@@ -52,6 +52,11 @@ public class ErrorMsg {
   public static final String TITLE_IS_REQUIRED = "Title is required";
   public static final String DESCRIPTION_IS_REQUIRED = "Description is required";
 
+  public static final String INVALID_ROLE = "Invalid role. Allowed roles are 'Doctor' and 'Assistant'";
+  public static final String USER_NOT_FOUND_WITH_PHONE = "User not found with phone";
+  public static final String PHONE_ALREADY_EXISTS = "Phone already exists";
+  public static final String USERNAME_OR_PHONE_MUST_NOT_BE_NULL = "Username or phone must not be null";
+
   private ErrorMsg() {
   }
 }
