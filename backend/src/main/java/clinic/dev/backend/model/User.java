@@ -1,7 +1,7 @@
 package clinic.dev.backend.model;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -47,11 +47,11 @@ public class User implements UserDetails {
   @Column(nullable = false, updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   @org.hibernate.annotations.CreationTimestamp
-  private Date createdAt;
+  private LocalDateTime createdAt;
 
   @PrePersist
   protected void onCreate() {
-    createdAt = new Date();
+    createdAt = LocalDateTime.now();
   }
 
   @Override
