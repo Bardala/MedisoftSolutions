@@ -32,9 +32,3 @@ public class Log {
   @Column(columnDefinition = "TEXT")
   private String stackTrace;
 }
-
-enum LogLevel {
-  INFO,
-  WARNING,
-  ERROR
-}

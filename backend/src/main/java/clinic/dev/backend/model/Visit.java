@@ -1,25 +1,53 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import clinic.dev.backend.constants.ErrorMsg;
+
 @Entity
 @Data
+@Table(name = "visits")
 public class Visit {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne
+  @JoinColumn(name = "patient_id", nullable = false)
+  @NotNull(message = ErrorMsg.USER_CANNOT_BE_NULL)
   private Patient patient;
 
-  @ManyToOne
-  private DentalProcedure service;
+  @Column(name = "visit_date", nullable = false)
+  @NotNull(message = "Visit date cannot be null")
+  private LocalDateTime visitDate;
 
   @ManyToOne
-  private Payment payment; // Can be null if no payment is made.
+  @JoinColumn(name = "doctor_id", nullable = false)
+  @NotNull(message = "Doctor cannot be null")
+  private User doctor;
 
-  private LocalDateTime date;
+  @ManyToOne
+  @JoinColumn(name = "assistant_id", nullable = true)
+  private User assistant;
+
+  @Column(name = "wait", nullable = true)
+  private Integer wait;
+
+  @Column(name = "duration", nullable = true)
+  private Integer duration;
+
+  @Column(name = "doctor_notes", nullable = true)
+  private String doctorNotes;
+
+  @Column(name = "created_at", updatable = false)
+  private LocalDateTime createdAt;
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = LocalDateTime.now();
+  }
 }
