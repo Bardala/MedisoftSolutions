@@ -1,7 +1,7 @@
 package clinic.dev.backend.controller;
 
 import clinic.dev.backend.model.DentalProcedure;
-import clinic.dev.backend.service.impl.ServiceService;
+import clinic.dev.backend.service.impl.DentalProcedureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 public class DentalProcedureController {
 
   @Autowired
-  private ServiceService serviceService;
+  private DentalProcedureService serviceService;
 
   @PostMapping
   public ResponseEntity<DentalProcedure> createService(@RequestBody DentalProcedure service) {

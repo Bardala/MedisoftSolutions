@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import clinic.dev.backend.model.DentalProcedure;
 
-public interface ServiceRepo extends JpaRepository<DentalProcedure, Long> {
+public interface DentalProcedureRepo extends JpaRepository<DentalProcedure, Long> {
 
 }

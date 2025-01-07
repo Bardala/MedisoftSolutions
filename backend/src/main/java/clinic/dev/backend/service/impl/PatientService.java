@@ -23,8 +23,8 @@ public class PatientService implements BaseService<Patient> {
   @Override
   public Patient update(Long id, Patient updatedPatient) {
     Patient existingPatient = getById(id);
-    existingPatient.setName(updatedPatient.getName());
-    existingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
+    existingPatient.setFullName(updatedPatient.getFullName());
+    existingPatient.setPhone(updatedPatient.getPhone());
     existingPatient.setAddress(updatedPatient.getAddress());
     return patientRepo.save(existingPatient);
   }

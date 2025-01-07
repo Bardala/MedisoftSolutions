@@ -23,8 +23,12 @@ public class MedicineService implements BaseService<Medicine> {
   @Override
   public Medicine update(Long id, Medicine updatedMedicine) {
     Medicine existingMedicine = getById(id);
-    existingMedicine.setName(updatedMedicine.getName());
-    existingMedicine.setDescription(updatedMedicine.getDescription());
+    existingMedicine.setMedicineName(updatedMedicine.getMedicineName());
+    existingMedicine.setDosage(updatedMedicine.getDosage());
+    existingMedicine.setDuration(updatedMedicine.getDuration());
+    existingMedicine.setFrequency(updatedMedicine.getFrequency());
+    existingMedicine.setInstructions(updatedMedicine.getInstructions());
+
     return medicineRepo.save(existingMedicine);
   }
 

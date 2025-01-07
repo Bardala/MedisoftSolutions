@@ -32,4 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-*.db
+myDb.db
+
+/src/main/resources/static/

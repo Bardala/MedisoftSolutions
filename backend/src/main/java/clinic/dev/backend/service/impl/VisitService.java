@@ -23,10 +23,13 @@ public class VisitService implements BaseService<Visit> {
   @Override
   public Visit update(Long id, Visit updatedVisit) {
     Visit existingVisit = getById(id);
+    existingVisit.setAssistant(updatedVisit.getAssistant());
+    existingVisit.setDoctor(updatedVisit.getDoctor());
+    existingVisit.setDoctorNotes(updatedVisit.getDoctorNotes());
+    existingVisit.setDuration(updatedVisit.getDuration());
     existingVisit.setPatient(updatedVisit.getPatient());
-    existingVisit.setService(updatedVisit.getService());
-    existingVisit.setDate(updatedVisit.getDate());
-    existingVisit.setPayment(updatedVisit.getPayment());
+    existingVisit.setWait(updatedVisit.getWait());
+
     return visitRepo.save(existingVisit);
   }
 

@@ -1,7 +1,7 @@
 package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.model.DentalProcedure;
-import clinic.dev.backend.repository.ServiceRepo;
+import clinic.dev.backend.repository.DentalProcedureRepo;
 import clinic.dev.backend.service.BaseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ServiceService implements BaseService<DentalProcedure> {
+public class DentalProcedureService implements BaseService<DentalProcedure> {
 
   @Autowired
-  private ServiceRepo serviceRepository;
+  private DentalProcedureRepo serviceRepository;
 
   @Override
   public DentalProcedure create(DentalProcedure service) {
@@ -23,9 +23,9 @@ public class ServiceService implements BaseService<DentalProcedure> {
   @Override
   public DentalProcedure update(Long id, DentalProcedure updatedService) {
     DentalProcedure existingService = getById(id);
-    existingService.setName(updatedService.getName());
+    existingService.setServiceName(updatedService.getServiceName());
     existingService.setDescription(updatedService.getDescription());
-    existingService.setPrice(updatedService.getPrice());
+    existingService.setCost(updatedService.getCost());
     return serviceRepository.save(existingService);
   }
 
