@@ -5,16 +5,22 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { LoginProvider } from "./context/loginContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const queryClient = new QueryClient();
+
 root.render(
-  <ThemeProvider>
-    <LoginProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </LoginProvider>
-  </ThemeProvider>,
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <LoginProvider>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </LoginProvider>
+    </ThemeProvider>
+  </QueryClientProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

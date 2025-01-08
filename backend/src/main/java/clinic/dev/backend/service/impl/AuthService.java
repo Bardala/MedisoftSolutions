@@ -1,5 +1,7 @@
 package clinic.dev.backend.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,6 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import clinic.dev.backend.constants.ErrorMsg;
+import clinic.dev.backend.dto.CurrUserInfo;
+import clinic.dev.backend.model.User;
+import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.AuthServiceBase;
 import clinic.dev.backend.util.JwtUtil;
 
@@ -24,6 +29,9 @@ public class AuthService implements AuthServiceBase {
 
   @Autowired
   private JwtUtil jwtUtil;
+
+  @Autowired
+  private UserRepo userRepo;
 
   @Override
   public String login(String username, String password) throws AuthenticationException {
@@ -42,4 +50,24 @@ public class AuthService implements AuthServiceBase {
       };
     }
   }
+
+  @Override
+  public CurrUserInfo getCurrUser(String token) throws AuthenticationException {
+    String username = jwtUtil.extractUsername(token);
+    Optional<User> user = userRepo.findByUsername(username);
+
+    if (!user.isPresent()) {
+      throw new UsernameNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
+    }
+
+    CurrUserInfo currUserInfo = new CurrUserInfo();
+    currUserInfo.setId(user.get().getId());
+    currUserInfo.setUsername(user.get().getUsername());
+    currUserInfo.setRole(user.get().getRole());
+    currUserInfo.setPhone(user.get().getPhone());
+    currUserInfo.setFullName(user.get().getName());
+
+    return currUserInfo;
+  }
+
 }

@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-
 import { LOCALS } from "../utils/localStorage";
 
 export class ApiError extends Error {

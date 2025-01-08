@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import clinic.dev.backend.dto.CurrUserInfo;
 import clinic.dev.backend.dto.LoginRequest;
 import clinic.dev.backend.dto.LoginResponse;
 import clinic.dev.backend.dto.SignupRequest;
@@ -36,5 +37,12 @@ public class AuthController {
     String token = authService.login(request.getIdentifier(), request.getPassword());
     LoginResponse res = new LoginResponse(token, request.getIdentifier());
     return ResponseEntity.ok(res);
+  }
+
+  @GetMapping("/userInfo")
+  public ResponseEntity<CurrUserInfo> getCurrUser(@RequestHeader("Authorization") String authorizationHeader) {
+    String token = authorizationHeader.substring(7);
+    CurrUserInfo currUser = authService.getCurrUser(token);
+    return ResponseEntity.ok(currUser);
   }
 }

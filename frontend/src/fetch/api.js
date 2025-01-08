@@ -1,7 +1,14 @@
-import { fetchFn } from "./fetch";
+import { fetchFn } from "./index";
 
-export const signupApi = (username, role, password) =>
-  fetchFn("/api/auth/signup", "POST", { username, role, password });
+export const loginApi = (identifier, password) =>
+  fetchFn({
+    endPoint: "/api/v1/auth/login",
+    method: "POST",
+    req: { identifier, password },
+  });
 
-export const loginApi = (login, password) =>
-  fetchFn("/api/auth/login", "POST", { login, password });
+export const CurrUserinfoApi = (token) =>
+  fetchFn({
+    endPoint: "/api/v1/auth/userInfo",
+    token,
+  });

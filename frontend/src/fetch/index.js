@@ -1,30 +1,14 @@
-import { HOST } from "../config";
-import { ApiError } from "./auth";
+import { errorFn } from "./ERROR";
+import { HOST, extractParams } from "../utils/extractParams";
+import { LOCALS } from "../utils/localStorage";
 
-const errorFn = (status, message) => {
-  const error = new ApiError(status, message);
-  throw error;
-};
-
-export const ERROR = {
-  TOKEN_EXPIRED: "TokenExpiredError",
-  INVALID_TOKEN: "JsonWebTokenError",
-  UNAUTHORIZED: "UnauthorizedError",
-};
-
-const extractParams = (endPoint, params) => {
-  const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
-  let res = String(endPoint);
-
-  if (apiParamsCount !== params.length)
-    throw new Error("params count mismatch");
-
-  for (let i = 0; i < apiParamsCount; i++) res = res.replace(/:\w+/, params[i]);
-
-  return HOST + res;
-};
-
-export const fetchFn = async (endPoint, method, req, token, params) => {
+export const fetchFn = async ({
+  endPoint,
+  method = "GET",
+  req = null,
+  token = localStorage.getItem(LOCALS.AUTH_TOKEN),
+  params = null,
+}) => {
   let url = HOST + endPoint;
   if (params) url = extractParams(endPoint, params);
 
@@ -37,23 +21,10 @@ export const fetchFn = async (endPoint, method, req, token, params) => {
     ...(req && { body: JSON.stringify(req) }),
   });
 
-  if (res.headers.get("Content-Type")?.includes("application/json")) {
-    const data = await res.json();
-    if (!res.ok)
-      if (
-        data.error === ERROR.TOKEN_EXPIRED ||
-        data.error === ERROR.INVALID_TOKEN
-      ) {
-        localStorage.removeItem("currUser");
-        window.location.reload();
-        errorFn(res.status, data.error);
-      } else if (data.error === ERROR.UNAUTHORIZED) {
-        window.location.href = "/login";
-        throw new ApiError(res.status, data.error);
-      } else errorFn(res.status, data.error);
-    return data;
+  if (!res.ok) {
+    const { status, message } = await res.json();
+    errorFn(status, message);
   }
 
-  if (!res.ok) errorFn(res.status, res.statusText);
-  return res;
+  return res.json();
 };
