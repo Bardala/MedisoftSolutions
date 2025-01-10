@@ -1,0 +1,55 @@
+.add-assistant-container {
+  padding: var(--padding-medium);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  margin: var(--padding-large) auto;
+  max-width: 600px;
+}
+
+.title {
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--padding-medium);
+}
+
+.add-assistant-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-assistant-form input {
+  padding: var(--padding-small);
+  margin-bottom: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+}
+
+.submit-button {
+  padding: var(--padding-small);
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: var(--padding-small);
+}
+
+.success-message {
+  color: green;
+  text-align: center;
+  margin-top: var(--padding-small);
+}

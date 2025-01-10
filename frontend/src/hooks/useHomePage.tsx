@@ -1,49 +1,53 @@
-import React, { useState } from "react";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import { useState } from "react";
+import { User } from "../types";
 import AddPatient from "../components/AddPatient";
 import PatientList from "../components/PatientList";
 import ManageRoles from "../components/ManageRoles";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
+import { patientsHistory, patients } from "../db/patientDb";
 
 import PatientProfile from "../components/PatientProfile";
 import Home from "../components/Home";
 import DailyDentistReport from "../components/DailyDentistReport";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
-import { patientsHistory, patients } from "../db/patientDb";
 import Registry from "../components/Registry";
+import AddAssistant from "../components/AddAssistant";
 
-const HomePage = ({ loggedInUser }) => {
+export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const renderContent =
-    loggedInUser === "Doctor"
+    loggedInUser.role === "Doctor"
       ? () => {
           switch (selectedOption) {
             case "/":
-              return <Home />;
+              return <Home setSelectedOption={setSelectedOption} />;
             case "/patients":
               return <PatientList />;
             case "/reports":
               return <DailyDentistReport />;
             case "/settings":
-              return <Settings />;
+              return <Settings setSelectedOption={setSelectedOption} />;
             case "/patient-history":
               return <Registry patient={patientsHistory} />;
             case "/patient-profile":
               return <PatientProfile patient={patients[0]} />;
             case "/monthly-reports":
               return <MonthlyDoctorReports />;
+            case "/add-assistant":
+              return <AddAssistant />;
+            case "/add-patient":
+              return <AddPatient />;
             default:
-              return <Home />;
+              return <Home setSelectedOption={setSelectedOption} />;
           }
         }
       : () => {
           switch (selectedOption) {
             case "/":
-              return <Home />;
+              return <Home setSelectedOption={setSelectedOption} />;
             case "/add-patient":
               return <AddPatient />;
             case "/patient-list":
@@ -57,26 +61,9 @@ const HomePage = ({ loggedInUser }) => {
             case "/reports":
               return <DailyFinancialReport />;
             default:
-              return <Home />;
+              return <Home setSelectedOption={setSelectedOption} />;
           }
         };
 
-  return (
-    <div>
-      {loggedInUser && (
-        <Header username={loggedInUser} setSelectedOption={setSelectedOption} />
-      )}
-      <Sidebar
-        loggedInUser={loggedInUser}
-        setSelectedOption={setSelectedOption}
-      />
-      <div className="home-page-container">
-        <div className="dashboard">
-          <div className="home-content">{renderContent()}</div>
-        </div>
-      </div>
-    </div>
-  );
+  return { renderContent, selectedOption, setSelectedOption };
 };
-
-export default HomePage;

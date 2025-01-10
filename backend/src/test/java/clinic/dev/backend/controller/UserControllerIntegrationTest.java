@@ -1,8 +1,8 @@
 package clinic.dev.backend.controller;
 
-import clinic.dev.backend.dto.LoginRequest;
-import clinic.dev.backend.dto.ResetPasswordRequest;
-import clinic.dev.backend.dto.SignupRequest;
+import clinic.dev.backend.dto.auth.LoginRequest;
+import clinic.dev.backend.dto.auth.SignupRequest;
+import clinic.dev.backend.dto.user.ResetPasswordRequest;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;

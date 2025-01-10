@@ -2,29 +2,47 @@ import React, { createContext, useContext, useState } from "react";
 import { LOCALS } from "../utils/localStorage";
 import { CurrUserinfoApi, loginApi } from "../fetch/api";
 import { LoginContextType, LoginProviderProps, User } from "../types";
+import { ApiError } from "../fetch/ERROR";
 
 const LoginContext = createContext<LoginContextType | null>(null);
 
-// Create a provider component
 export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(
     JSON.parse(localStorage.getItem(LOCALS.CURR_USER) as string),
   );
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const currUserInfo = async (token: string): Promise<void> => {
-    const user = await CurrUserinfoApi(token);
-    setLoggedInUser(user);
-    localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(user));
-    localStorage.setItem(LOCALS.AUTH_TOKEN, token); // Save token for subsequent requests
+  const currUserInfo = async (): Promise<void> => {
+    try {
+      const user = await CurrUserinfoApi();
+      setLoggedInUser(user);
+      localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(user));
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("Failed to fetch user information");
+      }
+      console.error(err);
+    }
   };
 
   const login = async (username: string, password: string): Promise<void> => {
+    setError(null);
     try {
       const response = await loginApi(username, password);
       const { token } = response;
-      await currUserInfo(token);
-    } catch (error) {
-      throw error; // Optionally re-throw for handling in the calling component
+      localStorage.setItem(LOCALS.AUTH_TOKEN, token);
+      await currUserInfo();
+      setSuccess(true);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("Login failed");
+      }
+      console.error(err);
     }
   };
 
@@ -32,10 +50,13 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
     setLoggedInUser(null);
     localStorage.removeItem(LOCALS.CURR_USER);
     localStorage.removeItem(LOCALS.AUTH_TOKEN);
+    setSuccess(false);
   };
 
   return (
-    <LoginContext.Provider value={{ loggedInUser, login, logout }}>
+    <LoginContext.Provider
+      value={{ loggedInUser, login, logout, success, error }}
+    >
       {children}
     </LoginContext.Provider>
   );

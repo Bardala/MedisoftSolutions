@@ -1,7 +1,7 @@
 package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.dto.SignupRequest;
+import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.UserRepo;

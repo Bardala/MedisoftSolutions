@@ -1,7 +1,5 @@
-import React from "react";
 import "../styles/header.css";
-import { useNavigate } from "react-router-dom";
-import { useLogin } from "../context/loginContext";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -16,15 +14,15 @@ import {
   faUserShield,
   faHome,
 } from "@fortawesome/free-solid-svg-icons";
-import dentistImage from "../images/dentist.jpg";
-import assistantImage from "../images/assistant.jpg";
+import { HeaderProps } from "../types";
+import { FC } from "react";
 
-const Header = ({ username, setSelectedOption }) => {
-  const navigate = useNavigate();
-  const { logout } = useLogin();
+const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
+  const dentistImage = "../images/dentist.jpg";
+  const assistantImage = "../images/assistant.jpg";
 
   const menuItems =
-    username === "Doctor"
+    loggedInUser.role === "Doctor"
       ? [
           { label: "Home", link: "/", icon: faHome },
           {
@@ -68,22 +66,18 @@ const Header = ({ username, setSelectedOption }) => {
           { label: "Manage Roles", link: "/roles", icon: faUserShield },
         ];
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   return (
     <div className="header">
       <div className="header-content">
         <img
-          src={username === "Doctor" ? dentistImage : assistantImage}
-          alt={username}
+          src={loggedInUser.role === "Doctor" ? dentistImage : assistantImage}
+          alt={loggedInUser.fullName}
           className="header-user-photo"
         />
 
         <span className="username">
-          Welcome, {username === "Doctor" ? "Dr.Mohamed" : "Mr.Ahmed"}
+          Welcome, {loggedInUser.role === "Doctor" ? "Dr" : "Mr"}{" "}
+          {loggedInUser.fullName}
         </span>
 
         <div className="header-icons">
@@ -96,10 +90,6 @@ const Header = ({ username, setSelectedOption }) => {
             />
           ))}
         </div>
-        {/* //todo: move it into settings */}
-        {/* <button className="logout-button" onClick={handleLogout}>
-          Logout
-        </button> */}
       </div>
     </div>
   );

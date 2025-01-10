@@ -7,7 +7,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/home.css"; // Assuming you will style this
 
-const Home = () => {
+const Home = ({
+  setSelectedOption,
+}: {
+  setSelectedOption: (option: string) => void;
+}) => {
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalVisits: 0,
@@ -61,11 +65,17 @@ const Home = () => {
       <section className="quick-actions">
         <h3>Quick Actions</h3>
         <div className="actions">
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => setSelectedOption("/add-patient")}
+          >
             <FontAwesomeIcon icon={faUserPlus} />
             Add New Patient
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => setSelectedOption("/monthly-reports")}
+          >
             <FontAwesomeIcon icon={faChartBar} />
             View Reports
           </button>

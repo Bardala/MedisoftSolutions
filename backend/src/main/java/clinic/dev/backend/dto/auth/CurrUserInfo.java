@@ -1,4 +1,4 @@
-package clinic.dev.backend.dto;
+package clinic.dev.backend.dto.auth;
 
 import lombok.Data;
 

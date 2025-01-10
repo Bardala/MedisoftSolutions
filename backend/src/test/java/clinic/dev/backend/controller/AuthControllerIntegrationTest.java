@@ -3,8 +3,8 @@ package clinic.dev.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.dto.LoginRequest;
-import clinic.dev.backend.dto.SignupRequest;
+import clinic.dev.backend.dto.auth.LoginRequest;
+import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.repository.UserRepo;
 
 import org.junit.jupiter.api.BeforeEach;

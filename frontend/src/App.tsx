@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useLogin } from "./context/loginContext";
 import LoginPage from "./pages/LoginPage";

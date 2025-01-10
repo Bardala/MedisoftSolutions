@@ -12,7 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.dto.CurrUserInfo;
+import clinic.dev.backend.dto.auth.CurrUserInfo;
+import clinic.dev.backend.exceptions.InvalidCredentialsException;
+import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.AuthServiceBase;
@@ -40,14 +42,11 @@ public class AuthService implements AuthServiceBase {
       UserDetails user = userDetailsService.loadUserByUsername(username);
       return jwtUtil.generateToken(user.getUsername());
     } catch (UsernameNotFoundException ex) {
-      throw new AuthenticationException(ErrorMsg.USER_DOES_NOT_EXIST) {
-      };
+      throw new UserNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
     } catch (BadCredentialsException ex) {
-      throw new AuthenticationException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD) {
-      };
+      throw new InvalidCredentialsException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
     } catch (AuthenticationException ex) {
-      throw new AuthenticationException(ErrorMsg.AUTHENTICATION_FAILED) {
-      };
+      throw new InvalidCredentialsException(ErrorMsg.AUTHENTICATION_FAILED);
     }
   }
 
@@ -57,7 +56,7 @@ public class AuthService implements AuthServiceBase {
     Optional<User> user = userRepo.findByUsername(username);
 
     if (!user.isPresent()) {
-      throw new UsernameNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
+      throw new UserNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
     }
 
     CurrUserInfo currUserInfo = new CurrUserInfo();
@@ -69,5 +68,4 @@ public class AuthService implements AuthServiceBase {
 
     return currUserInfo;
   }
-
 }

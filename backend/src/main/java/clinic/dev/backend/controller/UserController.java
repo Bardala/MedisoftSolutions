@@ -1,6 +1,6 @@
 package clinic.dev.backend.controller;
 
-import clinic.dev.backend.dto.ResetPasswordRequest;
+import clinic.dev.backend.dto.user.ResetPasswordRequest;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.service.UserServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;

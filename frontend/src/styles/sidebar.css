@@ -105,8 +105,8 @@
   color: var(--primary-color);
   font-size: 2rem;
   /* Make the Home icon larger */
-  width: 32px;
-  height: 32px;
+  width: 80px;
+  height: 80px;
 }
 
 .sidebar-menu {

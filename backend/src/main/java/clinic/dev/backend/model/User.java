@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.validation.RoleConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -26,14 +27,14 @@ public class User implements UserDetails {
   @Column(unique = true, nullable = false)
   private String username;
 
-  @NotBlank
+  @NotBlank(message = ErrorMsg.PASSWORD_IS_REQUIRED)
   private String password;
 
-  @NotBlank
-  @Column(unique = true, nullable = false)
+  @NotBlank(message = ErrorMsg.FULLNAME_IS_REQUIRED)
+  @Column(nullable = false)
   private String name;
 
-  @NotBlank
+  @NotBlank(message = ErrorMsg.PHONE_IS_REQUIRED)
   @Column(unique = true, nullable = false)
   private String phone;
 

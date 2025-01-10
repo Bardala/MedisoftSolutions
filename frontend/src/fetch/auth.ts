@@ -1,15 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { LOCALS } from "../utils/localStorage";
 
-export class ApiError extends Error {
-  status;
-
-  constructor(status, msg) {
-    super(msg);
-    this.status = status;
-  }
-}
-
 export const isLoggedIn = () => {
   return !!localStorage.getItem(LOCALS.CURR_USER);
 };

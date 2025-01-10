@@ -6,8 +6,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@tanstack/react-query": "^5.62.15",
-    "@tanstack/react-query-devtools": "^5.62.15",
+    "@tanstack/react-query": "^4.29.25",
     "chart.js": "^4.4.7",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
@@ -46,6 +45,7 @@
   },
   "proxy": "http://localhost:8080",
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.62.15",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",

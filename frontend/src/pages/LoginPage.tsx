@@ -1,33 +1,24 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 import "../styles/login.css";
-import dentistImage from "../images/dentist.jpg";
-import assistantImage from "../images/assistant.jpg";
-import { useLogin } from "../context/loginContext";
+import { useLoginPage } from "../hooks/useLoginPage";
 
 const logoImage = "/dentalLogo.png";
-// const logoImage = "/dentalBackground.png";
 
-const LoginPage = () => {
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { login } = useLogin();
+const LoginPage: React.FC = () => {
+  const dentistImage = "dentist.jpg";
+  const assistantImage = "assistant.jpg";
 
-  const handleRoleSelection = (role) => {
-    setSelectedRole(role);
-    setPassword("");
-  };
-
-  const handleSubmit = () => {
-    if (password) {
-      login(selectedRole);
-      navigate("/");
-    } else {
-      alert("Please enter a password!");
-    }
-  };
+  const {
+    selectedRole,
+    identifier,
+    setIdentifier,
+    password,
+    setPassword,
+    handleRoleSelection,
+    handleSubmit,
+    error,
+  } = useLoginPage();
 
   return (
     <div className="login-page">
@@ -64,7 +55,14 @@ const LoginPage = () => {
 
       {selectedRole && (
         <div className="password-section">
-          <h3>Enter {selectedRole} Password</h3>
+          <h3>Enter {selectedRole} Phone Number</h3>
+          <input
+            type="text"
+            placeholder="Username or Phone Number"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            className="password-input"
+          />
           <input
             type="password"
             placeholder="Password"
@@ -75,6 +73,7 @@ const LoginPage = () => {
           <button onClick={handleSubmit} className="submit-button">
             Login
           </button>
+          {error && <p className="error-message">{error}</p>}
         </div>
       )}
     </div>

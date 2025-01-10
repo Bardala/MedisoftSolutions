@@ -16,7 +16,7 @@ public class JwtUtil {
 
   // todo: Change to a strong secret key in .env
   private final String SECRET_KEY_STRING = "my_secret_key_which_should_be_at_least_32_character_long";
-  private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hour
+  private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 day
 
   private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
 
