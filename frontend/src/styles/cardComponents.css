@@ -111,7 +111,8 @@ table tbody tr:hover {
 
   /* General card container adjustments */
   .card-container {
-    width: 100%;
+    /* width: 100%; */
+    /*Didn't get significant change by commenting this field*/
     padding: var(--padding-small);
     margin: var(--padding-small) 0;
     box-shadow: none;
@@ -122,7 +123,8 @@ table tbody tr:hover {
   form input,
   form textarea,
   form button {
-    width: 100%;
+    /* width: 100%; */
+    /* by commenting this line, these components have been adjusted in the middle*/
     padding: var(--padding-small);
     font-size: var(--font-size-small);
     /* Adjust font size for better readability */

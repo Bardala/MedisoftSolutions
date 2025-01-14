@@ -8,5 +8,5 @@ public class CurrUserInfo {
   private String username;
   private String role;
   private String phone;
-  private String fullName;
+  private String name;
 }

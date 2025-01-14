@@ -27,6 +27,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private UserDetailsServiceImpl userDetailsService;
 
+  // This method was added for trying solving browsers requests access
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    // Exclude OPTIONS requests and the /error endpoint
+    String path = request.getRequestURI();
+    return request.getMethod().equalsIgnoreCase("OPTIONS") || path.equals("/error");
+  }
+
   @Override
   protected void doFilterInternal(
       HttpServletRequest request,

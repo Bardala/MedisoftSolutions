@@ -10,7 +10,6 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
   const assistantImage = "assistant.jpg";
 
   const { menuItems } = useSidebar(loggedInUser);
-
   return (
     <div className="sidebar">
       <div className="sidebar-user-photo-container">
@@ -28,8 +27,7 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
       <h3 className="sidebar-subtitle">
         Welcome
         <br />
-        {loggedInUser.role === "Doctor" ? " Dr." : "Mr."}{" "}
-        {loggedInUser.fullName}
+        {loggedInUser.role === "Doctor" ? " Dr." : "Mr."} {loggedInUser.name}
       </h3>
 
       <ul className="sidebar-menu">

@@ -22,9 +22,23 @@ public class DentalProcedure {
   @Column(name = "service_name", length = 150, nullable = false, unique = true)
   private String serviceName;
 
+  @NotBlank(message = "Arabic Service name is required")
+  @Column(name = "arabic_name", length = 150, nullable = false)
+  private String arabicName;
+
   @Column(length = 1000, nullable = true)
   private String description;
 
   @Column(name = "cost", nullable = false)
   private Double cost;
+
+  public DentalProcedure() {
+  }
+
+  public DentalProcedure(String serviceName, String arabicName, String description, double cost) {
+    this.serviceName = serviceName;
+    this.arabicName = arabicName;
+    this.description = description;
+    this.cost = cost;
+  }
 }

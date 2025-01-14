@@ -1,20 +1,36 @@
 package clinic.dev.backend.service.impl;
 
-import clinic.dev.backend.exceptions.ResourceNotFoundException;
-import clinic.dev.backend.model.Patient;
-import clinic.dev.backend.repository.PatientRepo;
+import clinic.dev.backend.dto.patient.PatientRegistryRes;
+import clinic.dev.backend.model.*;
+import clinic.dev.backend.repository.*;
 import clinic.dev.backend.service.BaseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientService implements BaseService<Patient> {
 
   @Autowired
   private PatientRepo patientRepo;
+
+  @Autowired
+  private VisitRepo visitRepo;
+
+  @Autowired
+  private PaymentRepo paymentRepo;
+
+  @Autowired
+  private VisitDentalProcedureRepo visitDentalProcedureRepo;
+
+  @Autowired
+  private VisitMedicineRepo visitMedicineRepo;
+
+  @Autowired
+  private VisitPaymentRepo visitPaymentRepo;
 
   @Override
   public Patient create(Patient patient) {
@@ -28,10 +44,6 @@ public class PatientService implements BaseService<Patient> {
   @Override
   public Patient update(Long id, Patient updatedPatient) {
     Patient existingPatient = getById(id);
-
-    if (existingPatient == null) {
-      throw new ResourceNotFoundException("Patient not found;");
-    }
 
     if (patientRepo.existsByFullName(updatedPatient.getFullName())) {
       throw new IllegalArgumentException("This name already exists, change it");
@@ -61,5 +73,30 @@ public class PatientService implements BaseService<Patient> {
   @Override
   public List<Patient> getAll() {
     return patientRepo.findAll();
+  }
+
+  public void deleteAll() {
+    patientRepo.deleteAll();
+  }
+
+  // todo: Create a native sql query for this method for avoiding redundancy data
+  public PatientRegistryRes getPatientRegistry(Long id) {
+    Patient patient = getById(id);
+    PatientRegistryRes dto = new PatientRegistryRes();
+
+    dto.setPatient(patient);
+    dto.setVisits(visitRepo.findByPatientId(patient.getId()));
+    dto.setPayments(paymentRepo.findByPatientId(patient.getId()));
+    dto.setVisitDentalProcedure(visitDentalProcedureRepo.findByVisitPatientId(patient.getId()));
+    dto.setMedicines(visitMedicineRepo.findByVisitPatientId(patient.getId()));
+    dto.setVisitPayments(visitPaymentRepo.findByVisitPatientId(patient.getId()));
+    return dto;
+  }
+
+  public List<PatientRegistryRes> AllPatientsRegistry() {
+    List<Patient> patients = patientRepo.findAll();
+    return patients.stream().map(patient -> {
+      return getPatientRegistry(patient.getId());
+    }).collect(Collectors.toList());
   }
 }

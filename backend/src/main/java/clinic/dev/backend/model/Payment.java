@@ -15,8 +15,6 @@ public class Payment {
 
   private Double amount;
 
-  private LocalDateTime timestamp;
-
   @ManyToOne
   private Patient patient;
 
@@ -24,5 +22,15 @@ public class Payment {
   private User recordedBy;
 
   @Temporal(TemporalType.DATE)
-  private Date date; // Add this field
+  private Date date; // todo: Remove this field
+
+  @Column(nullable = false, updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  @org.hibernate.annotations.CreationTimestamp
+  private LocalDateTime timestamp;
+
+  @PrePersist
+  protected void onCreate() {
+    timestamp = LocalDateTime.now();
+  }
 }

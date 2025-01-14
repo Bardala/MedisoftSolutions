@@ -43,4 +43,8 @@ public class DentalProcedureService implements BaseService<DentalProcedure> {
   public List<DentalProcedure> getAll() {
     return serviceRepository.findAll();
   }
+
+  public void deleteAll() {
+    serviceRepository.deleteAll();
+  }
 }

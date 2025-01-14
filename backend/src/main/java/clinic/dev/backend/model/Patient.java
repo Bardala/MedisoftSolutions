@@ -3,6 +3,7 @@ package clinic.dev.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import clinic.dev.backend.constants.ErrorMsg;
 @Table(name = "patients", uniqueConstraints = {
     @UniqueConstraint(columnNames = "full_name")
 })
+@NoArgsConstructor
 public class Patient {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

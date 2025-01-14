@@ -1,9 +1,9 @@
 package clinic.dev.backend.controller;
 
+import clinic.dev.backend.dto.patient.PatientRegistryRes;
 import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.service.impl.PatientService;
 import clinic.dev.backend.util.ApiRes;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +45,17 @@ public class PatientController {
   public ResponseEntity<ApiRes<List<Patient>>> getAllPatients() {
     List<Patient> patients = patientService.getAll();
     return ResponseEntity.ok(new ApiRes<>(patients));
+  }
+
+  @GetMapping("/registry/{id}")
+  public ResponseEntity<ApiRes<PatientRegistryRes>> getPatientRegistry(@PathVariable Long id) {
+    PatientRegistryRes patientRegistry = patientService.getPatientRegistry(id);
+    return ResponseEntity.ok(new ApiRes<>(patientRegistry));
+  }
+
+  @GetMapping("/registry")
+  public ResponseEntity<ApiRes<List<PatientRegistryRes>>> getRegistry() {
+    List<PatientRegistryRes> registry = patientService.AllPatientsRegistry();
+    return ResponseEntity.ok(new ApiRes<>(registry));
   }
 }

@@ -79,9 +79,13 @@ const Home = ({
             <FontAwesomeIcon icon={faChartBar} />
             View Reports
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => setSelectedOption("/record-new-visit")}
+          >
             <FontAwesomeIcon icon={faCalendarAlt} />
-            View Appointments
+            {/* View Appointments */}
+            Record New Visit
           </button>
         </div>
       </section>

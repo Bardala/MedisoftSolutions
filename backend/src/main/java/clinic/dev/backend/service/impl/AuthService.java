@@ -64,7 +64,7 @@ public class AuthService implements AuthServiceBase {
     currUserInfo.setUsername(user.get().getUsername());
     currUserInfo.setRole(user.get().getRole());
     currUserInfo.setPhone(user.get().getPhone());
-    currUserInfo.setFullName(user.get().getName());
+    currUserInfo.setName(user.get().getName());
 
     return currUserInfo;
   }

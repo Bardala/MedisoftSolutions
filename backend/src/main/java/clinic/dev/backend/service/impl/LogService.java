@@ -1,6 +1,7 @@
 package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.model.Log;
+import clinic.dev.backend.model.LogLevel;
 import clinic.dev.backend.repository.LogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,7 @@ public class LogService {
     log.setAction(action);
     log.setDetails(details);
     log.setIpAddress(ipAddress);
-    // todo: fix this error
-    // log.setLogLevel(LogLevel.valueOf(logLevel.toUpperCase()));
+    log.setLogLevel(LogLevel.valueOf(logLevel.toUpperCase()));
     log.setStackTrace(stackTrace);
     logRepository.save(log);
   }

@@ -46,7 +46,7 @@ export const useAddAssistant = () => {
 
     setNewAssistant({
       username,
-      fullName,
+      name: fullName,
       password,
       phone,
       role: "Assistant",

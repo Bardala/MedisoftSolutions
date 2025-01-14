@@ -10,7 +10,7 @@ export interface User {
   id?: number;
   username: string;
   role: string;
-  fullName: string;
+  name: string;
   password?: string;
   phone: number;
 }
@@ -30,30 +30,21 @@ export interface Patient {
 export interface Visit {
   id?: number;
   patient: Patient;
-  visitDate?: Date;
   doctor: User;
   assistant?: User;
+  visitDate?: Date;
   wait?: number;
   duration?: number;
   doctorNotes?: string;
   createdAt?: Date;
 }
 
-export interface VisitDentalProcedure {
-  id?: number;
-  visit: Visit;
-  service: DentalProcedure;
-}
-
 export interface DentalProcedure {
   id?: number;
-  name: string;
-}
-
-export interface VisitMedicine {
-  id?: number;
-  visit: Visit;
-  medicine: Medicine;
+  serviceName: string;
+  arabicName: string;
+  description: string;
+  cost: number;
 }
 
 export interface Medicine {
@@ -66,17 +57,29 @@ export interface Medicine {
   createdAt?: Date;
 }
 
+export interface Payment {
+  id?: number;
+  amount: number;
+  timestamp?: number;
+  patient: Patient;
+  recordedBy: User;
+  date?: Date; // todo: remove this field
+}
+
+export interface VisitDentalProcedure {
+  id?: number;
+  visit: Visit;
+  dentalProcedure: DentalProcedure;
+}
+
+export interface VisitMedicine {
+  id?: number;
+  visit: Visit;
+  medicine: Medicine;
+}
+
 export interface VisitPayment {
   id?: number;
   visit: Visit;
   payment: Payment;
-}
-
-export interface Payment {
-  id?: number;
-  amount: number;
-  timestamp?: Date;
-  patient: Patient;
-  recordedBy: User;
-  date: Date;
 }

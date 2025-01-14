@@ -2,7 +2,6 @@ import { useState } from "react";
 import { User } from "../types";
 import AddPatient from "../components/AddPatient";
 import PatientList from "../components/PatientList";
-import ManageRoles from "../components/ManageRoles";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
 import { patientsHistory, patients } from "../db/patientDb";
@@ -14,7 +13,10 @@ import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
 import Registry from "../components/Registry";
 import AddAssistant from "../components/AddAssistant";
+import { AddVisit } from "../components/AddVisit";
+import { GetRegistry } from "../components/GetRegistry";
 
+// todo: create a context provider
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -24,6 +26,8 @@ export const useHomePage = (loggedInUser: User) => {
           switch (selectedOption) {
             case "/":
               return <Home setSelectedOption={setSelectedOption} />;
+            case "/record-new-visit":
+              return <AddVisit />;
             case "/patients":
               return <PatientList />;
             case "/reports":
@@ -31,7 +35,8 @@ export const useHomePage = (loggedInUser: User) => {
             case "/settings":
               return <Settings setSelectedOption={setSelectedOption} />;
             case "/patient-history":
-              return <Registry patient={patientsHistory} />;
+              // return <Registry />;
+              return <GetRegistry />;
             case "/patient-profile":
               return <PatientProfile patient={patients[0]} />;
             case "/monthly-reports":
@@ -50,16 +55,19 @@ export const useHomePage = (loggedInUser: User) => {
               return <Home setSelectedOption={setSelectedOption} />;
             case "/add-patient":
               return <AddPatient />;
+            case "/record-new-visit":
+              return <AddVisit />;
             case "/patient-list":
               return <PatientList />;
-            case "/roles":
-              return <ManageRoles />;
             case "/payments":
               return <RecordPayments />;
             case "/patient-history":
-              return <Registry patient={patientsHistory} />;
+              // return <Registry />;
+              return <GetRegistry />;
             case "/reports":
               return <DailyFinancialReport />;
+            case "/settings":
+              return <Settings setSelectedOption={setSelectedOption} />;
             default:
               return <Home setSelectedOption={setSelectedOption} />;
           }

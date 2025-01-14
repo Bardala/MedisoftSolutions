@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import "../styles/registry.css";
 import { patientsHistory } from "../db/patientDb";
+import PatientSearch from "./PatientSearch";
+import { Patient } from "../types";
+import { usePatientSearch } from "../hooks/usePatientSearch";
 
 const Registry = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPatients, setFilteredPatients] = useState(patientsHistory);
   const [expandedVisit, setExpandedVisit] = useState(null);
   const [activeTab, setActiveTab] = useState("summary"); // New tab state
+  const { selectedPatient, handlePatientSelect } = usePatientSearch();
 
   // Search handler
   const handleSearch = (event) => {
@@ -118,12 +122,12 @@ const Registry = () => {
                     {Object.values(patient.visitsHistory).map(
                       (visit, index) => (
                         <tr key={index}>
-                          <td>{visit.date}</td>
+                          {/* <td>{visit.date}</td>
                           <td>{visit.time}</td>
                           <td>{visit.procedure}</td>
                           <td>{formatCurrency(visit.amountPaid)}</td>
                           <td>{visit.feedback || "None"}</td>
-                          <td>{visit.amountDue || "None"}</td>
+                          <td>{visit.amountDue || "None"}</td> */}
                           <td>
                             <button onClick={() => toggleExpandVisit(index)}>
                               {expandedVisit === index ? "Collapse" : "Expand"}
@@ -139,18 +143,18 @@ const Registry = () => {
                   <div className="expanded-visit-details">
                     <h5>Visit Details</h5>
                     <p>
-                      <strong>Duration:</strong>{" "}
+                      {/* <strong>Duration:</strong>{" "}
                       {
                         Object.values(patient.visitsHistory)[expandedVisit]
                           .duration
-                      }
+                      } */}
                     </p>
                     <p>
-                      <strong>Feedback:</strong>{" "}
+                      {/* <strong>Feedback:</strong>{" "}
                       {
                         Object.values(patient.visitsHistory)[expandedVisit]
                           .feedback
-                      }
+                      } */}
                     </p>
                   </div>
                 )}

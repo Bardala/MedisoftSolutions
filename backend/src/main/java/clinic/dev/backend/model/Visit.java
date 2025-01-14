@@ -21,8 +21,7 @@ public class Visit {
   @NotNull(message = ErrorMsg.USER_CANNOT_BE_NULL)
   private Patient patient;
 
-  @Column(name = "visit_date", nullable = false)
-  @NotNull(message = "Visit date cannot be null")
+  @Column(name = "visit_date", nullable = true)
   private LocalDateTime visitDate;
 
   @ManyToOne

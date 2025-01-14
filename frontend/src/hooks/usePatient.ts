@@ -41,7 +41,7 @@ const patientReducer = (state: Patient, action: PatientAction): Patient => {
 
 const initialPatientState: Patient = {
   fullName: "",
-  phone: 0,
+  phone: undefined,
   dateOfBirth: undefined,
   age: undefined,
   notes: "",

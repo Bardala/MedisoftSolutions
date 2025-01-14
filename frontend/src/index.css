@@ -8,6 +8,11 @@
   --secondary-bg: #f7f7f7;
   --secondary-color: #333;
 
+  /* Success Colors */
+  --success-bg: #d4edda;
+  --success-border: #c3e6cb;
+  --success-text: #155724;
+
   /* Neutral Colors */
   --border-color: #ddd;
   --white: #fff;
@@ -38,6 +43,11 @@
 
   --secondary-bg: #16213e;
   --secondary-color: #e6e6e6;
+
+  /* Success Colors */
+  --success-bg: #112716;
+  --success-border: #155724;
+  --success-text: #d4edda;
 
   --border-color: #444;
   --white: #e6e6e6;
@@ -166,9 +176,28 @@ p {
   overflow-y: auto;
 }
 
+.success {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
+  margin-top: var(--padding-small);
+  box-shadow: var(--shadow-light);
+  font-size: var(--font-size-body);
+}
+
 @media screen and (max-width: 768px) {
   .content.with-sidebar {
     margin-left: 0;
+  }
+
+  .content {
+    padding: 0px;
+  }
+
+  .home-content {
+    padding: 0px;
   }
 
   .dashboard {

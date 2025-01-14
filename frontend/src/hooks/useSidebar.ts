@@ -8,7 +8,6 @@ import {
   faPlusCircle,
   faList,
   faDollarSign,
-  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { MenuItem, User } from "../types";
 
@@ -30,6 +29,7 @@ export const useSidebar = (loggedInUser: User) => {
             icon: faCalendarAlt,
           },
           { label: "Settings", link: "/settings", icon: faCog },
+          // { label: "Manage Roles", link: "/roles", icon: faUserShield },
         ]
       : [
           {
@@ -49,7 +49,7 @@ export const useSidebar = (loggedInUser: User) => {
             link: "/reports",
             icon: faFileAlt,
           },
-          { label: "Manage Roles", link: "/roles", icon: faUserShield },
+          { label: "Settings", link: "/settings", icon: faCog },
         ];
 
   return { menuItems };

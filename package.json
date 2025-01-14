@@ -8,11 +8,11 @@
     "frontend": "cd frontend && npm start",
     "backend": "cd backend && ./mvnw spring-boot:run",
     "test:backend": "cd backend && ./mvnw test",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
     "cleanBackendBuild": "rm -rf backend/src/main/resources/static/*",
     "moveReactBuild": "cd frontend && npm run build && mv build/* ../backend/src/main/resources/static && cd ..",
     "buildAndMove": "npm run cleanBackendBuild && npm run moveReactBuild",
-    "start:sys": "npm run buildAndMove && npm run start:backend"
+    "start:sys": "npm run buildAndMove && npm run backend"
   },
   "author": "islam bardala",
   "license": "ISC"

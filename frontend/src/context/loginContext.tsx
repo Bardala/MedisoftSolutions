@@ -40,7 +40,7 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Login failed");
+        setError(String(err));
       }
       console.error(err);
     }

@@ -71,13 +71,13 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
       <div className="header-content">
         <img
           src={loggedInUser.role === "Doctor" ? dentistImage : assistantImage}
-          alt={loggedInUser.fullName}
+          alt={loggedInUser.name}
           className="header-user-photo"
         />
 
         <span className="username">
           Welcome, {loggedInUser.role === "Doctor" ? "Dr" : "Mr"}{" "}
-          {loggedInUser.fullName}
+          {loggedInUser.name}
         </span>
 
         <div className="header-icons">

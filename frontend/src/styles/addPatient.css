@@ -1,0 +1,119 @@
+.card-container {
+  background-color: var(--primary-bg);
+  color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  padding: var(--padding-medium);
+  margin: auto;
+  margin-top: var(--padding-medium);
+  width: 90%;
+  /* Responsive width for small screens */
+  max-width: 400px;
+}
+
+.card-container h2 {
+  font-size: var(--font-size-welcome);
+  margin-bottom: var(--padding-small);
+  color: var(--primary-color);
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+input,
+textarea,
+button {
+  font-size: var(--font-size-body);
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: 100%;
+  /* Full width for inputs and buttons */
+}
+
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-medium);
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+  /* Smaller height for small screens */
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+button:disabled {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-color);
+  cursor: not-allowed;
+}
+
+p {
+  margin-top: var(--padding-small);
+  text-align: center;
+  font-size: var(--font-size-body);
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.icon-description {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.icon {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    padding: var(--padding-small);
+  }
+
+  .card-container h2 {
+    font-size: 20px;
+    /* Smaller font size for small screens */
+  }
+
+  input,
+  textarea,
+  button {
+    font-size: 14px;
+    /* Reduce input font size */
+    padding: 8px;
+    /* Reduce padding for compact design */
+  }
+
+  textarea {
+    height: 60px;
+    /* Compact textarea */
+  }
+}

@@ -2,6 +2,8 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.service.impl.PaymentService;
+import clinic.dev.backend.util.ApiRes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +18,15 @@ public class PaymentController {
   private PaymentService paymentService;
 
   @PostMapping
-  public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
+  public ResponseEntity<ApiRes<Payment>> createPayment(@RequestBody Payment payment) {
     Payment createdPayment = paymentService.create(payment);
-    return ResponseEntity.ok(createdPayment);
+    return ResponseEntity.ok(new ApiRes<>(createdPayment));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Payment> updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
+  public ResponseEntity<ApiRes<Payment>> updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
     Payment updatedPayment = paymentService.update(id, payment);
-    return ResponseEntity.ok(updatedPayment);
+    return ResponseEntity.ok(new ApiRes<>(updatedPayment));
   }
 
   @DeleteMapping("/{id}")
@@ -34,14 +36,14 @@ public class PaymentController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Payment>> getPaymentById(@PathVariable Long id) {
     Payment payment = paymentService.getById(id);
-    return ResponseEntity.ok(payment);
+    return ResponseEntity.ok(new ApiRes<>(payment));
   }
 
   @GetMapping
-  public ResponseEntity<List<Payment>> getAllPayments() {
+  public ResponseEntity<ApiRes<List<Payment>>> getAllPayments() {
     List<Payment> payments = paymentService.getAll();
-    return ResponseEntity.ok(payments);
+    return ResponseEntity.ok(new ApiRes<>(payments));
   }
 }

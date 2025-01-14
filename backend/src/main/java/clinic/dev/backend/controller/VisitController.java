@@ -2,6 +2,8 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.service.impl.VisitService;
+import clinic.dev.backend.util.ApiRes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +18,15 @@ public class VisitController {
   private VisitService visitService;
 
   @PostMapping
-  public ResponseEntity<Visit> createVisit(@RequestBody Visit visit) {
+  public ResponseEntity<ApiRes<Visit>> createVisit(@RequestBody Visit visit) {
     Visit createdVisit = visitService.create(visit);
-    return ResponseEntity.ok(createdVisit);
+    return ResponseEntity.ok(new ApiRes<>(createdVisit));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Visit> updateVisit(@PathVariable Long id, @RequestBody Visit visit) {
+  public ResponseEntity<ApiRes<Visit>> updateVisit(@PathVariable Long id, @RequestBody Visit visit) {
     Visit updatedVisit = visitService.update(id, visit);
-    return ResponseEntity.ok(updatedVisit);
+    return ResponseEntity.ok(new ApiRes<>(updatedVisit));
   }
 
   @DeleteMapping("/{id}")
@@ -34,14 +36,14 @@ public class VisitController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Visit> getVisitById(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Visit>> getVisitById(@PathVariable Long id) {
     Visit visit = visitService.getById(id);
-    return ResponseEntity.ok(visit);
+    return ResponseEntity.ok(new ApiRes<>(visit));
   }
 
   @GetMapping
-  public ResponseEntity<List<Visit>> getAllVisits() {
+  public ResponseEntity<ApiRes<List<Visit>>> getAllVisits() {
     List<Visit> visits = visitService.getAll();
-    return ResponseEntity.ok(visits);
+    return ResponseEntity.ok(new ApiRes<>(visits));
   }
 }

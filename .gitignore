@@ -2,3 +2,5 @@ demoDraft/
 myDb.db
 
 .vscode/
+
+backend/logs/*
