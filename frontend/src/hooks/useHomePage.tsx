@@ -4,14 +4,12 @@ import AddPatient from "../components/AddPatient";
 import PatientList from "../components/PatientList";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
-import { patientsHistory, patients } from "../db/patientDb";
+import { patients } from "../db/patientDb";
 
 import PatientProfile from "../components/PatientProfile";
 import Home from "../components/Home";
-import DailyDentistReport from "../components/DailyDentistReport";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
-import Registry from "../components/Registry";
 import AddAssistant from "../components/AddAssistant";
 import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
@@ -31,7 +29,7 @@ export const useHomePage = (loggedInUser: User) => {
             case "/patients":
               return <PatientList />;
             case "/reports":
-              return <DailyDentistReport />;
+              return <DailyFinancialReport />;
             case "/settings":
               return <Settings setSelectedOption={setSelectedOption} />;
             case "/patient-history":

@@ -3,6 +3,7 @@ package clinic.dev.backend.controller;
 import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.service.impl.PaymentService;
 import clinic.dev.backend.util.ApiRes;
+import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +47,26 @@ public class PaymentController {
     List<Payment> payments = paymentService.getAll();
     return ResponseEntity.ok(new ApiRes<>(payments));
   }
+
+  @GetMapping("/workday")
+  public ResponseEntity<ApiRes<List<Payment>>> workdayPayments() {
+    List<Payment> workdayPayments = paymentService.getPaymentsForWorkday();
+    return ResponseEntity.ok(new ApiRes<>(workdayPayments));
+  }
+
+  @GetMapping("/summary")
+  public ResponseEntity<ApiRes<WorkdayPaymentSummaryRes>> workdayPaymentsSummary() {
+    WorkdayPaymentSummaryRes workdayPaymentsSummary = new WorkdayPaymentSummaryRes();
+    workdayPaymentsSummary.setPaymentCalc(paymentService.calculateMoneyCollectedToday());
+    workdayPaymentsSummary.setPaymentNum(paymentService.countPaymentsForToday());
+
+    return ResponseEntity.ok(new ApiRes<>(workdayPaymentsSummary));
+  }
+
+}
+
+@Data
+class WorkdayPaymentSummaryRes {
+  long paymentNum;
+  double paymentCalc;
 }

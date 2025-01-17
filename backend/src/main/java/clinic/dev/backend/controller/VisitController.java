@@ -46,4 +46,10 @@ public class VisitController {
     List<Visit> visits = visitService.getAll();
     return ResponseEntity.ok(new ApiRes<>(visits));
   }
+
+  @GetMapping("/workday")
+  public ResponseEntity<ApiRes<List<Visit>>> getWorkdayVisits() {
+    List<Visit> workdayVisits = visitService.getTodayVisits();
+    return ResponseEntity.ok(new ApiRes<>(workdayVisits));
+  }
 }

@@ -27,7 +27,8 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
       <h3 className="sidebar-subtitle">
         Welcome
         <br />
-        {loggedInUser.role === "Doctor" ? " Dr." : "Mr."} {loggedInUser.name}
+        {/* {loggedInUser.role === "Doctor" ? " Dr." : "Mr."} */}
+        {loggedInUser.name}
       </h3>
 
       <ul className="sidebar-menu">

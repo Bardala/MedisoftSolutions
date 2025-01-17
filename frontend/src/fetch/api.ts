@@ -11,17 +11,29 @@ import {
   CreateVisitRes,
   CurrUserinfoReq,
   CurrUserinfoRes,
+  DailyNewPatientsReq,
+  DailyNewPatientsRes,
   GetAllDentalProcedureReq,
   GetAllDentalProcedureRes,
   GetAllPatientsReq,
   GetAllPatientsRes,
   LoginReq,
   LoginRes,
+  MonthlyDaysInfoReq,
+  MonthlyDaysInfoRes,
+  MonthlySummaryReq,
+  MonthlySummaryRes,
   Patient,
   PatientRegistryReq,
   PatientRegistryRes,
   recordVisitDentalProcedureReq,
   recordVisitDentalProcedureRes,
+  WorkdayPaymentsReq,
+  WorkdayPaymentsRes,
+  WorkdayPaymentsSummaryReq,
+  WorkdayPaymentsSummaryRes,
+  WorkdayVisitsReq,
+  WorkdayVisitsRes,
 } from "../types";
 import { ENDPOINT } from "./endpoints";
 import { fetchFn } from "./index";
@@ -57,9 +69,17 @@ export const PatientRegistryApi = (patientId: number) =>
 export const GetAllPatients = () =>
   fetchFn<GetAllPatientsReq, GetAllPatientsRes>(ENDPOINT.GET_ALL_PATIENTS);
 
+export const DailyNewPatients = () =>
+  fetchFn<DailyNewPatientsReq, DailyNewPatientsRes>(
+    ENDPOINT.DAILY_NEW_PATIENTS,
+  );
+
 // *visit
 export const CreateVisitApi = (visit: CreateVisitReq) =>
   fetchFn<CreateVisitReq, CreateVisitRes>(ENDPOINT.CREATE_VISIT, "POST", visit);
+
+export const WorkDayVisitApi = () =>
+  fetchFn<WorkdayVisitsReq, WorkdayVisitsRes>(ENDPOINT.GET_WORKDAY_VISITS);
 
 // *payment
 export const CreatePaymentApi = (payment: CreatePaymentReq) =>
@@ -67,6 +87,16 @@ export const CreatePaymentApi = (payment: CreatePaymentReq) =>
     ENDPOINT.CREATE_PAYMENT,
     "POST",
     payment,
+  );
+
+export const WorkdayPaymentsApi = () =>
+  fetchFn<WorkdayPaymentsReq, WorkdayPaymentsRes>(
+    ENDPOINT.GET_WORKDAY_PAYMENTS,
+  );
+
+export const WorkdayPaymentsSummaryApi = () =>
+  fetchFn<WorkdayPaymentsSummaryReq, WorkdayPaymentsSummaryRes>(
+    ENDPOINT.GET_WORKDAY_PAYMENTS_SUMMARY,
   );
 
 // *DentalProcedure
@@ -91,4 +121,13 @@ export const CreateVisitPaymentApi = (visitPayment: CreateVisitPaymentReq) =>
     ENDPOINT.POST_VISIT_PAYMENT,
     "POST",
     visitPayment,
+  );
+
+// *Monthly Report
+export const GetMonthlySummaryApi = () =>
+  fetchFn<MonthlySummaryReq, MonthlySummaryRes>(ENDPOINT.GET_MONTHLY_SUMMARY);
+
+export const GetMonthlyDaysInfoApi = () =>
+  fetchFn<MonthlyDaysInfoReq, MonthlyDaysInfoRes>(
+    ENDPOINT.GET_MONTHLY_DAYS_INFO,
   );

@@ -8,6 +8,8 @@ import clinic.dev.backend.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +55,7 @@ public class PatientService implements BaseService<Patient> {
     existingPatient.setPhone(updatedPatient.getPhone());
     existingPatient.setAddress(updatedPatient.getAddress());
     existingPatient.setAge(updatedPatient.getAge());
-    existingPatient.setDateOfBirth(updatedPatient.getDateOfBirth());
+    // existingPatient.setDateOfBirth(updatedPatient.getDateOfBirth());
     existingPatient.setNotes(updatedPatient.getNotes());
     existingPatient.setMedicalHistory(updatedPatient.getMedicalHistory());
 
@@ -98,5 +100,16 @@ public class PatientService implements BaseService<Patient> {
     return patients.stream().map(patient -> {
       return getPatientRegistry(patient.getId());
     }).collect(Collectors.toList());
+  }
+
+  public List<Patient> dailyNewPatients() {
+    LocalDateTime referenceDate = LocalDateTime.now();
+    LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0)); // 6 AM today
+    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
+
+    return patientRepo.findAll().stream()
+        .filter(
+            patient -> !patient.getCreatedAt().isBefore(workdayStart) && patient.getCreatedAt().isBefore(workdayEnd))
+        .collect(Collectors.toList());
   }
 }

@@ -42,6 +42,7 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
             link: "/monthly-reports",
             icon: faCalendarAlt,
           },
+          { label: "Manage Roles", link: "/roles", icon: faUserShield },
           { label: "Settings", link: "/settings", icon: faCog },
         ]
       : [
@@ -64,6 +65,7 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
             icon: faFileAlt,
           },
           { label: "Manage Roles", link: "/roles", icon: faUserShield },
+          { label: "Settings", link: "/settings", icon: faCog },
         ];
 
   return (
@@ -76,7 +78,7 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
         />
 
         <span className="username">
-          Welcome, {loggedInUser.role === "Doctor" ? "Dr" : "Mr"}{" "}
+          {/* Welcome, {loggedInUser.role === "Doctor" ? "Dr" : "Mr"}{" "} */}
           {loggedInUser.name}
         </span>
 

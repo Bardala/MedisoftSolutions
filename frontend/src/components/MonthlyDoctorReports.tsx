@@ -8,9 +8,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
 } from "chart.js";
-import { dailyReports } from "../db/reportsDb";
 import "../styles/monthlyDoctorReports.css";
+import { useMonthlyReport } from "../hooks/useMonthlyReport";
 
 ChartJS.register(
   CategoryScale,
@@ -27,12 +28,10 @@ const MonthlyDentistReport = () => {
   const currentMonth = currentDate.getMonth();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  const monthlyStats = {
-    totalPatients: 0,
-    totalRevenue: 0,
-    procedures: {},
-  };
+  const { summary, daysInfo, isError, isLoading, summaryError, daysInfoError } =
+    useMonthlyReport();
 
+  // Initialize weekly stats
   const weeklyStats = {
     Sunday: 0,
     Monday: 0,
@@ -43,36 +42,28 @@ const MonthlyDentistReport = () => {
     Saturday: 0,
   };
 
-  Array.from({ length: daysInMonth }, (_, i) => i + 1).forEach((day) => {
-    const report = dailyReports[day];
-    if (report) {
-      monthlyStats.totalPatients += report.patientsToday;
-      monthlyStats.totalRevenue += report.totalRevenue;
-
-      // Track procedure count
-      monthlyStats.procedures[report.mostCommonProcedure] =
-        (monthlyStats.procedures[report.mostCommonProcedure] || 0) + 1;
-
-      // Add to weekly stats
-      const date = new Date(currentYear, currentMonth, day);
+  // Populate weekly stats with data from daysInfo
+  if (daysInfo) {
+    daysInfo.forEach((dayInfo) => {
+      const date = new Date(dayInfo.date);
       const dayName = date.toLocaleString("en-US", { weekday: "long" });
-      weeklyStats[dayName] += report.patientsToday;
-    }
-  });
+      weeklyStats[dayName] += dayInfo.totalVisits;
+    });
+  }
 
-  const mostCommonProcedure = Object.keys(monthlyStats.procedures).reduce(
-    (a, b) => (monthlyStats.procedures[a] > monthlyStats.procedures[b] ? a : b),
-    "",
+  // Determine the most and least crowded weekdays (excluding Friday)
+  const weekdays = { ...weeklyStats };
+  delete weekdays.Friday; // Exclude Friday (weekend)
+
+  const mostCrowdedWeekday = Object.keys(weekdays).reduce((a, b) =>
+    weekdays[a] > weekdays[b] ? a : b,
   );
 
-  const mostCrowdedWeekday = Object.keys(weeklyStats).reduce((a, b) =>
-    weeklyStats[a] > weeklyStats[b] ? a : b,
+  const leastCrowdedWeekday = Object.keys(weekdays).reduce((a, b) =>
+    weekdays[a] < weekdays[b] ? a : b,
   );
 
-  const leastCrowdedWeekday = Object.keys(weeklyStats).reduce((a, b) =>
-    weeklyStats[a] < weeklyStats[b] ? a : b,
-  );
-
+  // Chart data
   const chartData = {
     labels: Object.keys(weeklyStats),
     datasets: [
@@ -86,7 +77,7 @@ const MonthlyDentistReport = () => {
     ],
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     plugins: {
       legend: { position: "top" },
@@ -94,6 +85,16 @@ const MonthlyDentistReport = () => {
     },
     scales: { y: { beginAtZero: true } },
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError)
+    return (
+      <div>
+        Error:
+        {summaryError && <p>{summaryError.message}</p>}
+        {daysInfoError && <p>{daysInfoError.message}</p>}
+      </div>
+    );
 
   return (
     <div className="reports-container">
@@ -103,16 +104,24 @@ const MonthlyDentistReport = () => {
       <div className="summary-card">
         <h3>Monthly Summary</h3>
         <p>
-          <strong>Total Patients:</strong> {monthlyStats.totalPatients}
+          <strong>Total Visits:</strong> {summary?.totalVisits || "-"}
         </p>
         <p>
-          <strong>Most Common Procedure:</strong> {mostCommonProcedure || "-"}
+          <strong>Most Common Procedure:</strong>{" "}
+          {summary?.mostCommonProcedure || "-"}
         </p>
         <p>
-          <strong>Total Revenue:</strong> ${monthlyStats.totalRevenue}
+          <strong>Total Revenue:</strong> ${summary?.totalRevenue || "-"}
         </p>
         <p>
           <strong>Most Crowded Weekday:</strong> {mostCrowdedWeekday || "-"}
+        </p>
+        <p>
+          <strong>Least Crowded Weekday:</strong> {leastCrowdedWeekday || "-"}
+        </p>
+        <p>
+          <strong>New Patients This Month:</strong>{" "}
+          {summary?.totalNewPatients || "-"}
         </p>
       </div>
 
@@ -122,6 +131,9 @@ const MonthlyDentistReport = () => {
           const day = i + 1;
           const date = new Date(currentYear, currentMonth, day);
           const dayName = date.toLocaleString("en-US", { weekday: "short" });
+          const dayInfo = daysInfo?.find(
+            (info) => new Date(info.date).getDate() === day,
+          );
 
           return (
             <div key={day} className="calendar-day">
@@ -129,9 +141,9 @@ const MonthlyDentistReport = () => {
                 {dayName} {day}
               </div>
               <div className="day-data">
-                <p>{dailyReports[day]?.patientsToday || "-"}</p>
-                <p>{dailyReports[day]?.mostCommonProcedure || "-"}</p>
-                <p>${dailyReports[day]?.totalRevenue || "-"}</p>
+                <p>{dayInfo?.totalVisits || "-"}</p>
+                <p className="small-text">{dayInfo?.mostProcedure || "-"}</p>
+                <p>${dayInfo?.totalRevenue || "-"}</p>
               </div>
             </div>
           );
@@ -144,7 +156,7 @@ const MonthlyDentistReport = () => {
         <Bar data={chartData} options={chartOptions} />
       </div>
 
-      {/* Advice Card */}
+      {/* Advice Section */}
       <div className="advice-card">
         <h3>Advice for Better Management</h3>
         <p>
@@ -156,8 +168,9 @@ const MonthlyDentistReport = () => {
           balance the load.
         </p>
         <p>
-          <strong>Popular Procedure:</strong> {mostCommonProcedure || "None"}.
-          Consider offering promotions or packages around this procedure.
+          <strong>Popular Procedure:</strong>{" "}
+          {summary?.mostCommonProcedure || "None"}. Consider offering promotions
+          or packages around this procedure.
         </p>
         <p>
           <strong>Staffing Advice:</strong> Ensure adequate staff on{" "}

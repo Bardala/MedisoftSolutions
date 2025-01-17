@@ -1,0 +1,73 @@
+/* Responsively hide excessive columns or make sure text wraps well */
+@media (max-width: 600px) {
+
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    table-layout: auto;
+    font-size: calc(var(--font-size-body) - 2px);
+  }
+
+  th,
+  td {
+    padding: var(--padding-xs);
+    font-size: var(--font-size-small);
+    white-space: normal;
+    /* Allow text to wrap inside the cell */
+    word-wrap: break-word;
+    /* Ensure long words are wrapped */
+  }
+
+  table {
+    font-size: calc(var(--font-size-body) - 4px);
+    /* Adjust font size on smaller screens */
+  }
+
+  th,
+  td {
+    word-wrap: break-word;
+    /* Ensures long words break onto new lines */
+    white-space: normal;
+    /* Ensures text wrapping */
+  }
+
+  /* 
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    
+      th,
+      td {
+        font-size: var(--font-size-small);
+      }
+    
+      table {
+        font-size: calc(var(--font-size-body) - 2px);
+      }
+    
+      table th,
+      table td {
+        padding: var(--padding-xs);
+      }
+    
+      table {
+        font-size: calc(var(--font-size-body) - 2px);
+      }
+    
+      table th,
+      table td {
+        padding: var(--padding-xs);
+      } */
+
+}

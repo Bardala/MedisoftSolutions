@@ -58,4 +58,10 @@ public class PatientController {
     List<PatientRegistryRes> registry = patientService.AllPatientsRegistry();
     return ResponseEntity.ok(new ApiRes<>(registry));
   }
+
+  @GetMapping("/dailyNew")
+  public ResponseEntity<ApiRes<List<Patient>>> getDailyNewPatients() {
+    List<Patient> patients = patientService.dailyNewPatients();
+    return ResponseEntity.ok(new ApiRes<>(patients));
+  }
 }

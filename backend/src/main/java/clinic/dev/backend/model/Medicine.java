@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import clinic.dev.backend.constants.ErrorMsg;
 
 @Entity
@@ -38,11 +40,7 @@ public class Medicine {
   @Column(nullable = true)
   private String instructions; // Additional instructions, e.g., "Take after meals"
 
-  @Column(name = "created_at", updatable = false)
+  @Column(nullable = false, updatable = false, name = "created_at")
+  @CreationTimestamp
   private LocalDateTime createdAt;
-
-  @PrePersist
-  protected void onCreate() {
-    this.createdAt = LocalDateTime.now();
-  }
 }

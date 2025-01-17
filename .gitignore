@@ -4,3 +4,5 @@ myDb.db
 .vscode/
 
 backend/logs/*
+
+logs/

@@ -2,6 +2,8 @@ package clinic.dev.backend.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -45,15 +47,9 @@ public class User implements UserDetails {
   @Column(nullable = true)
   private String profilePicture;
 
-  @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  @org.hibernate.annotations.CreationTimestamp
+  @Column(nullable = false, updatable = false, name = "created_at")
+  @CreationTimestamp
   private LocalDateTime createdAt;
-
-  @PrePersist
-  protected void onCreate() {
-    createdAt = LocalDateTime.now();
-  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

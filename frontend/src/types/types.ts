@@ -13,12 +13,12 @@ export interface User {
   name: string;
   password?: string;
   phone: number;
+  createdAt: Date;
 }
 
 export interface Patient {
   id?: number;
   fullName: string;
-  dateOfBirth?: Date;
   age?: number;
   notes?: string;
   phone: number;
@@ -60,7 +60,7 @@ export interface Medicine {
 export interface Payment {
   id?: number;
   amount: number;
-  timestamp?: number;
+  createdAt?: number;
   patient: Patient;
   recordedBy: User;
   date?: Date; // todo: remove this field
@@ -82,4 +82,14 @@ export interface VisitPayment {
   id?: number;
   visit: Visit;
   payment: Payment;
+}
+
+export interface VisitAnalysis {
+  id?: number;
+  createdAt?: Date;
+  doctorName: string;
+  doctorNotes?: string;
+  procedures: string[];
+  totalPayment: number;
+  medicines: string[];
 }

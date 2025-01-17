@@ -98,14 +98,6 @@
     font-size: var(--font-size-small);
   }
 
-  .visit-history table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+  /* .visit-history */
 
-  .visit-history th,
-  .visit-history td {
-    font-size: var(--font-size-small);
-  }
 }

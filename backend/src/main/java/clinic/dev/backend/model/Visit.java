@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import clinic.dev.backend.constants.ErrorMsg;
 
 @Entity
@@ -20,9 +22,6 @@ public class Visit {
   @JoinColumn(name = "patient_id", nullable = false)
   @NotNull(message = ErrorMsg.USER_CANNOT_BE_NULL)
   private Patient patient;
-
-  @Column(name = "visit_date", nullable = true)
-  private LocalDateTime visitDate;
 
   @ManyToOne
   @JoinColumn(name = "doctor_id", nullable = false)
@@ -43,10 +42,6 @@ public class Visit {
   private String doctorNotes;
 
   @Column(name = "created_at", updatable = false)
+  @CreationTimestamp
   private LocalDateTime createdAt;
-
-  @PrePersist
-  protected void onCreate() {
-    this.createdAt = LocalDateTime.now();
-  }
 }

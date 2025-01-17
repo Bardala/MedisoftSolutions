@@ -79,3 +79,43 @@ export interface PatientRegistryRes {
   visitPayments: VisitPayment[];
   visitMedicines: VisitMedicine[];
 }
+
+export interface WorkdayVisitsReq {}
+export interface WorkdayVisitsRes {
+  workdayVisits: Visit[];
+}
+
+export interface WorkdayPaymentsReq {}
+export interface WorkdayPaymentsRes {
+  workdayPayments: Payment[];
+}
+
+export interface WorkdayPaymentsSummaryReq {}
+export interface WorkdayPaymentsSummaryRes {
+  paymentNum: number;
+  paymentCalc: number;
+}
+
+export interface DailyNewPatientsReq {}
+export interface DailyNewPatientsRes {
+  patients: Patient[];
+}
+
+export interface MonthlySummaryReq {}
+export interface MonthlySummaryRes {
+  totalNewPatients: number;
+  totalVisits: number;
+  totalRevenue: number;
+  mostCrowdedDay: string;
+  mostCommonProcedure: string;
+}
+
+export interface MonthlyDaysInfoReq {}
+export type MonthlyDaysInfoRes = MonthlyDayInfo[];
+
+export type MonthlyDayInfo = {
+  date: Date;
+  totalVisits: number;
+  totalRevenue: number;
+  mostProcedure: string;
+};

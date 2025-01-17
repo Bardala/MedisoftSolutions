@@ -48,7 +48,7 @@ public class SecurityConfig {
         }))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/index.html").permitAll()
+            .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.ico").permitAll()
             .requestMatchers(HttpMethod.GET, "/").permitAll()
             .requestMatchers(HttpMethod.GET, "/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/home").permitAll()

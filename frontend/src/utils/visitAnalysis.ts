@@ -5,16 +5,7 @@ import {
   VisitMedicine,
   VisitPayment,
 } from "../types";
-
-export interface VisitAnalysis {
-  id?: number;
-  visitDate?: Date;
-  doctorName: string;
-  doctorNotes?: string;
-  procedures: string[];
-  totalPayment: number;
-  medicines: string[];
-}
+import { VisitAnalysis } from "../types";
 
 export function analyzeVisits(
   visits: Visit[],
@@ -37,7 +28,7 @@ export function analyzeVisits(
 
     return {
       id: visit.id,
-      visitDate: visit.visitDate,
+      createdAt: visit.createdAt,
       doctorName: visit.doctor.name,
       doctorNotes: visit.doctorNotes || "N/A",
       procedures,

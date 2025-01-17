@@ -11,6 +11,7 @@ export enum ENDPOINT {
   GET_PATIENT_BY_ID = "/patients/:id",
   GET_ALL_PATIENTS = "/patients",
   PATIENT_REGISTRY = "/patients/registry/:id",
+  DAILY_NEW_PATIENTS = "/patients/dailyNew",
 
   // User APIs
   HEALTH = "/users/health",
@@ -32,6 +33,7 @@ export enum ENDPOINT {
   DELETE_VISIT = "/visits/:id",
   GET_VISIT_BY_ID = "/visits/:id",
   GET_ALL_VISITS = "/visits",
+  GET_WORKDAY_VISITS = "/visits/workday",
 
   // Dental Procedure APIs
   CREATE_DENTAL_PROCEDURE = "/services",
@@ -53,9 +55,15 @@ export enum ENDPOINT {
   DELETE_PAYMENT = "/payments/:id",
   GET_PAYMENT_BY_ID = "/payments/:id",
   GET_ALL_PAYMENTS = "/payments",
+  GET_WORKDAY_PAYMENTS = "/payments/workday",
+  GET_WORKDAY_PAYMENTS_SUMMARY = "/payments/summary",
 
   // VisitDentalProcedure APIs
   POST_VISIT_DENTAL_PROCEDURE = "/visit-dental-procedures",
   GET_ALL_VISIT_DENTAL_PROCEDURES = "/visit-dental-procedures",
   POST_VISIT_PAYMENT = "/visit-payment",
+
+  // MonthlyReport APIs
+  GET_MONTHLY_SUMMARY = "/reports/month/summary",
+  GET_MONTHLY_DAYS_INFO = "/reports/month/daysInfo",
 }

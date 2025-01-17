@@ -5,8 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import clinic.dev.backend.constants.ErrorMsg;
 
@@ -25,9 +26,6 @@ public class Patient {
   @Column(name = "full_name", length = 200, nullable = false, unique = true)
   private String fullName;
 
-  @Column(name = "date_of_birth", nullable = true)
-  private LocalDate dateOfBirth;
-
   @Column(nullable = true)
   private Integer age;
 
@@ -44,11 +42,7 @@ public class Patient {
   @Column(name = "medical_history", nullable = true, length = 500)
   private String medicalHistory;
 
-  @Column(name = "created_at", updatable = false)
+  @Column(nullable = false, updatable = false, name = "created_at")
+  @CreationTimestamp
   private LocalDateTime createdAt;
-
-  @PrePersist
-  protected void onCreate() {
-    this.createdAt = LocalDateTime.now();
-  }
 }

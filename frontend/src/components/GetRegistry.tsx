@@ -6,11 +6,13 @@ import { analyzeVisits, findUnlinkedPayments } from "../utils/visitAnalysis";
 import "../styles/getRegistry.css";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { timeFormate } from "../utils/timeFormat";
 
 export const GetRegistry: FC = () => {
   const { handlePatientSelect, selectedPatient } = usePatientSearch();
   const { mutation: patientRegistry } = usePatientRegistry();
   const [, setPatientId] = useState<number | null>(null);
+  const { data, isLoading, error } = patientRegistry;
 
   const handleSubmit = () => {
     if (selectedPatient) {
@@ -18,8 +20,6 @@ export const GetRegistry: FC = () => {
       patientRegistry.mutate(selectedPatient.id);
     }
   };
-
-  const { data, isLoading, error } = patientRegistry;
 
   return (
     <div className="container mx-auto p-4">
@@ -63,61 +63,74 @@ export const GetRegistry: FC = () => {
           </p>
           <p>
             <strong>Registered On:</strong>{" "}
-            {data.patient.createdAt
-              ? new Date(data.patient.createdAt).toLocaleDateString()
-              : "N/A"}
+            {timeFormate(data.patient.createdAt) || "N/A"}
           </p>
 
           {/* Visits Section */}
           <h3 className="text-lg font-semibold mt-6">Visits</h3>
-          <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-2">Date</th>
-                <th className="border border-gray-200 px-4 py-2">Doctor</th>
-                <th className="border border-gray-200 px-4 py-2">Notes</th>
-                <th className="border border-gray-200 px-4 py-2">Procedures</th>
-                <th className="border border-gray-200 px-4 py-2">
-                  Total Payment
-                </th>
-                <th className="border border-gray-200 px-4 py-2">Medicines</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analyzeVisits(
-                data.visits,
-                data.visitDentalProcedure,
-                data.visitPayments,
-                data.visitMedicines,
-              ).map((visit) => (
-                <tr key={visit.id}>
-                  <td className="border border-gray-200 px-4 py-2">
-                    {visit.visitDate
-                      ? new Date(visit.visitDate).toLocaleDateString()
-                      : "N/A"}
-                  </td>
-                  <td className="border border-gray-200 px-4 py-2">
-                    {visit.doctorName}
-                  </td>
-                  <td className="border border-gray-200 px-4 py-2">
-                    {visit.doctorNotes}
-                  </td>
-                  <td className="border border-gray-200 px-4 py-2">
-                    {visit.procedures?.join(", ") || "N/A"}
-                  </td>
-                  <td className="border border-gray-200 px-4 py-2">
-                    ${visit.totalPayment}
-                  </td>
-                  <td className="border border-gray-200 px-4 py-2">
-                    {visit.medicines?.join(", ") || "N/A"}
-                  </td>
+          <div className="table-container">
+            <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-200 px-4 py-2">Date</th>
+                  <th className="border border-gray-200 px-4 py-2">Notes</th>
+                  <th className="border border-gray-200 px-4 py-2">
+                    Procedures
+                  </th>
+                  <th className="border border-gray-200 px-4 py-2">
+                    Total Payment
+                  </th>
+                  <th className="border border-gray-200 px-4 py-2">
+                    Medicines
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {analyzeVisits(
+                  data.visits,
+                  data.visitDentalProcedure,
+                  data.visitPayments,
+                  data.visitMedicines,
+                ).map((visit) => (
+                  <tr key={visit.id}>
+                    <td
+                      className="border border-gray-200 px-4 py-2"
+                      data-label="Date"
+                    >
+                      {timeFormate(visit.createdAt) || "N/A"}
+                    </td>
+                    <td
+                      className="border border-gray-200 px-4 py-2"
+                      data-label="Notes"
+                    >
+                      {visit.doctorNotes}
+                    </td>
+                    <td
+                      className="border border-gray-200 px-4 py-2"
+                      data-label="Procedures"
+                    >
+                      {visit.procedures?.join(", ") || "N/A"}
+                    </td>
+                    <td
+                      className="border border-gray-200 px-4 py-2"
+                      data-label="Total Payment"
+                    >
+                      ${visit.totalPayment}
+                    </td>
+                    <td
+                      className="border border-gray-200 px-4 py-2"
+                      data-label="Medicines"
+                    >
+                      {visit.medicines?.join(", ") || "N/A"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Unlinked Payments Section */}
-          <h3 className="text-lg font-semibold mt-6">Unlinked Payments</h3>
+          <h3 className="text-lg font-semibold mt-6">Unlinked Payments </h3>
           <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
             <thead>
               <tr className="bg-gray-100">
@@ -137,7 +150,7 @@ export const GetRegistry: FC = () => {
                       ${payment.amount}
                     </td>
                     <td className="border border-gray-200 px-4 py-2">
-                      {new Date(payment?.timestamp).toLocaleDateString()}
+                      {timeFormate(payment.createdAt)}
                     </td>
                   </tr>
                 ),

@@ -68,6 +68,14 @@
   text-align: center;
 }
 
+.small-text {
+  font-size: 0.85rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 768px) {
   .reports-container {
     padding: 10px;
