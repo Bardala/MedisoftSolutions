@@ -13,7 +13,7 @@ export interface User {
   name: string;
   password?: string;
   phone: number;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 export interface Patient {

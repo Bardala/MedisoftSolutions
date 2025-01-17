@@ -20,8 +20,6 @@ const patientReducer = (state: Patient, action: PatientAction): Patient => {
   switch (action.type) {
     case "SET_FULL_NAME":
       return { ...state, fullName: action.payload };
-    case "SET_DATE_OF_BIRTH":
-      return { ...state, dateOfBirth: action.payload };
     case "SET_AGE":
       return { ...state, age: action.payload };
     case "SET_NOTES":
@@ -42,7 +40,6 @@ const patientReducer = (state: Patient, action: PatientAction): Patient => {
 const initialPatientState: Patient = {
   fullName: "",
   phone: undefined,
-  dateOfBirth: undefined,
   age: undefined,
   notes: "",
   address: "",
