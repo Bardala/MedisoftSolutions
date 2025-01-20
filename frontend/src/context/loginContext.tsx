@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import { LOCALS } from "../utils/localStorage";
 import { CurrUserinfoApi, loginApi } from "../fetch/api";
 import { LoginContextType, LoginProviderProps, User } from "../types";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 
 const LoginContext = createContext<LoginContextType | null>(null);
 

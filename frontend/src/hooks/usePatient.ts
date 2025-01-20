@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import { CreatePatientReq, CreatePatientRes, Patient } from "../types";
 import { CreatePatientApi } from "../fetch/api";
 import { useState } from "react";

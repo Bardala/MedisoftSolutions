@@ -6,3 +6,5 @@ myDb.db
 backend/logs/*
 
 logs/
+
+ApiTesting.md

@@ -3,15 +3,18 @@ import PatientSearch from "./PatientSearch";
 import { usePatientSearch } from "../hooks/usePatientSearch";
 import { usePatientRegistry } from "../hooks/useRegistry";
 import { analyzeVisits, findUnlinkedPayments } from "../utils/visitAnalysis";
-import "../styles/getRegistry.css";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import Table from "./Table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { timeFormate } from "../utils/timeFormat";
+import "../styles/getRegistry.css";
+import UploadImage from "./UploadImage";
+import UserFiles from "./UserFiles";
 
 export const GetRegistry: FC = () => {
   const { handlePatientSelect, selectedPatient } = usePatientSearch();
   const { mutation: patientRegistry } = usePatientRegistry();
-  const [, setPatientId] = useState<number | null>(null);
+  const [patientId, setPatientId] = useState<number | null>(null);
   const { data, isLoading, error } = patientRegistry;
 
   const handleSubmit = () => {
@@ -20,6 +23,26 @@ export const GetRegistry: FC = () => {
       patientRegistry.mutate(selectedPatient.id);
     }
   };
+
+  const visitColumns = [
+    { header: "Date", accessor: (row: any) => timeFormate(row.createdAt) },
+    { header: "Notes", accessor: "doctorNotes" },
+    {
+      header: "Procedures",
+      accessor: (row: any) => row.procedures?.join(", ") || "N/A",
+    },
+    { header: "Total Payment", accessor: (row: any) => `$${row.totalPayment}` },
+    {
+      header: "Medicines",
+      accessor: (row: any) => row.medicines?.join(", ") || "N/A",
+    },
+  ];
+
+  const paymentColumns = [
+    { header: "Payment ID", accessor: "id" },
+    { header: "Amount", accessor: (row: any) => `$${row.amount}` },
+    { header: "Date", accessor: (row: any) => timeFormate(row.createdAt) },
+  ];
 
   return (
     <div className="container mx-auto p-4">
@@ -45,6 +68,9 @@ export const GetRegistry: FC = () => {
       {data && (
         <div className="mt-8 bg-white shadow-md p-6 rounded-lg">
           <h2 className="text-xl font-semibold">{data.patient.fullName}</h2>
+          <p>
+            <strong>Id:</strong> {data.patient.id}
+          </p>
           <p className="mt-2">
             <strong>Phone:</strong> {data.patient.phone}
           </p>
@@ -68,95 +94,26 @@ export const GetRegistry: FC = () => {
 
           {/* Visits Section */}
           <h3 className="text-lg font-semibold mt-6">Visits</h3>
-          <div className="table-container">
-            <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-200 px-4 py-2">Date</th>
-                  <th className="border border-gray-200 px-4 py-2">Notes</th>
-                  <th className="border border-gray-200 px-4 py-2">
-                    Procedures
-                  </th>
-                  <th className="border border-gray-200 px-4 py-2">
-                    Total Payment
-                  </th>
-                  <th className="border border-gray-200 px-4 py-2">
-                    Medicines
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {analyzeVisits(
-                  data.visits,
-                  data.visitDentalProcedure,
-                  data.visitPayments,
-                  data.visitMedicines,
-                ).map((visit) => (
-                  <tr key={visit.id}>
-                    <td
-                      className="border border-gray-200 px-4 py-2"
-                      data-label="Date"
-                    >
-                      {timeFormate(visit.createdAt) || "N/A"}
-                    </td>
-                    <td
-                      className="border border-gray-200 px-4 py-2"
-                      data-label="Notes"
-                    >
-                      {visit.doctorNotes}
-                    </td>
-                    <td
-                      className="border border-gray-200 px-4 py-2"
-                      data-label="Procedures"
-                    >
-                      {visit.procedures?.join(", ") || "N/A"}
-                    </td>
-                    <td
-                      className="border border-gray-200 px-4 py-2"
-                      data-label="Total Payment"
-                    >
-                      ${visit.totalPayment}
-                    </td>
-                    <td
-                      className="border border-gray-200 px-4 py-2"
-                      data-label="Medicines"
-                    >
-                      {visit.medicines?.join(", ") || "N/A"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            columns={visitColumns}
+            data={analyzeVisits(
+              data.visits,
+              data.visitDentalProcedure,
+              data.visitPayments,
+              data.visitMedicines,
+            )}
+          />
 
           {/* Unlinked Payments Section */}
-          <h3 className="text-lg font-semibold mt-6">Unlinked Payments </h3>
-          <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-2">Payment ID</th>
-                <th className="border border-gray-200 px-4 py-2">Amount</th>
-                <th className="border border-gray-200 px-4 py-2">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {findUnlinkedPayments(data.payments, data.visitPayments).map(
-                (payment) => (
-                  <tr key={payment.id}>
-                    <td className="border border-gray-200 px-4 py-2">
-                      {payment.id}
-                    </td>
-                    <td className="border border-gray-200 px-4 py-2">
-                      ${payment.amount}
-                    </td>
-                    <td className="border border-gray-200 px-4 py-2">
-                      {timeFormate(payment.createdAt)}
-                    </td>
-                  </tr>
-                ),
-              )}
-            </tbody>
-          </table>
+          <h3 className="text-lg font-semibold mt-6">Unlinked Payments</h3>
+          <Table
+            columns={paymentColumns}
+            data={findUnlinkedPayments(data.payments, data.visitPayments)}
+          />
+
+          <UserFiles patientId={patientId} />
+
+          <UploadImage patientId={selectedPatient.id + ""} />
         </div>
       )}
     </div>

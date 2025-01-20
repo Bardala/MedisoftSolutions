@@ -1,5 +1,10 @@
 export const HOST = `http://192.168.1.2:8080`;
 
+export const host = (url: string) => {
+  const baseUrl = new URL(HOST);
+  return new URL(url, baseUrl).toString();
+};
+
 export const extractParams = (endPoint: string, params: string[]) => {
   const apiParamsCount = String(endPoint).match(/:\w+/g)?.length || 0;
   let res = String(endPoint);

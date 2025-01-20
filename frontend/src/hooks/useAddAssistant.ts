@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { CreateUserApi } from "../fetch/api";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import { CreateUserReq, CreateUserRes } from "../types";
 
 export const useAddAssistant = () => {

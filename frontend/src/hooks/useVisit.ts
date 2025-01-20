@@ -9,7 +9,7 @@ import {
   DentalProcedure,
   Patient,
 } from "../types";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 

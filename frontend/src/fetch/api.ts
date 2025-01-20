@@ -17,6 +17,8 @@ import {
   GetAllDentalProcedureRes,
   GetAllPatientsReq,
   GetAllPatientsRes,
+  GetFilesReq,
+  GetFilesRes,
   LoginReq,
   LoginRes,
   MonthlyDaysInfoReq,
@@ -28,6 +30,8 @@ import {
   PatientRegistryRes,
   recordVisitDentalProcedureReq,
   recordVisitDentalProcedureRes,
+  UploadFileReq,
+  UploadFileRes,
   WorkdayPaymentsReq,
   WorkdayPaymentsRes,
   WorkdayPaymentsSummaryReq,
@@ -131,3 +135,42 @@ export const GetMonthlyDaysInfoApi = () =>
   fetchFn<MonthlyDaysInfoReq, MonthlyDaysInfoRes>(
     ENDPOINT.GET_MONTHLY_DAYS_INFO,
   );
+
+//* Files
+export const UploadFileApi = (req: UploadFileReq) => {
+  const formData = new FormData();
+  formData.append("patientId", req.patientId);
+  formData.append("fileType", req.fileType);
+  formData.append("description", "N/A");
+  formData.append("file", req.file);
+
+  return fetchFn<UploadFileReq, UploadFileRes>(
+    ENDPOINT.UPLOAD_PATIENT_FILE,
+    "POST",
+    formData,
+  );
+};
+
+export const GetFilesApi = (patientId: number) =>
+  fetchFn<GetFilesReq, GetFilesRes[]>(ENDPOINT.GET_FILES, "GET", undefined, [
+    patientId + "",
+  ]);
+
+// export const UploadFilesApi = (req: UploadFilesReq) =>
+//   fetchFn<UploadFilesReq, UploadFilesRes>(ENDPOINT.UPLOAD_FILES, "POST", req);
+
+// export const DeleteFilesApi = (fileId: number) =>
+//   fetchFn<DeleteFilesReq, DeleteFilesRes>(
+//     ENDPOINT.DELETE_FILES,
+//     "DELETE",
+//     undefined,
+//     [fileId + ""],
+//   );
+
+// export const UpdateFileApi = (fileId: number) =>
+//   fetchFn<UpdateFileReq, UpdateFileRes>(
+//     ENDPOINT.UPDATE_FILE,
+//     "UPDATE",
+//     undefined,
+//     [fileId + ""],
+//   );

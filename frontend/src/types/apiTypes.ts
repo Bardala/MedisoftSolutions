@@ -119,3 +119,33 @@ export type MonthlyDayInfo = {
   totalRevenue: number;
   mostProcedure: string;
 };
+
+export interface UploadFileReq {
+  patientId: string;
+  fileType: string;
+  description: string;
+  file: File;
+}
+export interface UploadFileRes {}
+
+export interface GetFilesReq {} // Path variable patientId
+export interface GetFilesRes {
+  id: number;
+  fileType: string;
+  description: string;
+  filePath: string;
+}
+
+// export interface UploadFilesReq {
+//   patientId: string;
+//   fileType: string;
+//   description: string;
+//   files: File[];
+// }
+// export interface UploadFilesRes {}
+
+// export interface DeleteFilesReq {} // Path variable fileId
+// export interface DeleteFilesRes {}
+
+// export interface UpdateFileReq {} // Path variable fileId
+// export interface UpdateFileRes {}

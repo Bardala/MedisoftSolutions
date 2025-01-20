@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetAllDentalProcedureReq, GetAllDentalProcedureRes } from "../types";
 import { GetAllDentalProceduresApi } from "../fetch/api";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 
 export const useDentalProcedures = () => {
   return useQuery<GetAllDentalProcedureReq, ApiError, GetAllDentalProcedureRes>(

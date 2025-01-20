@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetMonthlySummaryApi, GetMonthlyDaysInfoApi } from "../fetch/api";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import { MonthlySummaryRes, MonthlyDaysInfoRes } from "../types";
 
 export const useMonthlyReport = () => {

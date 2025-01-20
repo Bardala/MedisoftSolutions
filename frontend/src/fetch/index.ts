@@ -1,52 +1,50 @@
 import { errorFn } from "./ERROR";
 import { HOST, extractParams } from "../utils/extractParams";
 import { LOCALS } from "../utils/localStorage";
+import { ApiRes, RestMethod } from "../types/types";
+import { ApiError } from "./ApiError";
 
 const apiVersion = "/api/v1";
-
-type RestMethod = "GET" | "POST" | "DELETE" | "UPDATE";
-
-interface ApiRes<T> {
-  data: T;
-  error: { [key: string]: string } | null;
-}
 
 export const fetchFn = async <Request, Response>(
   endPoint: string,
   method: RestMethod = "GET",
-  req: Request = null,
+  req: Request | FormData = null,
   params: string[] = null,
 ): Promise<Response> => {
   const token = localStorage.getItem(LOCALS.AUTH_TOKEN);
   let url = HOST + apiVersion + endPoint;
   if (params) url = extractParams(apiVersion + endPoint, params);
 
-  const res = await fetch(url, {
-    credentials: "include", // Add this
+  const headers: HeadersInit = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+
+  const options: RequestInit = {
+    credentials: "include",
     method,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Origin: window.location.origin,
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    ...(req && { body: JSON.stringify(req) }),
-  });
+    headers,
+  };
 
-  const jsonResponse: ApiRes<Response> = await res.json();
-
-  if (!res.ok || jsonResponse.error) {
-    throw new Error(
-      JSON.stringify(jsonResponse.error || "Network response was not ok"),
-    );
+  if (req) {
+    if (req instanceof FormData) {
+      options.body = req;
+    } else {
+      headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(req);
+    }
   }
+
+  const res = await fetch(url, options);
+
+  const jsonResponse: ApiRes<Response> = await res?.json();
 
   if (!res.ok || jsonResponse.error) {
     const errorMessage = jsonResponse.error
       ? JSON.stringify(jsonResponse.error)
-      : "Unknown error";
+      : "Network response was not ok";
     errorFn(res.status, errorMessage, jsonResponse.error);
-    throw new Error(errorMessage);
+    throw new ApiError(res.status, errorMessage, jsonResponse.error);
   }
 
   return jsonResponse.data;

@@ -1,0 +1,142 @@
+/* UploadImage.css */
+
+.upload-image-container {
+  background-color: var(--primary-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  color: var(--secondary-color);
+}
+
+.upload-image-container h2 {
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+  margin-bottom: var(--padding-medium);
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: var(--padding-large);
+  text-align: center;
+  background-color: var(--secondary-bg);
+  margin-bottom: var(--padding-medium);
+  cursor: pointer;
+}
+
+.upload-dropzone:hover {
+  background-color: var(--primary-bg);
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--padding-small);
+  margin-bottom: var(--padding-medium);
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.file-type-select {
+  margin-bottom: var(--padding-medium);
+}
+
+.file-type-select label {
+  font-size: var(--font-size-body);
+  margin-right: var(--padding-small);
+}
+
+.file-type-select select {
+  padding: var(--padding-small);
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.file-type-select select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-medium);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancel-button,
+.submit-button {
+  padding: var(--padding-small) var(--padding-medium);
+  font-size: var(--font-size-body);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-color);
+}
+
+.cancel-button:hover {
+  background-color: var(--primary-hover);
+  color: var(--white);
+}
+
+.submit-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Small screen adjustments */
+@media (max-width: 600px) {
+  .upload-image-container {
+    padding: var(--padding-small);
+  }
+
+  .upload-dropzone {
+    padding: var(--padding-medium);
+  }
+
+  .image-previews {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .preview-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: var(--padding-small);
+  }
+
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+}

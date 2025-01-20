@@ -5,7 +5,7 @@ import {
   WorkDayVisitApi,
   DailyNewPatients as DailyNewPatientsApi,
 } from "../fetch/api";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import {
   WorkdayPaymentsRes,
   WorkdayPaymentsSummaryRes,

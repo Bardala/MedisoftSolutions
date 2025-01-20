@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { PatientRegistryRes } from "../types";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 import { PatientRegistryApi } from "../fetch/api";
 
 export const usePatientRegistry = () => {

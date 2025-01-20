@@ -6,7 +6,7 @@ import {
   CreateVisitPaymentReq,
   CreateVisitPaymentRes,
 } from "../types";
-import { ApiError } from "../fetch/ERROR";
+import { ApiError } from "../fetch/ApiError";
 
 export const useRecordPayment = () => {
   const queryClient = useQueryClient();

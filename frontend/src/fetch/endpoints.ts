@@ -66,4 +66,12 @@ export enum ENDPOINT {
   // MonthlyReport APIs
   GET_MONTHLY_SUMMARY = "/reports/month/summary",
   GET_MONTHLY_DAYS_INFO = "/reports/month/daysInfo",
+
+  // PatientFile APIs
+  UPLOAD_PATIENT_FILE = "/patient-file",
+  UPLOAD_FILES = "/patient-file/upload-multiple",
+  GET_FILES = "/patient-file/:patientId",
+  DELETE_FILES = "/patient-file",
+  DELETE_FILE = "/patient-file/:fileId",
+  UPDATE_FILE = "/patient-file/:fileId",
 }

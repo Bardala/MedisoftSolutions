@@ -20,11 +20,11 @@ const DailyFinancialReport = () => {
     { header: "Patient Name", accessor: (row) => row?.patient.fullName },
     { header: "Phone", accessor: (row) => row?.patient.phone },
     { header: "Doctor Notes", accessor: (row) => row?.doctorNotes || "N/A" },
+    { header: "Amount Paid", accessor: (row) => `$${row?.amountPaid}` },
     {
       header: "Visit Time",
       accessor: (row) => dailyTimeFormate(row?.createdAt),
     },
-    { header: "Amount Paid", accessor: (row) => `$${row?.amountPaid}` },
   ];
 
   const unlinkedPaymentColumns = [
@@ -39,8 +39,11 @@ const DailyFinancialReport = () => {
     { header: "Patient Name", accessor: "fullName" },
     { header: "Phone", accessor: "phone" },
     { header: "Age", accessor: "age" },
-    { header: "Address", accessor: "address" },
-    { header: "Medical History", accessor: "medicalHistory" },
+    { header: "Address", accessor: (row) => row?.address || "N/A" },
+    {
+      header: "Medical History",
+      accessor: (row) => row?.medicalHistory || "N/A",
+    },
     { header: "Notes", accessor: (row) => row?.notes || "N/A" },
     {
       header: "Registered At",

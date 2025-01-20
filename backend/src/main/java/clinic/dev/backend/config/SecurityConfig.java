@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class SecurityConfig {
         }))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll() // Allow access to uploads
             .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.ico").permitAll()
             .requestMatchers(HttpMethod.GET, "/").permitAll()
             .requestMatchers(HttpMethod.GET, "/login").permitAll()
@@ -60,6 +62,11 @@ public class SecurityConfig {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
+  }
+
+  @Bean
+  public ModelMapper modelMapper() {
+    return new ModelMapper();
   }
 
   @Bean

@@ -1,0 +1,138 @@
+/* UserFiles.css */
+
+/* General Container Styles */
+.user-files-container {
+  padding: var(--padding-medium);
+  background-color: var(--primary-bg);
+  border-radius: var(--border-radius);
+  /* box-shadow: var(--shadow-light); */
+}
+
+/* File Section */
+.file-section {
+  margin-bottom: var(--padding-medium);
+  padding: var(--padding-small);
+  background-color: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  /* box-shadow: var(--shadow-light); */
+}
+
+/* Section Title */
+.file-section-title {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  margin-bottom: var(--padding-small);
+  text-align: center;
+  /* Center align for better visibility on small screens */
+}
+
+/* File List */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  /* Stack items vertically */
+  gap: var(--padding-small);
+}
+
+/* File Item */
+.file-item {
+  background-color: var(--primary-bg);
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  text-align: center;
+  flex: 1 1 auto;
+  /* Allow items to adjust size */
+}
+
+/* File Description */
+.file-description {
+  font-size: var(--font-size-body);
+  color: var(--secondary-color);
+  margin-bottom: var(--padding-small);
+}
+
+/* File Image */
+.file-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+}
+
+/* File Link */
+.file-link {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.file-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Small Screens Design */
+@media (max-width: 768px) {
+  .user-files-container {
+    padding: var(--padding-small);
+  }
+
+  .file-section {
+    padding: var(--padding-small);
+  }
+
+  .file-section-title {
+    font-size: var(--font-size-welcome);
+    /* Slightly smaller font for titles */
+  }
+
+  .file-list {
+    flex-direction: column;
+    /* Stack items vertically */
+    gap: var(--padding-small);
+    /* Smaller gaps for limited space */
+  }
+
+  .file-item {
+    flex: 1 1 100%;
+    /* Allow file items to take full width */
+    padding: var(--padding-small);
+    box-shadow: var(--shadow-light);
+    /* Lighter shadow for compact layout */
+  }
+
+  .file-image {
+    width: 100%;
+    /* Ensure images are responsive */
+    height: auto;
+  }
+
+  .file-link {
+    font-size: var(--font-size-body);
+    /* Keep font consistent */
+  }
+}
+
+/* Extra Small Screens (e.g., Mobile Phones) */
+@media (max-width: 480px) {
+  .file-section-title {
+    font-size: var(--font-size-body);
+    /* Smaller font for mobile devices */
+  }
+
+  .file-list {
+    gap: var(--padding-small);
+    /* Minimal gap for better fit */
+  }
+
+  .file-item {
+    padding: var(--padding-small);
+  }
+
+  .file-description {
+    font-size: var(--font-size-body);
+    /* Keep text readable */
+  }
+}

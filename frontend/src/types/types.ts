@@ -93,3 +93,8 @@ export interface VisitAnalysis {
   totalPayment: number;
   medicines: string[];
 }
+export interface ApiRes<T> {
+  data: T;
+  error: { [key: string]: string } | null;
+}
+export type RestMethod = "GET" | "POST" | "DELETE" | "UPDATE";
