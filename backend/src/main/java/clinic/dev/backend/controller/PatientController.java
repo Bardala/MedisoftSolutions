@@ -23,16 +23,16 @@ public class PatientController {
     return ResponseEntity.ok(new ApiRes<>(createdPatient));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ApiRes<Patient>> updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
-    Patient updatedPatient = patientService.update(id, patient);
+  @PutMapping()
+  public ResponseEntity<ApiRes<Patient>> updatePatient(@RequestBody Patient patient) {
+    Patient updatedPatient = patientService.update(patient);
     return ResponseEntity.ok(new ApiRes<>(updatedPatient));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ApiRes<Void>> deletePatient(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<String>> deletePatient(@PathVariable Long id) {
     patientService.delete(id);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(new ApiRes<>("Patient Deleted Successfully"));
   }
 
   @GetMapping("/{id}")

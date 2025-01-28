@@ -1,7 +1,7 @@
 import { errorFn } from "./ERROR";
 import { HOST, extractParams } from "../utils/extractParams";
 import { LOCALS } from "../utils/localStorage";
-import { ApiRes, RestMethod } from "../types/types";
+import { ApiRes, RestMethod } from "../types";
 import { ApiError } from "./ApiError";
 
 const apiVersion = "/api/v1";
@@ -37,15 +37,29 @@ export const fetchFn = async <Request, Response>(
 
   const res = await fetch(url, options);
 
-  const jsonResponse: ApiRes<Response> = await res?.json();
+  if (res.headers.get("content-type")?.includes("application/json")) {
+    const jsonResponse: ApiRes<Response> = await res?.json();
 
-  if (!res.ok || jsonResponse.error) {
-    const errorMessage = jsonResponse.error
-      ? JSON.stringify(jsonResponse.error)
-      : "Network response was not ok";
-    errorFn(res.status, errorMessage, jsonResponse.error);
-    throw new ApiError(res.status, errorMessage, jsonResponse.error);
+    if (res.status === 401) {
+      localStorage.removeItem(LOCALS.AUTH_TOKEN);
+      localStorage.removeItem(LOCALS.CURR_USER);
+      window.location.href = "/login";
+      throw new ApiError(
+        res.status,
+        "Unauthorized access. Redirecting to login.",
+      );
+    }
+
+    if (!res.ok || (jsonResponse && jsonResponse.error)) {
+      const errorMessage = jsonResponse.error
+        ? JSON.stringify(jsonResponse.error)
+        : "Network response was not ok";
+      errorFn(res.status, errorMessage, jsonResponse.error);
+      throw new ApiError(res.status, errorMessage, jsonResponse.error);
+    }
+
+    return jsonResponse.data;
   }
 
-  return jsonResponse.data;
+  return res as unknown as Response;
 };

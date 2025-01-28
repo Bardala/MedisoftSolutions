@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
@@ -8,6 +8,8 @@ const logoImage = "/dentalLogo.png";
 const LoginPage: React.FC = () => {
   const dentistImage = "dentist.jpg";
   const assistantImage = "assistant.jpg";
+  const [loginAttempts, setLoginAttempts] = useState(0); // Track login attempts
+  const maxAttempts = 3; // Set the maximum allowed attempts
 
   const {
     selectedRole,
@@ -19,6 +21,23 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     error,
   } = useLoginPage();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("username");
+    const password = params.get("password");
+
+    if (username && password && loginAttempts < maxAttempts) {
+      setIdentifier(username);
+      setPassword(password);
+
+      // Automatically trigger login
+      handleSubmit();
+      setLoginAttempts((prev) => prev + 1); // Increment login attempts
+    } else if (loginAttempts >= maxAttempts) {
+      console.error("Maximum login attempts exceeded.");
+    }
+  }, [setIdentifier, setPassword, handleSubmit, loginAttempts]);
 
   return (
     <div className="login-page">
@@ -73,7 +92,7 @@ const LoginPage: React.FC = () => {
           <button onClick={handleSubmit} className="submit-button">
             Login
           </button>
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="error-message">{error.message}</p>}
         </div>
       )}
     </div>

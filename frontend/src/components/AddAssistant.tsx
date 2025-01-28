@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/addAssistant.css";
 import { useAddAssistant } from "../hooks/useAddAssistant";
+import QRCodeComponent from "./QRCodeComponent";
 
 const AddAssistant: React.FC = () => {
   const {
@@ -15,7 +16,10 @@ const AddAssistant: React.FC = () => {
     setPhone,
     error,
     success,
+    qrPassword,
+    qrUsername,
   } = useAddAssistant();
+
   return (
     <div className="add-assistant-container">
       <h2 className="title">Add Assistant</h2>
@@ -45,7 +49,7 @@ const AddAssistant: React.FC = () => {
           type="number"
           placeholder="Phone"
           value={phone}
-          onChange={(e) => setPhone(e.target.valueAsNumber)}
+          onChange={(e) => setPhone(e.target.value)}
           required
         />
         <button type="submit" className="submit-button">
@@ -58,6 +62,12 @@ const AddAssistant: React.FC = () => {
           </p>
         )}
       </form>
+
+      {success && (
+        <div className="qr-code-container">
+          <QRCodeComponent username={qrUsername} password={qrPassword} />
+        </div>
+      )}
     </div>
   );
 };

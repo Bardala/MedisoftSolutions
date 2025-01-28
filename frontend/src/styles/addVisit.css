@@ -1,4 +1,4 @@
-.container {
+.add-visit-container {
   background-color: var(--primary-bg);
   color: var(--secondary-color);
   padding: var(--padding-large);
@@ -33,7 +33,7 @@ label {
   color: var(--secondary-color);
 }
 
-input[type="text"],
+add-visit-container input[type="text"],
 textarea {
   padding: var(--padding-small);
   border: 1px solid var(--border-color);

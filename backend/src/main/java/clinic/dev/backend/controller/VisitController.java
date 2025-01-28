@@ -23,9 +23,9 @@ public class VisitController {
     return ResponseEntity.ok(new ApiRes<>(createdVisit));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ApiRes<Visit>> updateVisit(@PathVariable Long id, @RequestBody Visit visit) {
-    Visit updatedVisit = visitService.update(id, visit);
+  @PutMapping()
+  public ResponseEntity<ApiRes<Visit>> updateVisit(@RequestBody Visit visit) {
+    Visit updatedVisit = visitService.update(visit);
     return ResponseEntity.ok(new ApiRes<>(updatedVisit));
   }
 

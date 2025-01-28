@@ -15,6 +15,7 @@ import {
   Visit,
   Payment,
 } from "../types";
+import { sortById } from "../utils/sort";
 
 export const useDailyReportData = () => {
   const dailyPaymentQuery = useQuery<WorkdayPaymentsRes, ApiError>(
@@ -22,7 +23,7 @@ export const useDailyReportData = () => {
     WorkdayPaymentsApi,
     {
       // refetchInterval: 500,
-      refetchIntervalInBackground: true,
+      // refetchIntervalInBackground: true,
     },
   );
 
@@ -34,19 +35,19 @@ export const useDailyReportData = () => {
   const dailyVisitsQuery = useQuery<WorkdayVisitsRes, ApiError>(
     ["daily visits"],
     WorkDayVisitApi,
-    { refetchInterval: 500 },
+    // { refetchInterval: 500 },
   );
 
   const dailyNewPatientsQuery = useQuery<DailyNewPatientsRes, ApiError>(
     ["daily new patients"],
     DailyNewPatientsApi,
-    { refetchInterval: 500 },
+    // { refetchInterval: 500 },
   );
 
   return {
-    patients: dailyNewPatientsQuery.data as unknown as Patient[],
-    visits: dailyVisitsQuery.data as unknown as Visit[],
-    payments: dailyPaymentQuery.data as unknown as Payment[],
+    patients: sortById(dailyNewPatientsQuery.data as unknown as Patient[]),
+    visits: sortById(dailyVisitsQuery.data as unknown as Visit[]),
+    payments: sortById(dailyPaymentQuery.data as unknown as Payment[]),
     paymentsSummary: dailyPaymentSummaryQuery.data,
 
     isLoading:

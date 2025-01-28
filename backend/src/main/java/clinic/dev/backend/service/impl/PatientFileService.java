@@ -1,6 +1,7 @@
 package clinic.dev.backend.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import clinic.dev.backend.dto.patientFile.PatientFileReq;
 import clinic.dev.backend.dto.patientFile.PatientFileRes;
+import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.PatientFile;
 import clinic.dev.backend.repository.PatientFileRepo;
+import clinic.dev.backend.repository.PatientRepo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +25,7 @@ public class PatientFileService {
   @Autowired
   private PatientFileRepo patientFileRepo;
   @Autowired
-  private PatientService patientService;
+  private PatientRepo patientRepo;
   @Autowired
   private StorageService storageService;
 
@@ -30,7 +34,11 @@ public class PatientFileService {
 
     patientFile.setFileType(patientFileReq.getFileType());
     patientFile.setDescription(patientFileReq.getDescription());
-    patientFile.setPatient(patientService.getById(patientFileReq.getPatientId()));
+    Optional<Patient> patient = patientRepo.findById(patientFileReq.getPatientId());
+    if (!patient.isPresent())
+      throw new ResourceNotFoundException("Patient Not Found By id " + patientFileReq.getPatientId());
+
+    patientFile.setPatient(patient.get());
 
     String subFolder = patientFileReq.getFileType();
     String finalDir = patientFileReq.getPatientId() + "";

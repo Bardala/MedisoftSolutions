@@ -50,6 +50,19 @@ public class PatientFileController {
     return ResponseEntity.ok(new ApiRes<>(files));
   }
 
+  @DeleteMapping("/{fileId}/delete-file")
+  public ResponseEntity<Void> deleteFile(@PathVariable("fileId") Long fileId) {
+    patientFileService.deletePatientFile(fileId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  // Unused api
+  @DeleteMapping("/{patientId}/delete-patient-files")
+  public ResponseEntity<ApiRes<String>> deleteFiles(@PathVariable("patientId") Long patientId) {
+    patientFileService.deletePatientFiles(patientId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
   // Unused api
   @PostMapping("/upload-multiple")
   public ResponseEntity<Void> uploadFiles(
@@ -66,20 +79,6 @@ public class PatientFileController {
       patientFileService.uploadPatientFile(requestDto, file);
     });
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  // Unused api
-  @DeleteMapping
-  public ResponseEntity<Void> deleteFiles(@RequestParam("patientId") Long patientId) {
-    patientFileService.deletePatientFiles(patientId);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
-
-  // Unused api
-  @DeleteMapping("/{fileId}")
-  public ResponseEntity<Void> deleteFile(@PathVariable("fileId") Long fileId) {
-    patientFileService.deletePatientFile(fileId);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   // Unused api

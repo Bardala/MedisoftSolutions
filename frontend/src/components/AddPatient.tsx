@@ -90,37 +90,19 @@ const AddPatient: React.FC = () => {
             <span>Phone Number</span>
           </div>
           <input
-            type="number"
+            type="tel"
             name="phone"
             placeholder="Phone Number"
             value={patient.phone}
             onChange={(e) =>
               dispatch({
                 type: "SET_PHONE",
-                payload: Number(e.target.valueAsNumber),
+                payload: e.target.value,
               })
             }
             required
           />
         </div>
-
-        {/* Date of Birth */}
-        {/* <div className="form-group">
-          <div className="icon-description">
-            <span className="icon">🎂</span>
-            <span>Date of Birth (optional)</span>
-          </div>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={
-              patient.dateOfBirth
-                ? patient.dateOfBirth.toISOString().split("T")[0]
-                : ""
-            }
-            onChange={handleInputChange}
-          />
-        </div> */}
 
         {/* Age */}
         <div className="form-group">

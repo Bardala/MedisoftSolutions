@@ -10,4 +10,6 @@ import clinic.dev.backend.model.PatientFile;
 @Repository
 public interface PatientFileRepo extends JpaRepository<PatientFile, Long> {
   List<PatientFile> findByPatientId(Long patientId);
+
+  void deleteByPatientId(Long patientId);
 }

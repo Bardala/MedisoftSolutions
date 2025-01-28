@@ -23,10 +23,9 @@ public class VisitDentalProcedureController {
     return ResponseEntity.ok(new ApiRes<>(createdVisitDentalProcedure));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ApiRes<VisitDentalProcedure>> updateVisitDentalProcedure(@PathVariable Long id,
-      @RequestBody VisitDentalProcedure visitDentalProcedure) {
-    VisitDentalProcedure updatedVisitDentalProcedure = visitDentalProcedureService.update(id, visitDentalProcedure);
+  @PutMapping("/update/{id}")
+  public ResponseEntity<ApiRes<VisitDentalProcedure>> updateVisitDentalProcedure(@PathVariable Long id) {
+    VisitDentalProcedure updatedVisitDentalProcedure = visitDentalProcedureService.update(id);
     return ResponseEntity.ok(new ApiRes<>(updatedVisitDentalProcedure));
   }
 
@@ -46,5 +45,11 @@ public class VisitDentalProcedureController {
   public ResponseEntity<ApiRes<List<VisitDentalProcedure>>> getAllVisitDentalProcedures() {
     List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureService.getAll();
     return ResponseEntity.ok(new ApiRes<>(visitDentalProcedures));
+  }
+
+  @GetMapping("/{id}/visit")
+  public ResponseEntity<ApiRes<List<VisitDentalProcedure>>> getProceduresByVisitId(@PathVariable Long id) {
+    List<VisitDentalProcedure> visitProcedures = visitDentalProcedureService.getByVisitId(id);
+    return ResponseEntity.ok(new ApiRes<>(visitProcedures));
   }
 }

@@ -16,6 +16,7 @@ export const useMonthlyReport = () => {
   return {
     summary: monthlySummaryQuery.data,
     daysInfo: monthlyDaysInfoQuery.data,
+    isErrorSummary: monthlySummaryQuery.isError,
     isError: monthlyDaysInfoQuery.isError || monthlySummaryQuery.isError,
     isLoading: monthlyDaysInfoQuery.isLoading || monthlySummaryQuery.isLoading,
     summaryError: monthlySummaryQuery.error,

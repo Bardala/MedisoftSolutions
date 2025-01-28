@@ -11,7 +11,7 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
     JSON.parse(localStorage.getItem(LOCALS.CURR_USER) as string),
   );
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError>(null);
 
   const currUserInfo = async (): Promise<void> => {
     try {
@@ -19,15 +19,12 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
       setLoggedInUser(user);
       localStorage.setItem(LOCALS.CURR_USER, JSON.stringify(user));
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("Failed to fetch user information");
-      }
+      setError(err);
       console.error(err);
     }
   };
 
+  // todo: Handle error like fetch/index.ts
   const login = async (username: string, password: string): Promise<void> => {
     setError(null);
     try {
@@ -37,11 +34,7 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
       await currUserInfo();
       setSuccess(true);
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError(String(err));
-      }
+      setError(err);
       console.error(err);
     }
   };

@@ -1,6 +1,65 @@
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--padding-medium);
+}
+
+thead th {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-color);
+  padding: var(--padding-small);
+  text-align: left;
+}
+
+tbody td {
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  padding: var(--padding-small);
+}
+
+tr:nth-child(even) {
+  background-color: var(--primary-bg);
+}
+
+/* Actions column */
+tbody td:last-child {
+  width: 40px;
+  /* Minimized width to fit just the icon */
+  text-align: center;
+}
+
+tbody td:last-child button {
+  font-size: 12px;
+  /* Reduced icon size */
+  padding: 4px;
+  /* Adjust padding for smaller button */
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+tbody td:last-child button:hover {
+  color: var(--hover-color);
+}
+
+/* Expanded rows */
+.expanded-row {
+  background-color: var(--expanded-bg);
+}
+
+.expanded-content {
+  padding: var(--padding-small);
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  font-size: var(--font-size-small);
+  color: var(--secondary-color);
+}
+
 /* Responsively hide excessive columns or make sure text wraps well */
 @media (max-width: 600px) {
-
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -17,57 +76,11 @@
     padding: var(--padding-xs);
     font-size: var(--font-size-small);
     white-space: normal;
-    /* Allow text to wrap inside the cell */
     word-wrap: break-word;
-    /* Ensure long words are wrapped */
   }
 
-  table {
-    font-size: calc(var(--font-size-body) - 4px);
-    /* Adjust font size on smaller screens */
+  .expanded-content {
+    font-size: calc(var(--font-size-small) - 1px);
+    padding: var(--padding-xs);
   }
-
-  th,
-  td {
-    word-wrap: break-word;
-    /* Ensures long words break onto new lines */
-    white-space: normal;
-    /* Ensures text wrapping */
-  }
-
-  /* 
-      .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-    
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-    
-      th,
-      td {
-        font-size: var(--font-size-small);
-      }
-    
-      table {
-        font-size: calc(var(--font-size-body) - 2px);
-      }
-    
-      table th,
-      table td {
-        padding: var(--padding-xs);
-      }
-    
-      table {
-        font-size: calc(var(--font-size-body) - 2px);
-      }
-    
-      table th,
-      table td {
-        padding: var(--padding-xs);
-      } */
-
 }

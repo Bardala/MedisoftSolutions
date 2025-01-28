@@ -2,6 +2,7 @@ package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.model.Medicine;
 import clinic.dev.backend.repository.MedicineRepo;
+import clinic.dev.backend.repository.VisitMedicineRepo;
 import clinic.dev.backend.service.BaseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class MedicineService implements BaseService<Medicine> {
 
   @Autowired
   private MedicineRepo medicineRepo;
+
+  @Autowired
+  private VisitMedicineRepo visitMedicineRepo;
 
   @Override
   public Medicine create(Medicine medicine) {
@@ -34,6 +38,7 @@ public class MedicineService implements BaseService<Medicine> {
 
   @Override
   public void delete(Long id) {
+    visitMedicineRepo.deleteByMedicineId(id);
     medicineRepo.deleteById(id);
   }
 

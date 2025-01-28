@@ -8,9 +8,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import clinic.dev.backend.exceptions.InvalidTokenException;
 import clinic.dev.backend.service.impl.UserDetailsServiceImpl;
 
 import java.io.IOException;
+import java.util.Map;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,12 +32,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private UserDetailsServiceImpl userDetailsService;
 
-  // This method was added for trying solving browsers requests access
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    // Exclude OPTIONS requests and the /error endpoint
+    // Exclude the following endpoints from JWT authentication filter
     String path = request.getRequestURI();
-    return request.getMethod().equalsIgnoreCase("OPTIONS") || path.equals("/error");
+
+    // List of paths that should not require authentication
+    return path.equals("/api/v1/auth/login") ||
+        path.equals("/api/v1/auth/signup") ||
+        path.equals("/api/v1/healthz") ||
+        path.equals("/static/**") ||
+        path.equals("/uploads/**") ||
+        path.equals("/index.html") ||
+        path.endsWith(".jpg") ||
+        path.endsWith(".png") ||
+        path.endsWith(".jpeg") ||
+        path.endsWith(".pdf") ||
+        path.endsWith(".ico") ||
+        path.equals("/") ||
+        path.equals("/home");
   }
 
   @Override
@@ -41,25 +59,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
 
-    // Get the JWT token from the Authorization header
     final String authorizationHeader = request.getHeader("Authorization");
-
     String identifier = null;
     String token = null;
 
     if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response);
+      // filterChain.doFilter(request, response); // complete through SecurityConfig
+      sendErrorResponse(response, "Unauthorized", "Authorization header is missing or invalid.");
       return;
     }
 
     token = authorizationHeader.substring(7);
-    identifier = jwtUtil.extractUsername(token);
 
-    // Validate the token and set the user authentication if it's valid
-    if (identifier != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      UserDetails userDetails = userDetailsService.loadUserByIdentifier(identifier);
+    if (token.length() == 0) {
+      sendErrorResponse(response, "Unauthorized", "Authorization header is missing or invalid.");
+      return;
+    }
 
-      if (jwtUtil.validateToken(token, userDetails.getUsername())) {
+    try {
+      // Attempt to parse and extract the username from the token
+      identifier = jwtUtil.extractUsername(token);
+
+      if (identifier != null &&
+          SecurityContextHolder.getContext().getAuthentication() == null) {
+        UserDetails userDetails = userDetailsService.loadUserByIdentifier(identifier);
+
+        // Validate the token
+        jwtUtil.validateToken(token, userDetails.getUsername());
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             userDetails,
             null,
@@ -68,10 +95,54 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Set the authentication in the context
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+      } else if (identifier == null) {
+        sendErrorResponse(response, "Unauthorized", "Invalid or missing user information in token.");
+        return;
       }
+
+    } catch (io.jsonwebtoken.ExpiredJwtException e) {
+      sendErrorResponse(response, "TokenExpired", "The token has expired.");
+      return;
+
+    } catch (io.jsonwebtoken.MalformedJwtException e) {
+      sendErrorResponse(response, "InvalidToken", "The token is malformed.");
+      return;
+
+    } catch (io.jsonwebtoken.SignatureException e) {
+      sendErrorResponse(response, "InvalidSignature", "The token signature is invalid.");
+      return;
+
+    } catch (InvalidTokenException e) {
+      sendErrorResponse(response, "InvalidToken", e.getMessage());
+      return;
+
+    } catch (Exception e) {
+      sendErrorResponse(response, "Unauthorized", "An unexpected error occurred.");
+      return;
     }
 
-    // Continue the filter chain
     filterChain.doFilter(request, response);
   }
+
+  /**
+   * Utility method to send a formatted error response using ApiRes.
+   */
+  private void sendErrorResponse(HttpServletResponse response, String errorCode, String errorMessage)
+      throws IOException {
+    response.setContentType("application/json");
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+    // Create the error map
+    Map<String, String> error = Map.of("code", errorCode, "message",
+        errorMessage);
+
+    // Create an ApiRes instance with the error
+    ApiRes<Object> apiResponse = new ApiRes<>(error);
+
+    // Convert ApiRes to JSON and write it to the response
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonResponse = objectMapper.writeValueAsString(apiResponse);
+    response.getWriter().write(jsonResponse);
+  }
+
 }

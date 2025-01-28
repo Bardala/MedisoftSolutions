@@ -1,7 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
-import { CreatePatientReq, CreatePatientRes, Patient } from "../types";
-import { CreatePatientApi } from "../fetch/api";
+import {
+  CreatePatientReq,
+  CreatePatientRes,
+  DeletePatientRes,
+  Patient,
+  UpdatePatientReq,
+  UpdatePatientRes,
+} from "../types";
+import {
+  CreatePatientApi,
+  DeletePatientApi,
+  UpdatePatientApi,
+} from "../fetch/api";
 import { useState } from "react";
 
 import { useReducer } from "react";
@@ -11,7 +22,7 @@ type PatientAction =
   | { type: "SET_DATE_OF_BIRTH"; payload: Date }
   | { type: "SET_AGE"; payload: number }
   | { type: "SET_NOTES"; payload: string }
-  | { type: "SET_PHONE"; payload: number }
+  | { type: "SET_PHONE"; payload: string }
   | { type: "SET_ADDRESS"; payload: string }
   | { type: "SET_MEDICAL_HISTORY"; payload: string }
   | { type: "RESET" };
@@ -77,4 +88,22 @@ export const useCreatePatient = () => {
     patient: state,
     dispatch,
   };
+};
+
+export const useUpdatePatient = () => {
+  const updatePatientMutation = useMutation<
+    UpdatePatientRes,
+    ApiError,
+    UpdatePatientReq
+  >((newInfo) => UpdatePatientApi(newInfo));
+
+  return { updatePatientMutation };
+};
+
+export const useDeletePatient = () => {
+  const deletePatientMutation = useMutation<DeletePatientRes, ApiError, number>(
+    (patientId) => DeletePatientApi(patientId),
+  );
+
+  return { deletePatientMutation };
 };

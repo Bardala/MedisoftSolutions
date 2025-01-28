@@ -1,3 +1,4 @@
+/* General header styles remain unchanged */
 .header {
   width: 70%;
   background-color: var(--primary-color);
@@ -21,13 +22,6 @@
   color: var(--white);
 }
 
-/* .header-user-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: var(--padding-small);
-} */
-
 .header-user-photo {
   display: none;
 }
@@ -41,6 +35,7 @@
   font-weight: bold;
 }
 
+/* Logout button remains unchanged */
 .logout-button {
   background-color: var(--white);
   color: var(--primary-color);
@@ -57,6 +52,39 @@
   color: var(--white);
 }
 
+/* Theme toggle button adjustments */
+.theme-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--white);
+  font-size: 1.2rem;
+  /* Match other icons' size */
+  padding: 0;
+  /* Remove unnecessary padding */
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  /* Match the header icon size */
+  height: 40px;
+  /* Match the header icon size */
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.1);
+}
+
+.theme-icon {
+  color: var(--white);
+  width: 20px;
+  /* Match icon dimensions */
+  height: 20px;
+  /* Match icon dimensions */
+}
+
+/* Responsive styles for small screens */
 @media screen and (max-width: 768px) {
   .header-icons {
     display: flex;
@@ -75,5 +103,21 @@
   .header-user-photo {
     border-radius: 50%;
     margin-right: var(--padding-small);
+  }
+
+  .theme-toggle-button {
+    width: 30px;
+    /* Adjust for smaller screens */
+    height: 30px;
+    /* Adjust for smaller screens */
+    font-size: 1rem;
+    /* Scale down the icon size */
+  }
+
+  .theme-icon {
+    width: 16px;
+    /* Scale down icon dimensions */
+    height: 16px;
+    /* Scale down icon dimensions */
   }
 }

@@ -8,10 +8,12 @@ export const useAddAssistant = () => {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState<number>(null);
+  const [phone, setPhone] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [newAssistant, setNewAssistant] = useState<CreateUserReq | null>(null);
+  const [qrUsername, setQrUsername] = useState("");
+  const [qrPassword, setQrPassword] = useState("");
 
   const createUserMutation = useMutation<
     CreateUserRes,
@@ -20,6 +22,8 @@ export const useAddAssistant = () => {
   >(CreateUserApi(newAssistant), {
     onSuccess: () => {
       setSuccess(true);
+      setQrPassword(password);
+      setQrUsername(username);
       resetForm();
     },
     onError: (error: ApiError) => {
@@ -67,5 +71,7 @@ export const useAddAssistant = () => {
     setPassword,
     phone,
     setPhone,
+    qrPassword,
+    qrUsername,
   };
 };

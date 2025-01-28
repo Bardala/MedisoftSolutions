@@ -6,7 +6,7 @@ export enum ENDPOINT {
 
   // Patient APIs
   CREATE_PATIENT = "/patients",
-  UPDATE_PATIENT = "/patients/:id",
+  UPDATE_PATIENT = "/patients",
   DELETE_PATIENT = "/patients/:id",
   GET_PATIENT_BY_ID = "/patients/:id",
   GET_ALL_PATIENTS = "/patients",
@@ -20,7 +20,7 @@ export enum ENDPOINT {
   GET_USER_BY_USERNAME = "/users/username/:username",
   GET_USER_BY_PHONE = "/users/phone/:phone",
   GET_USERS_BY_ROLE = "/users/role/:role",
-  UPDATE_USER = "/users/:id",
+  UPDATE_USER = "/users/update",
   DELETE_USER_BY_ID = "/users/:id",
   DELETE_USER_BY_USERNAME = "/users/username/:username",
   DELETE_USER_BY_PHONE = "/users/phone/:phone",
@@ -29,7 +29,7 @@ export enum ENDPOINT {
 
   // Visit APIs
   CREATE_VISIT = "/visits",
-  UPDATE_VISIT = "/visits/:id",
+  UPDATE_VISIT = "/visits",
   DELETE_VISIT = "/visits/:id",
   GET_VISIT_BY_ID = "/visits/:id",
   GET_ALL_VISITS = "/visits",
@@ -51,7 +51,7 @@ export enum ENDPOINT {
 
   // Payment APIs
   CREATE_PAYMENT = "/payments",
-  UPDATE_PAYMENT = "/payments/:id",
+  UPDATE_PAYMENT = "/payments",
   DELETE_PAYMENT = "/payments/:id",
   GET_PAYMENT_BY_ID = "/payments/:id",
   GET_ALL_PAYMENTS = "/payments",
@@ -61,7 +61,13 @@ export enum ENDPOINT {
   // VisitDentalProcedure APIs
   POST_VISIT_DENTAL_PROCEDURE = "/visit-dental-procedures",
   GET_ALL_VISIT_DENTAL_PROCEDURES = "/visit-dental-procedures",
+  UPDATE_VISIT_DENTALPROCEDURE = "/visit-dental-procedures/update/:id",
+  DELETE_VISIT_PROCEDURE = "/visit-dental-procedures/:id",
+  GET_VISIT_PROCEDURES_BY_VISIT_ID = "/visit-dental-procedures/:id/visit",
+
+  // VisitPayment
   POST_VISIT_PAYMENT = "/visit-payment",
+  GET_VISIT_PAYMENT = "/visit-payment/patient/:id",
 
   // MonthlyReport APIs
   GET_MONTHLY_SUMMARY = "/reports/month/summary",
@@ -71,7 +77,7 @@ export enum ENDPOINT {
   UPLOAD_PATIENT_FILE = "/patient-file",
   UPLOAD_FILES = "/patient-file/upload-multiple",
   GET_FILES = "/patient-file/:patientId",
-  DELETE_FILES = "/patient-file",
-  DELETE_FILE = "/patient-file/:fileId",
+  DELETE_FILES = "/patient-file/:patientId/delete-patient-files",
+  DELETE_FILE = "/patient-file/:fileId/delete-file",
   UPDATE_FILE = "/patient-file/:fileId",
 }

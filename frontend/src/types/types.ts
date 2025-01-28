@@ -1,19 +1,22 @@
+import { ApiError } from "../fetch/ApiError";
+
 export interface LoginContextType {
   loggedInUser: User | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   success: boolean;
-  error: string | null;
+  error: ApiError;
 }
 
 export interface User {
   id?: number;
   username: string;
-  role: string;
+  role: "Doctor" | "Assistant";
   name: string;
   password?: string;
-  phone: number;
+  phone: string;
   createdAt?: Date;
+  profilePicture?: string;
 }
 
 export interface Patient {
@@ -21,7 +24,7 @@ export interface Patient {
   fullName: string;
   age?: number;
   notes?: string;
-  phone: number;
+  phone: string;
   address?: string;
   medicalHistory?: string;
   createdAt?: Date;
@@ -32,7 +35,6 @@ export interface Visit {
   patient: Patient;
   doctor: User;
   assistant?: User;
-  visitDate?: Date;
   wait?: number;
   duration?: number;
   doctorNotes?: string;
@@ -60,10 +62,9 @@ export interface Medicine {
 export interface Payment {
   id?: number;
   amount: number;
-  createdAt?: number;
+  createdAt?: Date;
   patient: Patient;
   recordedBy: User;
-  date?: Date; // todo: remove this field
 }
 
 export interface VisitDentalProcedure {
@@ -84,17 +85,40 @@ export interface VisitPayment {
   payment: Payment;
 }
 
+// export interface VisitAnalysis {
+//   visitId: number;
+//   createdAt?: Date;
+//   doctorName: string;
+//   doctorNotes?: string;
+//   procedures: { procedureId?: number; serviceName: string }[];
+//   totalPayment: number;
+//   paymentIds: number[]; // Array of payment IDs
+//   medicines: { medicineId?: number; medicineName: string }[];
+// }
+
 export interface VisitAnalysis {
-  id?: number;
-  createdAt?: Date;
-  doctorName: string;
-  doctorNotes?: string;
-  procedures: string[];
-  totalPayment: number;
-  medicines: string[];
+  visit: Visit;
+  procedures: DentalProcedure[];
+  payment: Payment;
+  medicines: Medicine[];
 }
+
 export interface ApiRes<T> {
   data: T;
   error: { [key: string]: string } | null;
 }
-export type RestMethod = "GET" | "POST" | "DELETE" | "UPDATE";
+export type RestMethod = "GET" | "POST" | "DELETE" | "PUT";
+
+export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED";
+
+export interface QueueEntry {
+  id?: number;
+  position: number;
+  patient: Patient;
+  doctor: User;
+  status: QueueStatus;
+  assistant?: User;
+  createdAt?: Date;
+  updatedAt?: Date;
+  estimatedWaitTime?: Date;
+}

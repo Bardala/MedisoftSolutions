@@ -21,7 +21,7 @@ export const AddVisit: React.FC = () => {
   } = useAddVisit();
 
   return (
-    <div className="container">
+    <div className="add-visit-container">
       <h2>📋Record Visit</h2>
 
       {successMessage && (
@@ -34,8 +34,10 @@ export const AddVisit: React.FC = () => {
               <p>Patient: {createdVisitDetails.patientName}</p>
               <p>Doctor: {createdVisitDetails.doctorName}</p>
               Dental Procedures:{" "}
-              {selectedDentalProcedures?.map((dp) => (
-                <p>{dp.serviceName}</p>
+              {createdVisitDetails.procedures?.map((p, index) => (
+                <p key={index}>
+                  {p.arabicName}, {p.serviceName}
+                </p>
               ))}
               <p>Visit Date: {createdVisitDetails.visitDate}</p>
               <p>Doctor Notes: {createdVisitDetails.doctorNotes}</p>
@@ -45,7 +47,7 @@ export const AddVisit: React.FC = () => {
             <div>
               <h3>Payment Details:</h3>
               <p>Payment ID: {createdPaymentDetails.paymentId}</p>
-              <p>Amount: {createdPaymentDetails.amount}</p>
+              <p>Amount: ${createdPaymentDetails.amount}</p>
             </div>
           )}
         </div>

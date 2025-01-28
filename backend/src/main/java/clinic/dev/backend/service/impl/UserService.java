@@ -73,6 +73,7 @@ public class UserService implements UserServiceBase {
 
   @Override
   public User update(User user) {
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepo.save(user);
   }
 

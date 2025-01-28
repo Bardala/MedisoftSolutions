@@ -32,6 +32,10 @@ public class VisitPaymentService {
     return visitPaymentRepo.findById(id).orElseThrow(() -> new RuntimeException("VisitPayment not found"));
   }
 
+  public List<VisitPayment> getByPatientId(Long patientId) {
+    return visitPaymentRepo.findByVisitPatientId(patientId);
+  }
+
   public List<VisitPayment> getAll() {
     return visitPaymentRepo.findAll();
   }

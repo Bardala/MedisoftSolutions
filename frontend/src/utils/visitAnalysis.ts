@@ -16,24 +16,21 @@ export function analyzeVisits(
   return visits.map((visit) => {
     const procedures = visitDentalProcedures
       ?.filter((vdp) => vdp.visit.id === visit.id)
-      ?.map((vdp) => vdp.dentalProcedure.serviceName);
+      ?.map((vdp) => vdp.dentalProcedure);
 
-    const totalPayment = visitPayments
+    const payments = visitPayments
       ?.filter((vp) => vp.visit.id === visit.id)
-      ?.reduce((sum, vp) => sum + vp.payment.amount, 0);
+      ?.map((vp) => vp.payment);
 
     const medicines = visitMedicines
       ?.filter((vm) => vm.visit.id === visit.id)
-      ?.map((vm) => vm.medicine.medicineName);
+      ?.map((vm) => vm.medicine);
 
     return {
-      id: visit.id,
-      createdAt: visit.createdAt,
-      doctorName: visit.doctor.name,
-      doctorNotes: visit.doctorNotes || "N/A",
-      procedures,
-      totalPayment,
-      medicines,
+      visit,
+      procedures: procedures || [],
+      payment: payments?.[0] || null, // Assuming one payment per visit; adjust if otherwise
+      medicines: medicines || [],
     };
   });
 }

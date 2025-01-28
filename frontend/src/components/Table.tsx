@@ -1,43 +1,146 @@
-import { ReactNode } from "react";
 import "../styles/table.css";
-interface Column<T> {
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FormModal } from "./FormModel";
+
+export interface Column<T> {
   header: string;
-  accessor: keyof T | ((row: T) => ReactNode);
+  accessor: keyof T | ((row: T) => React.ReactNode);
+  expandable?: boolean;
 }
 
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
+  enableActions?: boolean;
+  onUpdate?: (row: T) => void;
+  onDelete?: (row: T) => void;
 }
 
 const Table = <T extends Record<string, unknown>>({
   columns,
   data,
+  enableActions = false,
+  onUpdate,
+  onDelete,
 }: TableProps<T>) => {
+  const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [rowToEdit, setRowToEdit] = useState<T | null>(null);
+
+  const toggleExpandRow = (rowIndex: number) => {
+    setExpandedRowIndex((prevIndex) =>
+      prevIndex === rowIndex ? null : rowIndex,
+    );
+  };
+
+  const handleUpdateClick = (row: T) => {
+    setRowToEdit(row);
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteClick = (row: T) => {
+    if (onDelete) onDelete(row);
+  };
+
   return (
     <div className="table-container">
       <table>
         <thead>
           <tr>
-            {columns.map((col, index) => (
-              <th key={index}>{col.header}</th>
-            ))}
+            {columns
+              .filter((col) => !col.expandable)
+              .map((col, index) => (
+                <th key={index}>{col.header}</th>
+              ))}
+            <th className="actions-column">More</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((col, colIndex) => (
-                <td key={colIndex}>
-                  {typeof col.accessor === "function"
-                    ? col.accessor(row)
-                    : (row[col.accessor] as React.ReactNode)}
+            <React.Fragment key={rowIndex}>
+              <tr>
+                {columns
+                  .filter((col) => !col.expandable)
+                  .map((col, colIndex) => (
+                    <td key={colIndex}>
+                      {typeof col.accessor === "function"
+                        ? col.accessor(row)
+                        : (row[col.accessor] as React.ReactNode)}
+                    </td>
+                  ))}
+                <td className="action-cell">
+                  {/* Expand/Collapse Button */}
+                  <button
+                    onClick={() => toggleExpandRow(rowIndex)}
+                    className="expand-icon"
+                  >
+                    {expandedRowIndex === rowIndex ? "▼" : "▶"}
+                  </button>
                 </td>
-              ))}
-            </tr>
+              </tr>
+              {expandedRowIndex === rowIndex && (
+                <tr className="expanded-row">
+                  <td
+                    colSpan={
+                      columns.filter((col) => !col.expandable).length + 1
+                    }
+                  >
+                    <div className="expanded-content">
+                      {columns
+                        .filter((col) => col.expandable)
+                        .map((col, colIndex) => (
+                          <div key={colIndex}>
+                            <strong>{col.header}:</strong>{" "}
+                            {typeof col.accessor === "function"
+                              ? col.accessor(row)
+                              : (row[col.accessor] as React.ReactNode)}
+                          </div>
+                        ))}
+
+                      {/* Optional Action Buttons */}
+                      {enableActions && (
+                        <div className="action-buttons">
+                          {onUpdate && (
+                            <button
+                              onClick={() => handleUpdateClick(row)}
+                              className="update-button"
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                          )}
+                          {onDelete && (
+                            <button
+                              onClick={() => handleDeleteClick(row)}
+                              className="delete-button"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
+
+      {/* Update Modal */}
+      {isUpdateModalOpen && rowToEdit && (
+        <FormModal
+          objectToEdit={rowToEdit}
+          onSave={(updatedRow: T) => {
+            if (onUpdate) onUpdate(updatedRow);
+            setUpdateModalOpen(false);
+          }}
+          onClose={() => setUpdateModalOpen(false)}
+          title="Update Details"
+        />
+      )}
     </div>
   );
 };

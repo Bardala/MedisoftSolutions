@@ -46,4 +46,9 @@ public class VisitPaymentController {
     List<VisitPayment> visitPayments = visitPaymentService.getAll();
     return ResponseEntity.ok(new ApiRes<>(visitPayments));
   }
+
+  @GetMapping("/patient/{patientId}")
+  public ResponseEntity<ApiRes<List<VisitPayment>>> getVisitPaymentByPatientId(@PathVariable Long patientId) {
+    return ResponseEntity.ok(new ApiRes<>(visitPaymentService.getByPatientId(patientId)));
+  }
 }

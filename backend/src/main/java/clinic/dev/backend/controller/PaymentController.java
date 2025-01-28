@@ -24,14 +24,14 @@ public class PaymentController {
     return ResponseEntity.ok(new ApiRes<>(createdPayment));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ApiRes<Payment>> updatePayment(@PathVariable Long id, @RequestBody Payment payment) {
-    Payment updatedPayment = paymentService.update(id, payment);
+  @PutMapping()
+  public ResponseEntity<ApiRes<Payment>> updatePayment(@RequestBody Payment payment) {
+    Payment updatedPayment = paymentService.update(payment);
     return ResponseEntity.ok(new ApiRes<>(updatedPayment));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Void>> deletePayment(@PathVariable Long id) {
     paymentService.delete(id);
     return ResponseEntity.noContent().build();
   }

@@ -1,12 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { PatientRegistryRes } from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { PatientRegistryApi } from "../fetch/api";
 
-export const usePatientRegistry = () => {
-  const mutation = useMutation<PatientRegistryRes, ApiError, number>(
-    (patientId) => PatientRegistryApi(patientId),
+export const usePatientRegistry = (patientId: number) => {
+  const patientRegistryQuery = useQuery<PatientRegistryRes, ApiError>(
+    ["patient-registry", patientId],
+    () => PatientRegistryApi(patientId),
+    {
+      enabled: !!patientId,
+    },
   );
 
-  return { mutation };
+  return { patientRegistryQuery };
 };

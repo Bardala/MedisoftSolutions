@@ -1,20 +1,26 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateVisitApi, RecordVisitDentalProcedureApi } from "../fetch/api";
+import {
+  AddToQueueApi,
+  CreateVisitApi,
+  DeleteVisitApi,
+  UpdateVisitApi,
+} from "../fetch/api";
 import {
   CreateVisitRes,
-  recordVisitDentalProcedureRes,
-  recordVisitDentalProcedureReq,
   CreateVisitReq,
   DentalProcedure,
   Patient,
+  UpdateVisitRes,
+  Visit,
+  DeleteVisitRes,
 } from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
+import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 
 export const useRecordVisit = () => {
-  const queryClient = useQueryClient();
   const [doctorNotes, setDoctorNotes] = useState<string>("");
 
   const createVisitMutation = useMutation<
@@ -22,28 +28,12 @@ export const useRecordVisit = () => {
     ApiError,
     CreateVisitReq
   >((newVisit) => CreateVisitApi(newVisit), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["visits"]);
-    },
+    onSuccess: (data) =>
+      AddToQueueApi({ doctorId: data.doctor?.id, patientId: data.patient?.id }),
   });
-
-  const recordVisitDentalProcedureMutation = useMutation<
-    recordVisitDentalProcedureRes,
-    ApiError,
-    recordVisitDentalProcedureReq
-  >(
-    (visitDentalProcedure) =>
-      RecordVisitDentalProcedureApi(visitDentalProcedure),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["visitDentalProcedures"]);
-      },
-    },
-  );
 
   return {
     createVisitMutation,
-    recordVisitDentalProcedureMutation,
     doctorNotes,
     setDoctorNotes,
   };
@@ -51,21 +41,19 @@ export const useRecordVisit = () => {
 
 export const useAddVisit = () => {
   const { loggedInUser } = useLogin();
-
+  const { doctorNotes, setDoctorNotes, createVisitMutation } = useRecordVisit();
   const {
-    doctorNotes,
-    setDoctorNotes,
-    recordVisitDentalProcedureMutation,
-    createVisitMutation,
-  } = useRecordVisit();
+    selectedDentalProcedures,
+    setSelectedDentalProcedures,
+    handleDentalProcedureSelect,
+    handleRecordVisitProcedures,
+  } = useRecordVisitsProcedures();
 
   const { mutation: paymentMutation } = useRecordPayment();
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [selectedDentalProcedures, setSelectedDentalProcedures] = useState<
-    DentalProcedure[]
-  >([]);
+
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [createdVisitDetails, setCreatedVisitDetails] = useState<{
     visitId: number;
@@ -73,6 +61,7 @@ export const useAddVisit = () => {
     doctorName: string;
     visitDate: string;
     doctorNotes: string;
+    procedures: DentalProcedure[];
   } | null>(null);
   const [createdPaymentDetails, setCreatedPaymentDetails] = useState<{
     paymentId: number;
@@ -81,10 +70,6 @@ export const useAddVisit = () => {
 
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
-  };
-
-  const handleDentalProcedureSelect = (dentalProcedure: DentalProcedure) => {
-    setSelectedDentalProcedures((prev) => [...prev, dentalProcedure]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,23 +81,19 @@ export const useAddVisit = () => {
 
     const newVisit: CreateVisitReq = {
       patient: { id: selectedPatient?.id },
-      doctor: { id: loggedInUser?.id },
-      visitDate: new Date(),
+      doctor: { id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : 1 },
+      ...(loggedInUser.role === "Assistant" && {
+        assistant: { id: loggedInUser.id },
+      }),
       doctorNotes,
     };
 
     try {
       const visit = await createVisitMutation.mutateAsync(newVisit);
-      const visitId = visit.id;
+      const visitId = visit?.id;
 
-      await Promise.all(
-        selectedDentalProcedures.map((dentalProcedure) =>
-          recordVisitDentalProcedureMutation.mutateAsync({
-            visit: { id: visitId },
-            dentalProcedure: { id: dentalProcedure.id },
-          }),
-        ),
-      );
+      await handleRecordVisitProcedures(visitId);
+
       let paymentResult = null;
       if (paymentAmount > 0) {
         paymentResult = await paymentMutation.mutateAsync({
@@ -136,6 +117,7 @@ export const useAddVisit = () => {
         doctorName: loggedInUser.name,
         visitDate: new Date().toLocaleString(),
         doctorNotes,
+        procedures: selectedDentalProcedures,
       });
       setCreatedPaymentDetails(
         paymentResult
@@ -151,9 +133,6 @@ export const useAddVisit = () => {
       setSelectedDentalProcedures([]);
       setPaymentAmount(0);
       setDoctorNotes("");
-      // alert("Visit and payment recorded successfully!");
-
-      // Reset states after successful submission
       setSelectedPatient(null);
       setSelectedDentalProcedures([]);
       setPaymentAmount(0);
@@ -182,4 +161,22 @@ export const useAddVisit = () => {
     createdVisitDetails,
     createdPaymentDetails,
   };
+};
+
+export const useUpdateVisit = () => {
+  const updateVisitMutation = useMutation<UpdateVisitRes, ApiError, Visit>(
+    (visit) => UpdateVisitApi(visit),
+  );
+
+  return { updateVisitMutation };
+};
+
+export const useDeleteVisit = () => {
+  const queryClient = useQueryClient();
+  const deleteVisitMutation = useMutation<DeleteVisitRes, ApiError, Visit>(
+    (visit) => DeleteVisitApi(visit.id),
+    { onSuccess: () => queryClient.invalidateQueries(["daily visits"]) },
+  );
+
+  return { deleteVisitMutation };
 };

@@ -1,8 +1,12 @@
-import React from "react";
 import "../styles/cardComponents.css";
-import { patientsList } from "../db/patientDb";
+import { useDailyReportData } from "../hooks/useDailyReportData";
+import { dailyTimeFormate } from "../utils";
 
+// todo: Add visit dental procedure, and queueing in database.
+// todo: Use Table component.
 const PatientList = () => {
+  const { visits } = useDailyReportData();
+
   return (
     <div className="card-container">
       <h2>Patient List</h2>
@@ -11,23 +15,24 @@ const PatientList = () => {
           <tr>
             <th>Name</th>
             <th>Phone</th>
-            <th>Visits</th>
+            <th>Date</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {patientsList.map((patient, index) => (
-            <tr key={index}>
-              <td>{patient.name}</td>
-              <td>{patient.phone}</td>
-              <td>{patient.visits}</td>
-              <td>
-                <button>View</button>
-                <button>Edit</button>
-                <button>Delete</button>
-              </td>
-            </tr>
-          ))}
+          {visits?.length > 0 &&
+            visits?.map((visit, index) => (
+              <tr key={index}>
+                <td>{visit.patient.fullName}</td>
+                <td>{visit.patient.phone}</td>
+                <td>{dailyTimeFormate(visit.createdAt)}</td>
+                <td>
+                  <button>View</button>
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

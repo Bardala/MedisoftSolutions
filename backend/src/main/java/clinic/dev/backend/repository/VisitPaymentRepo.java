@@ -14,4 +14,10 @@ public interface VisitPaymentRepo extends JpaRepository<VisitPayment, Long> {
   List<VisitPayment> findByVisitPatientId(Long id);
 
   Collection<VisitPayment> findByVisit(Visit visit);
+
+  void deleteByVisitPatientId(Long patientId);
+
+  void deleteByPaymentId(Long id);
+
+  void deleteByVisitId(Long id);
 }

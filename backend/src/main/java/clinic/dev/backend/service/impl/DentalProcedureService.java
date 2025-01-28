@@ -2,10 +2,12 @@ package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.model.DentalProcedure;
 import clinic.dev.backend.repository.DentalProcedureRepo;
+import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.service.BaseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +16,9 @@ public class DentalProcedureService implements BaseService<DentalProcedure> {
 
   @Autowired
   private DentalProcedureRepo serviceRepository;
+
+  @Autowired
+  private VisitDentalProcedureRepo visitDentalProcedureRepo;
 
   @Override
   public DentalProcedure create(DentalProcedure service) {
@@ -30,7 +35,9 @@ public class DentalProcedureService implements BaseService<DentalProcedure> {
   }
 
   @Override
+  @Transactional
   public void delete(Long id) {
+    visitDentalProcedureRepo.deleteByDentalProcedureId(id);
     serviceRepository.deleteById(id);
   }
 

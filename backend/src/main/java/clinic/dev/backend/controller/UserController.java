@@ -3,6 +3,8 @@ package clinic.dev.backend.controller;
 import clinic.dev.backend.dto.user.ResetPasswordRequest;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.service.UserServiceBase;
+import clinic.dev.backend.util.ApiRes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,10 +54,10 @@ public class UserController {
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+  @PutMapping("/update")
+  public ResponseEntity<ApiRes<User>> updateUser(@RequestBody User updatedUser) {
     User user = userService.update(updatedUser);
-    return new ResponseEntity<>(user, HttpStatus.OK);
+    return ResponseEntity.ok(new ApiRes<User>(user));
   }
 
   @DeleteMapping("/{id}")

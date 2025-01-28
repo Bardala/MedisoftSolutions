@@ -29,8 +29,6 @@ export const useLoginPage = () => {
       } catch (err) {
         console.error("Login failed", err);
       }
-    } else {
-      alert("Please enter a password!");
     }
   };
 

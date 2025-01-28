@@ -1,13 +1,11 @@
 import {
   faUser,
   faUsers,
-  faClipboardList,
   faFileAlt,
   faCalendarAlt,
   faCog,
-  faPlusCircle,
   faList,
-  faDollarSign,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { MenuItem, User } from "../types";
 
@@ -16,11 +14,11 @@ export const useSidebar = (loggedInUser: User) => {
     loggedInUser.role === "Doctor"
       ? [
           { label: "Current Patient", link: "/patient-profile", icon: faUser },
-          { label: "Patient Records", link: "/patients", icon: faUsers },
+          { label: "Wait List", link: "/patients", icon: faUsers },
           {
             label: "Registry",
             link: "/patient-history",
-            icon: faClipboardList,
+            icon: faSearch,
           },
           { label: "Daily Reports", link: "/reports", icon: faFileAlt },
           {
@@ -29,21 +27,15 @@ export const useSidebar = (loggedInUser: User) => {
             icon: faCalendarAlt,
           },
           { label: "Settings", link: "/settings", icon: faCog },
-          // { label: "Manage Roles", link: "/roles", icon: faUserShield },
         ]
       : [
-          {
-            label: "Add New Patient",
-            link: "/add-patient",
-            icon: faPlusCircle,
-          },
-          { label: "View Patient List", link: "/patient-list", icon: faList },
+          { label: "Current Patient", link: "/patient-profile", icon: faUser },
+          { label: "Wait List", link: "/patients", icon: faList },
           {
             label: "Registry",
             link: "/patient-history",
-            icon: faClipboardList,
+            icon: faSearch,
           },
-          { label: "Record Payments", link: "/payments", icon: faDollarSign },
           {
             label: "Daily Financial Report",
             link: "/reports",

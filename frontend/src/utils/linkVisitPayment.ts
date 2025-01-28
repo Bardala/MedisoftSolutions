@@ -1,12 +1,11 @@
 import { Visit, Payment } from "../types";
 
 type VisitWithPayment = Visit & { amountPaid: number };
-type UnlinkedPayment = Payment;
 
 export const linkVisitsAndPayments = (
   visits: Visit[],
   payments: Payment[],
-): { linked: VisitWithPayment[]; unlinkedPayments: UnlinkedPayment[] } => {
+): { linked: VisitWithPayment[]; unlinkedPayments: Payment[] } => {
   const paymentMap = new Map<number, Payment>();
 
   // Populate the payment map for fast lookup by patientId

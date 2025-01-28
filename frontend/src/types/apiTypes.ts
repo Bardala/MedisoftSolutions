@@ -38,10 +38,10 @@ export interface GetAllPatientsReq {}
 export type GetAllPatientsRes = Patient[];
 
 export interface CreateVisitReq {
-  patient: Pick<Visit, "id">;
+  patient: Pick<Patient, "id">;
   doctor: Pick<User, "id">;
+  assistant?: Pick<User, "id">;
   doctorNotes: string;
-  visitDate: Date;
 }
 export interface CreateVisitRes extends Visit {}
 
@@ -136,16 +136,54 @@ export interface GetFilesRes {
   filePath: string;
 }
 
-// export interface UploadFilesReq {
-//   patientId: string;
-//   fileType: string;
-//   description: string;
-//   files: File[];
-// }
-// export interface UploadFilesRes {}
+export interface DeleteFileReq {} // Path variable fileId
+export interface DeleteFileRes {}
 
-// export interface DeleteFilesReq {} // Path variable fileId
-// export interface DeleteFilesRes {}
+export interface DeleteFilesReq {} // Path variable patientId
+export interface DeleteFilesRes {}
 
-// export interface UpdateFileReq {} // Path variable fileId
-// export interface UpdateFileRes {}
+export interface UpdateUserReq extends User {}
+export interface UpdateUserRes extends User {}
+
+export interface ResetPasswordReq {
+  username: string;
+  newPassword: string;
+}
+export interface ResetPasswordRes {}
+
+export interface UpdatePatientReq extends Patient {}
+export interface UpdatePatientRes extends Patient {}
+
+export interface DeletePatientReq {}
+export interface DeletePatientRes {}
+
+export interface UpdateVisitReq extends Visit {}
+export interface UpdateVisitRes extends Visit {}
+
+export interface DeleteVisitReq {}
+export interface DeleteVisitRes {}
+
+export interface UpdatePaymentReq extends Payment {}
+export interface UpdatePaymentRes extends Payment {}
+
+export interface DeletePaymentReq {}
+export interface DeletePaymentRes {}
+
+export interface UpdateVisitDentalProcedureReq {} // Path variable visitDentalProcedureId
+export interface UpdateVisitDentalProcedureRes extends VisitDentalProcedure {}
+
+export interface DeleteVisitDentalProcedureReq {}
+export interface DeleteVisitDentalProcedureRes {}
+
+export interface GetVisitPaymentsReq {} // Path variable patientId
+export interface GetVisitPaymentsRes {
+  visitPayments: VisitPayment[];
+}
+
+export interface DeleteVisitProcedureReq {}
+export interface DeleteVisitProcedureRes {}
+
+export interface GetVisitProceduresByVisitIdReq {}
+export interface GetVisitProceduresByVisitIdRes {
+  visitProcedure: VisitDentalProcedure[];
+}

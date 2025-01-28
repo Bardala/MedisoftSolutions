@@ -6,6 +6,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import clinic.dev.backend.exceptions.ExpiredTokenException;
+import clinic.dev.backend.exceptions.InvalidTokenException;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,9 +38,16 @@ public class JwtUtil {
         .compact();
   }
 
-  public boolean validateToken(String token, String username) {
+  public boolean validateToken(String token, String username) throws InvalidTokenException, ExpiredTokenException {
     final String extractedUsername = extractUsername(token);
-    return (extractedUsername.equals(username) && !isTokenExpired(token));
+
+    if (isTokenExpired(token))
+      throw new ExpiredTokenException("The token has expired.");
+
+    if (!extractedUsername.equals(username))
+      throw new InvalidTokenException("The token is invalid.");
+
+    return true; // Token is valid
   }
 
   private boolean isTokenExpired(String token) {

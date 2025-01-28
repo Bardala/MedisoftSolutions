@@ -42,14 +42,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ApiRes<String>> handleAuthException(AuthenticationException ex) {
     ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   // Handle InvalidCredentialsException
   @ExceptionHandler(InvalidCredentialsException.class)
   public ResponseEntity<ApiRes<String>> handleInvalidCredentialsException(InvalidCredentialsException ex) {
     ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   // Handle UserNotFoundException

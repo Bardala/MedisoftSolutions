@@ -1,44 +1,63 @@
-import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserPlus,
-  faChartBar,
-  faCalendarAlt,
+  faDollarSign,
+  faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import "../styles/home.css"; // Assuming you will style this
+import "../styles/home.css";
+import { useMonthlyReport } from "../hooks/useMonthlyReport";
+import { useDailyReportData } from "../hooks/useDailyReportData";
+import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid"; // For unique notification IDs
+import { dailyTimeFormate } from "../utils";
 
 const Home = ({
   setSelectedOption,
 }: {
   setSelectedOption: (option: string) => void;
 }) => {
-  const [stats, setStats] = useState({
-    totalPatients: 0,
-    totalVisits: 0,
-    totalPayments: 0,
-  });
+  const { summary } = useMonthlyReport();
+  const { patients, visits, payments, isLoading, isError } =
+    useDailyReportData();
 
-  const [notifications, setNotifications] = useState([
-    { message: "New patient registration: John Doe", time: "2 hours ago" },
-    {
-      message: "Appointment for Jane Smith at 3 PM tomorrow",
-      time: "1 day ago",
-    },
-    { message: "Reminder: Patient payment due", time: "3 days ago" },
-  ]);
+  const [notifications, setNotifications] = useState<
+    { id: string; message: string; time: string }[]
+  >([]);
 
-  const loadStats = () => {
-    // Simulate fetching data from the backend
-    setStats({
-      totalPatients: 120,
-      totalVisits: 350,
-      totalPayments: 15350,
-    });
-  };
-
+  // Effect to generate notifications based on daily report data
   useEffect(() => {
-    loadStats();
-  }, []);
+    if (!isLoading && !isError) {
+      // Combine all entities into a single array with a unified structure
+      const combinedData = [
+        ...patients.map((patient) => ({
+          id: uuidv4(),
+          message: `New patient registration: ${patient.fullName}, from: ${patient.address} `,
+          time: new Date(patient.createdAt).toLocaleString(),
+          createdAt: patient.createdAt,
+        })),
+        ...visits.map((visit) => ({
+          id: uuidv4(),
+          message: `New visit recorded for patient: ${visit.patient.fullName}`,
+          time: new Date(visit.createdAt).toLocaleString(),
+          createdAt: visit.createdAt,
+        })),
+        ...payments.map((payment) => ({
+          id: uuidv4(),
+          message: `Payment received: $${payment.amount} from ${payment.patient.fullName}`,
+          time: new Date(payment.createdAt).toLocaleString(),
+          createdAt: payment.createdAt,
+        })),
+      ];
+
+      // Sort the combined data by the createdAt timestamp in descending order
+      const sortedNotifications = combinedData.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+
+      setNotifications(sortedNotifications);
+    }
+  }, [patients, visits, payments, isLoading, isError]);
 
   return (
     <div className="home">
@@ -48,15 +67,15 @@ const Home = ({
       {/* Dashboard Summary */}
       <section className="dashboard-summary">
         <div className="summary-item">
-          <h3>{stats.totalPatients}</h3>
-          <p>Total Patients</p>
+          <h3>{summary?.totalNewPatients || 0}</h3>
+          <p>Total New Patients</p>
         </div>
         <div className="summary-item">
-          <h3>{stats.totalVisits}</h3>
+          <h3>{summary?.totalVisits || 0}</h3>
           <p>Total Visits</p>
         </div>
         <div className="summary-item">
-          <h3>${stats.totalPayments}</h3>
+          <h3>${summary?.totalRevenue || 0}</h3>
           <p>Total Payments</p>
         </div>
       </section>
@@ -74,16 +93,16 @@ const Home = ({
           </button>
           <button
             className="action-btn"
-            onClick={() => setSelectedOption("/monthly-reports")}
+            onClick={() => setSelectedOption("/payments")}
           >
-            <FontAwesomeIcon icon={faChartBar} />
-            View Reports
+            <FontAwesomeIcon icon={faDollarSign} />
+            Add Payment
           </button>
           <button
             className="action-btn"
             onClick={() => setSelectedOption("/record-new-visit")}
           >
-            <FontAwesomeIcon icon={faCalendarAlt} />
+            <FontAwesomeIcon icon={faPlusCircle} />
             {/* View Appointments */}
             Record New Visit
           </button>
@@ -93,14 +112,20 @@ const Home = ({
       {/* Notifications */}
       <section className="notifications">
         <h3>Recent Notifications</h3>
-        <ul>
-          {notifications.map((notification, index) => (
-            <li key={index}>
-              <p>{notification.message}</p>
-              <span>{notification.time}</span>
-            </li>
-          ))}
-        </ul>
+        {isLoading ? (
+          <p>Loading notifications...</p>
+        ) : isError ? (
+          <p>Error loading notifications</p>
+        ) : (
+          <ul>
+            {notifications.map((notification) => (
+              <li key={notification.id}>
+                <p>{notification.message}</p>
+                <span>{dailyTimeFormate(notification.time)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

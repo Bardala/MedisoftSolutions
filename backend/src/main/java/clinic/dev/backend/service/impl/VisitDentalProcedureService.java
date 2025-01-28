@@ -21,11 +21,8 @@ public class VisitDentalProcedureService {
     return visitDentalProcedureRepo.save(visitDentalProcedure);
   }
 
-  public VisitDentalProcedure update(Long id, VisitDentalProcedure updatedVisitDentalProcedure) {
-    VisitDentalProcedure existingVisitDentalProcedure = getById(id);
-    existingVisitDentalProcedure.setVisit(updatedVisitDentalProcedure.getVisit());
-    existingVisitDentalProcedure.setDentalProcedure(updatedVisitDentalProcedure.getDentalProcedure());
-    return visitDentalProcedureRepo.save(existingVisitDentalProcedure);
+  public VisitDentalProcedure update(Long id) {
+    return visitDentalProcedureRepo.save(getById(id));
   }
 
   public void delete(Long id) {
@@ -52,5 +49,9 @@ public class VisitDentalProcedureService {
             vdp -> !vdp.getVisit().getCreatedAt().isBefore(workdayStart)
                 && vdp.getVisit().getCreatedAt().isBefore(workdayEnd))
         .collect(Collectors.toList());
+  }
+
+  public List<VisitDentalProcedure> getByVisitId(Long visitId) {
+    return visitDentalProcedureRepo.findByVisitId(visitId);
   }
 }

@@ -1,0 +1,73 @@
+.patient-profile-container {
+  background-color: var(--primary-bg);
+  color: var(--secondary-color);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  /* max-width: 600px; */
+  margin: auto;
+}
+
+.patient-profile-container h2 {
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--padding-medium);
+}
+
+.patient-info,
+.visit-details {
+  margin-bottom: var(--padding-medium);
+}
+
+.patient-info p,
+.visit-details p {
+  font-size: var(--font-size-body);
+  margin: var(--padding-small) 0;
+}
+
+.doctor-notes textarea {
+  width: 100%;
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-top: var(--padding-small);
+}
+
+.notes-buttons {
+  display: flex;
+  gap: var(--padding-small);
+  margin-top: var(--padding-small);
+}
+
+.save-button,
+.cancel-button,
+.toggle-button {
+  padding: var(--padding-small) var(--padding-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  box-shadow: var(--shadow-light);
+}
+
+.cancel-button {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-color);
+  box-shadow: var(--shadow-light);
+}
+
+.toggle-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  box-shadow: var(--shadow-light);
+}
+
+.toggle-button:hover {
+  background-color: var(--primary-hover);
+}
