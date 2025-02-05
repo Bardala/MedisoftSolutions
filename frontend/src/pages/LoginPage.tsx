@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
-import { assistantImage, doctorImage, logoImage } from "../utils"; // Removed assistantImage import
+import { assistantImage, doctorImage, logoImage } from "../utils";
 
 export const LoginPage: React.FC = () => {
-  const [loginAttempts, setLoginAttempts] = useState(0); // Track login attempts
-  const maxAttempts = 3; // Set the maximum allowed attempts
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const maxAttempts = 3;
 
   const {
     selectedRole,
@@ -34,6 +34,14 @@ export const LoginPage: React.FC = () => {
       console.error("Maximum login attempts exceeded.");
     }
   }, [setIdentifier, setPassword, handleSubmit, loginAttempts]);
+
+  useEffect(() => {
+    if (selectedRole === "Doctor") {
+      setIdentifier("doctor");
+    } else if (selectedRole === "Assistant") {
+      setIdentifier("assistant1");
+    }
+  }, [selectedRole, setIdentifier]);
 
   return (
     <div className="login-page">

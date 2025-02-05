@@ -13,65 +13,31 @@ import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
 import QueuePage from "../components/Queue";
 
-// todo: create a context provider
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
 
-  const renderContent =
-    loggedInUser.role === "Doctor"
-      ? () => {
-          switch (selectedOption) {
-            case "/":
-              return <Home setSelectedOption={setSelectedOption} />;
-            case "/record-new-visit":
-              return <AddVisit />;
-            case "/patients":
-              return <QueuePage doctorId={1} />;
-            case "/reports":
-              return <DailyFinancialReport />;
-            case "/settings":
-              return <Settings setSelectedOption={setSelectedOption} />;
-            case "/patient-history":
-              return <GetRegistry />;
-            case "/patient-profile":
-              return <PatientProfile />;
-            case "/monthly-reports": // Just for doctor
-              return <MonthlyDoctorReports />;
-            case "/add-assistant":
-              return <AddAssistant />; // Just for doctor
-            case "/add-patient":
-              return <AddPatient />;
-            case "/payments":
-              return <RecordPayments />;
-            default:
-              return <Home setSelectedOption={setSelectedOption} />;
-          }
-        }
-      : () => {
-          switch (selectedOption) {
-            case "/patient-profile":
-              return <PatientProfile />;
-            case "/":
-              return <Home setSelectedOption={setSelectedOption} />;
-            case "/add-patient":
-              return <AddPatient />;
-            case "/record-new-visit":
-              return <AddVisit />;
-            case "/patients":
-              return <QueuePage doctorId={1} />;
-            case "/payments":
-              return <RecordPayments />;
-            case "/patient-history":
-              // return <Registry />;
-              return <GetRegistry />;
-            case "/reports":
-              return <DailyFinancialReport />;
-            case "/settings":
-              return <Settings setSelectedOption={setSelectedOption} />;
-            default:
-              return <Home setSelectedOption={setSelectedOption} />;
-          }
-        };
+  const commonRoutes = {
+    "/": <Home setSelectedOption={setSelectedOption} />,
+    "/record-new-visit": <AddVisit />,
+    "/patients": <QueuePage doctorId={1} />,
+    "/reports": <DailyFinancialReport />,
+    "/settings": <Settings setSelectedOption={setSelectedOption} />,
+    "/patient-history": <GetRegistry />,
+    "/patient-profile": <PatientProfile />,
+    "/add-patient": <AddPatient />,
+    "/payments": <RecordPayments />,
+  };
+
+  const doctorRoutes = {
+    "/monthly-reports": <MonthlyDoctorReports />,
+    "/add-assistant": <AddAssistant />,
+  };
+
+  const renderContent = () =>
+    commonRoutes[selectedOption] ??
+    (loggedInUser.role === "Doctor" ? doctorRoutes[selectedOption] : null) ?? (
+      <Home setSelectedOption={setSelectedOption} />
+    );
 
   return { renderContent, selectedOption, setSelectedOption };
 };

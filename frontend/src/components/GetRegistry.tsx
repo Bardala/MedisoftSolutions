@@ -42,10 +42,14 @@ export const GetRegistry: FC = () => {
   const { updatePatientMutation } = useUpdatePatient();
   const { deletePatientMutation } = useDeletePatient();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { updateVisitMutation } = useUpdateVisit();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { deleteVisitMutation } = useDeleteVisit();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { updatePaymentMutation } = useUpdatePayment();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { deletePaymentMutation } = useDeletePayment();
 
   const handleSubmit = () =>

@@ -7,7 +7,6 @@ import {
 import PrescriptionForm from "./PrescriptionForm";
 import Table from "./Table";
 import "../styles/medicines.css";
-import { PrescriptionPrint } from "./PrescriptionPrint";
 
 export const Medicines: FC<{ visit: Visit }> = ({ visit }) => {
   const [, setPrescriptions] = useState<Medicine[]>([]);
