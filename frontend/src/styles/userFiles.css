@@ -3,7 +3,7 @@
 /* General Container Styles */
 .user-files-container {
   padding: var(--padding-medium);
-  background-color: var(--primary-bg);
+  /* background-color: var(--primary-bg); */
   border-radius: var(--border-radius);
   /* box-shadow: var(--shadow-light); */
 }
@@ -12,7 +12,7 @@
 .file-section {
   margin-bottom: var(--padding-medium);
   padding: var(--padding-small);
-  background-color: var(--secondary-bg);
+  /* background-color: var(--secondary-bg); */
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
   /* box-shadow: var(--shadow-light); */

@@ -1,4 +1,4 @@
-/* Base Styles */
+/* Base Styles
 .patient-history {
   padding: var(--padding-medium);
   background-color: var(--secondary-bg);
@@ -21,7 +21,6 @@
   border: 1px solid var(--border-color);
 }
 
-/* Patient Summary */
 .patient-summary {
   margin-bottom: var(--padding-medium);
   padding: var(--padding-small);
@@ -29,7 +28,6 @@
   border-radius: var(--border-radius);
 }
 
-/* Tabs */
 .tabs {
   display: flex;
   margin-bottom: var(--padding-small);
@@ -55,7 +53,6 @@
   margin-right: 0;
 }
 
-/* Visit History */
 .visit-history table {
   width: 100%;
   border-collapse: collapse;
@@ -92,12 +89,10 @@
   margin-top: var(--padding-small);
 }
 
-/* Responsive Styles */
 @media screen and (max-width: 768px) {
   .patient-summary p {
     font-size: var(--font-size-small);
   }
 
-  /* .visit-history */
 
-}
+} */

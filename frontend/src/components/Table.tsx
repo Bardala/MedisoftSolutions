@@ -28,6 +28,10 @@ const Table = <T extends Record<string, unknown>>({
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [rowToEdit, setRowToEdit] = useState<T | null>(null);
+  function hasNoExpandableColumns<T>(columns: Column<T>[]): boolean {
+    return !columns.some((column) => column.expandable === true);
+  }
+  const expandableColumns = hasNoExpandableColumns(columns);
 
   const toggleExpandRow = (rowIndex: number) => {
     setExpandedRowIndex((prevIndex) =>
@@ -35,13 +39,19 @@ const Table = <T extends Record<string, unknown>>({
     );
   };
 
-  const handleUpdateClick = (row: T) => {
+  const handleUpdateClick = (row: T, rowIndex: number) => {
     setRowToEdit(row);
+    setExpandedRowIndex(null); // Close any previously expanded row
     setUpdateModalOpen(true);
   };
 
   const handleDeleteClick = (row: T) => {
     if (onDelete) onDelete(row);
+  };
+
+  const closeEdit = () => {
+    setRowToEdit(null);
+    setUpdateModalOpen(false);
   };
 
   return (
@@ -54,7 +64,9 @@ const Table = <T extends Record<string, unknown>>({
               .map((col, index) => (
                 <th key={index}>{col.header}</th>
               ))}
-            <th className="actions-column">More</th>
+            {enableActions && !expandableColumns && (
+              <th className="actions-column">More</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -70,15 +82,16 @@ const Table = <T extends Record<string, unknown>>({
                         : (row[col.accessor] as React.ReactNode)}
                     </td>
                   ))}
-                <td className="action-cell">
-                  {/* Expand/Collapse Button */}
-                  <button
-                    onClick={() => toggleExpandRow(rowIndex)}
-                    className="expand-icon"
-                  >
-                    {expandedRowIndex === rowIndex ? "▼" : "▶"}
-                  </button>
-                </td>
+                {enableActions && !expandableColumns && (
+                  <td className="action-cell">
+                    <button
+                      onClick={() => toggleExpandRow(rowIndex)}
+                      className="expand-icon"
+                    >
+                      {expandedRowIndex === rowIndex ? "▼" : "▶"}
+                    </button>
+                  </td>
+                )}
               </tr>
               {expandedRowIndex === rowIndex && (
                 <tr className="expanded-row">
@@ -99,12 +112,11 @@ const Table = <T extends Record<string, unknown>>({
                           </div>
                         ))}
 
-                      {/* Optional Action Buttons */}
                       {enableActions && (
                         <div className="action-buttons">
                           {onUpdate && (
                             <button
-                              onClick={() => handleUpdateClick(row)}
+                              onClick={() => handleUpdateClick(row, rowIndex)}
                               className="update-button"
                             >
                               <FontAwesomeIcon icon={faEdit} />
@@ -124,23 +136,29 @@ const Table = <T extends Record<string, unknown>>({
                   </td>
                 </tr>
               )}
+              {isUpdateModalOpen && rowToEdit === row && (
+                <tr className="form-modal-row">
+                  <td
+                    colSpan={
+                      columns.filter((col) => !col.expandable).length + 1
+                    }
+                  >
+                    <FormModal
+                      objectToEdit={rowToEdit}
+                      onSave={(updatedRow: T) => {
+                        if (onUpdate) onUpdate(updatedRow);
+                        closeEdit();
+                      }}
+                      onClose={closeEdit}
+                      title="Update Details"
+                    />
+                  </td>
+                </tr>
+              )}
             </React.Fragment>
           ))}
         </tbody>
       </table>
-
-      {/* Update Modal */}
-      {isUpdateModalOpen && rowToEdit && (
-        <FormModal
-          objectToEdit={rowToEdit}
-          onSave={(updatedRow: T) => {
-            if (onUpdate) onUpdate(updatedRow);
-            setUpdateModalOpen(false);
-          }}
-          onClose={() => setUpdateModalOpen(false)}
-          title="Update Details"
-        />
-      )}
     </div>
   );
 };

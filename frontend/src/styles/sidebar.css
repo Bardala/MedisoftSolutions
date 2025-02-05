@@ -26,36 +26,19 @@
   letter-spacing: 1px;
 }
 
-/* .sidebar-user-photo-container {
-  text-align: center;
-  margin: 20px 0;
-} */
-
 .sidebar-user-photo-container {
   text-align: center;
-  margin: 20px 0;
+  /* margin: 20px 0; */
 }
 
 .sidebar-user-photo {
-  /* width: 180px;
-  height: 180px; */
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary-color);
-  box-shadow: var(--shadow-small);
-}
-
-.sidebar-user-photo {
-  width: 180px;
-  /* Adjust size as needed */
+  width: 120px;
   height: 180px;
+  object-position: top;
   border-radius: 50%;
-  /* Makes the image circular */
   object-fit: cover;
   border: 2px solid var(--primary-color);
-  /* Optional border */
   box-shadow: var(--shadow-small);
-  /* Optional shadow */
 }
 
 .sidebar-item {

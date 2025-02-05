@@ -6,7 +6,6 @@ import "../styles/addVisit.css";
 
 export const AddVisit: React.FC = () => {
   const {
-    setDoctorNotes,
     setPaymentAmount,
     handleDentalProcedureSelect,
     handlePatientSelect,
@@ -14,7 +13,6 @@ export const AddVisit: React.FC = () => {
     selectedPatient,
     paymentAmount,
     handleSubmit,
-    doctorNotes,
     successMessage,
     createdVisitDetails,
     createdPaymentDetails,
@@ -40,7 +38,6 @@ export const AddVisit: React.FC = () => {
                 </p>
               ))}
               <p>Visit Date: {createdVisitDetails.visitDate}</p>
-              <p>Doctor Notes: {createdVisitDetails.doctorNotes}</p>
             </div>
           )}
           {createdPaymentDetails && (
@@ -82,25 +79,15 @@ export const AddVisit: React.FC = () => {
         <div className="form-group">
           <label htmlFor="paymentAmount">💵Payment Amount</label>
           <input
-            type="number"
+            // type="number"
             id="paymentAmount"
-            value={paymentAmount}
+            placeholder="Enter Payment Amount 💵"
+            value={paymentAmount > 0 ? paymentAmount : ""}
             onChange={(e) => setPaymentAmount(Number(e.target.value))}
-            min="0"
-            step="1"
+            // min="0"
+            // step="1"
           />
         </div>
-
-        {/* Doctor Notes */}
-        <div className="form-group">
-          <label htmlFor="doctorNotes">📝Doctor Notes</label>
-          <textarea
-            id="doctorNotes"
-            value={doctorNotes}
-            onChange={(e) => setDoctorNotes(e.target.value)}
-          />
-        </div>
-
         <button type="submit">💾Record Visit</button>
       </form>
     </div>

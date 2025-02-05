@@ -8,6 +8,22 @@
   --secondary-bg: #f7f7f7;
   --secondary-color: #333;
 
+  /* Third Colors (Soft Sky Blue) */
+  --third-bg: #f0f8ff;
+  /* Alice Blue (Very Light Blue) */
+  --third-color: #80bfff;
+  /* Soft Sky Blue */
+  --third-hover: #66a3e0;
+  /* Slightly Darker Sky Blue */
+
+  /* Fourth Colors (Deep Royal Blue) */
+  --fourth-bg: #e6ebf5;
+  /* Soft Blue-Grey Background */
+  --fourth-color: #265a9f;
+  /* Deep Royal Blue */
+  --fourth-hover: #1d4b87;
+  /* Darker Royal Blue */
+
   /* Success Colors */
   --success-bg: #d4edda;
   --success-border: #c3e6cb;
@@ -17,6 +33,16 @@
   --border-color: #ddd;
   --white: #fff;
   --black: #000;
+
+  /* New Variables for Welcome Component */
+  --section-bg: #f9f9f9;
+  /* Light background for sections */
+  --text-color: #555;
+  /* Default text color */
+  --list-border-color: #eee;
+  /* Border color for list items */
+  --ripple-effect-color: rgba(255, 255, 255, 0.3);
+  /* Ripple effect color for buttons */
 
   /* Fonts */
   --font-size-title: 32px;
@@ -44,6 +70,18 @@
   --secondary-bg: #16213e;
   --secondary-color: #e6e6e6;
 
+  --third-bg: #1e2a3a;
+  /* Deep Blue-Grey */
+  --third-color: #80bfff;
+  --third-hover: #66a3e0;
+
+  --fourth-bg: #121a26;
+  /* Dark Navy Blue */
+  --fourth-color: #4a90e2;
+  /* Primary Blue */
+  --fourth-hover: #357ac4;
+  /* Hover Blue */
+
   /* Success Colors */
   --success-bg: #112716;
   --success-border: #155724;
@@ -53,17 +91,31 @@
   --white: #e6e6e6;
   --black: #000;
 
+  /* New Variables for Welcome Component (Dark Mode) */
+  --section-bg: #1e1e2e;
+  /* Dark background for sections */
+  --text-color: #e6e6e6;
+  /* Light text color for dark mode */
+  --list-border-color: #444;
+  /* Dark border color for list items */
+  --ripple-effect-color: rgba(0, 0, 0, 0.3);
+  /* Ripple effect color for buttons */
+
+  /* Fonts */
   --font-size-title: 32px;
   --font-size-body: 16px;
   --font-size-welcome: 24px;
 
+  /* Spacing */
   --padding-large: 40px;
   --padding-medium: 20px;
   --padding-small: 10px;
 
+  /* Shadows */
   --shadow-light: 0px 4px 10px rgba(255, 255, 255, 0.2);
   --shadow-medium: 0px 6px 15px rgba(255, 255, 255, 0.25);
 
+  /* Border radius */
   --border-radius: 8px;
 }
 
@@ -104,6 +156,40 @@ h6 {
 
 p {
   font-size: var(--font-size-body);
+}
+
+input,
+textarea {
+  background-color: inherit;
+  color: inherit;
+  width: -webkit-fill-available;
+}
+
+/* General form styling */
+form input,
+/* form textarea, */
+form button {
+  /* background-color: inherit;
+  color: inherit; */
+  width: calc(100% - var(--padding-small) * 2);
+  padding: var(--padding-small);
+  margin: var(--padding-small) auto;
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--font-size-body);
+}
+
+form button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: var(--primary-hover);
 }
 
 .container {

@@ -1,10 +1,10 @@
 /* UploadImage.css */
 
 .upload-image-container {
-  background-color: var(--primary-bg);
+  /* background-color: var(--primary-bg); */
   padding: var(--padding-medium);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-light);
+  /* box-shadow: var(--shadow-light); */
   color: var(--secondary-color);
 }
 
@@ -19,7 +19,7 @@
   border-radius: var(--border-radius);
   padding: var(--padding-large);
   text-align: center;
-  background-color: var(--secondary-bg);
+  /* background-color: var(--secondary-bg); */
   margin-bottom: var(--padding-medium);
   cursor: pointer;
 }

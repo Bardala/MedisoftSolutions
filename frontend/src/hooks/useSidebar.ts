@@ -6,6 +6,8 @@ import {
   faCog,
   faList,
   faSearch,
+  faFileArchive,
+  faProcedures,
 } from "@fortawesome/free-solid-svg-icons";
 import { MenuItem, User } from "../types";
 
@@ -13,14 +15,22 @@ export const useSidebar = (loggedInUser: User) => {
   const menuItems: MenuItem[] =
     loggedInUser.role === "Doctor"
       ? [
-          { label: "Current Patient", link: "/patient-profile", icon: faUser },
+          {
+            label: "Current Patient",
+            link: "/patient-profile",
+            icon: faProcedures,
+          },
           { label: "Wait List", link: "/patients", icon: faUsers },
           {
             label: "Registry",
             link: "/patient-history",
             icon: faSearch,
           },
-          { label: "Daily Reports", link: "/reports", icon: faFileAlt },
+          {
+            label: "Daily Reports",
+            link: "/reports",
+            icon: faFileArchive,
+          },
           {
             label: "Monthly Reports",
             link: "/monthly-reports",

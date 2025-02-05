@@ -1,4 +1,4 @@
-export const HOST = `http://192.168.1.2:8080`;
+import { HOST } from "./HOST";
 
 export const host = (url: string) => {
   const baseUrl = new URL(HOST);

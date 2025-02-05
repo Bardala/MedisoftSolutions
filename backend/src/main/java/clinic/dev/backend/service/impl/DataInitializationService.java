@@ -119,19 +119,19 @@ public class DataInitializationService {
   private void addMedicines() {
     if (medicineRepo.count() == 0) {
       List<Medicine> medicines = Arrays.asList(
-          createMedicine("باراسيتامول", "500 مجم", "مرتين في اليوم", 7, "تناول بعد الأكل"),
-          createMedicine("أموكسيسيلين", "250 مجم", "ثلاث مرات في اليوم", 5, "تناول قبل الأكل"),
-          createMedicine("إيبوبروفين", "200 مجم", "مرة واحدة في اليوم", 3, "تناول مع الماء"),
-          createMedicine("غسول الفم كلورهيكسيدين", "10 مل", "مرتين في اليوم", 14, "مضمض لمدة 30 ثانية ثم ابصق"),
-          createMedicine("ميترونيدازول", "500 مجم", "كل 12 ساعة", 5, "تجنب الكحول أثناء العلاج"),
-          createMedicine("ديكلوفيناك", "50 مجم", "مرتين في اليوم", 7, "تناول بعد الأكل"),
-          createMedicine("كليندامايسين", "300 مجم", "ثلاث مرات في اليوم", 7, "تناول مع كوب كامل من الماء"),
-          createMedicine("أزيثروميسين", "500 مجم", "مرة واحدة في اليوم", 3,
+          createMedicine("Paracetamol", "500 مجم", "مرتين في اليوم", 7, "تناول بعد الأكل"),
+          createMedicine("Amoxicillin", "250 مجم", "ثلاث مرات في اليوم", 5, "تناول قبل الأكل"),
+          createMedicine("Ibuprofen", "200 مجم", "مرة واحدة في اليوم", 3, "تناول مع الماء"),
+          createMedicine("Chlorhexidine Mouthwash", "10 مل", "مرتين في اليوم", 14, "مضمض لمدة 30 ثانية ثم ابصق"),
+          createMedicine("Metronidazole", "500 مجم", "كل 12 ساعة", 5, "تجنب الكحول أثناء العلاج"),
+          createMedicine("Diclofenac", "50 مجم", "مرتين في اليوم", 7, "تناول بعد الأكل"),
+          createMedicine("Clindamycin", "300 مجم", "ثلاث مرات في اليوم", 7, "تناول مع كوب كامل من الماء"),
+          createMedicine("Azithromycin", "500 مجم", "مرة واحدة في اليوم", 3,
               "تناول قبل الأكل بساعة أو بعد الأكل بساعتين"),
-          createMedicine("نابروكسين", "250 مجم", "مرتين في اليوم", 5, "تناول مع الطعام أو الحليب"),
-          createMedicine("كيتوبروفين", "100 مجم", "مرتين في اليوم", 5, "تناول مع الطعام"),
-          createMedicine("أسيكلوفير", "400 مجم", "خمس مرات في اليوم", 7, "تناول مع أو بدون طعام"),
-          createMedicine("ديكساميثازون", "0.5 مجم", "مرة واحدة في اليوم", 5, "تناول مع الطعام"));
+          createMedicine("Naproxen", "250 مجم", "مرتين في اليوم", 5, "تناول مع الطعام أو الحليب"),
+          createMedicine("Ketoprofen", "100 مجم", "مرتين في اليوم", 5, "تناول مع الطعام"),
+          createMedicine("Acyclovir", "400 مجم", "خمس مرات في اليوم", 7, "تناول مع أو بدون طعام"),
+          createMedicine("Dexamethasone", "0.5 مجم", "مرة واحدة في اليوم", 5, "تناول مع الطعام"));
       medicineRepo.saveAll(medicines);
     }
   }

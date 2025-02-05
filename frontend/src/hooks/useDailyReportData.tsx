@@ -45,9 +45,9 @@ export const useDailyReportData = () => {
   );
 
   return {
-    patients: sortById(dailyNewPatientsQuery.data as unknown as Patient[]),
-    visits: sortById(dailyVisitsQuery.data as unknown as Visit[]),
-    payments: sortById(dailyPaymentQuery.data as unknown as Payment[]),
+    patients: sortById(dailyNewPatientsQuery.data) as unknown as Patient[],
+    visits: sortById(dailyVisitsQuery.data) as unknown as Visit[],
+    payments: sortById(dailyPaymentQuery.data) as unknown as Payment[],
     paymentsSummary: dailyPaymentSummaryQuery.data,
 
     isLoading:

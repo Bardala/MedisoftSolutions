@@ -1,10 +1,12 @@
 import {
+  CreateMedicineReq,
   CreatePatientReq,
   CreatePatientRes,
   CreatePaymentReq,
   CreatePaymentRes,
   CreateUserReq,
   CreateUserRes,
+  CreateVisitMedicineReq,
   CreateVisitPaymentReq,
   CreateVisitPaymentRes,
   CreateVisitReq,
@@ -47,6 +49,7 @@ import {
   recordVisitDentalProcedureRes,
   ResetPasswordReq,
   ResetPasswordRes,
+  UpdateMedicineReq,
   UpdatePatientReq,
   UpdatePatientRes,
   UpdatePaymentReq,
@@ -68,7 +71,7 @@ import {
   WorkdayVisitsReq,
   WorkdayVisitsRes,
 } from "../types";
-import { QueueEntry } from "../types/types";
+import { Medicine, QueueEntry, VisitMedicine } from "../types/types";
 import { ENDPOINT } from "./endpoints";
 import { fetchFn } from "./index";
 
@@ -324,3 +327,76 @@ export const GetVisitProceduresByVisitIdApi = (params: { visitId: number }) =>
     undefined,
     [params.visitId + ""],
   );
+
+// *VisitMedicine APIs
+
+// Fetch all VisitMedicines
+export const GetAllVisitMedicinesApi = () =>
+  fetchFn<void, VisitMedicine[]>(ENDPOINT.GET_ALL_VISIT_MEDICINES);
+
+// Fetch a specific VisitMedicine by ID
+export const GetVisitMedicineByIdApi = (id: number) =>
+  fetchFn<void, VisitMedicine>(
+    ENDPOINT.GET_VISIT_MEDICINE_BY_ID,
+    "GET",
+    undefined,
+    [id.toString()],
+  );
+
+// Create a new VisitMedicine
+export const CreateVisitMedicineApi = (visitMedicine: CreateVisitMedicineReq) =>
+  fetchFn<VisitMedicine, VisitMedicine>(
+    ENDPOINT.CREATE_VISIT_MEDICINE,
+    "POST",
+    visitMedicine,
+  );
+
+// Delete a VisitMedicine by ID
+export const DeleteVisitMedicineApi = (visitMedicine: VisitMedicine) =>
+  fetchFn<void, void>(ENDPOINT.DELETE_VISIT_MEDICINE, "DELETE", undefined, [
+    visitMedicine?.id.toString(),
+  ]);
+
+// Fetch VisitMedicines by Visit ID
+export const GetVisitMedicinesByVisitIdApi = (visitId: number) =>
+  fetchFn<void, VisitMedicine[]>(
+    ENDPOINT.GET_VISIT_MEDICINES_BY_VISIT_ID,
+    "GET",
+    undefined,
+    [visitId.toString()],
+  );
+
+// Fetch VisitMedicines by Medicine ID
+export const GetVisitMedicinesByMedicineIdApi = (medicineId: number) =>
+  fetchFn<void, VisitMedicine[]>(
+    ENDPOINT.GET_VISIT_MEDICINES_BY_MEDICINE_ID,
+    "GET",
+    undefined,
+    [medicineId.toString()],
+  );
+
+// *Medicine APIs
+
+// Fetch all Medicines
+export const GetAllMedicinesApi = () =>
+  fetchFn<void, Medicine[]>(ENDPOINT.GET_ALL_MEDICINES);
+
+// Fetch a specific Medicine by ID
+export const GetMedicineByIdApi = (id: number) =>
+  fetchFn<void, Medicine>(ENDPOINT.GET_MEDICINE_BY_ID, "GET", undefined, [
+    id.toString(),
+  ]);
+
+// Create a new Medicine
+export const CreateMedicineApi = (medicine: CreateMedicineReq) =>
+  fetchFn<Medicine, Medicine>(ENDPOINT.CREATE_MEDICINE, "POST", medicine);
+
+// Update a Medicine by ID
+export const UpdateMedicineApi = (medicine: UpdateMedicineReq) =>
+  fetchFn<Medicine, Medicine>(ENDPOINT.UPDATE_MEDICINE, "PUT", medicine);
+
+// Delete a Medicine by ID
+export const DeleteMedicineApi = (id: number) =>
+  fetchFn<void, void>(ENDPOINT.DELETE_MEDICINE, "DELETE", undefined, [
+    id.toString(),
+  ]);

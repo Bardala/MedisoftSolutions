@@ -1,0 +1,170 @@
+/* General Styling */
+.prescription-print-container {
+  font-family: "Cairo", sans-serif;
+  max-width: 850px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  color: #333;
+  height: inherit;
+}
+
+/* Clinic Header */
+.clinic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid #007bff;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+/* .clinic-logo {
+  width: 80px;
+  height: auto;
+} */
+
+.clinic-logo {
+  width: 140px;
+  height: 140px;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.clinic-info {
+  text-align: right;
+}
+
+.clinic-info h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #007bff;
+}
+
+.clinic-info p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Printable Prescription Section */
+.printable-prescription {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Prescription Header */
+.prescription-header {
+  background-color: #f3f3f3;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.prescription-header p {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Table Styling */
+.prescription-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.prescription-table th,
+.prescription-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.prescription-table th {
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+}
+
+.prescription-table td {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Signature Section */
+.signature-section {
+  margin-top: 30px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.signature-line {
+  display: inline-block;
+  width: 200px;
+  border-top: 2px solid #333;
+  margin-top: 10px;
+}
+
+/* Print Button */
+.print-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: background 0.3s ease;
+}
+
+.print-button:hover {
+  background-color: #0056b3;
+}
+
+/* Print-specific styles */
+@media print {
+  .print-button {
+    display: none;
+  }
+
+  .prescription-print-container {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .clinic-header {
+    border-bottom: none;
+  }
+}
+
+/* Print-specific styles */
+@media print {
+  .prescription-chunk {
+    page-break-after: always;
+    margin-bottom: 40px;
+  }
+
+  .prescription-chunk:last-child {
+    page-break-after: avoid;
+  }
+
+  .print-button {
+    display: none;
+  }
+}
+
+.prescription-chunk {
+  margin-bottom: 40px;
+}

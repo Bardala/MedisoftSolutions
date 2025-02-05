@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
+import { assistantImage, doctorImage, logoImage } from "../utils"; // Removed assistantImage import
 
-const logoImage = "/dentalLogo.png";
-
-const LoginPage: React.FC = () => {
-  const dentistImage = "dentist.jpg";
-  const assistantImage = "assistant.jpg";
+export const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0); // Track login attempts
   const maxAttempts = 3; // Set the maximum allowed attempts
 
@@ -53,7 +49,7 @@ const LoginPage: React.FC = () => {
           className={`role-card ${selectedRole === "Doctor" ? "selected" : ""}`}
           onClick={() => handleRoleSelection("Doctor")}
         >
-          <img src={dentistImage} alt="Doctor Icon" className="role-icon" />
+          <img src={doctorImage} alt="Doctor Icon" className="role-icon" />
           <h2>Doctor</h2>
         </div>
 
@@ -98,5 +94,3 @@ const LoginPage: React.FC = () => {
     </div>
   );
 };
-
-export default LoginPage;

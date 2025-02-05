@@ -12,5 +12,5 @@ public class PatientRegistryRes {
   private List<Payment> payments;
   private List<VisitDentalProcedure> visitDentalProcedure;
   private List<VisitPayment> visitPayments;
-  private List<VisitMedicine> medicines;
+  private List<VisitMedicine> visitMedicines;
 }

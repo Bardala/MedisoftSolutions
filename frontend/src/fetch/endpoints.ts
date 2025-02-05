@@ -44,7 +44,7 @@ export enum ENDPOINT {
 
   // Medicine APIs
   CREATE_MEDICINE = "/medicines",
-  UPDATE_MEDICINE = "/medicines/:id",
+  UPDATE_MEDICINE = "/medicines",
   DELETE_MEDICINE = "/medicines/:id",
   GET_MEDICINE_BY_ID = "/medicines/:id",
   GET_ALL_MEDICINES = "/medicines",
@@ -80,4 +80,12 @@ export enum ENDPOINT {
   DELETE_FILES = "/patient-file/:patientId/delete-patient-files",
   DELETE_FILE = "/patient-file/:fileId/delete-file",
   UPDATE_FILE = "/patient-file/:fileId",
+
+  // VisitMedicine APIs
+  GET_ALL_VISIT_MEDICINES = "/visit-medicines",
+  GET_VISIT_MEDICINE_BY_ID = "/visit-medicines/:id",
+  CREATE_VISIT_MEDICINE = "/visit-medicines",
+  DELETE_VISIT_MEDICINE = "/visit-medicines/:id",
+  GET_VISIT_MEDICINES_BY_VISIT_ID = "/visit-medicines/visit/:visitId",
+  GET_VISIT_MEDICINES_BY_MEDICINE_ID = "/visit-medicines/medicine/:medicineId",
 }

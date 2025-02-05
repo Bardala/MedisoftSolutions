@@ -1,0 +1,86 @@
+/* Dental Management Welcome Page Styles */
+
+.welcome-container {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: #333;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.welcome-header {
+  background: #0077b6;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-main {
+  background: white;
+  max-width: 800px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+.welcome-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #0077b6;
+}
+
+.welcome-section h2 {
+  color: #0077b6;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.welcome-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.welcome-section ul li {
+  background: #e3f2fd;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.welcome-action {
+  margin-top: 20px;
+}
+
+.welcome-button {
+  background: #0077b6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.welcome-button:hover {
+  background: #005f99;
+}
+
+.welcome-footer {
+  margin-top: 20px;
+  padding: 15px;
+  background: #0077b6;
+  color: white;
+  width: 100%;
+  font-size: 0.9rem;
+}

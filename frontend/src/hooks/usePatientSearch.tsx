@@ -32,5 +32,6 @@ export const usePatientSearch = () => {
     handlePatientSelect,
     isLoading,
     error,
+    allPatients: patients,
   };
 };

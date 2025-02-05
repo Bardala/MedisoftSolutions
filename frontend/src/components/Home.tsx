@@ -7,9 +7,10 @@ import {
 import "../styles/home.css";
 import { useMonthlyReport } from "../hooks/useMonthlyReport";
 import { useDailyReportData } from "../hooks/useDailyReportData";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid"; // For unique notification IDs
 import { dailyTimeFormate } from "../utils";
+import { isEqual } from "lodash"; // For deep comparison
 
 const Home = ({
   setSelectedOption,
@@ -24,11 +25,15 @@ const Home = ({
     { id: string; message: string; time: string }[]
   >([]);
 
-  // Effect to generate notifications based on daily report data
-  useEffect(() => {
+  // Use refs to store previous values of patients, visits, and payments
+  const prevPatientsRef = useRef<typeof patients>([]);
+  const prevVisitsRef = useRef<typeof visits>([]);
+  const prevPaymentsRef = useRef<typeof payments>([]);
+
+  // Memoize the combined data and sorted notifications
+  const combinedData = useMemo(() => {
     if (!isLoading && !isError) {
-      // Combine all entities into a single array with a unified structure
-      const combinedData = [
+      return [
         ...patients.map((patient) => ({
           id: uuidv4(),
           message: `New patient registration: ${patient.fullName}, from: ${patient.address} `,
@@ -48,16 +53,33 @@ const Home = ({
           createdAt: payment.createdAt,
         })),
       ];
+    }
+    return [];
+  }, [patients, visits, payments, isLoading, isError]);
 
-      // Sort the combined data by the createdAt timestamp in descending order
-      const sortedNotifications = combinedData.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
+  const sortedNotifications = useMemo(() => {
+    return combinedData.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }, [combinedData]);
 
+  // Update notifications only if sortedNotifications has changed
+  useEffect(() => {
+    // Check if the data has actually changed using deep comparison
+    const patientsChanged = !isEqual(patients, prevPatientsRef.current);
+    const visitsChanged = !isEqual(visits, prevVisitsRef.current);
+    const paymentsChanged = !isEqual(payments, prevPaymentsRef.current);
+
+    if (patientsChanged || visitsChanged || paymentsChanged) {
       setNotifications(sortedNotifications);
     }
-  }, [patients, visits, payments, isLoading, isError]);
+
+    // Update the refs with the current values
+    prevPatientsRef.current = patients;
+    prevVisitsRef.current = visits;
+    prevPaymentsRef.current = payments;
+  }, [sortedNotifications, patients, visits, payments]);
 
   return (
     <div className="home">
@@ -116,7 +138,7 @@ const Home = ({
           <p>Loading notifications...</p>
         ) : isError ? (
           <p>Error loading notifications</p>
-        ) : (
+        ) : notifications.length > 0 ? (
           <ul>
             {notifications.map((notification) => (
               <li key={notification.id}>
@@ -125,6 +147,8 @@ const Home = ({
               </li>
             ))}
           </ul>
+        ) : (
+          <p>There have been no operations performed today.</p>
         )}
       </section>
     </div>

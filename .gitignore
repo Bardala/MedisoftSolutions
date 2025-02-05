@@ -8,3 +8,11 @@ backend/logs/*
 logs/
 
 ApiTesting.md
+
+*.crt
+*.key
+*.pem
+*.pfx
+
+*.cer
+*.p12

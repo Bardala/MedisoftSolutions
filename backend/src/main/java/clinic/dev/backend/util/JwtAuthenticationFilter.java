@@ -38,7 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String path = request.getRequestURI();
 
     // List of paths that should not require authentication
-    return path.equals("/api/v1/auth/login") ||
+    return path.startsWith("/api/v1/auth/login") ||
+        path.startsWith("/api/v1/auth/signup") ||
+        path.startsWith("/api/v1/healthz") ||
+        path.startsWith("/static/") ||
+        path.startsWith("/uploads/") ||
+        // return path.equals("/api/v1/auth/login") ||
         path.equals("/api/v1/auth/signup") ||
         path.equals("/api/v1/healthz") ||
         path.equals("/static/**") ||
@@ -49,7 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         path.endsWith(".jpeg") ||
         path.endsWith(".pdf") ||
         path.endsWith(".ico") ||
+        path.endsWith(".mp3") ||
         path.equals("/") ||
+        path.equals("/login") ||
         path.equals("/home");
   }
 
@@ -108,7 +115,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       sendErrorResponse(response, "InvalidToken", "The token is malformed.");
       return;
 
-    } catch (io.jsonwebtoken.SignatureException e) {
+    } catch (@SuppressWarnings("deprecation") io.jsonwebtoken.SignatureException e) {
       sendErrorResponse(response, "InvalidSignature", "The token signature is invalid.");
       return;
 

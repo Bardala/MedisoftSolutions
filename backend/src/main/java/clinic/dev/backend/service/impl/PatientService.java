@@ -88,7 +88,7 @@ public class PatientService {
     dto.setVisits(visitRepo.findByPatientId(patient.getId()));
     dto.setPayments(paymentRepo.findByPatientId(patient.getId()));
     dto.setVisitDentalProcedure(visitDentalProcedureRepo.findByVisitPatientId(patient.getId()));
-    dto.setMedicines(visitMedicineRepo.findByVisitPatientId(patient.getId()));
+    dto.setVisitMedicines(visitMedicineRepo.findByVisitPatientId(patient.getId()));
     dto.setVisitPayments(visitPaymentRepo.findByVisitPatientId(patient.getId()));
     return dto;
   }

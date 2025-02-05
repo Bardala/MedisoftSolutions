@@ -4,3 +4,5 @@ export * from "./localStorage";
 export * from "./timeFormat";
 export * from "./visitAnalysis";
 export * from "./convertFilePath";
+export * from "./speakUtils";
+export * from "./images";

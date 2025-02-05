@@ -44,14 +44,14 @@ textarea {
   transition: box-shadow 0.3s, border-color 0.3s;
 }
 
-input[type="text"]:focus,
+.add-visit-container input[type="text"]:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0px 0px 8px var(--primary-hover);
 }
 
-textarea {
+.add-visit-container textarea {
   resize: vertical;
   min-height: 100px;
 }

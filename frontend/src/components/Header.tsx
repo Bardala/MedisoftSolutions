@@ -1,74 +1,21 @@
 import "../styles/header.css";
 import { useTheme } from "../context/ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faUsers,
-  faClipboardList,
-  faFileAlt,
-  faCalendarAlt,
-  faCog,
-  faList,
-  faSearch,
-  faHome,
-  faMoon,
-  faSun,
-} from "@fortawesome/free-solid-svg-icons";
+import { faHome, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { HeaderProps } from "../types";
 import { FC } from "react";
+import { useSidebar } from "../hooks/useSidebar";
+import { assistantImage, doctorImage } from "../utils";
 
 const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const dentistImage = "../images/dentist.jpg";
-  const assistantImage = "../images/assistant.jpg";
-
-  const menuItems =
-    loggedInUser.role === "Doctor"
-      ? [
-          { label: "Home", link: "/", icon: faHome },
-          { label: "Current Patient", link: "/patient-profile", icon: faUser },
-          { label: "Patient Records", link: "/patients", icon: faUsers },
-          {
-            label: "Registry",
-            link: "/patient-history",
-            icon: faSearch,
-          },
-          { label: "Daily Reports", link: "/reports", icon: faFileAlt },
-          {
-            label: "Monthly Reports",
-            link: "/monthly-reports",
-            icon: faCalendarAlt,
-          },
-          { label: "Settings", link: "/settings", icon: faCog },
-        ]
-      : [
-          { label: "Home", link: "/", icon: faHome },
-          // {
-          //   label: "Add New Patient",
-          //   link: "/add-patient",
-          //   icon: faPlusCircle,
-          // },
-          { label: "Current Patient", link: "/patient-profile", icon: faUser },
-          { label: "Wait List", link: "/patients", icon: faList },
-          {
-            label: "Registry",
-            link: "/patient-history",
-            icon: faClipboardList,
-          },
-          // { label: "Record Payments", link: "/payments", icon: faDollarSign },
-          {
-            label: "Daily Financial Report",
-            link: "/reports",
-            icon: faFileAlt,
-          },
-          { label: "Settings", link: "/settings", icon: faCog },
-        ];
+  const { menuItems } = useSidebar(loggedInUser);
 
   return (
     <div className="header">
       <div className="header-content">
         <img
-          src={loggedInUser.role === "Doctor" ? dentistImage : assistantImage}
+          src={loggedInUser.role === "Doctor" ? doctorImage : assistantImage}
           alt={loggedInUser.name}
           className="header-user-photo"
         />
@@ -76,6 +23,11 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
         <span className="username">{loggedInUser.name}</span>
 
         <div className="header-icons">
+          <FontAwesomeIcon
+            icon={faHome}
+            className="header-icon"
+            onClick={() => setSelectedOption("/")}
+          />
           {menuItems.map((item, index) => (
             <FontAwesomeIcon
               key={index}

@@ -11,6 +11,7 @@ import {
   faExchangeAlt,
   faSearch,
   faTrash,
+  faVolumeUp,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   monthlyTimeFormate,
@@ -25,9 +26,11 @@ import { DentalProcedure, Payment, Visit } from "../types";
 import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
 import { useUpdateVisit, useDeleteVisit } from "../hooks/useVisit";
 import { sortById } from "../utils/sort";
+import { handleSpeakName } from "../utils";
 
 export const GetRegistry: FC = () => {
-  const { handlePatientSelect, selectedPatient } = usePatientSearch();
+  const { handlePatientSelect, selectedPatient, allPatients } =
+    usePatientSearch();
   const [patientId, setPatientId] = useState<number | null>(null);
   const { patientRegistryQuery } = usePatientRegistry(patientId);
   const { data, isLoading, error } = patientRegistryQuery;
@@ -73,6 +76,45 @@ export const GetRegistry: FC = () => {
       });
     }
   };
+
+  const allPatientColumns = [
+    {
+      header: "Id",
+      accessor: (row) => row.id,
+    },
+    {
+      header: "Fullname",
+      accessor: (row) => row.fullName,
+    },
+    {
+      header: "Address",
+      accessor: (row) => row.address || "N/A",
+    },
+    {
+      header: "Age",
+      accessor: (row) => row.age || "N/A",
+    },
+    {
+      header: "Phone Number",
+      accessor: (row) => row.phone,
+      expandable: true,
+    },
+    {
+      header: "Notes",
+      accessor: (row) => row.notes || "N/A",
+      expandable: true,
+    },
+    {
+      header: "Registered At",
+      accessor: (row) => timeFormate(row.createdAt),
+      expandable: true,
+    },
+    {
+      header: "Medical History",
+      accessor: (row) => row.medicalHistory || "N/A",
+      expandable: true,
+    },
+  ];
 
   const visitColumns = [
     {
@@ -146,8 +188,8 @@ export const GetRegistry: FC = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Patient Registry</h1>
+    <div className="container">
+      <h1>Patient Registry</h1>
       <PatientSearch onSelect={handlePatientSelect} />
       <button
         className="search-button"
@@ -157,19 +199,13 @@ export const GetRegistry: FC = () => {
         <FontAwesomeIcon icon={faSearch} /> {selectedPatient?.fullName}
       </button>
 
-      {!!patientId && isLoading && (
-        <p className="text-blue-500 mt-4">Loading patient registry...</p>
-      )}
-      {error && (
-        <p className="text-red-500 mt-4">
-          Error loading patient registry: {error.message}
-        </p>
-      )}
+      {!!patientId && isLoading && <p>Loading patient registry...</p>}
+      {error && <p>Error loading patient registry: {error.message}</p>}
 
       {data && (
-        <div className="mt-8 bg-white shadow-md p-6 rounded-lg">
+        <div>
           {/*patient details */}
-          <h2 className="text-xl font-semibold">{data.patient.fullName}</h2>
+          <h2>{data.patient.fullName}</h2>
           <p>
             <strong>Id:</strong> {data.patient.id}
           </p>
@@ -214,6 +250,15 @@ export const GetRegistry: FC = () => {
             <button onClick={() => setConfirmDelete(true)}>
               <FontAwesomeIcon icon={faTrash} />
             </button>
+            <button
+              className="action-button speak-button"
+              onClick={() =>
+                handleSpeakName(data.patient.fullName, 1, "IN_PROGRESS")
+              }
+              title="Speak Name"
+            >
+              <FontAwesomeIcon icon={faVolumeUp} />
+            </button>
           </div>
 
           {/* Update Modal */}
@@ -252,9 +297,9 @@ export const GetRegistry: FC = () => {
               data.visitPayments,
               data.visitMedicines,
             )}
-            onUpdate={updateVisitMutation.mutate}
-            onDelete={deleteVisitMutation.mutate}
-            // enableActions={true}
+            // onUpdate={updateVisitMutation.mutate}
+            // onDelete={deleteVisitMutation.mutate}
+            enableActions={true}
           />
 
           {/* Unlinked Payments Section */}
@@ -283,8 +328,8 @@ export const GetRegistry: FC = () => {
               <Table
                 columns={paymentColumns}
                 data={sortById(data.payments)}
-                onUpdate={updatePaymentMutation.mutate}
-                onDelete={deletePaymentMutation.mutate}
+                // onUpdate={updatePaymentMutation.mutate}
+                // onDelete={deletePaymentMutation.mutate}
                 enableActions={true}
               />
             ) : (
@@ -294,9 +339,9 @@ export const GetRegistry: FC = () => {
                   sortById(data.payments),
                   data.visitPayments,
                 )}
-                onUpdate={updatePaymentMutation.mutate}
-                onDelete={deletePaymentMutation.mutate}
-                // enableActions={true}
+                // onUpdate={updatePaymentMutation.mutate}
+                // onDelete={deletePaymentMutation.mutate}
+                enableActions={true}
               />
             )}
           </div>
@@ -305,6 +350,15 @@ export const GetRegistry: FC = () => {
 
           {/* <UploadImage patientId={selectedPatient.id + ""} /> */}
         </div>
+      )}
+
+      {!selectedPatient && allPatients?.length > 0 && (
+        <Table
+          columns={allPatientColumns}
+          data={allPatients}
+          enableActions={true}
+          onUpdate={updatePatientMutation.mutate}
+        />
       )}
     </div>
   );

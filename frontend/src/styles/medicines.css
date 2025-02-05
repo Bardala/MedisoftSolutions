@@ -1,0 +1,15 @@
+/* medicines.css */
+.medicines-container {
+  margin-top: 20px;
+}
+
+.visit-medicines-list {
+  margin-top: 20px;
+}
+
+.visit-medicine-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}

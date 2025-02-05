@@ -3,6 +3,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: var(--padding-medium);
+  border-radius: var(--border-radius);
 }
 
 thead th {
@@ -42,6 +43,11 @@ tbody td:last-child button {
 
 tbody td:last-child button:hover {
   color: var(--hover-color);
+}
+
+table th,
+table td {
+  border: 1px solid var(--border-color);
 }
 
 /* Expanded rows */

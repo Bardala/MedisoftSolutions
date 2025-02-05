@@ -2,6 +2,8 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.model.Medicine;
 import clinic.dev.backend.service.impl.MedicineService;
+import clinic.dev.backend.util.ApiRes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,32 +18,32 @@ public class MedicineController {
   private MedicineService medicineService;
 
   @PostMapping
-  public ResponseEntity<Medicine> createMedicine(@RequestBody Medicine medicine) {
+  public ResponseEntity<ApiRes<Medicine>> createMedicine(@RequestBody Medicine medicine) {
     Medicine createdMedicine = medicineService.create(medicine);
-    return ResponseEntity.ok(createdMedicine);
+    return ResponseEntity.ok(new ApiRes<>(createdMedicine));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<Medicine> updateMedicine(@PathVariable Long id, @RequestBody Medicine medicine) {
-    Medicine updatedMedicine = medicineService.update(id, medicine);
-    return ResponseEntity.ok(updatedMedicine);
+  @PutMapping()
+  public ResponseEntity<ApiRes<Medicine>> updateMedicine(@RequestBody Medicine medicine) {
+    Medicine updatedMedicine = medicineService.update(medicine);
+    return ResponseEntity.ok(new ApiRes<>(updatedMedicine));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteMedicine(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Void>> deleteMedicine(@PathVariable Long id) {
     medicineService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Medicine> getMedicineById(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Medicine>> getMedicineById(@PathVariable Long id) {
     Medicine medicine = medicineService.getById(id);
-    return ResponseEntity.ok(medicine);
+    return ResponseEntity.ok(new ApiRes<>(medicine));
   }
 
   @GetMapping
-  public ResponseEntity<List<Medicine>> getAllMedicines() {
+  public ResponseEntity<ApiRes<List<Medicine>>> getAllMedicines() {
     List<Medicine> medicines = medicineService.getAll();
-    return ResponseEntity.ok(medicines);
+    return ResponseEntity.ok(new ApiRes<>(medicines));
   }
 }

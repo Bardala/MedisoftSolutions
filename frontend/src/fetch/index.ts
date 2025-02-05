@@ -1,5 +1,6 @@
 import { errorFn } from "./ERROR";
-import { HOST, extractParams } from "../utils/extractParams";
+import { extractParams } from "../utils/extractParams";
+import { HOST } from "../utils/HOST";
 import { LOCALS } from "../utils/localStorage";
 import { ApiRes, RestMethod } from "../types";
 import { ApiError } from "./ApiError";

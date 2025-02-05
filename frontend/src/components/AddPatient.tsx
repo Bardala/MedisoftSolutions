@@ -22,9 +22,6 @@ const AddPatient: React.FC = () => {
       case "fullName":
         dispatch({ type: "SET_FULL_NAME", payload: value });
         break;
-      // case "dateOfBirth":
-      //   dispatch({ type: "SET_DATE_OF_BIRTH", payload: new Date(value) });
-      //   break;
       case "age":
         dispatch({ type: "SET_AGE", payload: Number(value) });
         break;
@@ -52,16 +49,6 @@ const AddPatient: React.FC = () => {
       console.error("Error creating patient:", err);
     }
   };
-
-  // const handleDentalProcedureSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   console.log("Dental Procedure Submitted");
-  // };
-
-  // const handlePaymentSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   console.log("Payment Submitted");
-  // };
 
   return (
     <div className="card-container">
@@ -147,19 +134,6 @@ const AddPatient: React.FC = () => {
             onChange={handleInputChange}
           />
         </div>
-        {/* //todo: create Record Visit, which let you choose the patient and the dental procedure */}
-        {/* <div className="form-group">
-          <div className="icon-description">
-            <span className="icon">🦷</span>
-            <span>Procedure (optional)</span>
-          </div>
-          <input
-            type="text"
-            name="procedure"
-            placeholder="Procedure Name"
-            required
-          />
-        </div> */}
 
         {/* Notes */}
         <div className="form-group">
@@ -182,50 +156,6 @@ const AddPatient: React.FC = () => {
 
       {success && <p className="success">Patient registered successfully!</p>}
       {isError && <p className="error">Error: {error?.message}</p>}
-
-      {/* Dental Procedure Form */}
-      {/* <h2>Add Dental Procedure</h2>
-      <form onSubmit={handleDentalProcedureSubmit}> */}
-      {/* <div className="form-group">
-          <div className="icon-description">
-            <span className="icon">🦷</span>
-            <span>Procedure (optional)</span>
-          </div>
-          <input
-            type="text"
-            name="procedure"
-            placeholder="Procedure Name"
-            required
-          />
-        </div> */}
-      {/* <div className="form-group">
-          <label>Visit Date</label>
-          <input type="date" name="visitDate" required />
-        </div> */}
-      {/* <button type="submit">Save Procedure</button>
-      </form> */}
-
-      {/* Payment Form */}
-      {/* <h2>Record Payment</h2>
-      <form onSubmit={handlePaymentSubmit}> */}
-      {/* <div className="form-group">
-          <div className="icon-description">
-            <span className="icon">💵</span>
-            <span>Amount (optional)</span>
-          </div>
-          <input
-            type="number"
-            name="amount"
-            placeholder="Payment Amount"
-            required
-          />
-        </div> */}
-      {/* <div className="form-group">
-          <label>Payment Date</label>
-          <input type="date" name="paymentDate" required />
-        </div> */}
-      {/* <button type="submit">Record Payment</button>
-      </form> */}
     </div>
   );
 };

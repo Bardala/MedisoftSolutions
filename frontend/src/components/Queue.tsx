@@ -1,27 +1,38 @@
 import React from "react";
-import { useQueue } from "../hooks/useQueue";
+import {
+  useFetchQueue,
+  useRemovePatientFromQueue,
+  useUpdateQueuePosition,
+  useUpdateQueueStatus,
+} from "../hooks/useQueue";
 import { QueueStatus } from "../types";
 import "../styles/queuePage.css";
-import { dailyTimeFormate } from "../utils";
+import { dailyTimeFormate, speak } from "../utils";
 import {
   faPlay,
   faCheckCircle,
   faTrashAlt,
+  faVolumeUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { handleSpeakName } from "../utils/speakUtils";
 
 const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
-  const {
-    updatePositionMutation,
-    removePatientMutation,
-    updateStatusMutation,
-    queue,
-    isLoading,
-    isError,
-  } = useQueue(doctorId);
+  const { queue, isLoading, isError } = useFetchQueue(doctorId);
+  const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
+  const { removePatientMutation } = useRemovePatientFromQueue();
+  const { updatePositionMutation } = useUpdateQueuePosition();
 
   const handleStatusChange = (queueId: number, status: QueueStatus) => {
     updateStatusMutation.mutate({ queueId, status });
+
+    // Speak the patient's name when status is updated to "IN_PROGRESS"
+    if (status === "IN_PROGRESS") {
+      const patient = queue?.find((entry) => entry.id === queueId);
+      if (patient) {
+        speak(patient.patient.fullName, "ar");
+      }
+    }
   };
 
   const handleRemovePatient = (queueId: number) => {
@@ -47,8 +58,8 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
               <th>Position</th>
               <th>Patient</th>
               <th>Arrived In</th>
-              <th>Status</th>
-              <th></th>
+              {/* <th>Status</th> */}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -81,11 +92,11 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                 </td>
                 <td>{entry.patient.fullName}</td>
                 <td>{dailyTimeFormate(entry.createdAt)}</td>
-                <td>
+                {/* <td>
                   <span className={`status-tag ${entry.status.toLowerCase()}`}>
                     {entry.status}
                   </span>
-                </td>
+                </td> */}
 
                 <td>
                   {entry.position === 1 && entry.status === "WAITING" && (
@@ -114,6 +125,20 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                     title="Remove"
                   >
                     <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                  {/* Add Speak Button */}
+                  <button
+                    className="action-button speak-button"
+                    onClick={() =>
+                      handleSpeakName(
+                        entry.patient.fullName,
+                        entry.position,
+                        entry.status,
+                      )
+                    }
+                    title="Speak Name"
+                  >
+                    <FontAwesomeIcon icon={faVolumeUp} />
                   </button>
                 </td>
               </tr>

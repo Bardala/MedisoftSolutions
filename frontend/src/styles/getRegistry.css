@@ -2,18 +2,18 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--padding-medium);
-  background-color: var(--primary-bg);
+  background-color: var(--secondary-bg);
   color: var(--secondary-color);
   padding: var(--padding-large);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-light);
+  /* box-shadow: var(--shadow-light); */
   /* max-width: 600px; */
   margin: 20px auto;
 }
 
 
 /* Heading Styles */
-h1 {
+.container h1 {
   font-size: var(--font-size-title);
   color: var(--primary-color);
   text-align: center;
@@ -37,8 +37,9 @@ textarea {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-body);
-  background-color: var(--white);
+  /* background-color: var(--white); */
   transition: box-shadow 0.3s, border-color 0.3s;
+  width: -webkit-fill-available;
 }
 
 /* Buttons */
@@ -70,7 +71,7 @@ button:disabled {
 
 /* Cards */
 .card {
-  background-color: var(--white);
+  /* background-color: var(--white); */
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   padding: var(--padding-medium);

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import {
   DentalProcedure,
+  Medicine,
   Patient,
   Payment,
   User,
@@ -186,4 +187,55 @@ export interface DeleteVisitProcedureRes {}
 export interface GetVisitProceduresByVisitIdReq {}
 export interface GetVisitProceduresByVisitIdRes {
   visitProcedure: VisitDentalProcedure[];
+}
+
+// Define request and response types for each API (if needed)
+export interface GetAllVisitMedicinesRes {
+  data: VisitMedicine[];
+}
+
+export interface GetVisitMedicineByIdRes {
+  data: VisitMedicine;
+}
+
+export interface CreateVisitMedicineReq {
+  visit: Visit;
+  medicine: Medicine;
+}
+
+export interface CreateVisitMedicineRes {
+  data: VisitMedicine;
+}
+
+export interface DeleteVisitMedicineRes {
+  message: string;
+}
+
+export interface GetVisitMedicinesByVisitIdRes {
+  data: VisitMedicine[];
+}
+
+export interface GetVisitMedicinesByMedicineIdRes {
+  data: VisitMedicine[];
+}
+
+// Define request and response types for each API
+export interface CreateMedicineReq extends Medicine {}
+
+export interface CreateMedicineRes {
+  medicine: Medicine;
+}
+
+export interface UpdateMedicineReq extends Medicine {}
+
+export interface UpdateMedicineRes extends Medicine {}
+
+export interface DeleteMedicineRes {
+  message: string;
+}
+
+export interface GetMedicineByIdRes extends Medicine {}
+
+export interface GetAllMedicinesRes {
+  medicines: Medicine[];
 }

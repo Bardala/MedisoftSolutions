@@ -94,7 +94,7 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
             )}
           </>
         ) : (
-          <p>{doctorNotes}</p>
+          <p>{doctorNotes || "N/A"}</p>
         )}
       </div>
 
@@ -106,7 +106,7 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
               <li key={vp.id}>
                 {vp.dentalProcedure.serviceName} (
                 {vp.dentalProcedure.arabicName})
-                {currVisit && (
+                {currVisit && loggedInUser.role === "Doctor" && (
                   <button
                     className="action-button danger"
                     onClick={() => handleDeleteVp(vp)}
@@ -121,7 +121,7 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
         </div>
       )}
 
-      {currVisit && currVisit && (
+      {currVisit && loggedInUser.role === "Doctor" && (
         <div>
           <span>Add Procedure</span>
           <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
