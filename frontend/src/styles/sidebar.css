@@ -80,6 +80,7 @@
   transition: background-color 0.2s ease;
 }
 
+
 .sidebar-home:hover {
   background-color: var(--hover-color);
 }
@@ -97,6 +98,13 @@
   padding: 0;
   margin: 0;
   overflow-y: auto;
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.sidebar-menu::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari */
 }
 
 .sidebar-link {

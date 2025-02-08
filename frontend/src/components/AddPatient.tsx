@@ -56,14 +56,14 @@ const AddPatient: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {/* Full Name */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">👤</span>
             <span>Full Name</span>
-          </div>
+          </div> */}
           <input
             type="text"
             name="fullName"
-            placeholder="Full Name"
+            placeholder="👤Full Name"
             value={patient.fullName || ""}
             onChange={handleInputChange}
             required
@@ -72,14 +72,14 @@ const AddPatient: React.FC = () => {
 
         {/* Phone */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">📞</span>
             <span>Phone Number</span>
-          </div>
+          </div> */}
           <input
             type="tel"
             name="phone"
-            placeholder="Phone Number"
+            placeholder="📞Phone Number"
             value={patient.phone}
             onChange={(e) =>
               dispatch({
@@ -93,14 +93,14 @@ const AddPatient: React.FC = () => {
 
         {/* Age */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">📅</span>
             <span>Age (optional)</span>
-          </div>
+          </div> */}
           <input
             type="number"
             name="age"
-            placeholder="Age (optional)"
+            placeholder="📅Age (optional)"
             value={patient.age || ""}
             onChange={handleInputChange}
           />
@@ -108,14 +108,14 @@ const AddPatient: React.FC = () => {
 
         {/* Address */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">🏠</span>
             <span>Address (optional)</span>
-          </div>
+          </div> */}
           <input
             type="text"
             name="address"
-            placeholder="Address (optional)"
+            placeholder="🏠Address (optional)"
             value={patient.address || ""}
             onChange={handleInputChange}
           />
@@ -123,13 +123,13 @@ const AddPatient: React.FC = () => {
 
         {/* Medical History */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">💊</span>
             <span>Medical History (optional)</span>
-          </div>
+          </div> */}
           <textarea
             name="medicalHistory"
-            placeholder="Medical History (optional)"
+            placeholder="💊Medical History (optional)"
             value={patient.medicalHistory || ""}
             onChange={handleInputChange}
           />
@@ -137,13 +137,13 @@ const AddPatient: React.FC = () => {
 
         {/* Notes */}
         <div className="form-group">
-          <div className="icon-description">
+          {/* <div className="icon-description">
             <span className="icon">📝</span>
             <span>Notes (optional)</span>
-          </div>
+          </div> */}
           <textarea
             name="notes"
-            placeholder="Notes (optional)"
+            placeholder="📝Notes (optional)"
             value={patient.notes || ""}
             onChange={handleInputChange}
           />

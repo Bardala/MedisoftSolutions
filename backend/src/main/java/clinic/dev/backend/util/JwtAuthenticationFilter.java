@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         path.equals("/api/v1/healthz") ||
         path.equals("/static/**") ||
         path.equals("/uploads/**") ||
+
         path.equals("/index.html") ||
         path.endsWith(".jpg") ||
         path.endsWith(".png") ||

@@ -13,10 +13,8 @@ const DailyFinancialReport = () => {
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
   const { deleteVisitMutation } = useDeleteVisit();
 
-  const { patients, visits, payments, isError, isLoading } =
+  const { patients, visits, payments, totalPayments, isError, isLoading } =
     useDailyReportData();
-
-  const totalPayments = payments?.reduce((acc, p) => acc + p.amount, 0);
 
   const { updatePaymentMutation } = useUpdatePayment();
   const { deletePaymentMutation } = useDeletePayment();
@@ -105,10 +103,18 @@ const DailyFinancialReport = () => {
       <h2>Daily Report</h2>
 
       <div className="stats">
-        <p>Total Daily Revenue: ${totalPayments || 0}</p>
-        <p>Total Daily Payments: {payments?.length || 0}</p>
-        <p>Total Visits: {visits?.length || 0}</p>
-        <p>Total New Patients: {patients?.length || 0}</p>
+        <p>
+          Total Daily Revenue: <strong>${totalPayments || 0}</strong>
+        </p>
+        <p>
+          Total Daily Payments: <strong>{payments?.length || 0}</strong>
+        </p>
+        <p>
+          Total Visits: <strong>{visits?.length || 0}</strong>
+        </p>
+        <p>
+          Total New Patients: <strong>{patients?.length || 0}</strong>
+        </p>
       </div>
 
       <div className="tables">

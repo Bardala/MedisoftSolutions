@@ -24,27 +24,42 @@ export const AddVisit: React.FC = () => {
 
       {successMessage && (
         <div className="success-message">
-          <p>{successMessage}</p>
+          <p>✅ {successMessage}</p>
           {createdVisitDetails && (
             <div>
-              <h3>Visit Details:</h3>
-              <p>Visit ID: {createdVisitDetails.visitId}</p>
-              <p>Patient: {createdVisitDetails.patientName}</p>
-              <p>Doctor: {createdVisitDetails.doctorName}</p>
-              Dental Procedures:{" "}
+              <h3>🦷 Visit Details:</h3>
+              <p>
+                📄 Visit ID: <strong>{createdVisitDetails.visitId}</strong>
+              </p>
+              <p>
+                👤 Patient: <strong>{createdVisitDetails.patientName}</strong>
+              </p>
+              <p>
+                🩺 Doctor: <strong>{createdVisitDetails.doctorName}</strong>
+              </p>
+              <p>📝 Dental Procedures:</p>
               {createdVisitDetails.procedures?.map((p, index) => (
                 <p key={index}>
-                  {p.arabicName}, {p.serviceName}
+                  <strong>
+                    🔹 {p.arabicName}, {p.serviceName}
+                  </strong>
                 </p>
               ))}
-              <p>Visit Date: {createdVisitDetails.visitDate}</p>
+              <p>
+                📅 Visit Date: <strong>{createdVisitDetails.visitDate}</strong>
+              </p>
             </div>
           )}
           {createdPaymentDetails && (
             <div>
-              <h3>Payment Details:</h3>
-              <p>Payment ID: {createdPaymentDetails.paymentId}</p>
-              <p>Amount: ${createdPaymentDetails.amount}</p>
+              <h3>💳 Payment Details:</h3>
+              <p>
+                🔢 Payment ID:{" "}
+                <strong>{createdPaymentDetails.paymentId}</strong>
+              </p>
+              <p>
+                💰 Amount: <strong>💵 {createdPaymentDetails.amount}</strong>
+              </p>
             </div>
           )}
         </div>

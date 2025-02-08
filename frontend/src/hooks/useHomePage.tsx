@@ -12,6 +12,7 @@ import AddAssistant from "../components/AddAssistant";
 import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
 import QueuePage from "../components/Queue";
+import { doctorId } from "../utils";
 
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -19,7 +20,7 @@ export const useHomePage = (loggedInUser: User) => {
   const commonRoutes = {
     "/": <Home setSelectedOption={setSelectedOption} />,
     "/record-new-visit": <AddVisit />,
-    "/patients": <QueuePage doctorId={1} />,
+    "/patients": <QueuePage doctorId={doctorId} />,
     "/reports": <DailyFinancialReport />,
     "/settings": <Settings setSelectedOption={setSelectedOption} />,
     "/patient-history": <GetRegistry />,

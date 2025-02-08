@@ -31,20 +31,24 @@ label {
   font-size: var(--font-size-body);
   font-weight: bold;
   color: var(--secondary-color);
+  display: block;
+  margin: var(--padding-small) 0;
 }
 
-add-visit-container input[type="text"],
-textarea {
+.add-visit-container input[type="text"],
+.form-group input {
   padding: var(--padding-small);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-body);
   /* color: var(--secondary-color); */
-  background-color: var(--white);
+  /* background-color: var(--white); */
   transition: box-shadow 0.3s, border-color 0.3s;
+  box-shadow: var(--shadow-light);
 }
 
 .add-visit-container input[type="text"]:focus,
+input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary-color);

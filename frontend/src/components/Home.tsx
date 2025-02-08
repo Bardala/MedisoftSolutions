@@ -17,8 +17,8 @@ const Home = ({
 }: {
   setSelectedOption: (option: string) => void;
 }) => {
-  const { summary } = useMonthlyReport();
-  const { patients, visits, payments, isLoading, isError } =
+  // const { summary } = useMonthlyReport();
+  const { patients, visits, payments, totalPayments, isLoading, isError } =
     useDailyReportData();
 
   const [notifications, setNotifications] = useState<
@@ -36,19 +36,19 @@ const Home = ({
       return [
         ...patients.map((patient) => ({
           id: uuidv4(),
-          message: `New patient registration: ${patient.fullName}, from: ${patient.address} `,
+          message: `🆕🤒 New patient registration: ${patient.fullName}, from: ${patient.address} `,
           time: new Date(patient.createdAt).toLocaleString(),
           createdAt: patient.createdAt,
         })),
         ...visits.map((visit) => ({
           id: uuidv4(),
-          message: `New visit recorded for patient: ${visit.patient.fullName}`,
+          message: `🏥 New visit recorded for patient: ${visit.patient.fullName}`,
           time: new Date(visit.createdAt).toLocaleString(),
           createdAt: visit.createdAt,
         })),
         ...payments.map((payment) => ({
           id: uuidv4(),
-          message: `Payment received: $${payment.amount} from ${payment.patient.fullName}`,
+          message: `💰 Payment received: $${payment.amount} from ${payment.patient.fullName}`,
           time: new Date(payment.createdAt).toLocaleString(),
           createdAt: payment.createdAt,
         })),
@@ -89,15 +89,15 @@ const Home = ({
       {/* Dashboard Summary */}
       <section className="dashboard-summary">
         <div className="summary-item">
-          <h3>{summary?.totalNewPatients || 0}</h3>
-          <p>Total New Patients</p>
+          <h3>🆕🤒{patients?.length || 0}</h3>
+          <p>New Patients</p>
         </div>
         <div className="summary-item">
-          <h3>{summary?.totalVisits || 0}</h3>
+          <h3>🏥{visits?.length || 0}</h3>
           <p>Total Visits</p>
         </div>
         <div className="summary-item">
-          <h3>${summary?.totalRevenue || 0}</h3>
+          <h3>💰{totalPayments || 0}</h3>
           <p>Total Payments</p>
         </div>
       </section>

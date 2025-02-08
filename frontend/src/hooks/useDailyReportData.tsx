@@ -44,11 +44,15 @@ export const useDailyReportData = () => {
     // { refetchInterval: 500 },
   );
 
+  const payments = sortById(dailyPaymentQuery.data) as unknown as Payment[];
+  const totalPayments = payments?.reduce((acc, p) => acc + p.amount, 0);
+
   return {
     patients: sortById(dailyNewPatientsQuery.data) as unknown as Patient[],
     visits: sortById(dailyVisitsQuery.data) as unknown as Visit[],
-    payments: sortById(dailyPaymentQuery.data) as unknown as Payment[],
+    payments,
     paymentsSummary: dailyPaymentSummaryQuery.data,
+    totalPayments,
 
     isLoading:
       dailyNewPatientsQuery.isLoading ||

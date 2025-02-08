@@ -37,11 +37,12 @@ button {
 }
 
 input:focus,
+input[type="text"]:focus,
 textarea:focus,
 button:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: var(--shadow-medium);
+  box-shadow: 0px 0px 8px var(--primary-hover);
 }
 
 textarea {

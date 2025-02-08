@@ -104,24 +104,24 @@ const MonthlyDentistReport = () => {
       <div className="summary-card">
         <h3>Monthly Summary</h3>
         <p>
-          <strong>Total Visits:</strong> {summary?.totalVisits || "-"}
+          Total Visits: <strong>{summary?.totalVisits || "-"}</strong>
         </p>
         <p>
-          <strong>Most Common Procedure:</strong>{" "}
-          {summary?.mostCommonProcedure || "-"}
+          Most Common Procedure:{" "}
+          <strong>{summary?.mostCommonProcedure || "-"}</strong>
         </p>
         <p>
-          <strong>Total Revenue:</strong> ${summary?.totalRevenue || "-"}
+          Total Revenue: <strong>${summary?.totalRevenue || "-"}</strong>
         </p>
         <p>
-          <strong>Most Crowded Weekday:</strong> {mostCrowdedWeekday || "-"}
+          Most Crowded Weekday: <strong>{mostCrowdedWeekday || "-"}</strong>
         </p>
         <p>
-          <strong>Least Crowded Weekday:</strong> {leastCrowdedWeekday || "-"}
+          Least Crowded Weekday: <strong>{leastCrowdedWeekday || "-"}</strong>
         </p>
         <p>
-          <strong>New Patients This Month:</strong>{" "}
-          {summary?.totalNewPatients || "-"}
+          New Patients This Month:{" "}
+          <strong>{summary?.totalNewPatients || "-"}</strong>
         </p>
       </div>
 

@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
-import { assistantImage, doctorImage, logoImage } from "../utils";
+import {
+  assistantImage,
+  assistantUsername,
+  doctorImage,
+  doctorUsername,
+  logoImage,
+} from "../utils";
 
 export const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
@@ -37,9 +43,9 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (selectedRole === "Doctor") {
-      setIdentifier("doctor");
+      setIdentifier(doctorUsername);
     } else if (selectedRole === "Assistant") {
-      setIdentifier("assistant1");
+      setIdentifier(assistantUsername);
     }
   }, [selectedRole, setIdentifier]);
 

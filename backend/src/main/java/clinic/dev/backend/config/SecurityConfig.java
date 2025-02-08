@@ -77,7 +77,7 @@ public class SecurityConfig {
     return config.getAuthenticationManager();
   }
 
-  @Bean
+  // @Bean
   public UserDetailsService userDetailsService() {
     return new UserDetailsServiceImpl();
   }

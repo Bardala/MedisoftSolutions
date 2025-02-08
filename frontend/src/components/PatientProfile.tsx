@@ -9,15 +9,16 @@ import {
   useUpdateQueueStatus,
   useRemovePatientFromQueue,
 } from "../hooks/useQueue";
-import { callNextPatient, callPatientForDoctor } from "../utils";
+import { callNextPatient, callPatientForDoctor, doctorId } from "../utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Medicines } from "./Medicines";
 import PatientProfileHeader from "./PatientProfileHeader";
-import { PrescriptionPrint } from "./PrescriptionPrint"; // Import the PrescriptionPrint component
+import { PrescriptionPrint } from "./PrescriptionPrint";
+import { useLogin } from "../context/loginContext";
 
 const CurrentPatientProfile = () => {
-  const doctorId = 1;
+  const { loggedInUser } = useLogin();
   const { queue, isLoading, isError } = useFetchQueue(doctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
@@ -51,9 +52,12 @@ const CurrentPatientProfile = () => {
       await updateStatusMutation.mutateAsync(
         { queueId: nextPatientEntry.id, status: "IN_PROGRESS" },
         {
-          onSuccess: () => {
-            callPatientForDoctor(nextPatientEntry.patient.fullName);
-            queue.length > 2 && callNextPatient(queue[2].patient.fullName);
+          onSuccess: async () => {
+            await Promise.resolve(
+              callPatientForDoctor(nextPatientEntry.patient.fullName),
+            );
+            if (queue.length > 2)
+              await Promise.resolve(callNextPatient(queue[2].patient.fullName));
           },
         },
       );
@@ -118,7 +122,7 @@ const CurrentPatientProfile = () => {
         <p>No current patient found.</p>
       )}
 
-      {queue && queue.length > 1 && (
+      {loggedInUser.role === "Doctor" && queue?.length > 1 && (
         <div className="next-patient-section">
           <p className="next-patient-name">
             <strong>Next Patient:</strong> {queue[1].patient.fullName}
