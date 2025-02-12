@@ -4,6 +4,7 @@ import PatientSearch from "./PatientSearch";
 import { useRecordPayment } from "../hooks/usePayment";
 import { useLogin } from "../context/loginContext";
 import { Patient } from "../types";
+import { isArabic } from "../utils";
 
 const RecordPayments: React.FC = () => {
   const { loggedInUser } = useLogin();
@@ -51,6 +52,7 @@ const RecordPayments: React.FC = () => {
 
         <form onSubmit={addPayment}>
           <input
+            className={isArabic(selectedPatient.fullName) ? "arabic" : ""}
             type="text"
             name="name"
             placeholder="Patient Name"

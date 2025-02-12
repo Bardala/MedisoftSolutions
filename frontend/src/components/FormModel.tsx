@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Patient, Payment } from "../types";
+import { isArabic } from "../utils";
 
 interface FormModalProps<T> {
   objectToEdit: T;
@@ -59,6 +60,7 @@ export const FormModal = <T extends Record<string, any>>({
             <div className="mb-4" key={key}>
               <label>{key}</label>
               <input
+                className={isArabic(formData[key]) ? "arabic" : ""}
                 type="text"
                 value={formData[key] || ""}
                 onChange={(e) => handleChange(key as keyof T, e.target.value)}

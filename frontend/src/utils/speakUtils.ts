@@ -129,7 +129,7 @@ export const handleSpeakName = (
 
 export const callPatientForAssistant = (name: string) => {
   const textToSpeak =
-    " على المريضْ " +
+    "\n على المريضْ " +
     formatArabicText(name) +
     " الْحُضُورْ لِلْاِسْتِعْلَامَاتْ ";
   speak(textToSpeak, "ar", "male");
@@ -137,12 +137,12 @@ export const callPatientForAssistant = (name: string) => {
 
 export const callPatientForDoctor = (name: string) => {
   const textToSpeak =
-    " فَلْيَتَفَضلْ بالدخولْ المريضْ " + formatArabicText(name);
+    "\n فَلْيَتَفَضلْ بالدخولْ المريضْ " + formatArabicText(name);
   speak(textToSpeak, "ar", "male");
 };
 
 export const callNextPatient = (name: string) => {
-  const textToSpeak = " المريضْ التالى " + formatArabicText(name);
+  const textToSpeak = "\n المريضْ التالي \n" + formatArabicText(name);
   speak(textToSpeak, "ar", "male");
 };
 

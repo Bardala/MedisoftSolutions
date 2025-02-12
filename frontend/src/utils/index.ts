@@ -7,3 +7,4 @@ export * from "./convertFilePath";
 export * from "./speakUtils";
 export * from "./images";
 export * from "./globalVars";
+export * from "./isArabic";

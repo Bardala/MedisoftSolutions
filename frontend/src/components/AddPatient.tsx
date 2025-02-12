@@ -1,6 +1,7 @@
 import React from "react";
 import { useCreatePatient } from "../hooks/usePatient"; // Adjust the path to your hook
 import "../styles/cardComponents.css";
+import { isArabic } from "../utils";
 
 const AddPatient: React.FC = () => {
   const {
@@ -61,6 +62,7 @@ const AddPatient: React.FC = () => {
             <span>Full Name</span>
           </div> */}
           <input
+            className={isArabic(patient.fullName) ? "arabic" : ""}
             type="text"
             name="fullName"
             placeholder="👤Full Name"
@@ -113,6 +115,7 @@ const AddPatient: React.FC = () => {
             <span>Address (optional)</span>
           </div> */}
           <input
+            className={isArabic(patient.address) ? "arabic" : ""}
             type="text"
             name="address"
             placeholder="🏠Address (optional)"
@@ -128,6 +131,7 @@ const AddPatient: React.FC = () => {
             <span>Medical History (optional)</span>
           </div> */}
           <textarea
+            className={isArabic(patient.medicalHistory) ? "arabic" : ""}
             name="medicalHistory"
             placeholder="💊Medical History (optional)"
             value={patient.medicalHistory || ""}
@@ -142,6 +146,7 @@ const AddPatient: React.FC = () => {
             <span>Notes (optional)</span>
           </div> */}
           <textarea
+            className={isArabic(patient.notes) ? "arabic" : ""}
             name="notes"
             placeholder="📝Notes (optional)"
             value={patient.notes || ""}

@@ -158,6 +158,11 @@ p {
   font-size: var(--font-size-body);
 }
 
+.arabic {
+  direction: rtl;
+  text-align: right;
+}
+
 input,
 textarea {
   background-color: inherit;

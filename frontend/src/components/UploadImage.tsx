@@ -31,20 +31,42 @@ const UploadImage: React.FC<UploadImageProps> = ({
     },
   });
 
+  const sanitizeFileName = (fileName: string) => {
+    return fileName
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/[^\w.-]/g, ""); // Remove special characters except letters, numbers, dots, underscores, and hyphens
+  };
+
   const handleUploadFiles = async () => {
     setIsLoading(true);
+
     for (const file of files) {
+      // Extract file extension
+      const fileExtension = file.name.split(".").pop();
+      const fileBaseName = file.name.substring(0, file.name.lastIndexOf("."));
+
+      // Sanitize file name
+      const sanitizedFileName = sanitizeFileName(fileBaseName);
+      const newFileName = `${sanitizedFileName}.${fileExtension}`;
+
+      // Rename file using File API
+      const sanitizedFile = new File([file], newFileName, { type: file.type });
+
+      // Upload sanitized file
       await uploadFileMutation.mutateAsync({
         patientId,
         fileType,
         description: "N/A",
-        file,
+        file: sanitizedFile,
       });
+
+      // Remove uploaded file from UI
       setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
       setFilePreviews((prevPreviews) =>
         prevPreviews.filter((preview) => preview !== URL.createObjectURL(file)),
       );
     }
+
     alert("All files uploaded successfully!");
     setIsLoading(false);
     setFiles([]);

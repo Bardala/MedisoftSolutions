@@ -15,5 +15,11 @@ export const convertFilePath = (filePath: string) => {
     correctedPath = "/" + correctedPath;
   }
 
+  // Remove the "src/main/resources/static" and "C:/ClinicSys" segments
+  correctedPath = normalizedPath.replace(
+    /^\/?C:\/ClinicSys\/src\/main\/resources\/static/,
+    "",
+  );
+
   return host(correctedPath);
 };
