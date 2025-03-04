@@ -16,3 +16,6 @@ ApiTesting.md
 
 *.cer
 *.p12
+
+node_modules
+package-lock.json

@@ -2,7 +2,8 @@ import React, { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
 import Table from "./Table";
 import "../styles/prescriptionPrint.css";
-import { logoImage } from "../utils/images";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { prescriptionLogo, programLogoImage } from "../utils/images";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 
 interface PrescriptionPrintProps {
@@ -55,9 +56,22 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
               .prescription-chunk { 
                 page-break-after: always; 
                 margin-bottom: 40px;
+                
+                font-family: "Cairo", sans-serif;
+                max-width: 850px;
+                margin: 20px auto;
+                padding: 20px;
+                border-radius: 10px;
+                background-color: #ffffff;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+                color: #333;
+                height: inherit;
               }
               .prescription-chunk:last-child { 
                 page-break-after: avoid;
+              }
+              .clinic-header {
+                border-bottom: 3px solid #007bff;
               }
             }
           </style>
@@ -97,11 +111,18 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
         <div key={index} className="prescription-chunk">
           {/* Clinic Header */}
           <div className="clinic-header">
-            <img src={logoImage} alt="Clinic Logo" className="clinic-logo" />
+            <img
+              // src={prescriptionLogo}
+              // alt="Clinic Logo"
+              alt=""
+              // className="clinic-logo"
+            />
+
             <div className="clinic-info">
               <h1>عيادة الدكتور محمد سمير الدسوقي</h1>
-              <p>📍 العنوان: 123 شارع التحرير، القاهرة</p>
-              <p>📞 هاتف: 01012345678 - 0223456789</p>
+              {/* <p>📍 العنوان: 123 شارع التحرير، القاهرة</p> */}
+              <p>📍 العنوان: موقف طنطا - شارع السوق، كوم حمادة</p>
+              <p>📞 هاتف: 01005546461</p>
               <p>🕒 مواعيد العمل: يوميًا من 12 ظهرًا حتى 12 منتصف الليل</p>
             </div>
           </div>
@@ -115,7 +136,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
               </p>
               <p>
                 <strong>تاريخ الزيارة:</strong>{" "}
-                {new Date(visit.createdAt).toLocaleDateString()}
+                {new Date(visit.createdAt).toLocaleDateString("en-GB")}
               </p>
               <p>
                 <strong>Doctor Name:</strong> {visit.doctor.name}
@@ -132,11 +153,21 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
             )}
 
             {/* Signature */}
-            <div className="signature-section">
-              <p>
-                <strong>توقيع الطبيب:</strong>
-              </p>
-              <p>________________________</p>
+            <div className="prescription-footer">
+              <div className="signature-section">
+                <p>
+                  <strong>توقيع الطبيب:</strong>
+                </p>
+                <p>________________________</p>
+              </div>
+
+              <div className="company-logo-container">
+                <img
+                  src={programLogoImage}
+                  alt="MediSoft Logo"
+                  className="company-logo"
+                />
+              </div>
             </div>
           </div>
         </div>

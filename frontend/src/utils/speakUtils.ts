@@ -51,17 +51,17 @@ export const speak = (text: string, lang = "en-US", gender = "female") => {
     .catch((err) => console.error("Error in speech sequence:", err));
 };
 
-export const speak2 = (text, lang = "en-US", gender = "female") => {
+export const speak2 = async (text, lang = "en-US", gender = "female") => {
   if ("speechSynthesis" in window) {
     // Create an audio object for the alert sound
     const audioBefore = new Audio("simple-notification.mp3");
     const audioAfter = new Audio("simple-notification.mp3");
 
     // Play the alert sound first
-    audioBefore.play();
+    await Promise.resolve(audioBefore.play());
 
     // When the sound finishes, start the speech synthesis
-    audioBefore.onended = () => {
+    audioBefore.onended = async () => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       utterance.volume = 1;
@@ -80,11 +80,13 @@ export const speak2 = (text, lang = "en-US", gender = "female") => {
       }
 
       // Play the alert sound after the speech ends
-      utterance.onend = () => {
-        audioAfter.play();
-      };
+      await Promise.resolve(
+        (utterance.onend = () => {
+          audioAfter.play();
+        }),
+      );
 
-      window.speechSynthesis.speak(utterance);
+      await Promise.resolve(window.speechSynthesis.speak(utterance));
     };
   } else {
     console.error("Speech synthesis not supported in this browser.");

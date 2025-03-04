@@ -1,7 +1,7 @@
 /* General styles */
 .settings-container {
   padding: var(--padding-medium);
-  background-color: var(--primary-bg);
+  /* background-color: var(--primary-bg); */
   color: var(--primary-color);
   font-family: Arial, sans-serif;
 }

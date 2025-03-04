@@ -1,19 +1,27 @@
 {
-  "name": "clinck",
-  "version": "1.9.0",
+  "name": "clinic",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend": "cd frontend && npm start",
-    "backend": "cd backend && ./mvnw spring-boot:run",
-    "test:backend": "cd backend && ./mvnw test",
-    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
-    "cleanBackendBuild": "rm -rf backend/src/main/resources/static/*",
-    "moveReactBuild": "cd frontend && npm run build && mv build/* ../backend/src/main/resources/static && cd ..",
-    "buildAndMove": "npm run cleanBackendBuild && npm run moveReactBuild",
-    "start:sys": "npm run buildAndMove && npm run backend"
+    "frontend-build": "cd frontend && npm run build",
+    "backend": "cd backend && mvn spring-boot:run",
+    "backend-dev": "cd backend && cross-env SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run",
+    "backend-prod": "cd backend && cross-env SPRING_PROFILES_ACTIVE=prod mvn spring-boot:run",
+    "backend-clean": "cd backend && mvn clean",
+    "backend-build-dev": "cd backend && mvn clean package -Dspring.profiles.active=dev",
+    "backend-build-prod": "cd backend && mvn clean package -Dspring.profiles.active=prod",
+    "backend-build-prod-skip-testing": "cd backend && mvn clean package -DskipTests -Dspring.profiles.active=prod",
+    "test:backend": "cd backend && mvn test",
+    "start": "concurrently \"npm run frontend\" \"npm run backend-dev\""
   },
   "author": "islam bardala",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1"
+  }
 }

@@ -36,6 +36,7 @@ import {
   GetVisitProceduresByVisitIdRes,
   LoginReq,
   LoginRes,
+  MonthlyDayInfo,
   MonthlyDaysInfoReq,
   MonthlyDaysInfoRes,
   MonthlySummaryReq,
@@ -120,9 +121,9 @@ export const PatientRegistryApi = (patientId: number) =>
 export const GetAllPatients = () =>
   fetchFn<GetAllPatientsReq, GetAllPatientsRes>(ENDPOINT.GET_ALL_PATIENTS);
 
-export const DailyNewPatients = () =>
+export const DailyNewPatientsApi = (date) =>
   fetchFn<DailyNewPatientsReq, DailyNewPatientsRes>(
-    ENDPOINT.DAILY_NEW_PATIENTS,
+    `${ENDPOINT.DAILY_NEW_PATIENTS}?date=${date}`,
   );
 
 export const UpdatePatientApi = (patient: Patient) =>
@@ -144,8 +145,10 @@ export const DeletePatientApi = (patientId: number) =>
 export const CreateVisitApi = (visit: CreateVisitReq) =>
   fetchFn<CreateVisitReq, CreateVisitRes>(ENDPOINT.CREATE_VISIT, "POST", visit);
 
-export const WorkDayVisitApi = () =>
-  fetchFn<WorkdayVisitsReq, WorkdayVisitsRes>(ENDPOINT.GET_WORKDAY_VISITS);
+export const WorkDayVisitApi = (date) =>
+  fetchFn<WorkdayVisitsReq, WorkdayVisitsRes>(
+    `${ENDPOINT.GET_WORKDAY_VISITS}?date=${date}`,
+  );
 
 export const UpdateVisitApi = (visit: Visit) =>
   fetchFn<UpdateVisitReq, UpdateVisitRes>(ENDPOINT.UPDATE_VISIT, "PUT", visit);
@@ -166,9 +169,9 @@ export const CreatePaymentApi = (payment: CreatePaymentReq) =>
     payment,
   );
 
-export const WorkdayPaymentsApi = () =>
+export const WorkdayPaymentsApi = (date) =>
   fetchFn<WorkdayPaymentsReq, WorkdayPaymentsRes>(
-    ENDPOINT.GET_WORKDAY_PAYMENTS,
+    `${ENDPOINT.GET_WORKDAY_PAYMENTS}?date=${date}`,
   );
 
 export const WorkdayPaymentsSummaryApi = () =>
@@ -216,12 +219,14 @@ export const CreateVisitPaymentApi = (visitPayment: CreateVisitPaymentReq) =>
   );
 
 // *Monthly Report
-export const GetMonthlySummaryApi = () =>
-  fetchFn<MonthlySummaryReq, MonthlySummaryRes>(ENDPOINT.GET_MONTHLY_SUMMARY);
+export const GetMonthlySummaryApi = (year: number, month: number) =>
+  fetchFn<MonthlySummaryReq, MonthlySummaryRes>(
+    `${ENDPOINT.GET_MONTHLY_SUMMARY}?year=${year}&month=${month}`,
+  );
 
-export const GetMonthlyDaysInfoApi = () =>
-  fetchFn<MonthlyDaysInfoReq, MonthlyDaysInfoRes>(
-    ENDPOINT.GET_MONTHLY_DAYS_INFO,
+export const GetMonthlyDaysInfoApi = (year: number, month: number) =>
+  fetchFn<void, MonthlyDayInfo[]>(
+    `${ENDPOINT.GET_MONTHLY_DAYS_INFO}?year=${year}&month=${month}`,
   );
 
 //* Files

@@ -102,7 +102,7 @@ const UserFiles: FC<FileListProps> = ({ patientId }) => {
                   {groupedFiles[fileType]?.length > 0 &&
                     groupedFiles[fileType].map((file: GetFilesRes) => (
                       <div key={file.id} className="file-item">
-                        <h3 className="file-description">{file.description}</h3>
+                        {/* <h3 className="file-description">{file.description}</h3> */}
                         <RenderFile file={file} />
                         <button onClick={() => handleDeleteFile(file)}>
                           <FontAwesomeIcon icon={faTrash} />

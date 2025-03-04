@@ -1,5 +1,4 @@
-import React from "react";
-import { Bar } from "react-chartjs-2";
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,10 +7,10 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
 } from "chart.js";
 import "../styles/monthlyDoctorReports.css";
 import { useMonthlyReport } from "../hooks/useMonthlyReport";
+import { ChartComponent } from "./ChartComponent";
 
 ChartJS.register(
   CategoryScale,
@@ -23,13 +22,26 @@ ChartJS.register(
 );
 
 const MonthlyDentistReport = () => {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  // todo: start year should be 2025 in production, but keep it 2020 for preview.
+  const startYear = 2025;
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
   const { summary, daysInfo, isError, isLoading, summaryError, daysInfoError } =
-    useMonthlyReport();
+    useMonthlyReport(selectedYear, selectedMonth);
+
+  const handleYearChange = (operation: 1 | -1) => {
+    setSelectedYear(selectedYear + operation);
+  };
+
+  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMonth(parseInt(event.target.value));
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const currentDate = new Date(selectedYear, selectedMonth - 1, 1);
+  const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
 
   // Initialize weekly stats
   const weeklyStats = {
@@ -43,7 +55,7 @@ const MonthlyDentistReport = () => {
   };
 
   // Populate weekly stats with data from daysInfo
-  if (daysInfo) {
+  if (daysInfo?.length > 0) {
     daysInfo.forEach((dayInfo) => {
       const date = new Date(dayInfo.date);
       const dayName = date.toLocaleString("en-US", { weekday: "long" });
@@ -63,29 +75,6 @@ const MonthlyDentistReport = () => {
     weekdays[a] < weekdays[b] ? a : b,
   );
 
-  // Chart data
-  const chartData = {
-    labels: Object.keys(weeklyStats),
-    datasets: [
-      {
-        label: "Number of Visits",
-        data: Object.values(weeklyStats),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartOptions: ChartOptions<"bar"> = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Weekly Visits Statistics" },
-    },
-    scales: { y: { beginAtZero: true } },
-  };
-
   if (isLoading) return <div>Loading...</div>;
   if (isError)
     return (
@@ -98,7 +87,46 @@ const MonthlyDentistReport = () => {
 
   return (
     <div className="reports-container">
-      <h2>Monthly Financial Report</h2>
+      <h2>Monthly Report</h2>
+
+      {/* Month and Year Selector */}
+      <div className="month-year-selector">
+        <label className="report-year">
+          <span>
+            <strong>{selectedYear}</strong>
+          </span>
+          <div className="report-year-buttons-container">
+            <button
+              className="report-year-button"
+              disabled={selectedYear >= currentYear}
+              onClick={() => handleYearChange(1)}
+              title="Up"
+            >
+              ▲
+            </button>
+            <button
+              className="report-year-button"
+              disabled={selectedYear === startYear}
+              onClick={() => handleYearChange(-1)}
+              title="Down"
+            >
+              ▼
+            </button>
+          </div>
+        </label>
+        <label>
+          Month:
+          <select value={selectedMonth} onChange={handleMonthChange}>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {new Date(selectedYear, i, 1).toLocaleString("default", {
+                  month: "long",
+                })}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       {/* Monthly Summary Card */}
       <div className="summary-card">
@@ -129,7 +157,7 @@ const MonthlyDentistReport = () => {
       <div className="calendar">
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
-          const date = new Date(currentYear, currentMonth, day);
+          const date = new Date(selectedYear, selectedMonth - 1, day);
           const dayName = date.toLocaleString("en-US", { weekday: "short" });
           const dayInfo = daysInfo?.find(
             (info) => new Date(info.date).getDate() === day,
@@ -151,10 +179,7 @@ const MonthlyDentistReport = () => {
       </div>
 
       {/* Weekly Statistics Card */}
-      <div className="chart-card">
-        <h3>Weekly Visits Statistics</h3>
-        <Bar data={chartData} options={chartOptions} />
-      </div>
+      <ChartComponent weeklyStats={weeklyStats} />
 
       {/* Advice Section */}
       <div className="advice-card">

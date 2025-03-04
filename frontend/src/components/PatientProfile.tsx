@@ -56,8 +56,11 @@ const CurrentPatientProfile = () => {
             await Promise.resolve(
               callPatientForDoctor(nextPatientEntry.patient.fullName),
             );
-            if (queue.length > 2)
-              await Promise.resolve(callNextPatient(queue[2].patient.fullName));
+            // if ()
+            queue.length > 2 &&
+              (await Promise.resolve(
+                callNextPatient(queue[2].patient.fullName),
+              ));
           },
         },
       );

@@ -3,6 +3,39 @@
   font-family: Arial, sans-serif;
 }
 
+/* Month and Year Selector */
+.month-year-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+
+.month-year-selector label {
+  font-size: var(--font-size-body);
+  color: var(--primary-color);
+}
+
+.month-year-selector input,
+.month-year-selector select {
+  width: inherit;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+  background: var(--primary-bg);
+  color: var(--secondary-color);
+}
+
+.month-year-selector input:focus,
+.month-year-selector select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Summary Card */
 .summary-card {
   background: var(--primary-bg);
   border: 1px solid var(--border-color);
@@ -23,6 +56,7 @@
   margin: 5px 0;
 }
 
+/* Calendar View */
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -53,6 +87,7 @@
   margin: 2px 0;
 }
 
+/* Chart Card */
 .chart-card {
   background: var(--primary-bg);
   border: 1px solid var(--border-color);
@@ -68,18 +103,75 @@
   text-align: center;
 }
 
+/* Advice Card */
+.advice-card {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.advice-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.advice-card p {
+  font-size: var(--font-size-body);
+  margin: 5px 0;
+}
+
+/* Small Text */
 .small-text {
   font-size: 0.85rem;
   line-height: 1.2;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.report-year {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: var(--padding-small);
+}
+
+.report-year button {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  padding: 5px;
+  font-size: var(--font-size-body);
+  transition: background-color 0.3s ease;
+}
+
+.report-year-buttons-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .reports-container {
     padding: 10px;
   }
+
+  /* .month-year-selector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .month-year-selector input,
+  .month-year-selector select {
+    width: 100%;
+  } */
 
   .summary-card,
   .chart-card,

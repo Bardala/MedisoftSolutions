@@ -60,6 +60,10 @@
 
   /* Border radius */
   --border-radius: 8px;
+
+  --primary-brand-color: black;
+  --secondary-brand-color: #e2e7e9;
+  --logo-bg: var(--third-bg);
 }
 
 :root.dark-mode {
@@ -117,6 +121,10 @@
 
   /* Border radius */
   --border-radius: 8px;
+
+  --primary-brand-color: #e2e7e9;
+  --secondary-brand-color: black;
+  --logo-bg: var(--fourth-bg);
 }
 
 body {

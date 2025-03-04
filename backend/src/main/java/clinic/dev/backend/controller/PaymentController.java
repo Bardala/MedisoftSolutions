@@ -6,9 +6,11 @@ import clinic.dev.backend.util.ApiRes;
 import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -49,8 +51,13 @@ public class PaymentController {
   }
 
   @GetMapping("/workday")
-  public ResponseEntity<ApiRes<List<Payment>>> workdayPayments() {
-    List<Payment> workdayPayments = paymentService.getPaymentsForWorkday();
+  public ResponseEntity<ApiRes<List<Payment>>> workdayPayments(
+      @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    // If no date is provided, use the current date
+    if (date == null) {
+      date = LocalDate.now();
+    }
+    List<Payment> workdayPayments = paymentService.getPaymentsForDate(date);
     return ResponseEntity.ok(new ApiRes<>(workdayPayments));
   }
 

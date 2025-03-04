@@ -5,9 +5,11 @@ import clinic.dev.backend.service.impl.VisitService;
 import clinic.dev.backend.util.ApiRes;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,8 +50,13 @@ public class VisitController {
   }
 
   @GetMapping("/workday")
-  public ResponseEntity<ApiRes<List<Visit>>> getWorkdayVisits() {
-    List<Visit> workdayVisits = visitService.getTodayVisits();
+  public ResponseEntity<ApiRes<List<Visit>>> getWorkdayVisits(
+      @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    // If no date is provided, use the current date
+    if (date == null) {
+      date = LocalDate.now();
+    }
+    List<Visit> workdayVisits = visitService.getVisitsForDate(date);
     return ResponseEntity.ok(new ApiRes<>(workdayVisits));
   }
 }

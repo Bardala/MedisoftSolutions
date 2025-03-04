@@ -248,7 +248,7 @@ export const GetRegistry: FC = () => {
 
           {/* Action buttons */}
           <div>
-            <button onClick={() => setUpdateModalOpen(true)}>
+            <button onClick={() => setUpdateModalOpen(!isUpdateModalOpen)}>
               <FontAwesomeIcon icon={faEdit} />
             </button>
             <button onClick={() => setConfirmDelete(true)}>

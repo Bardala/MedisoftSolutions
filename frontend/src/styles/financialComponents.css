@@ -5,22 +5,123 @@
   box-shadow: var(--shadow-light);
 }
 
-.stats {
+/* Styling for the date picker */
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--padding-small);
   margin-bottom: var(--padding-medium);
 }
 
-.stats p {
+.date-picker-label {
   font-size: var(--font-size-body);
+  font-weight: bold;
+  color: var(--primary-text);
+}
+
+.date-picker {
+  padding: var(--padding-small);
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: inherit;
+}
+
+.date-picker:hover {
+  border-color: var(--accent-color);
+}
+
+/* Statistics Section */
+.stats {
+  margin-bottom: var(--padding-medium);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--padding-small);
+}
+
+/* Make all stats elements have the same width */
+.stats p {
+  flex: 1;
+  /* Ensures equal width distribution */
+  min-width: 180px;
+  /* Prevents elements from becoming too small */
+  text-align: center;
+  /* Centers text */
+  font-size: var(--font-size-body);
+  padding: var(--padding-small);
+  background: var(--primary-bg);
+  border-radius: 4px;
+  box-shadow: var(--shadow-light);
+}
+
+/* Tables Section */
+.tables {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-medium);
+}
+
+/* Table Container */
+.visits-section,
+.new-patients-section,
+.payment-section {
+  background: var(--primary-bg);
+  padding: var(--padding-medium);
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+}
+
+/* Payment Header with Toggle Button */
+.payment-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--padding-small);
 }
 
-/* table {
-  width: 100%;
-  border-collapse: collapse;
+.payment-header {
+  font-size: var(--font-size-subheading);
+  font-weight: bold;
+  color: var(--primary-text);
 }
 
-table th,
-table td {
-  padding: var(--padding-small);
-  border: 1px solid var(--border-color);
-} */
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  padding: var(--padding-small) var(--padding-medium);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: var(--font-size-body);
+}
+
+.toggle-button:hover {
+  background: var(--button-hover-bg);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .payment-header-container {
+    align-items: center;
+    gap: var(--padding-small);
+  }
+
+  .toggle-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

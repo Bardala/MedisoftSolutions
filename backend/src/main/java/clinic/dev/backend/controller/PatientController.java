@@ -5,9 +5,11 @@ import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.service.impl.PatientService;
 import clinic.dev.backend.util.ApiRes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,8 +62,13 @@ public class PatientController {
   }
 
   @GetMapping("/dailyNew")
-  public ResponseEntity<ApiRes<List<Patient>>> getDailyNewPatients() {
-    List<Patient> patients = patientService.dailyNewPatients();
+  public ResponseEntity<ApiRes<List<Patient>>> getDailyNewPatients(
+      @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    // If no date is provided, use the current date
+    if (date == null) {
+      date = LocalDate.now();
+    }
+    List<Patient> patients = patientService.getDailyNewPatientsForDate(date);
     return ResponseEntity.ok(new ApiRes<>(patients));
   }
 }

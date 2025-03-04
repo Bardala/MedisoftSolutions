@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -76,26 +77,22 @@ public class PaymentService {
     return getPaymentsAtThisPeriod(workdayStart, workdayEnd);
   }
 
-  public List<Payment> getDayPayments(LocalDateTime date) {
-    LocalDateTime referenceDate = date;
-    LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0)); // 6 AM today
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
+  public List<Payment> getPaymentsForDate(LocalDate date) {
+    LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
+    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
 
-    // if the current time is after 12am and before 6am
-    if (referenceDate.isBefore(workdayStart)) {
-      LocalDateTime at12Am = referenceDate.toLocalDate().atTime(LocalTime.of(0, 0)); // let the day starts at 12am
-      LocalDateTime at6Am = at12Am.plusHours(6); // let the day ends at 6am
+    // If the date is today and the current time is before 6 AM, adjust the period
+    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
+      LocalDateTime at12Am = date.atTime(LocalTime.MIN); // 12 AM on the given date
+      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM on the given date
 
       List<Payment> paymentsFrom0to6Am = getPaymentsAtThisPeriod(at12Am, at6Am);
 
-      // Now we have to get the payment of the day before from 6am to 12am
-      LocalDateTime after6AmYesterday = at12Am.minusHours(18);
-
+      // Get payments from the previous day (6 AM to 12 AM)
+      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
       List<Payment> paymentsAfter6AmYesterday = getPaymentsAtThisPeriod(after6AmYesterday, at12Am);
 
-      for (int i = 0; i < paymentsAfter6AmYesterday.size() - 1; i++) {
-        paymentsFrom0to6Am.add(paymentsAfter6AmYesterday.get(i));
-      }
+      paymentsFrom0to6Am.addAll(paymentsAfter6AmYesterday);
 
       return paymentsFrom0to6Am;
     }

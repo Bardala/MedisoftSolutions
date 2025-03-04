@@ -1,5 +1,6 @@
 package clinic.dev.backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -9,11 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @Profile("prod")
 public class WebConfigProd implements WebMvcConfigurer {
+
+  @Value("${file.upload-dir}")
+  private String uploadDir;
+
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/uploads/**")
-        .addResourceLocations("file:C:/ClinicSys/src/main/resources/static/uploads/")
-        .setCachePeriod(3600);
+        .addResourceLocations("file:" + uploadDir)
+        .setCachePeriod(3600 * 24);
   }
 
   @Override

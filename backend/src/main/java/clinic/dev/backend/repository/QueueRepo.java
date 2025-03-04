@@ -25,4 +25,6 @@ public interface QueueRepo extends JpaRepository<Queue, Long> {
   @Modifying
   @Query("UPDATE Queue q SET q.position = q.position + 1 WHERE q.position BETWEEN :start AND :end AND q.doctor.id = :doctorId")
   void incrementPositions(@Param("start") int start, @Param("end") int end, @Param("doctorId") Long doctorId);
+
+  void deleteByPatientId(Long id);
 }

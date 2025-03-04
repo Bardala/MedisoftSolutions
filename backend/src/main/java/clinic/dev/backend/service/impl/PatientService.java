@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -38,6 +39,9 @@ public class PatientService {
   @Autowired
   private PatientFileService patientFileService;
 
+  @Autowired
+  private QueueRepo queueRepo;
+
   @Transactional
   public Patient create(Patient patient) {
     if (patientRepo.existsByFullName(patient.getFullName())) {
@@ -54,6 +58,7 @@ public class PatientService {
 
   @Transactional
   public void delete(Long id) {
+    queueRepo.deleteByPatientId(id);
     visitPaymentRepo.deleteByVisitPatientId(id);
     visitMedicineRepo.deleteByVisitPatientId(id);
     visitDentalProcedureRepo.deleteByVisitPatientId(id);
@@ -128,26 +133,22 @@ public class PatientService {
   }
 
   @Transactional(readOnly = true)
-  public List<Patient> getDayNewPatients(LocalDateTime date) {
-    LocalDateTime referenceDate = date;
-    LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0)); // 6 AM today
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
+  public List<Patient> getDailyNewPatientsForDate(LocalDate date) {
+    LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
+    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
 
-    // if the current time is after 12am and before 6am
-    if (referenceDate.isBefore(workdayStart)) {
-      LocalDateTime at12Am = referenceDate.toLocalDate().atTime(LocalTime.of(0, 0)); // let the day starts at 12am
-      LocalDateTime at6Am = at12Am.plusHours(6); // let the day ends at 6am
+    // If the date is today and the current time is before 6 AM, adjust the period
+    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
+      LocalDateTime at12Am = date.atTime(LocalTime.MIN); // 12 AM on the given date
+      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM on the given date
 
       List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am);
 
-      // Now we have to get the patient of the day before from 6am to 12am
-      LocalDateTime after6AmYesterday = at12Am.minusHours(18);
-
+      // Get patients from the previous day (6 AM to 12 AM)
+      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
       List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am);
 
-      for (int i = 0; i < patientsAfter6AmYesterday.size() - 1; i++) {
-        patientsFrom0to6Am.add(patientsAfter6AmYesterday.get(i));
-      }
+      patientsFrom0to6Am.addAll(patientsAfter6AmYesterday);
 
       return patientsFrom0to6Am;
     }

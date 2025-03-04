@@ -6,7 +6,7 @@ import {
   assistantUsername,
   doctorImage,
   doctorUsername,
-  logoImage,
+  programLogoImage,
 } from "../utils";
 
 export const LoginPage: React.FC = () => {
@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="login-page">
       <img
-        src={logoImage}
+        src={programLogoImage}
         alt="Dental Management System Logo"
         className="logo"
       />

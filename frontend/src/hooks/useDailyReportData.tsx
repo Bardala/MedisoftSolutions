@@ -1,14 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   WorkdayPaymentsApi,
-  WorkdayPaymentsSummaryApi,
   WorkDayVisitApi,
-  DailyNewPatients as DailyNewPatientsApi,
+  DailyNewPatientsApi,
 } from "../fetch/api";
 import { ApiError } from "../fetch/ApiError";
 import {
   WorkdayPaymentsRes,
-  WorkdayPaymentsSummaryRes,
   WorkdayVisitsRes,
   DailyNewPatientsRes,
   Patient,
@@ -17,31 +15,22 @@ import {
 } from "../types";
 import { sortById } from "../utils/sort";
 
-export const useDailyReportData = () => {
+export const useDailyReportData = (
+  date = new Date().toISOString().split("T")[0],
+) => {
   const dailyPaymentQuery = useQuery<WorkdayPaymentsRes, ApiError>(
-    ["daily payments"],
-    WorkdayPaymentsApi,
-    {
-      // refetchInterval: 500,
-      // refetchIntervalInBackground: true,
-    },
+    ["daily payments", date],
+    () => WorkdayPaymentsApi(date),
   );
 
-  const dailyPaymentSummaryQuery = useQuery<
-    WorkdayPaymentsSummaryRes,
-    ApiError
-  >(["daily payments summary"], WorkdayPaymentsSummaryApi);
-
   const dailyVisitsQuery = useQuery<WorkdayVisitsRes, ApiError>(
-    ["daily visits"],
-    WorkDayVisitApi,
-    // { refetchInterval: 500 },
+    ["daily visits", date],
+    () => WorkDayVisitApi(date),
   );
 
   const dailyNewPatientsQuery = useQuery<DailyNewPatientsRes, ApiError>(
-    ["daily new patients"],
-    DailyNewPatientsApi,
-    // { refetchInterval: 500 },
+    ["daily new patients", date],
+    () => DailyNewPatientsApi(date),
   );
 
   const payments = sortById(dailyPaymentQuery.data) as unknown as Payment[];
@@ -51,18 +40,16 @@ export const useDailyReportData = () => {
     patients: sortById(dailyNewPatientsQuery.data) as unknown as Patient[],
     visits: sortById(dailyVisitsQuery.data) as unknown as Visit[],
     payments,
-    paymentsSummary: dailyPaymentSummaryQuery.data,
+    // paymentsSummary: dailyPaymentSummaryQuery.data,
     totalPayments,
 
     isLoading:
       dailyNewPatientsQuery.isLoading ||
       dailyPaymentQuery.isLoading ||
-      dailyVisitsQuery.isLoading ||
-      dailyPaymentSummaryQuery.isLoading,
+      dailyVisitsQuery.isLoading,
     isError:
       dailyNewPatientsQuery.isError ||
       dailyPaymentQuery.isError ||
-      dailyPaymentSummaryQuery.isError ||
       dailyVisitsQuery.isError,
   };
 };

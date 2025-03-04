@@ -3,7 +3,10 @@ import "../styles/financialComponents.css";
 import { linkVisitsAndPayments } from "../utils/linkVisitPayment";
 import { dailyTimeFormate, timeFormate } from "../utils";
 import Table from "./Table";
-import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExchangeAlt,
+  faCalendarAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
@@ -11,13 +14,17 @@ import { useDeleteVisit } from "../hooks/useVisit";
 
 const DailyFinancialReport = () => {
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0],
+  ); // Default: Today
+
   const { deleteVisitMutation } = useDeleteVisit();
-
-  const { patients, visits, payments, totalPayments, isError, isLoading } =
-    useDailyReportData();
-
   const { updatePaymentMutation } = useUpdatePayment();
   const { deletePaymentMutation } = useDeletePayment();
+
+  // Fetch data for the selected date
+  const { patients, visits, payments, totalPayments, isError, isLoading } =
+    useDailyReportData(selectedDate);
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading data. Please try again later.</p>;
@@ -48,29 +55,17 @@ const DailyFinancialReport = () => {
   ];
 
   const paymentColumns = [
-    {
-      header: "Payment Id",
-      accessor: (row) => row?.id,
-    },
-    {
-      header: "Patient Name",
-      accessor: (row) => row?.patient.fullName,
-    },
-    {
-      header: "Amount",
-      accessor: (row) => `$${row?.amount}`,
-    },
-    {
-      header: "Date",
-      accessor: (row) => dailyTimeFormate(row.createdAt),
-    },
+    { header: "Payment Id", accessor: (row) => row?.id },
+    { header: "Patient Name", accessor: (row) => row?.patient.fullName },
+    { header: "Amount", accessor: (row) => `$${row?.amount}` },
+    { header: "Date", accessor: (row) => dailyTimeFormate(row.createdAt) },
     {
       header: "Recorded By",
       accessor: (row) => row.recordedBy.name,
       expandable: true,
     },
     {
-      header: "Date",
+      header: "Time",
       accessor: (row) => timeFormate(row.createdAt),
       expandable: true,
     },
@@ -102,23 +97,37 @@ const DailyFinancialReport = () => {
     <div className="card-container">
       <h2>Daily Report</h2>
 
+      {/* Date Picker */}
+      <div className="date-picker-container">
+        <label htmlFor="report-date">
+          <FontAwesomeIcon icon={faCalendarAlt} /> Select Date:
+        </label>
+        <input
+          type="date"
+          id="report-date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="date-picker"
+        />
+      </div>
+
       <div className="stats">
         <p>
-          Total Daily Revenue: <strong>${totalPayments || 0}</strong>
+          Total Revenue: <strong>${totalPayments || 0}</strong>
         </p>
         <p>
-          Total Daily Payments: <strong>{payments?.length || 0}</strong>
+          Total Payments: <strong>{payments?.length || 0}</strong>
         </p>
         <p>
           Total Visits: <strong>{visits?.length || 0}</strong>
         </p>
         <p>
-          Total New Patients: <strong>{patients?.length || 0}</strong>
+          New Patients: <strong>{patients?.length || 0}</strong>
         </p>
       </div>
 
       <div className="tables">
-        <div className="table-container">
+        <div className="visits-section">
           <h3>Daily Visits</h3>
           <Table
             columns={linkedVisitColumns}
@@ -128,12 +137,12 @@ const DailyFinancialReport = () => {
           />
         </div>
 
-        <div>
+        <div className="payment-section">
           {/* Header for Table */}
           <div className="payment-header-container">
-            <h4 className="payment-header">
+            <h3>
               {convertPaymentTable ? "All Payments" : "Unlinked Payments"}
-            </h4>
+            </h3>
             <button
               onClick={() => setConvertPaymentTable(!convertPaymentTable)}
               className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
@@ -162,7 +171,7 @@ const DailyFinancialReport = () => {
           )}
         </div>
 
-        <div className="table-container">
+        <div className="new-patients-section">
           <h3>Daily New Patients</h3>
           <Table columns={patientColumns} data={patients || []} />
         </div>

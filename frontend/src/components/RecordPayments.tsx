@@ -12,7 +12,7 @@ const RecordPayments: React.FC = () => {
   const { mutation: paymentMutation } = useRecordPayment();
   const [payments, setPayments] = useState([]);
   const [paymentDetails, setPaymentDetails] = useState({
-    amount: "",
+    amount: 0,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +37,7 @@ const RecordPayments: React.FC = () => {
             id: newPayment.id,
           },
         ]);
-        setPaymentDetails({ amount: "" });
+        setPaymentDetails({ amount: 0 });
       } catch (error) {
         console.error("Error recording payment:", error);
       }
@@ -52,19 +52,19 @@ const RecordPayments: React.FC = () => {
 
         <form onSubmit={addPayment}>
           <input
-            className={isArabic(selectedPatient.fullName) ? "arabic" : ""}
+            className={isArabic(selectedPatient?.fullName) ? "arabic" : ""}
             type="text"
             name="name"
             placeholder="Patient Name"
-            value={selectedPatient ? selectedPatient.fullName : ""}
+            value={selectedPatient ? selectedPatient?.fullName : ""}
             readOnly
             required
           />
           <input
-            type="number"
+            // type="number"
             name="amount"
             placeholder="Amount Paid"
-            value={paymentDetails.amount}
+            value={paymentDetails.amount > 0 ? paymentDetails.amount : ""}
             onChange={handleInputChange}
             required
           />
