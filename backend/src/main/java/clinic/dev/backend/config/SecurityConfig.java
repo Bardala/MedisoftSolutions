@@ -48,7 +48,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll() // Allow access to uploads
-            .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.ico", "*.mp3").permitAll()
+            .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.svg", "*.ico", "*.mp3").permitAll()
             .requestMatchers(HttpMethod.GET, "/").permitAll()
             .requestMatchers(HttpMethod.GET, "/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/home").permitAll()

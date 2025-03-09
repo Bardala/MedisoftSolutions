@@ -3,7 +3,7 @@ import { Visit, VisitMedicine } from "../types";
 import Table from "./Table";
 import "../styles/prescriptionPrint.css";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { prescriptionLogo, programLogoImage } from "../utils/images";
+import { programLogoImage, whatsappImage } from "../utils/images";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 
 interface PrescriptionPrintProps {
@@ -111,19 +111,35 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
         <div key={index} className="prescription-chunk">
           {/* Clinic Header */}
           <div className="clinic-header">
-            <img
-              // src={prescriptionLogo}
-              // alt="Clinic Logo"
-              alt=""
-              // className="clinic-logo"
-            />
+            {/* <div className="clinic-logo-container">
+              <img
+                src={prescriptionLogo}
+                alt="Clinic Logo"
+                className="clinic-logo"
+              />
+            </div> */}
 
             <div className="clinic-info">
               <h1>عيادة الدكتور محمد سمير الدسوقي</h1>
-              {/* <p>📍 العنوان: 123 شارع التحرير، القاهرة</p> */}
-              <p>📍 العنوان: موقف طنطا - شارع السوق، كوم حمادة</p>
-              <p>📞 هاتف: 01005546461</p>
-              <p>🕒 مواعيد العمل: يوميًا من 12 ظهرًا حتى 12 منتصف الليل</p>
+              <h2>أخصائي طب وجراحة الفم والأسنان - القصر العيني</h2>
+              <hr className="clinic-separator" />
+              {/* <p>📞 هاتف: 01005546461</p> */}
+              <p>
+                <img
+                  src={whatsappImage}
+                  alt="WhatsApp"
+                  className="whatsapp-logo"
+                />
+                📞 هاتف: 01005546461
+              </p>
+              <p>
+                📍 العنوان: خلف موقف طنطا ، بجوار مسجد عمر بن الخطاب -الباب
+                الخلفى، كوم حمادة
+              </p>
+              <p>
+                🕒 مواعيد العمل: يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف
+                الليل
+              </p>
             </div>
           </div>
 
@@ -134,6 +150,11 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
               <p>
                 <strong>اسم المريض:</strong> {visit.patient.fullName}
               </p>
+              {visit.patient.age && (
+                <p>
+                  <strong>العمر: </strong> {visit.patient.age + " سنة" || "N/A"}
+                </p>
+              )}
               <p>
                 <strong>تاريخ الزيارة:</strong>{" "}
                 {new Date(visit.createdAt).toLocaleDateString("en-GB")}
@@ -152,11 +173,11 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
               />
             )}
 
-            {/* Signature */}
+            {/* Footer with signature & logo */}
             <div className="prescription-footer">
               <div className="signature-section">
                 <p>
-                  <strong>توقيع الطبيب:</strong>
+                  <strong>: توقيع الطبيب</strong>
                 </p>
                 <p>________________________</p>
               </div>
@@ -168,6 +189,11 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
                   className="company-logo"
                 />
               </div>
+            </div>
+
+            {/* Centered message at bottom */}
+            <div className="healing-message">
+              <p>مع تمنياتنا بالشفاء العاجل</p>
             </div>
           </div>
         </div>

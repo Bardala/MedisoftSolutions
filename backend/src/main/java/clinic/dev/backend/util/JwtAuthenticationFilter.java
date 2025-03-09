@@ -57,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         path.endsWith(".pdf") ||
         path.endsWith(".ico") ||
         path.endsWith(".mp3") ||
+        path.endsWith(".svg") ||
         path.equals("/") ||
         path.equals("/login") ||
         path.equals("/home");
