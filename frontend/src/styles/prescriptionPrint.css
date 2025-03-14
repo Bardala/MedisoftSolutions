@@ -14,39 +14,58 @@
 /* Clinic Header */
 .clinic-header {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   border-bottom: 3px solid #007bff;
-  padding-bottom: 15px;
+  padding-bottom: 4px;
+  padding-top: 4px;
   margin-bottom: 20px;
+  background: #f0f8ff;
+  border-radius: 10%;
 }
 
-/* .clinic-logo {
-  width: 80px;
-  height: auto;
-} */
+.doctor-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  /* margin: 4px; */
+}
 
 .clinic-logo {
-  width: 140px;
-  height: 140px;
-  margin-right: 20px;
-  border-radius: 50%;
-}
-
-.clinic-info {
-  text-align: right;
-}
-
-.clinic-info h1 {
-  margin: 0;
-  font-size: 22px;
-  color: #007bff;
+  width: 106px;
+  /* border-radius: 50%; */
 }
 
 .clinic-info p {
   margin: 2px 0;
   font-size: 14px;
   color: #555;
+}
+
+/* Clinic Header */
+.clinic-info {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.doctor-info h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #007bff;
+}
+
+.doctor-info h2 {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #333;
+  /* font-style: italic; */
+}
+
+.clinic-separator {
+  width: 60%;
+  margin: 5px auto;
+  border: 1px solid #007bff;
 }
 
 /* Printable Prescription Section */
@@ -134,58 +153,20 @@
 
 .prescription-footer {
   display: flex;
-  flex-direction: row-reverse;
+  /* flex-direction: row-reverse;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-end; */
+  flex-direction: column;
 }
 
 .company-logo-container {
   text-align: center;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 
 .company-logo {
-  width: 60px;
+  width: 80px;
   height: auto;
-}
-
-/* Clinic Header */
-.clinic-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 3px solid #007bff;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
-}
-
-.clinic-logo {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-}
-
-.clinic-info {
-  text-align: center;
-  flex-grow: 1;
-}
-
-.clinic-info h1 {
-  margin: 0;
-  font-size: 24px;
-  color: #007bff;
-}
-
-.clinic-info h2 {
-  margin: 5px 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.clinic-separator {
-  width: 60%;
-  margin: 5px auto;
-  border: 1px solid #007bff;
 }
 
 .healing-message {
@@ -206,6 +187,21 @@
   width: 24px;
   margin-left: 5px;
   vertical-align: middle;
+}
+
+.print-section-footer {
+  text-align: center;
+}
+
+.upper-footer {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.lower-footer {
+  text-align: center;
 }
 
 /* Print-specific styles */

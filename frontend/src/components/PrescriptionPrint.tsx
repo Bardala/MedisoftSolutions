@@ -2,8 +2,11 @@ import React, { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
 import Table from "./Table";
 import "../styles/prescriptionPrint.css";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { programLogoImage, whatsappImage } from "../utils/images";
+import {
+  prescriptionLogo,
+  programLogoImage,
+  whatsappImage,
+} from "../utils/images";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 
 interface PrescriptionPrintProps {
@@ -23,7 +26,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
     return result;
   };
 
-  const medicineChunks = chunkArray(visitMedicines, 4);
+  const medicineChunks = chunkArray(visitMedicines, 5);
 
   // Function to handle printing
   const handlePrint = () => {
@@ -52,26 +55,37 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
           <style>
             ${styles}
             @media print {
-              body { margin: 0; padding: 20px; }
+              body { margin: 0; padding: 0; }
               .prescription-chunk { 
                 page-break-after: always; 
-                margin-bottom: 40px;
-                
+                height: 100vh; /* Full page height */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
                 font-family: "Cairo", sans-serif;
-                max-width: 850px;
-                margin: 20px auto;
-                padding: 20px;
-                border-radius: 10px;
                 background-color: #ffffff;
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
                 color: #333;
-                height: inherit;
               }
               .prescription-chunk:last-child { 
                 page-break-after: avoid;
               }
               .clinic-header {
                 border-bottom: 3px solid #007bff;
+              }
+              .printable-prescription {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height 100%;
+              }
+              .prescription-footer {
+                margin-top: auto; /* Push footer to the bottom */
+              }
+
+              .prescription-chunk { 
+                height: 100%
               }
             }
           </style>
@@ -111,35 +125,22 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
         <div key={index} className="prescription-chunk">
           {/* Clinic Header */}
           <div className="clinic-header">
-            {/* <div className="clinic-logo-container">
+            <div className="clinic-logo-container">
               <img
                 src={prescriptionLogo}
                 alt="Clinic Logo"
                 className="clinic-logo"
               />
-            </div> */}
+            </div>
 
-            <div className="clinic-info">
+            <div className="doctor-info">
               <h1>عيادة الدكتور محمد سمير الدسوقي</h1>
-              <h2>أخصائي طب وجراحة الفم والأسنان - القصر العيني</h2>
-              <hr className="clinic-separator" />
-              {/* <p>📞 هاتف: 01005546461</p> */}
-              <p>
-                <img
-                  src={whatsappImage}
-                  alt="WhatsApp"
-                  className="whatsapp-logo"
-                />
-                📞 هاتف: 01005546461
-              </p>
-              <p>
-                📍 العنوان: خلف موقف طنطا ، بجوار مسجد عمر بن الخطاب -الباب
-                الخلفى، كوم حمادة
-              </p>
-              <p>
-                🕒 مواعيد العمل: يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف
-                الليل
-              </p>
+              <h2>
+                <strong>أخصائي طب وجراحة الفم والأسنان </strong>
+              </h2>
+              <h2>
+                <strong>القصر العيني</strong>
+              </h2>
             </div>
           </div>
 
@@ -159,41 +160,66 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
                 <strong>تاريخ الزيارة:</strong>{" "}
                 {new Date(visit.createdAt).toLocaleDateString("en-GB")}
               </p>
-              <p>
-                <strong>Doctor Name:</strong> {visit.doctor.name}
-              </p>
             </div>
 
             {/* Medicines Table */}
             {chunk.length > 0 && (
-              <Table
-                columns={medicineColumns}
-                data={chunk}
-                enableActions={false}
-              />
+              <div>
+                <Table
+                  columns={medicineColumns}
+                  data={chunk}
+                  enableActions={false}
+                />
+              </div>
             )}
 
             {/* Footer with signature & logo */}
             <div className="prescription-footer">
-              <div className="signature-section">
-                <p>
-                  <strong>: توقيع الطبيب</strong>
-                </p>
-                <p>________________________</p>
+              <div className="upper-footer">
+                <div className="signature-section">
+                  <p>
+                    <strong>: توقيع الطبيب</strong>
+                  </p>
+                  <p>________________________</p>
+                </div>
+
+                <div className="company-logo-container">
+                  <img
+                    src={programLogoImage}
+                    alt="MediSoft Logo"
+                    className="company-logo"
+                  />
+                </div>
               </div>
 
-              <div className="company-logo-container">
-                <img
-                  src={programLogoImage}
-                  alt="MediSoft Logo"
-                  className="company-logo"
-                />
-              </div>
-            </div>
+              <div className="lower-footer">
+                {/* Centered message at bottom */}
+                <div className="healing-message">
+                  <p>مع تمنياتنا بالشفاء العاجل</p>
+                </div>
 
-            {/* Centered message at bottom */}
-            <div className="healing-message">
-              <p>مع تمنياتنا بالشفاء العاجل</p>
+                <hr className="clinic-separator" />
+
+                {/* Clinic Info */}
+                <div className="clinic-info">
+                  <p>
+                    <img
+                      src={whatsappImage}
+                      alt="WhatsApp"
+                      className="whatsapp-logo"
+                    />
+                    📞 هاتف: <span>6461-554-0100</span>
+                  </p>
+                  <p>
+                    📍 العنوان: خلف موقف طنطا ، بجوار مسجد عمر بن الخطاب -الباب
+                    الخلفى، كوم حمادة
+                  </p>
+                  <p>
+                    🕒 مواعيد العمل: يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف
+                    الليل
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

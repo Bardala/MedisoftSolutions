@@ -1,6 +1,6 @@
 {
   "name": "clinic",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "backend-build-dev": "cd backend && mvn clean package -Dspring.profiles.active=dev",
     "backend-build-prod": "cd backend && mvn clean package -Dspring.profiles.active=prod",
     "backend-build-prod-skip-testing": "cd backend && mvn clean package -DskipTests -Dspring.profiles.active=prod",
+    "backend-build-dev-skip-testing": "cd backend && mvn clean package -DskipTests -Dspring.profiles.active=dev",
     "test:backend": "cd backend && mvn test",
     "start": "concurrently \"npm run frontend\" \"npm run backend-dev\""
   },
