@@ -7,7 +7,7 @@ import {
   useRecordVisitsProcedures,
 } from "../hooks/useVisitDentalProcedure";
 import { Visit, VisitDentalProcedure } from "../types";
-import { dailyTimeFormate, monthlyTimeFormate } from "../utils";
+import { dailyTimeFormate, isArabic, monthlyTimeFormate } from "../utils";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DentalProcedureSearch from "./DentalProcedureSearch";
@@ -62,31 +62,34 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
           ? dailyTimeFormate(visit.createdAt)
           : monthlyTimeFormate(visit.createdAt)}
       </p>
-      <p>
+      {/* <p>
         <strong>Duration:</strong>{" "}
         {visit.duration ? `${visit.duration} mins` : "N/A"}
-      </p>
+      </p> */}
       <div className="doctor-notes">
         <strong>Doctor Notes:</strong>
         {currVisit && loggedInUser.role === "Doctor" ? (
           <>
             <textarea
+              className={isArabic(doctorNotes) ? "arabic" : ""}
               value={doctorNotes}
               onChange={(e) => setDoctorNotes(e.target.value)}
               rows={4}
               placeholder="Add notes here..."
             />
-            <div className="notes-buttons">
-              <button className="save-button" onClick={handleSaveNotes}>
-                Save Notes
-              </button>
-              <button
-                className="cancel-button"
-                onClick={() => setDoctorNotes(visit.doctorNotes || "")}
-              >
-                Cancel
-              </button>
-            </div>
+            {doctorNotes !== visit.doctorNotes && (
+              <div className="notes-buttons">
+                <button className="save-button" onClick={handleSaveNotes}>
+                  Save Notes
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => setDoctorNotes(visit.doctorNotes || "")}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
             {updateVisitMutation.isSuccess && (
               <p>
                 New changes "<strong>{doctorNotes}</strong>" have been saved
@@ -123,7 +126,6 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
 
       {currVisit && loggedInUser.role === "Doctor" && (
         <div>
-          <span>Add Procedure</span>
           <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
           {selectedDentalProcedures.length > 0 && (
             <div className="selected-items">

@@ -141,7 +141,7 @@ li {
   margin-top: var(--padding-small);
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .container {
     padding: var(--padding-medium);
   }
@@ -171,4 +171,4 @@ li {
     width: auto;
     margin-left: auto;
   }
-}
+} */

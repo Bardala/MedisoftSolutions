@@ -1,15 +1,15 @@
 import React from "react";
 import { useAddVisit } from "../hooks/useVisit";
 import PatientSearch from "./PatientSearch";
-import DentalProcedureSearch from "./DentalProcedureSearch";
+// import DentalProcedureSearch from "./DentalProcedureSearch";
 import "../styles/addVisit.css";
 
 export const AddVisit: React.FC = () => {
   const {
     setPaymentAmount,
-    handleDentalProcedureSelect,
+    // handleDentalProcedureSelect,
     handlePatientSelect,
-    selectedDentalProcedures,
+    // selectedDentalProcedures,
     selectedPatient,
     paymentAmount,
     handleSubmit,
@@ -37,14 +37,14 @@ export const AddVisit: React.FC = () => {
               <p>
                 🩺 Doctor: <strong>{createdVisitDetails.doctorName}</strong>
               </p>
-              <p>📝 Dental Procedures:</p>
+              {/* <p>📝 Dental Procedures:</p>
               {createdVisitDetails.procedures?.map((p, index) => (
                 <p key={index}>
                   <strong>
                     🔹 {p.arabicName}, {p.serviceName}
                   </strong>
                 </p>
-              ))}
+              ))} */}
               <p>
                 📅 Visit Date: <strong>{createdVisitDetails.visitDate}</strong>
               </p>
@@ -76,7 +76,7 @@ export const AddVisit: React.FC = () => {
         )}
 
         {/* Dental Procedure Selection */}
-        <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
+        {/* <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
         {selectedDentalProcedures.length > 0 && (
           <div className="selected-items">
             Selected Dental Procedures:
@@ -88,7 +88,7 @@ export const AddVisit: React.FC = () => {
               ))}
             </ul>
           </div>
-        )}
+        )} */}
 
         {/* Payment Amount Input */}
         <div className="form-group">

@@ -1,0 +1,52 @@
+/* Prescriptions Container */
+.prescriptions-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: var(--padding-medium);
+  background-color: var(--section-bg);
+  border-radius: var(--border-radius);
+}
+
+/* Design Selector */
+.design-selector {
+  margin-bottom: var(--padding-medium);
+  text-align: center;
+}
+
+.design-selector label {
+  font-size: var(--font-size-body);
+  font-weight: bold;
+  margin-right: var(--padding-small);
+  color: var(--text-color);
+}
+
+.design-selector select {
+  padding: var(--padding-small);
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  /* background-color: var(--white); */
+  /* color: var(--text-color); */
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* .design-selector select:hover {
+  border-color: var(--primary-color);
+  background-color: var(--third-bg);
+} */
+
+.design-selector select:focus {
+  outline: none;
+  border-color: var(--primary-hover);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Prescription Design Container */
+.prescription-design {
+  margin-top: var(--padding-medium);
+  /* background-color: var(--white); */
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  padding: var(--padding-medium);
+}

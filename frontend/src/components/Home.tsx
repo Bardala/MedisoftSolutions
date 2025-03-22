@@ -5,7 +5,6 @@ import {
   faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/home.css";
-import { useMonthlyReport } from "../hooks/useMonthlyReport";
 import { useDailyReportData } from "../hooks/useDailyReportData";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid"; // For unique notification IDs

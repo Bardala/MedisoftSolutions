@@ -1,0 +1,40 @@
+/* Search Container */
+.search-container input {
+  width: 100%;
+  width: calc(100% - var(--padding-small)* 2);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+/* Search List */
+.search-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--fourth-bg);
+  display: none;
+  z-index: 1;
+}
+
+.search-list.visible {
+  display: block;
+  /* Show when visible */
+}
+
+/* Search List Items */
+.search-list li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--list-border-color);
+  background-color: var(--fourth-bg);
+}
+
+.search-list li:hover {
+  background-color: var(--ripple-effect-color);
+}

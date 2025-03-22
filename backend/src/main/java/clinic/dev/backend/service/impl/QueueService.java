@@ -3,6 +3,7 @@ package clinic.dev.backend.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.Queue;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class QueueService {
 
   private final QueueRepo queueRepository;

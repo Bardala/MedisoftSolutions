@@ -1,0 +1,14 @@
+{
+  "settings": "الإعدادات",
+  "addAssistant": "إضافة مساعد جديد",
+  "logout": "تسجيل الخروج",
+  "editProfile": "تعديل الملف الشخصي",
+  "username": "اسم المستخدم",
+  "name": "الاسم",
+  "phone": "رقم الهاتف",
+  "newPassword": "كلمة مرور جديدة",
+  "repeatNewPassword": "إعادة كلمة المرور الجديدة",
+  "enterNewPassword": "أدخل كلمة المرور الجديدة",
+  "saveChanges": "حفظ التغييرات",
+  "cancel": "إلغاء"
+}

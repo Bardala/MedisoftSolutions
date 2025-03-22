@@ -1,7 +1,10 @@
-import React from "react";
+import { useState } from "react";
 import { useCreatePatient } from "../hooks/usePatient"; // Adjust the path to your hook
+import SearchComponent from "./SearchComponent"; // Import the SearchComponent
 import "../styles/cardComponents.css";
 import { isArabic } from "../utils";
+import { Patient } from "../types";
+import { usePatientSearch } from "../hooks/usePatientSearch";
 
 const AddPatient: React.FC = () => {
   const {
@@ -13,24 +16,19 @@ const AddPatient: React.FC = () => {
     patient,
     dispatch,
   } = useCreatePatient();
+  const [showInfo, setShowInfo] = useState(false);
+  const { allPatients } = usePatientSearch();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-
     switch (name) {
       case "fullName":
         dispatch({ type: "SET_FULL_NAME", payload: value });
         break;
       case "age":
         dispatch({ type: "SET_AGE", payload: Number(value) });
-        break;
-      case "address":
-        dispatch({ type: "SET_ADDRESS", payload: value });
-        break;
-      case "medicalHistory":
-        dispatch({ type: "SET_MEDICAL_HISTORY", payload: value });
         break;
       case "notes":
         dispatch({ type: "SET_NOTES", payload: value });
@@ -57,10 +55,6 @@ const AddPatient: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {/* Full Name */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">👤</span>
-            <span>Full Name</span>
-          </div> */}
           <input
             className={isArabic(patient.fullName) ? "arabic" : ""}
             type="text"
@@ -70,14 +64,56 @@ const AddPatient: React.FC = () => {
             onChange={handleInputChange}
             required
           />
+          <button
+            type="button"
+            className="info-button"
+            onClick={() => setShowInfo(!showInfo)}
+          >
+            ❗
+          </button>
+
+          {showInfo && (
+            <div className="info-message arabic">
+              <p>
+                ⚠️ يُرجى استخدام الكتابة العربية الصحيحة لتفادي الأخطاء في
+                استدعاء المرضى.
+              </p>
+              <ul>
+                <li>
+                  ✅ بدلاً من <b>'احمد'</b> اكتب <b>'أحمد'</b>
+                </li>
+                <li>
+                  ✅ بدلاً من <b>'على'</b> اكتب <b>'علي'</b>
+                </li>
+                <li>
+                  ✅ بدلاً من <b>'اسماعيل'</b> اكتب <b>'إسماعيل'</b>
+                </li>
+                <li>
+                  ✅ بدلاً من <b>'عبدالمجيد'</b> اكتب <b>'عبد المجيد'</b>
+                </li>
+                <li>
+                  ✅ بدلاً من <b>'بشري'</b> اكتب <b>'بشرى'</b>
+                </li>
+                <li>
+                  ✅ استخدم التشكيل الصحيح مثل: <b>'إبراهيم'</b> بدلاً من{" "}
+                  <b>'ابراهيم'</b>
+                </li>
+                <li>
+                  ✅ في بعض الكلمات، يكون من الصحيح استخدام <b>'ي'</b> بدلاً من{" "}
+                  <b>'ى'</b>؛ لذا يُرجى مراجعة القواعد الإملائية لكل حالة.
+                </li>
+              </ul>
+              <p>⚠️ تأكد من وضع الهمزات بالشكل الصحيح</p>
+              <p>
+                ⚠️ تأكد من اختيار الحرف الصحيح في نهاية الكلمة: استخدم{" "}
+                <b>'ى'</b> بدلاً من <b>'ي'</b> في الحالات التي تستدعي ذلك،
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Phone */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">📞</span>
-            <span>Phone Number</span>
-          </div> */}
           <input
             type="tel"
             name="phone"
@@ -95,10 +131,6 @@ const AddPatient: React.FC = () => {
 
         {/* Age */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">📅</span>
-            <span>Age (optional)</span>
-          </div> */}
           <input
             type="number"
             name="age"
@@ -110,41 +142,35 @@ const AddPatient: React.FC = () => {
 
         {/* Address */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">🏠</span>
-            <span>Address (optional)</span>
-          </div> */}
-          <input
-            className={isArabic(patient.address) ? "arabic" : ""}
-            type="text"
-            name="address"
+          <SearchComponent<Patient>
+            data={allPatients}
+            searchKey="address"
+            displayKey="address"
             placeholder="🏠Address (optional)"
-            value={patient.address || ""}
-            onChange={handleInputChange}
+            onSelect={(item) =>
+              dispatch({ type: "SET_ADDRESS", payload: item.address })
+            }
           />
         </div>
 
         {/* Medical History */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">💊</span>
-            <span>Medical History (optional)</span>
-          </div> */}
-          <textarea
-            className={isArabic(patient.medicalHistory) ? "arabic" : ""}
-            name="medicalHistory"
+          <SearchComponent<Patient>
+            data={allPatients}
+            searchKey="medicalHistory"
+            displayKey="medicalHistory"
             placeholder="💊Medical History (optional)"
-            value={patient.medicalHistory || ""}
-            onChange={handleInputChange}
+            onSelect={(item) =>
+              dispatch({
+                type: "SET_MEDICAL_HISTORY",
+                payload: item.medicalHistory,
+              })
+            }
           />
         </div>
 
         {/* Notes */}
         <div className="form-group">
-          {/* <div className="icon-description">
-            <span className="icon">📝</span>
-            <span>Notes (optional)</span>
-          </div> */}
           <textarea
             className={isArabic(patient.notes) ? "arabic" : ""}
             name="notes"

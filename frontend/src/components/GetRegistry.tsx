@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import PatientSearch from "./PatientSearch";
 import { usePatientSearch } from "../hooks/usePatientSearch";
 import { usePatientRegistry } from "../hooks/useRegistry";
@@ -23,12 +23,12 @@ import UserFiles from "./UserFiles";
 import { useDeletePatient, useUpdatePatient } from "../hooks/usePatient";
 import { FormModal } from "./FormModel";
 import { DentalProcedure, Payment, Visit } from "../types";
-import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
-import { useUpdateVisit, useDeleteVisit } from "../hooks/useVisit";
 import { sortById } from "../utils/sort";
-import { handleSpeakName } from "../utils";
+import { calculateRemainingBalance, isArabic, speak } from "../utils";
+import { useLogin } from "../context/loginContext";
 
 export const GetRegistry: FC = () => {
+  const { loggedInUser } = useLogin();
   const { handlePatientSelect, selectedPatient, allPatients } =
     usePatientSearch();
   const [patientId, setPatientId] = useState<number | null>(null);
@@ -39,18 +39,13 @@ export const GetRegistry: FC = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
 
+  const [patientNotes, setPatientNotes] = useState("");
+  useEffect(() => {
+    if (data?.patient) setPatientNotes(data?.patient.notes);
+  }, [data?.patient]);
+
   const { updatePatientMutation } = useUpdatePatient();
   const { deletePatientMutation } = useDeletePatient();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { updateVisitMutation } = useUpdateVisit();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { deleteVisitMutation } = useDeleteVisit();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { updatePaymentMutation } = useUpdatePayment();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { deletePaymentMutation } = useDeletePayment();
 
   const handleSubmit = () =>
     selectedPatient && setPatientId(selectedPatient.id);
@@ -101,11 +96,6 @@ export const GetRegistry: FC = () => {
     {
       header: "Phone Number",
       accessor: (row) => row.phone,
-      expandable: true,
-    },
-    {
-      header: "Notes",
-      accessor: (row) => row.notes || "N/A",
       expandable: true,
     },
     {
@@ -191,6 +181,11 @@ export const GetRegistry: FC = () => {
     },
   ];
 
+  function handleSavePatientNotes(): void {
+    data.patient.notes = patientNotes;
+    updatePatientMutation.mutate(data.patient);
+  }
+
   return (
     <div className="container">
       <h1>Patient Registry</h1>
@@ -208,62 +203,92 @@ export const GetRegistry: FC = () => {
 
       {data && (
         <div>
-          {/*patient details */}
-          <h2>{data.patient.fullName}</h2>
+          {/* Patient Details */}
+          <h2>🧑‍⚕️ {data.patient.fullName}</h2>
           <p>
-            <strong>Id:</strong> {data.patient.id}
+            🆔 <strong>Id:</strong> {data.patient.id}
           </p>
           <p className="mt-2">
-            <strong>Phone:</strong> {data.patient.phone}
+            📞 <strong>Phone:</strong> {data.patient.phone}
           </p>
           <p>
-            <strong>Age:</strong> {data.patient.age || "N/A"}
+            🎂 <strong>Age:</strong> {data.patient.age || "N/A"}
           </p>
           <p>
-            <strong>Address:</strong> {data.patient.address || "N/A"}
+            🏠 <strong>Address:</strong> {data.patient.address || "N/A"}
           </p>
           <p>
-            <strong>Medical History:</strong>{" "}
+            🏥 <strong>Medical History:</strong>{" "}
             {data.patient.medicalHistory || "N/A"}
+          </p>
+          {data.visits && (
+            <p>
+              📅 <strong>Number of Visits:</strong> {data.visits.length}
+            </p>
+          )}
+          <p>
+            🕒 <strong>Registered On:</strong>{" "}
+            {timeFormate(data.patient.createdAt) || "N/A"}
+          </p>
+          <p>
+            📝 <strong>Notes:</strong>
           </p>
           {data.payments && (
             <p>
-              <strong>Amount Paid: </strong>
-              {"$"}
+              💰 <strong>Total Amount Paid: </strong> $
               {data.payments.reduce((acc, payment) => acc + payment.amount, 0)}
             </p>
           )}
-          {data.visits && (
-            <p>
-              <strong>Number of Visit:</strong> {data.visits.length}
-            </p>
-          )}
           <p>
-            <strong>Notes:</strong> {data.patient.notes || "N/A"}
+            🔴 <strong>Remaining Balance: </strong> $
+            {calculateRemainingBalance(data.patient.notes, data.payments)}
           </p>
-          <p>
-            <strong>Registered On:</strong>{" "}
-            {timeFormate(data.patient.createdAt) || "N/A"}
-          </p>
+          <>
+            <textarea
+              className={isArabic(patientNotes) ? "arabic" : ""}
+              value={patientNotes}
+              onChange={(e) => setPatientNotes(e.target.value)}
+              rows={4}
+              placeholder="Add notes here..."
+              disabled={loggedInUser.role === "Assistant"}
+            />
+            {loggedInUser.role === "Doctor" &&
+              patientNotes !== data.patient.notes && (
+                <div className="notes-buttons">
+                  <button
+                    className="save-button"
+                    onClick={handleSavePatientNotes}
+                  >
+                    Save Notes
+                  </button>
+                  <button
+                    className="cancel-button"
+                    onClick={() => setPatientNotes(data.patient?.notes || "")}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+          </>
 
           {/* Action buttons */}
-          <div>
-            <button onClick={() => setUpdateModalOpen(!isUpdateModalOpen)}>
-              <FontAwesomeIcon icon={faEdit} />
-            </button>
-            <button onClick={() => setConfirmDelete(true)}>
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-            <button
-              className="action-button speak-button"
-              onClick={() =>
-                handleSpeakName(data.patient.fullName, 1, "IN_PROGRESS")
-              }
-              title="Speak Name"
-            >
-              <FontAwesomeIcon icon={faVolumeUp} />
-            </button>
-          </div>
+          {loggedInUser.role === "Doctor" && (
+            <div>
+              <button onClick={() => setUpdateModalOpen(!isUpdateModalOpen)}>
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+              <button onClick={() => setConfirmDelete(true)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+              <button
+                className="action-button speak-button"
+                onClick={() => speak(data.patient.fullName, "ar")}
+                title="Speak Name"
+              >
+                <FontAwesomeIcon icon={faVolumeUp} />
+              </button>
+            </div>
+          )}
 
           {/* Update Modal */}
           {isUpdateModalOpen && data?.patient && (
@@ -359,9 +384,15 @@ export const GetRegistry: FC = () => {
       {!selectedPatient && allPatients?.length > 0 && (
         <Table
           columns={allPatientColumns}
-          data={allPatients}
+          data={allPatients.sort(
+            (p1, p2) => p1.fullName.charCodeAt(0) - p2.fullName.charCodeAt(0),
+          )}
           enableActions={true}
-          onUpdate={updatePatientMutation.mutate}
+          onUpdate={
+            loggedInUser.role === "Doctor"
+              ? updatePatientMutation.mutate
+              : undefined
+          }
         />
       )}
     </div>

@@ -9,24 +9,37 @@ import {
   useUpdateQueueStatus,
   useRemovePatientFromQueue,
 } from "../hooks/useQueue";
-import { callNextPatient, callPatientForDoctor, doctorId } from "../utils";
+import {
+  callNextPatient,
+  callPatientForDoctor,
+  doctorId,
+  isArabic,
+} from "../utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Medicines } from "./Medicines";
 import PatientProfileHeader from "./PatientProfileHeader";
-import { PrescriptionPrint } from "./PrescriptionPrint";
 import { useLogin } from "../context/loginContext";
+import { calculateRemainingBalance } from "../utils";
+import { PrescriptionsContainer } from "./PrescriptionsContainer";
+import { useUpdatePatient } from "../hooks/usePatient";
 
 const CurrentPatientProfile = () => {
   const { loggedInUser } = useLogin();
   const { queue, isLoading, isError } = useFetchQueue(doctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
+  const { updatePatientMutation } = useUpdatePatient();
+
   const [currPatient, setCurrPatient] = useState<Patient | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>("info");
 
-  const visits = usePatientRegistry(currPatient?.id)?.patientRegistryQuery.data
-    ?.visits;
+  const [patientNotes, setPatientNotes] = useState("");
+
+  const patientRegistryData = usePatientRegistry(currPatient?.id)
+    .patientRegistryQuery.data;
+  const payments = patientRegistryData?.payments;
+  const visits = patientRegistryData?.visits;
   const visit = visits ? visits[visits.length - 1] : null;
   const lastVisit =
     visits && visits.length > 1 ? visits[visits.length - 2] : null;
@@ -38,6 +51,10 @@ const CurrentPatientProfile = () => {
       setCurrPatient(null);
     }
   }, [queue]);
+
+  useEffect(() => {
+    if (currPatient) setPatientNotes(currPatient.notes);
+  }, [currPatient]);
 
   const handleNextPatient = async () => {
     if (!queue || queue.length === 0) return;
@@ -56,11 +73,9 @@ const CurrentPatientProfile = () => {
             await Promise.resolve(
               callPatientForDoctor(nextPatientEntry.patient.fullName),
             );
-            // if ()
-            queue.length > 2 &&
-              (await Promise.resolve(
-                callNextPatient(queue[2].patient.fullName),
-              ));
+            await Promise.resolve(
+              queue.length > 2 && callNextPatient(queue[2].patient.fullName),
+            );
           },
         },
       );
@@ -69,6 +84,11 @@ const CurrentPatientProfile = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: Something went wrong...</p>;
+
+  function handleSavePatientNotes(): void {
+    currPatient.notes = patientNotes;
+    updatePatientMutation.mutate(currPatient);
+  }
 
   return (
     <div className="patient-profile-container">
@@ -88,21 +108,63 @@ const CurrentPatientProfile = () => {
             {expandedSection === "info" && (
               <div className="patient-info">
                 <p>
-                  <strong>Name:</strong> {currPatient.fullName}
+                  📛 <strong>Name:</strong> {currPatient.fullName}
                 </p>
                 <p>
-                  <strong>Phone:</strong> {currPatient.phone}
+                  📞 <strong>Phone:</strong> {currPatient.phone}
                 </p>
                 <p>
-                  <strong>Medical History:</strong>{" "}
+                  🏥 <strong>Medical History:</strong>{" "}
                   {currPatient.medicalHistory || "N/A"}
                 </p>
                 <p>
-                  <strong>Address:</strong> {currPatient.address || "N/A"}
+                  🏠 <strong>Address:</strong> {currPatient.address || "N/A"}
                 </p>
                 <p>
-                  <strong>Patient Notes:</strong> {currPatient.notes || "N/A"}
+                  🎂 <strong>Age:</strong> {currPatient.age || "N/A"}
                 </p>
+                {payments && (
+                  <p>
+                    💰 <strong>Total Amount Paid:</strong> $
+                    {payments.reduce((acc, payment) => acc + payment.amount, 0)}
+                  </p>
+                )}
+                <p>
+                  🔴 <strong>Remaining Balance:</strong> $
+                  {calculateRemainingBalance(currPatient.notes, payments)}
+                </p>
+                <p>
+                  📝 <strong>Patient Notes:</strong>{" "}
+                </p>
+                <>
+                  <textarea
+                    className={isArabic(patientNotes) ? "arabic" : ""}
+                    value={patientNotes}
+                    onChange={(e) => setPatientNotes(e.target.value)}
+                    rows={4}
+                    placeholder="Add notes here..."
+                    disabled={loggedInUser.role === "Assistant"}
+                  />
+                  {loggedInUser.role === "Doctor" &&
+                    patientNotes !== currPatient.notes && (
+                      <div className="notes-buttons">
+                        <button
+                          className="save-button"
+                          onClick={handleSavePatientNotes}
+                        >
+                          Save Notes
+                        </button>
+                        <button
+                          className="cancel-button"
+                          onClick={() =>
+                            setPatientNotes(currPatient?.notes || "")
+                          }
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                </>
               </div>
             )}
             {expandedSection === "visits" && visit && (
@@ -117,7 +179,7 @@ const CurrentPatientProfile = () => {
             )}
             {/* New section for printing prescriptions */}
             {expandedSection === "prescriptionPrint" && (
-              <PrescriptionPrint visit={visit} />
+              <PrescriptionsContainer visit={visit} />
             )}
           </div>
         </>

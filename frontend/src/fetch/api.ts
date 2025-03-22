@@ -37,8 +37,6 @@ import {
   LoginReq,
   LoginRes,
   MonthlyDayInfo,
-  MonthlyDaysInfoReq,
-  MonthlyDaysInfoRes,
   MonthlySummaryReq,
   MonthlySummaryRes,
   Patient,

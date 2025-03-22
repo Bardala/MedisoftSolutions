@@ -7,7 +7,7 @@ import {
 } from "../hooks/useQueue";
 import { QueueStatus } from "../types";
 import "../styles/queuePage.css";
-import { dailyTimeFormate, speak } from "../utils";
+import { dailyTimeFormate } from "../utils";
 import {
   faPlay,
   faCheckCircle,
@@ -15,7 +15,7 @@ import {
   faVolumeUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleSpeakName } from "../utils/speakUtils";
+import { callPatientForDoctor, handleSpeakName } from "../utils/speakUtils";
 
 const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
   const { queue, isLoading, isError } = useFetchQueue(doctorId);
@@ -30,7 +30,8 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
     if (status === "IN_PROGRESS") {
       const patient = queue?.find((entry) => entry.id === queueId);
       if (patient) {
-        speak(patient.patient.fullName, "ar");
+        // speak(patient.patient.fullName, "ar");
+        callPatientForDoctor(patient.patient.fullName);
       }
     }
   };

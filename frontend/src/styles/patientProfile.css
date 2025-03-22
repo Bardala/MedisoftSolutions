@@ -207,6 +207,36 @@
   background-color: var(--primary-hover);
 }
 
+.warn-section {
+  margin-top: 20px;
+}
+
+.set-warn-button,
+.remove-warn-button {
+  padding: 8px 16px;
+  background-color: #ffcc00;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.set-warn-button:hover,
+.remove-warn-button:hover {
+  background-color: #e6b800;
+}
+
+.warn-input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 60px;
+  margin-left: 10px;
+}
+
 /* Media query for small screens */
 @media (max-width: 600px) {
   .header-section {

@@ -6,7 +6,6 @@ import reportWebVitals from "./reportWebVitals";
 import { LoginProvider } from "./context/loginContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -18,7 +17,7 @@ root.render(
       <LoginProvider>
         <React.StrictMode>
           <App />
-          <ReactQueryDevtools />
+          {/* <ReactQueryDevtools /> */}
         </React.StrictMode>
       </LoginProvider>
     </ThemeProvider>

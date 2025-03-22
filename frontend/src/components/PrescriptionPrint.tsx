@@ -1,13 +1,9 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
-import Table from "./Table";
 import "../styles/prescriptionPrint.css";
-import {
-  prescriptionLogo,
-  programLogoImage,
-  whatsappImage,
-} from "../utils/images";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
+import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
+import Table from "./Table";
 
 interface PrescriptionPrintProps {
   visit: Visit;
@@ -17,7 +13,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
   const visitMedicines: VisitMedicine[] = query.data || [];
 
-  // Split medicines into chunks of 4
+  // Split medicines into chunks of 5
   const chunkArray = (array: VisitMedicine[], size: number) => {
     const result = [];
     for (let i = 0; i < array.length; i += size) {
@@ -70,20 +66,24 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
               .prescription-chunk:last-child { 
                 page-break-after: avoid;
               }
-              .clinic-header {
+              .prescription-chunk .clinic-header {
                 border-bottom: 3px solid #007bff;
               }
-              .printable-prescription {
+              .prescription-chunk .printable-prescription {
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 height 100%;
               }
-              .prescription-footer {
+              .prescription-chunk .prescription-footer {
                 margin-top: auto; /* Push footer to the bottom */
               }
-
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                border-radius: var(--border-radius);
+              }
               .prescription-chunk { 
                 height: 100%
               }
@@ -134,7 +134,8 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
             </div>
 
             <div className="doctor-info">
-              <h1>عيادة الدكتور محمد سمير الدسوقي</h1>
+              <h1>الدكتور</h1>
+              <h1>محمد سمير الدسوقي</h1>
               <h2>
                 <strong>أخصائي طب وجراحة الفم والأسنان </strong>
               </h2>
@@ -146,7 +147,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
 
           {/* Prescription Content */}
           <div className="printable-prescription">
-            <h2>الروشتة الطبية</h2>
+            {/* <h2>الروشتة الطبية</h2> */}
             <div className="prescription-header">
               <p>
                 <strong>اسم المريض:</strong> {visit.patient.fullName}
@@ -164,7 +165,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
 
             {/* Medicines Table */}
             {chunk.length > 0 && (
-              <div>
+              <div className="prescription-table">
                 <Table
                   columns={medicineColumns}
                   data={chunk}

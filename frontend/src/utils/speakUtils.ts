@@ -1,5 +1,36 @@
 import { QueueStatus } from "../types";
 
+const nameCorrections: Record<string, string> = {
+  احمد: "أحمد",
+  اسامة: "أسامة",
+  مصطفي: "مصطفى",
+  ابراهيم: "إبراهيم",
+  الهام: "إلهام",
+  انس: "أنس",
+  امينة: "أمينة",
+  انور: "أنور",
+  الامين: "الأمين",
+  اشرف: "أشرف",
+  امين: "أمين",
+  ابتسام: "إبتسام",
+  ابوبكر: "أبوبكر",
+  ايمن: "أيمن",
+  اسماعيل: "إسماعيل",
+  ايهاب: "إيهاب",
+  ايه: "آية",
+  احسان: "إحسان",
+  اسر: "إسر",
+  افنان: "أفنان",
+  امل: "أمل",
+  اسلام: "إسلام",
+  انتصار: "إنتصار",
+  انصاف: "أنصاف",
+  انعام: "إنعام",
+  ايمان: "إيمان",
+  بشري: "بشرى",
+  علي: "علي",
+};
+
 // ! Didn't play audio well, synchronization didn't work properly.
 export const speak = (text: string, lang = "en-US", gender = "female") => {
   if (!("speechSynthesis" in window)) {
@@ -93,11 +124,15 @@ export const speak2 = async (text, lang = "en-US", gender = "female") => {
   }
 };
 
-const formatArabicText = (text: string) =>
+const formatArabicText = (text: string): string =>
   text
     .split(" ")
     .map((word) => {
       let formattedWord = word;
+
+      if (nameCorrections[formattedWord]) {
+        formattedWord = nameCorrections[formattedWord];
+      }
 
       // If word ends with "ة", replace it with "ه"
       if (formattedWord.endsWith("ة")) {
@@ -116,6 +151,8 @@ const formatArabicText = (text: string) =>
       return formattedWord;
     })
     .join("ْ \n") + "ْ \n";
+
+// Example usage
 
 export const handleSpeakName = (
   name: string,

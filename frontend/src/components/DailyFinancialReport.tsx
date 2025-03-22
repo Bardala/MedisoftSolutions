@@ -11,12 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
 import { useDeleteVisit } from "../hooks/useVisit";
+import { useLogin } from "../context/loginContext";
 
 const DailyFinancialReport = () => {
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0],
   ); // Default: Today
+  const { loggedInUser } = useLogin();
 
   const { deleteVisitMutation } = useDeleteVisit();
   const { updatePaymentMutation } = useUpdatePayment();
@@ -43,7 +45,23 @@ const DailyFinancialReport = () => {
       expandable: true,
     },
     {
-      header: "Doctor Notes",
+      // todo: Add warn in patient notes, where dental can tell assistant about remaining visits
+      header: "Patient Notes",
+      accessor: (row) => row?.patient.notes || "N/A",
+      expandable: true,
+    },
+    {
+      header: "Patient Address",
+      accessor: (row) => row?.patient.address || "N/A",
+      expandable: true,
+    },
+    {
+      header: "Patient Age",
+      accessor: (row) => row?.patient.age || "N/A",
+      expandable: true,
+    },
+    {
+      header: "Visit Notes",
       accessor: (row) => row?.doctorNotes || "N/A",
       expandable: true,
     },
@@ -60,6 +78,11 @@ const DailyFinancialReport = () => {
     { header: "Amount", accessor: (row) => `$${row?.amount}` },
     { header: "Date", accessor: (row) => dailyTimeFormate(row.createdAt) },
     {
+      header: "Patient Notes",
+      accessor: (row) => row?.patient.notes || "N/A",
+      expandable: true,
+    },
+    {
       header: "Recorded By",
       accessor: (row) => row.recordedBy.name,
       expandable: true,
@@ -75,7 +98,7 @@ const DailyFinancialReport = () => {
     { header: "Id", accessor: "id" },
     { header: "Patient Name", accessor: "fullName" },
     { header: "Phone", accessor: "phone", expandable: true },
-    { header: "Age", accessor: "age", expandable: true },
+    { header: "Age", accessor: (row) => row.age || "N/A", expandable: true },
     { header: "Address", accessor: (row) => row?.address || "N/A" },
     {
       header: "Medical History",
@@ -98,18 +121,20 @@ const DailyFinancialReport = () => {
       <h2>Daily Report</h2>
 
       {/* Date Picker */}
-      <div className="date-picker-container">
-        <label htmlFor="report-date">
-          <FontAwesomeIcon icon={faCalendarAlt} /> Select Date:
-        </label>
-        <input
-          type="date"
-          id="report-date"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="date-picker"
-        />
-      </div>
+      {loggedInUser.role === "Doctor" && (
+        <div className="date-picker-container">
+          <label htmlFor="report-date">
+            <FontAwesomeIcon icon={faCalendarAlt} /> Select Date:
+          </label>
+          <input
+            type="date"
+            id="report-date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="date-picker"
+          />
+        </div>
+      )}
 
       <div className="stats">
         <p>
@@ -173,7 +198,11 @@ const DailyFinancialReport = () => {
 
         <div className="new-patients-section">
           <h3>Daily New Patients</h3>
-          <Table columns={patientColumns} data={patients || []} />
+          <Table
+            columns={patientColumns}
+            data={patients || []}
+            enableActions={true}
+          />
         </div>
       </div>
     </div>

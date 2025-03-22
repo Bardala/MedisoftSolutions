@@ -9,7 +9,6 @@ import {
 import {
   CreateVisitRes,
   CreateVisitReq,
-  DentalProcedure,
   Patient,
   UpdateVisitRes,
   Visit,
@@ -45,7 +44,6 @@ export const useAddVisit = () => {
   const {
     selectedDentalProcedures,
     setSelectedDentalProcedures,
-    handleDentalProcedureSelect,
     handleRecordVisitProcedures,
   } = useRecordVisitsProcedures();
 
@@ -61,7 +59,7 @@ export const useAddVisit = () => {
     doctorName: string;
     visitDate: string;
     doctorNotes: string;
-    procedures: DentalProcedure[];
+    // procedures: DentalProcedure[];
   } | null>(null);
   const [createdPaymentDetails, setCreatedPaymentDetails] = useState<{
     paymentId: number;
@@ -74,8 +72,8 @@ export const useAddVisit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPatient || selectedDentalProcedures.length === 0) {
-      alert("Please select a patient and at least one dental procedure.");
+    if (!selectedPatient) {
+      alert("Please select a patient");
       return null;
     }
 
@@ -117,7 +115,7 @@ export const useAddVisit = () => {
         doctorName: loggedInUser.name,
         visitDate: new Date().toLocaleString(),
         doctorNotes,
-        procedures: selectedDentalProcedures,
+        // procedures: selectedDentalProcedures,
       });
       setCreatedPaymentDetails(
         paymentResult
@@ -149,7 +147,7 @@ export const useAddVisit = () => {
   return {
     setDoctorNotes,
     setPaymentAmount,
-    handleDentalProcedureSelect,
+    // handleDentalProcedureSelect,
     handlePatientSelect,
     handleSubmit,
     selectedDentalProcedures,

@@ -1,6 +1,7 @@
 import React from "react";
 import { usePatientSearch } from "../hooks/usePatientSearch";
 import { Patient } from "../types";
+import { isArabic } from "../utils";
 
 interface PatientSearchProps {
   onSelect: (patient: Patient) => void;
@@ -29,6 +30,7 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ onSelect }) => {
     <div className="form-group">
       <label htmlFor="patient">🧑‍⚕️Select Patient</label>
       <input
+        className={isArabic(searchTerm) ? "arabic" : ""}
         type="text"
         id="patient"
         placeholder="Search by name or phone number"
@@ -39,7 +41,7 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ onSelect }) => {
       {isLoading && <p>Loading patients...</p>}
       {error && <p>Error loading patients</p>}
       {searchTerm && patients && patients.length > 0 && (
-        <ul className="search-results">
+        <ul className="search-results arabic">
           {patients.map((patient) => (
             <li
               key={patient.id}
