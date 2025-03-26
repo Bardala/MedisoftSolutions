@@ -1,0 +1,6 @@
+{
+  "select_patient": "🧑‍⚕️Select Patient",
+  "search_placeholder": "Search by name or phone number",
+  "loading_patients": "Loading patients...",
+  "error_loading_patients": "Error loading patients"
+}

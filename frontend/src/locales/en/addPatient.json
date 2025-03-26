@@ -1,0 +1,14 @@
+{
+  "title": "Add New Patient",
+  "fullNamePlaceholder": "👤 Full Name",
+  "phonePlaceholder": "📞 Phone Number",
+  "agePlaceholder": "📅 Age (optional)",
+  "addressPlaceholder": "🏠 Address (optional)",
+  "medicalHistoryPlaceholder": "💊 Medical History (optional)",
+  "notesPlaceholder": "📝 Notes (optional)",
+  "submitButton": "Save",
+  "savingButton": "Saving...",
+  "successMessage": "Patient registered successfully!",
+  "errorMessage": "Error: {{error}}",
+  "arabicNameWarning": "⚠️ Please use proper Arabic spelling to avoid errors in patient calls."
+}

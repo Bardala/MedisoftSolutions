@@ -7,8 +7,10 @@
   "name": "Name",
   "phone": "Phone",
   "newPassword": "New Password",
-  "repeatNewPassword": "Repeat New Password",
+  "saveChanges": "Save Changes and logout",
+  "cancel": "Cancel",
+  "enterName": "Enter your name",
+  "enterPhone": "Enter your phone",
   "enterNewPassword": "Enter new password",
-  "saveChanges": "Save Changes",
-  "cancel": "Cancel"
+  "repeatNewPassword": "Repeat new password"
 }

@@ -1,0 +1,10 @@
+{
+  "login.welcome": "Welcome to Dental Management System",
+  "login.doctor": "Doctor",
+  "login.assistant": "Assistant",
+  "login.login": "Log In",
+  "login.usernamePlaceholder": "Username or Phone Number",
+  "login.passwordPlaceholder": "Password",
+  "login.submit": "Login",
+  "login.error": "Login failed. Please try again."
+}

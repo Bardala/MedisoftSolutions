@@ -23,8 +23,10 @@ import { useLogin } from "../context/loginContext";
 import { calculateRemainingBalance } from "../utils";
 import { PrescriptionsContainer } from "./PrescriptionsContainer";
 import { useUpdatePatient } from "../hooks/usePatient";
+import { useIntl } from "react-intl";
 
 const CurrentPatientProfile = () => {
+  const { formatMessage: f } = useIntl();
   const { loggedInUser } = useLogin();
   const { queue, isLoading, isError } = useFetchQueue(doctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
@@ -82,8 +84,8 @@ const CurrentPatientProfile = () => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: Something went wrong...</p>;
+  if (isLoading) return <p>{f({ id: "loading" })}</p>;
+  if (isError) return <p>{f({ id: "error" })}</p>;
 
   function handleSavePatientNotes(): void {
     currPatient.notes = patientNotes;
@@ -93,7 +95,7 @@ const CurrentPatientProfile = () => {
   return (
     <div className="patient-profile-container">
       <div className="header-section">
-        <h2>Current Patient Profile</h2>
+        <h2>{f({ id: "currentPatient" })}</h2>
       </div>
 
       {currPatient ? (
@@ -108,33 +110,36 @@ const CurrentPatientProfile = () => {
             {expandedSection === "info" && (
               <div className="patient-info">
                 <p>
-                  📛 <strong>Name:</strong> {currPatient.fullName}
+                  📛 <strong>{f({ id: "name" })}:</strong>{" "}
+                  {currPatient.fullName}
                 </p>
                 <p>
-                  📞 <strong>Phone:</strong> {currPatient.phone}
+                  📞 <strong>{f({ id: "phone" })}:</strong> {currPatient.phone}
                 </p>
                 <p>
-                  🏥 <strong>Medical History:</strong>{" "}
-                  {currPatient.medicalHistory || "N/A"}
+                  🏥 <strong>{f({ id: "medicalHistory" })}:</strong>{" "}
+                  {currPatient.medicalHistory || f({ id: "not_available" })}
                 </p>
                 <p>
-                  🏠 <strong>Address:</strong> {currPatient.address || "N/A"}
+                  🏠 <strong>{f({ id: "address" })}:</strong>{" "}
+                  {currPatient.address || f({ id: "not_available" })}
                 </p>
                 <p>
-                  🎂 <strong>Age:</strong> {currPatient.age || "N/A"}
+                  🎂 <strong>{f({ id: "age" })}:</strong>{" "}
+                  {currPatient.age || f({ id: "not_available" })}
                 </p>
                 {payments && (
                   <p>
-                    💰 <strong>Total Amount Paid:</strong> $
+                    💰 <strong>{f({ id: "totalAmountPaid" })}:</strong> $
                     {payments.reduce((acc, payment) => acc + payment.amount, 0)}
                   </p>
                 )}
                 <p>
-                  🔴 <strong>Remaining Balance:</strong> $
+                  🔴 <strong>{f({ id: "remainingBalance" })}:</strong> $
                   {calculateRemainingBalance(currPatient.notes, payments)}
                 </p>
                 <p>
-                  📝 <strong>Patient Notes:</strong>{" "}
+                  📝 <strong>{f({ id: "patientNotes" })}:</strong>{" "}
                 </p>
                 <>
                   <textarea
@@ -142,7 +147,7 @@ const CurrentPatientProfile = () => {
                     value={patientNotes}
                     onChange={(e) => setPatientNotes(e.target.value)}
                     rows={4}
-                    placeholder="Add notes here..."
+                    placeholder={f({ id: "addNotesPlaceholder" })}
                     disabled={loggedInUser.role === "Assistant"}
                   />
                   {loggedInUser.role === "Doctor" &&
@@ -152,7 +157,7 @@ const CurrentPatientProfile = () => {
                           className="save-button"
                           onClick={handleSavePatientNotes}
                         >
-                          Save Notes
+                          {f({ id: "saveNotes" })}
                         </button>
                         <button
                           className="cancel-button"
@@ -160,7 +165,7 @@ const CurrentPatientProfile = () => {
                             setPatientNotes(currPatient?.notes || "")
                           }
                         >
-                          Cancel
+                          {f({ id: "cancel" })}
                         </button>
                       </div>
                     )}
@@ -184,13 +189,14 @@ const CurrentPatientProfile = () => {
           </div>
         </>
       ) : (
-        <p>No current patient found.</p>
+        <p>{f({ id: "noCurrentPatient" })}</p>
       )}
 
       {loggedInUser.role === "Doctor" && queue?.length > 1 && (
         <div className="next-patient-section">
           <p className="next-patient-name">
-            <strong>Next Patient:</strong> {queue[1].patient.fullName}
+            <strong>{f({ id: "nextPatient" })}:</strong>{" "}
+            {queue[1].patient.fullName}
           </p>
           <button onClick={handleNextPatient} className="next-patient-button">
             <FontAwesomeIcon icon={faArrowRight} />

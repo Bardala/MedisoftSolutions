@@ -1,0 +1,18 @@
+{
+  "waitList": "Wait List",
+  "position": "Position",
+  "patient": "Patient",
+  "arrivedIn": "Arrived In",
+  "actions": "Actions",
+  "start": "Start",
+  "complete": "Complete",
+  "remove": "Remove",
+  "callPatient": "Call Patient",
+  "moveUp": "Move Up",
+  "moveDown": "Move Down",
+  "status.waiting": "Waiting",
+  "status.inProgress": "In Progress",
+  "status.completed": "Completed",
+  "loading": "Loading...",
+  "error": "Error loading queue"
+}

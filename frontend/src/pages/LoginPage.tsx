@@ -8,10 +8,12 @@ import {
   doctorUsername,
   programLogoImage,
 } from "../utils";
+import { useIntl } from "react-intl";
 
 export const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const maxAttempts = 3;
+  const { formatMessage: f } = useIntl();
 
   const {
     selectedRole,
@@ -57,14 +59,14 @@ export const LoginPage: React.FC = () => {
         className="logo"
       />
 
-      <h1 className="title">Welcome to Dental Management System</h1>
+      <h1 className="title">{f({ id: "login.welcome" })}</h1>
       <div className="roles">
         <div
           className={`role-card ${selectedRole === "Doctor" ? "selected" : ""}`}
           onClick={() => handleRoleSelection("Doctor")}
         >
           <img src={doctorImage} alt="Doctor Icon" className="role-icon" />
-          <h2>Doctor</h2>
+          <h2>{f({ id: "login.doctor" })}</h2>
         </div>
 
         <div
@@ -78,31 +80,44 @@ export const LoginPage: React.FC = () => {
             alt="Assistant Icon"
             className="role-icon"
           />
-          <h2>Assistant</h2>
+          <h2>{f({ id: "login.assistant" })}</h2>
         </div>
       </div>
 
       {selectedRole && (
         <div className="password-section">
-          <h3>Enter {selectedRole} Phone Number</h3>
+          <h3>
+            {f(
+              { id: "login.login" },
+              {
+                role: f({
+                  id: `login.${selectedRole.toLowerCase()}`,
+                }),
+              },
+            )}
+          </h3>
           <input
             type="text"
-            placeholder="Username or Phone Number"
+            placeholder={f({
+              id: "login.usernamePlaceholder",
+            })}
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             className="password-input"
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={f({
+              id: "login.passwordPlaceholder",
+            })}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="password-input"
           />
           <button onClick={handleSubmit} className="submit-button">
-            Login
+            {f({ id: "login.submit" })}
           </button>
-          {error && <p className="error-message">{error.message}</p>}
+          {error && <p className="error-message">{f({ id: "login.error" })}</p>}
         </div>
       )}
     </div>

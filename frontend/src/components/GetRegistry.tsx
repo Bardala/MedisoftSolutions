@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from "react";
 import PatientSearch from "./PatientSearch";
 import { usePatientSearch } from "../hooks/usePatientSearch";
@@ -26,8 +25,10 @@ import { DentalProcedure, Payment, Visit } from "../types";
 import { sortById } from "../utils/sort";
 import { calculateRemainingBalance, isArabic, speak } from "../utils";
 import { useLogin } from "../context/loginContext";
+import { useIntl } from "react-intl";
 
 export const GetRegistry: FC = () => {
+  const { formatMessage: f } = useIntl();
   const { loggedInUser } = useLogin();
   const { handlePatientSelect, selectedPatient, allPatients } =
     usePatientSearch();
@@ -53,11 +54,11 @@ export const GetRegistry: FC = () => {
   const handleUpdatePatient = (updatedPatient: typeof data.patient) => {
     updatePatientMutation.mutate(updatedPatient, {
       onSuccess: () => {
-        alert("Patient updated successfully!");
+        alert(f({ id: "patient_updated_success" }));
         setUpdateModalOpen(false);
       },
       onError: (err) => {
-        alert(`Error updating patient: ${err.message}`);
+        alert(f({ id: "error_updating_patient" }, { error: err.message }));
       },
     });
   };
@@ -66,11 +67,11 @@ export const GetRegistry: FC = () => {
     if (patientId) {
       deletePatientMutation.mutate(patientId, {
         onSuccess: () => {
-          alert("Patient deleted successfully!");
+          alert(f({ id: "patient_deleted_success" }));
           setConfirmDelete(false);
         },
         onError: (err) => {
-          alert(`Error deleting patient: ${err.message}`);
+          alert(f({ id: "error_deleting_patient" }, { error: err.message }));
         },
       });
     }
@@ -78,78 +79,79 @@ export const GetRegistry: FC = () => {
 
   const allPatientColumns = [
     {
-      header: "Id",
+      header: f({ id: "patient_id" }),
       accessor: (row) => row.id,
     },
     {
-      header: "Fullname",
+      header: f({ id: "full_name" }),
       accessor: (row) => row.fullName,
     },
     {
-      header: "Address",
-      accessor: (row) => row.address || "N/A",
+      header: f({ id: "address" }),
+      accessor: (row) => row.address || f({ id: "not_available" }),
     },
     {
-      header: "Age",
-      accessor: (row) => row.age || "N/A",
+      header: f({ id: "age" }),
+      accessor: (row) => row.age || f({ id: "not_available" }),
     },
     {
-      header: "Phone Number",
+      header: f({ id: "phone_number" }),
       accessor: (row) => row.phone,
       expandable: true,
     },
     {
-      header: "Registered At",
+      header: f({ id: "registered_at" }),
       accessor: (row) => timeFormate(row.createdAt),
       expandable: true,
     },
     {
-      header: "Medical History",
-      accessor: (row) => row.medicalHistory || "N/A",
+      header: f({ id: "medical_history" }),
+      accessor: (row) => row.medicalHistory || f({ id: "not_available" }),
       expandable: true,
     },
   ];
 
   const visitColumns = [
     {
-      header: "Visit Id",
+      header: f({ id: "visit_id" }),
       accessor: (row: { visit: Visit }) => row.visit.id,
     },
     {
-      header: "Payment",
+      header: f({ id: "payment" }),
       accessor: (row: { payment: Payment }) =>
-        row.payment ? `$${row.payment.amount}` : "N/A",
+        row.payment ? `$${row.payment.amount}` : f({ id: "not_available" }),
     },
     {
-      header: "Date",
+      header: f({ id: "date" }),
       accessor: (row: { visit: Visit }) =>
         monthlyTimeFormate(row.visit.createdAt),
     },
     {
-      header: "Notes",
-      accessor: (row: { visit: Visit }) => row.visit.doctorNotes || "N/A",
+      header: f({ id: "notes" }),
+      accessor: (row: { visit: Visit }) =>
+        row.visit.doctorNotes || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Procedures",
+      header: f({ id: "procedures" }),
       accessor: (row: { procedures: DentalProcedure[] }) =>
         row.procedures
           ?.map(
             (procedure: DentalProcedure) =>
               procedure.serviceName + " " + procedure.arabicName,
           )
-          .join(", ") || "N/A",
+          .join(", ") || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Medicines",
-      accessor: (row: any) =>
+      header: f({ id: "medicines" }),
+      accessor: (row) =>
         row.medicines?.map((medicine) => medicine.medicineName).join(", ") ||
-        "N/A",
+        f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Year",
+      header: f({ id: "year" }),
       accessor: (row: { visit: Visit }) =>
         yearlyTimeFormate(row.visit.createdAt),
       expandable: true,
@@ -158,25 +160,25 @@ export const GetRegistry: FC = () => {
 
   const paymentColumns = [
     {
-      header: "Payment Id",
-      accessor: (row: any) => row?.id,
+      header: f({ id: "payment_id" }),
+      accessor: (row) => row?.id,
     },
     {
-      header: "Amount",
-      accessor: (row: any) => `$${row?.amount}`,
+      header: f({ id: "amount" }),
+      accessor: (row) => `$${row?.amount}`,
     },
     {
-      header: "Date",
-      accessor: (row: any) => monthlyTimeFormate(row.createdAt),
+      header: f({ id: "date" }),
+      accessor: (row) => monthlyTimeFormate(row.createdAt),
     },
     {
-      header: "Recorded By",
-      accessor: (row: any) => row.recordedBy.name,
+      header: f({ id: "recorded_by" }),
+      accessor: (row) => row.recordedBy.name,
       expandable: true,
     },
     {
-      header: "Year",
-      accessor: (row: any) => yearlyTimeFormate(row.createdAt),
+      header: f({ id: "year" }),
+      accessor: (row) => yearlyTimeFormate(row.createdAt),
       expandable: true,
     },
   ];
@@ -188,7 +190,7 @@ export const GetRegistry: FC = () => {
 
   return (
     <div className="container">
-      <h1>Patient Registry</h1>
+      <h1>{f({ id: "patient_registry" })}</h1>
       <PatientSearch onSelect={handlePatientSelect} />
       <button
         className="search-button"
@@ -198,58 +200,94 @@ export const GetRegistry: FC = () => {
         <FontAwesomeIcon icon={faSearch} /> {selectedPatient?.fullName}
       </button>
 
-      {!!patientId && isLoading && <p>Loading patient registry...</p>}
-      {error && <p>Error loading patient registry: {error.message}</p>}
+      {!!patientId && isLoading && (
+        <p>{f({ id: "loading_patient_registry" })}</p>
+      )}
+      {error && (
+        <p>
+          {f(
+            { id: "error_loading_patient_registry" },
+            { error: error.message },
+          )}
+        </p>
+      )}
 
       {data && (
         <div>
           {/* Patient Details */}
-          <h2>🧑‍⚕️ {data.patient.fullName}</h2>
-          <p>
-            🆔 <strong>Id:</strong> {data.patient.id}
-          </p>
+          <h2>
+            {f({ id: "patient_details" }, { fullName: data.patient.fullName })}
+          </h2>
+          <p>{f({ id: "patient_id" }, { id: data.patient.id })}</p>
           <p className="mt-2">
-            📞 <strong>Phone:</strong> {data.patient.phone}
+            {f({ id: "patient_phone" }, { phone: data.patient.phone })}
           </p>
           <p>
-            🎂 <strong>Age:</strong> {data.patient.age || "N/A"}
+            {f(
+              { id: "patient_age" },
+              { age: data.patient.age || f({ id: "not_available" }) },
+            )}
           </p>
           <p>
-            🏠 <strong>Address:</strong> {data.patient.address || "N/A"}
+            {f(
+              { id: "patient_address" },
+              { address: data.patient.address || f({ id: "not_available" }) },
+            )}
           </p>
           <p>
-            🏥 <strong>Medical History:</strong>{" "}
-            {data.patient.medicalHistory || "N/A"}
+            {f(
+              { id: "patient_medical_history" },
+              {
+                medicalHistory:
+                  data.patient.medicalHistory || f({ id: "not_available" }),
+              },
+            )}
           </p>
           {data.visits && (
-            <p>
-              📅 <strong>Number of Visits:</strong> {data.visits.length}
-            </p>
+            <p>{f({ id: "patient_visits" }, { visits: data.visits.length })}</p>
           )}
           <p>
-            🕒 <strong>Registered On:</strong>{" "}
-            {timeFormate(data.patient.createdAt) || "N/A"}
-          </p>
-          <p>
-            📝 <strong>Notes:</strong>
+            {f(
+              { id: "patient_registered_on" },
+              {
+                registeredOn:
+                  timeFormate(data.patient.createdAt) ||
+                  f({ id: "not_available" }),
+              },
+            )}
           </p>
           {data.payments && (
             <p>
-              💰 <strong>Total Amount Paid: </strong> $
-              {data.payments.reduce((acc, payment) => acc + payment.amount, 0)}
+              {f(
+                { id: "total_amount_paid" },
+                {
+                  amount: data.payments.reduce(
+                    (acc, payment) => acc + payment.amount,
+                    0,
+                  ),
+                },
+              )}
             </p>
           )}
           <p>
-            🔴 <strong>Remaining Balance: </strong> $
-            {calculateRemainingBalance(data.patient.notes, data.payments)}
+            {f(
+              { id: "remaining_balance" },
+              {
+                balance: calculateRemainingBalance(
+                  data.patient.notes,
+                  data.payments,
+                ),
+              },
+            )}
           </p>
+          <p>{f({ id: "patient_notes" })}</p>
           <>
             <textarea
               className={isArabic(patientNotes) ? "arabic" : ""}
               value={patientNotes}
               onChange={(e) => setPatientNotes(e.target.value)}
               rows={4}
-              placeholder="Add notes here..."
+              placeholder={f({ id: "notes" })}
               disabled={loggedInUser.role === "Assistant"}
             />
             {loggedInUser.role === "Doctor" &&
@@ -259,13 +297,13 @@ export const GetRegistry: FC = () => {
                     className="save-button"
                     onClick={handleSavePatientNotes}
                   >
-                    Save Notes
+                    {f({ id: "save_notes" })}
                   </button>
                   <button
                     className="cancel-button"
                     onClick={() => setPatientNotes(data.patient?.notes || "")}
                   >
-                    Cancel
+                    {f({ id: "cancel" })}
                   </button>
                 </div>
               )}
@@ -283,7 +321,7 @@ export const GetRegistry: FC = () => {
               <button
                 className="action-button speak-button"
                 onClick={() => speak(data.patient.fullName, "ar")}
-                title="Speak Name"
+                title={f({ id: "speak_name" })}
               >
                 <FontAwesomeIcon icon={faVolumeUp} />
               </button>
@@ -296,7 +334,7 @@ export const GetRegistry: FC = () => {
               objectToEdit={data.patient}
               onSave={handleUpdatePatient}
               onClose={() => setUpdateModalOpen(false)}
-              title="Update Patient Details"
+              title={f({ id: "update_patient_details" })}
             />
           )}
 
@@ -304,20 +342,22 @@ export const GetRegistry: FC = () => {
           {confirmDelete && (
             <div>
               <div>
-                <h2>Confirm Delete</h2>
-                <p>Are you sure you want to delete this patient?</p>
+                <h2>{f({ id: "confirm_delete" })}</h2>
+                <p>{f({ id: "delete_confirmation_message" })}</p>
                 <div>
                   <button onClick={() => setConfirmDelete(false)}>
-                    Cancel
+                    {f({ id: "cancel" })}
                   </button>
-                  <button onClick={handleDeletePatient}>Delete</button>
+                  <button onClick={handleDeletePatient}>
+                    {f({ id: "delete" })}
+                  </button>
                 </div>
               </div>
             </div>
           )}
 
           {/* Visits Section */}
-          <h3>Visits</h3>
+          <h3>{f({ id: "visits" })}</h3>
           <Table
             columns={visitColumns}
             data={analyzeVisits(
@@ -326,29 +366,23 @@ export const GetRegistry: FC = () => {
               data.visitPayments,
               data.visitMedicines,
             )}
-            // onUpdate={updateVisitMutation.mutate}
-            // onDelete={deleteVisitMutation.mutate}
             enableActions={true}
           />
 
           {/* Unlinked Payments Section */}
-          {/* <h3 className="text-lg font-semibold mt-6">Unlinked Payments</h3> */}
           <div>
             {/* Header for Table */}
             <div className="payment-header-container">
               <h4 className="payment-header">
-                {convertPaymentTable ? "All Payments" : "Unlinked Payments"}
+                {convertPaymentTable
+                  ? f({ id: "all_payments" })
+                  : f({ id: "unlinked_payments" })}
               </h4>
               <button
                 onClick={() => setConvertPaymentTable(!convertPaymentTable)}
                 className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
               >
                 <FontAwesomeIcon icon={faExchangeAlt} />
-                {/* <span>
-                  {convertPaymentTable
-                    ? " View Unlinked Payments"
-                    : " View All Payments"}
-                </span> */}
               </button>
             </div>
 
@@ -357,8 +391,6 @@ export const GetRegistry: FC = () => {
               <Table
                 columns={paymentColumns}
                 data={sortById(data.payments)}
-                // onUpdate={updatePaymentMutation.mutate}
-                // onDelete={deletePaymentMutation.mutate}
                 enableActions={true}
               />
             ) : (
@@ -368,16 +400,12 @@ export const GetRegistry: FC = () => {
                   sortById(data.payments),
                   data.visitPayments,
                 )}
-                // onUpdate={updatePaymentMutation.mutate}
-                // onDelete={deletePaymentMutation.mutate}
                 enableActions={true}
               />
             )}
           </div>
 
           <UserFiles patientId={patientId} />
-
-          {/* <UploadImage patientId={selectedPatient.id + ""} /> */}
         </div>
       )}
 

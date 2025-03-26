@@ -18,6 +18,7 @@ import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
+import { useIntl } from "react-intl";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");
@@ -46,7 +47,7 @@ export const useAddVisit = () => {
     setSelectedDentalProcedures,
     handleRecordVisitProcedures,
   } = useRecordVisitsProcedures();
-
+  const intl = useIntl();
   const { mutation: paymentMutation } = useRecordPayment();
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
@@ -108,7 +109,10 @@ export const useAddVisit = () => {
         }
       }
 
-      setSuccessMessage("Visit and payment recorded successfully!");
+      // setSuccessMessage("Visit and payment recorded successfully!");
+      setSuccessMessage(
+        intl.formatMessage({ id: "visitAndPaymentSuccessMessage" }),
+      );
       setCreatedVisitDetails({
         visitId,
         patientName: selectedPatient.fullName,

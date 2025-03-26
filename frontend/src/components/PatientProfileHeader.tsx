@@ -7,6 +7,7 @@ import {
   faPrint,
 } from "@fortawesome/free-solid-svg-icons";
 import { useLogin } from "../context/loginContext";
+import { useIntl } from "react-intl";
 
 interface PatientProfileHeaderProps {
   expandedSection: string | null;
@@ -18,6 +19,7 @@ const PatientProfileHeader = ({
   setExpandedSection,
 }: PatientProfileHeaderProps) => {
   const { loggedInUser } = useLogin();
+  const { formatMessage: f } = useIntl();
 
   return (
     <div className="profile-header">
@@ -27,7 +29,7 @@ const PatientProfileHeader = ({
           setExpandedSection(expandedSection === "info" ? null : "info")
         }
       >
-        <FontAwesomeIcon icon={faUser} /> <span>info</span>
+        <FontAwesomeIcon icon={faUser} /> <span>{f({ id: "info" })}</span>
       </div>
       <div
         className="icon"
@@ -35,7 +37,8 @@ const PatientProfileHeader = ({
           setExpandedSection(expandedSection === "visits" ? null : "visits")
         }
       >
-        <FontAwesomeIcon icon={faClipboard} /> <span>visit</span>
+        <FontAwesomeIcon icon={faClipboard} />{" "}
+        <span>{f({ id: "visits" })}</span>
       </div>
       <div
         className="icon"
@@ -43,7 +46,7 @@ const PatientProfileHeader = ({
           setExpandedSection(expandedSection === "files" ? null : "files")
         }
       >
-        <FontAwesomeIcon icon={faFileAlt} /> <span>files</span>
+        <FontAwesomeIcon icon={faFileAlt} /> <span>{f({ id: "files" })}</span>
       </div>
 
       {loggedInUser.role === "Doctor" && (
@@ -56,7 +59,8 @@ const PatientProfileHeader = ({
               )
             }
           >
-            <FontAwesomeIcon icon={faPills} /> <span>medicines</span>
+            <FontAwesomeIcon icon={faPills} />{" "}
+            <span>{f({ id: "medicines" })}</span>
           </div>
 
           <div
@@ -69,7 +73,7 @@ const PatientProfileHeader = ({
               )
             }
           >
-            <FontAwesomeIcon icon={faPrint} /> <span>print</span>
+            <FontAwesomeIcon icon={faPrint} /> <span>{f({ id: "print" })}</span>
           </div>
         </>
       )}

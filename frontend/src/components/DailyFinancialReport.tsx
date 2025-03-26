@@ -12,8 +12,10 @@ import { useState } from "react";
 import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
 import { useDeleteVisit } from "../hooks/useVisit";
 import { useLogin } from "../context/loginContext";
+import { useIntl } from "react-intl";
 
 const DailyFinancialReport = () => {
+  const { formatMessage: f } = useIntl();
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0],
@@ -28,8 +30,8 @@ const DailyFinancialReport = () => {
   const { patients, visits, payments, totalPayments, isError, isLoading } =
     useDailyReportData(selectedDate);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error loading data. Please try again later.</p>;
+  if (isLoading) return <p>{f({ id: "loading" })}</p>;
+  if (isError) return <p>{f({ id: "errorLoadingData" })}</p>;
 
   const { linked: linkedVisits, unlinkedPayments } = linkVisitsAndPayments(
     visits || [],
@@ -37,94 +39,112 @@ const DailyFinancialReport = () => {
   );
 
   const linkedVisitColumns = [
-    { header: "Visit Id", accessor: (row) => row.id },
-    { header: "Patient Name", accessor: (row) => row?.patient.fullName },
+    { header: f({ id: "visitId" }), accessor: (row) => row.id },
     {
-      header: "Phone",
+      header: f({ id: "patientName" }),
+      accessor: (row) => row?.patient.fullName,
+    },
+    {
+      header: f({ id: "phone" }),
       accessor: (row) => row?.patient.phone,
       expandable: true,
     },
     {
-      // todo: Add warn in patient notes, where dental can tell assistant about remaining visits
-      header: "Patient Notes",
-      accessor: (row) => row?.patient.notes || "N/A",
+      header: f({ id: "patientNotes" }),
+      accessor: (row) => row?.patient.notes || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Patient Address",
-      accessor: (row) => row?.patient.address || "N/A",
+      header: f({ id: "patientAddress" }),
+      accessor: (row) => row?.patient.address || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Patient Age",
-      accessor: (row) => row?.patient.age || "N/A",
+      header: f({ id: "patientAge" }),
+      accessor: (row) => row?.patient.age || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Visit Notes",
-      accessor: (row) => row?.doctorNotes || "N/A",
+      header: f({ id: "visitNotes" }),
+      accessor: (row) => row?.doctorNotes || f({ id: "not_available" }),
       expandable: true,
     },
-    { header: "Amount Paid", accessor: (row) => `$${row?.amountPaid}` },
     {
-      header: "Visit Time",
+      header: f({ id: "amountPaid" }),
+      accessor: (row) => `$${row?.amountPaid}`,
+    },
+    {
+      header: f({ id: "visitTime" }),
       accessor: (row) => dailyTimeFormate(row?.createdAt),
     },
   ];
 
   const paymentColumns = [
-    { header: "Payment Id", accessor: (row) => row?.id },
-    { header: "Patient Name", accessor: (row) => row?.patient.fullName },
-    { header: "Amount", accessor: (row) => `$${row?.amount}` },
-    { header: "Date", accessor: (row) => dailyTimeFormate(row.createdAt) },
+    { header: f({ id: "paymentId" }), accessor: (row) => row?.id },
     {
-      header: "Patient Notes",
-      accessor: (row) => row?.patient.notes || "N/A",
+      header: f({ id: "patientName" }),
+      accessor: (row) => row?.patient.fullName,
+    },
+    { header: f({ id: "amount" }), accessor: (row) => `$${row?.amount}` },
+    {
+      header: f({ id: "date" }),
+      accessor: (row) => dailyTimeFormate(row.createdAt),
+    },
+    {
+      header: f({ id: "patientNotes" }),
+      accessor: (row) => row?.patient.notes || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Recorded By",
+      header: f({ id: "recordedBy" }),
       accessor: (row) => row.recordedBy.name,
       expandable: true,
     },
     {
-      header: "Time",
+      header: f({ id: "time" }),
       accessor: (row) => timeFormate(row.createdAt),
       expandable: true,
     },
   ];
 
   const patientColumns = [
-    { header: "Id", accessor: "id" },
-    { header: "Patient Name", accessor: "fullName" },
-    { header: "Phone", accessor: "phone", expandable: true },
-    { header: "Age", accessor: (row) => row.age || "N/A", expandable: true },
-    { header: "Address", accessor: (row) => row?.address || "N/A" },
+    { header: f({ id: "patient_id" }), accessor: "id" },
+    { header: f({ id: "patientName" }), accessor: "fullName" },
+    { header: f({ id: "phone" }), accessor: "phone", expandable: true },
     {
-      header: "Medical History",
-      accessor: (row) => row?.medicalHistory || "N/A",
+      header: f({ id: "patientAge" }),
+      accessor: (row) => row.age || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Notes",
-      accessor: (row) => row?.notes || "N/A",
+      header: f({ id: "patientAddress" }),
+      accessor: (row) => row?.address || f({ id: "not_available" }),
+    },
+    {
+      header: f({ id: "medicalHistory" }),
+      accessor: (row) => row?.medicalHistory || f({ id: "not_available" }),
       expandable: true,
     },
     {
-      header: "Registered At",
+      header: f({ id: "notes" }),
+      accessor: (row) => row?.notes || f({ id: "not_available" }),
+      expandable: true,
+    },
+    {
+      header: f({ id: "registeredAt" }),
       accessor: (row) => dailyTimeFormate(row?.createdAt),
     },
   ];
 
   return (
     <div className="card-container">
-      <h2>Daily Report</h2>
+      <h2>{f({ id: "dailyReport" })}</h2>
 
       {/* Date Picker */}
       {loggedInUser.role === "Doctor" && (
         <div className="date-picker-container">
           <label htmlFor="report-date">
-            <FontAwesomeIcon icon={faCalendarAlt} /> Select Date:
+            <FontAwesomeIcon icon={faCalendarAlt} /> {f({ id: "selectDate" })}:
           </label>
           <input
             type="date"
@@ -138,22 +158,22 @@ const DailyFinancialReport = () => {
 
       <div className="stats">
         <p>
-          Total Revenue: <strong>${totalPayments || 0}</strong>
+          {f({ id: "totalRevenue" })}: <strong>${totalPayments || 0}</strong>
         </p>
         <p>
-          Total Payments: <strong>{payments?.length || 0}</strong>
+          {f({ id: "totalPayments" })}: <strong>{payments?.length || 0}</strong>
         </p>
         <p>
-          Total Visits: <strong>{visits?.length || 0}</strong>
+          {f({ id: "totalVisits" })}: <strong>{visits?.length || 0}</strong>
         </p>
         <p>
-          New Patients: <strong>{patients?.length || 0}</strong>
+          {f({ id: "newPatients" })}: <strong>{patients?.length || 0}</strong>
         </p>
       </div>
 
       <div className="tables">
         <div className="visits-section">
-          <h3>Daily Visits</h3>
+          <h3>{f({ id: "dailyVisits" })}</h3>
           <Table
             columns={linkedVisitColumns}
             data={linkedVisits}
@@ -166,7 +186,9 @@ const DailyFinancialReport = () => {
           {/* Header for Table */}
           <div className="payment-header-container">
             <h3>
-              {convertPaymentTable ? "All Payments" : "Unlinked Payments"}
+              {convertPaymentTable
+                ? f({ id: "allPayments" })
+                : f({ id: "unlinkedPayments" })}
             </h3>
             <button
               onClick={() => setConvertPaymentTable(!convertPaymentTable)}
@@ -197,7 +219,7 @@ const DailyFinancialReport = () => {
         </div>
 
         <div className="new-patients-section">
-          <h3>Daily New Patients</h3>
+          <h3>{f({ id: "dailyNewPatients" })}</h3>
           <Table
             columns={patientColumns}
             data={patients || []}

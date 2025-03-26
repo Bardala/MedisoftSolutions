@@ -16,8 +16,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { callPatientForDoctor, handleSpeakName } from "../utils/speakUtils";
+import { useIntl } from "react-intl";
 
 const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
+  const { formatMessage: f } = useIntl();
   const { queue, isLoading, isError } = useFetchQueue(doctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
@@ -30,7 +32,6 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
     if (status === "IN_PROGRESS") {
       const patient = queue?.find((entry) => entry.id === queueId);
       if (patient) {
-        // speak(patient.patient.fullName, "ar");
         callPatientForDoctor(patient.patient.fullName);
       }
     }
@@ -44,23 +45,22 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
     updatePositionMutation.mutate({ queueId, newPosition });
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading queue</div>;
+  if (isLoading) return <div>{f({ id: "loading" })}</div>;
+  if (isError) return <div>{f({ id: "error" })}</div>;
 
   return (
     <div className="queue-page">
-      <h1>Wait List</h1>
+      <h1>{f({ id: "waitList" })}</h1>
 
       {/* Queue List */}
       <div className="queue-table-container">
         <table className="queue-table">
           <thead>
             <tr>
-              <th>Position</th>
-              <th>Patient</th>
-              <th>Arrived In</th>
-              {/* <th>Status</th> */}
-              <th>Actions</th>
+              <th>{f({ id: "position" })}</th>
+              <th>{f({ id: "patient" })}</th>
+              <th>{f({ id: "arrivedIn" })}</th>
+              <th>{f({ id: "actions" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +74,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                       onClick={() =>
                         handleUpdatePosition(entry.id, entry.position - 1)
                       }
-                      title="Move Up"
+                      title={f({ id: "moveUp" })}
                     >
                       ▲
                     </button>
@@ -85,7 +85,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                       onClick={() =>
                         handleUpdatePosition(entry.id, entry.position + 1)
                       }
-                      title="Move Down"
+                      title={f({ id: "moveDown" })}
                     >
                       ▼
                     </button>
@@ -93,12 +93,6 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                 </td>
                 <td>{entry.patient.fullName}</td>
                 <td>{dailyTimeFormate(entry.createdAt)}</td>
-                {/* <td>
-                  <span className={`status-tag ${entry.status.toLowerCase()}`}>
-                    {entry.status}
-                  </span>
-                </td> */}
-
                 <td>
                   {entry.position === 1 && entry.status === "WAITING" && (
                     <button
@@ -106,7 +100,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                       onClick={() =>
                         handleStatusChange(entry.id, "IN_PROGRESS")
                       }
-                      title="Start"
+                      title={f({ id: "start" })}
                     >
                       <FontAwesomeIcon icon={faPlay} />
                     </button>
@@ -115,7 +109,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                     <button
                       className="action-button"
                       onClick={() => handleStatusChange(entry.id, "COMPLETED")}
-                      title="Complete"
+                      title={f({ id: "complete" })}
                     >
                       <FontAwesomeIcon icon={faCheckCircle} />
                     </button>
@@ -123,7 +117,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                   <button
                     className="action-button danger"
                     onClick={() => handleRemovePatient(entry.id)}
-                    title="Remove"
+                    title={f({ id: "remove" })}
                   >
                     <FontAwesomeIcon icon={faTrashAlt} />
                   </button>
@@ -137,7 +131,7 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
                         entry.status,
                       )
                     }
-                    title="Speak Name"
+                    title={f({ id: "callPatient" })}
                   >
                     <FontAwesomeIcon icon={faVolumeUp} />
                   </button>

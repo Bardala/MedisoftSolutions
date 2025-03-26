@@ -7,8 +7,10 @@ import {
 import PrescriptionForm from "./PrescriptionForm";
 import Table from "./Table";
 import "../styles/medicines.css";
+import { useIntl } from "react-intl";
 
 export const Medicines: FC<{ visit: Visit }> = ({ visit }) => {
+  const { formatMessage: f } = useIntl();
   const [, setPrescriptions] = useState<Medicine[]>([]);
   const { query: visitMedicinesQuery } = useGetVisitMedicinesByVisitId(
     visit?.id,
@@ -24,24 +26,24 @@ export const Medicines: FC<{ visit: Visit }> = ({ visit }) => {
   // Define columns for the medicines table
   const medicineColumns = [
     {
-      header: "Medicine Name",
+      header: f({ id: "medicineName" }),
       accessor: (row) => row.medicine.medicineName,
     },
     {
-      header: "Dosage",
+      header: f({ id: "dosage" }),
       accessor: (row) => row.medicine.dosage,
     },
     {
-      header: "Frequency",
+      header: f({ id: "frequency" }),
       accessor: (row) => row.medicine.frequency || "N/A",
     },
     {
-      header: "Duration (days)",
+      header: f({ id: "duration" }),
       accessor: (row) => row.medicine.duration || "N/A",
       expandable: true,
     },
     {
-      header: "Instructions",
+      header: f({ id: "instructions" }),
       accessor: (row) => row.medicine.instructions || "N/A",
       expandable: true,
     },
@@ -57,7 +59,7 @@ export const Medicines: FC<{ visit: Visit }> = ({ visit }) => {
 
       {/* Display VisitMedicines in a table */}
       <div className="visit-medicines-list">
-        <h3>Prescribed Medicines</h3>
+        <h3>{f({ id: "prescribedMedicines" })}</h3>
         <Table
           columns={medicineColumns}
           data={visitMedicines || []}

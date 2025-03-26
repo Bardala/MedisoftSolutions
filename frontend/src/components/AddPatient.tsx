@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { useCreatePatient } from "../hooks/usePatient"; // Adjust the path to your hook
-import SearchComponent from "./SearchComponent"; // Import the SearchComponent
+import { useIntl } from "react-intl";
+import { useCreatePatient } from "../hooks/usePatient";
 import "../styles/cardComponents.css";
 import { isArabic } from "../utils";
-import { Patient } from "../types";
 import { usePatientSearch } from "../hooks/usePatientSearch";
 
 const AddPatient: React.FC = () => {
@@ -19,6 +18,8 @@ const AddPatient: React.FC = () => {
   const [showInfo, setShowInfo] = useState(false);
   const { allPatients } = usePatientSearch();
 
+  const { formatMessage: f } = useIntl();
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -33,11 +34,23 @@ const AddPatient: React.FC = () => {
       case "notes":
         dispatch({ type: "SET_NOTES", payload: value });
         break;
+      case "address":
+        dispatch({ type: "SET_ADDRESS", payload: value });
+        break;
+      case "medicalHistory":
+        return { type: "SET_MEDICAL_HISTORY", payload: value };
       default:
         break;
     }
   };
-
+  const [showAddressList, setShowAddressList] = useState(false);
+  const [showMedicalHistoryList, setShowMedicalHistoryList] = useState(false);
+  const uniqueAddresses = Array.from(
+    new Set(allPatients?.map((p) => p.address) || []),
+  );
+  const uniqueMedicalHistories = Array.from(
+    new Set(allPatients?.map((p) => p.medicalHistory) || []),
+  );
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -51,7 +64,7 @@ const AddPatient: React.FC = () => {
 
   return (
     <div className="card-container">
-      <h2>Add New Patient</h2>
+      <h2>{f({ id: "title" })}</h2>
       <form onSubmit={handleSubmit}>
         {/* Full Name */}
         <div className="form-group">
@@ -59,7 +72,7 @@ const AddPatient: React.FC = () => {
             className={isArabic(patient.fullName) ? "arabic" : ""}
             type="text"
             name="fullName"
-            placeholder="👤Full Name"
+            placeholder={f({ id: "fullNamePlaceholder" })}
             value={patient.fullName || ""}
             onChange={handleInputChange}
             required
@@ -74,40 +87,7 @@ const AddPatient: React.FC = () => {
 
           {showInfo && (
             <div className="info-message arabic">
-              <p>
-                ⚠️ يُرجى استخدام الكتابة العربية الصحيحة لتفادي الأخطاء في
-                استدعاء المرضى.
-              </p>
-              <ul>
-                <li>
-                  ✅ بدلاً من <b>'احمد'</b> اكتب <b>'أحمد'</b>
-                </li>
-                <li>
-                  ✅ بدلاً من <b>'على'</b> اكتب <b>'علي'</b>
-                </li>
-                <li>
-                  ✅ بدلاً من <b>'اسماعيل'</b> اكتب <b>'إسماعيل'</b>
-                </li>
-                <li>
-                  ✅ بدلاً من <b>'عبدالمجيد'</b> اكتب <b>'عبد المجيد'</b>
-                </li>
-                <li>
-                  ✅ بدلاً من <b>'بشري'</b> اكتب <b>'بشرى'</b>
-                </li>
-                <li>
-                  ✅ استخدم التشكيل الصحيح مثل: <b>'إبراهيم'</b> بدلاً من{" "}
-                  <b>'ابراهيم'</b>
-                </li>
-                <li>
-                  ✅ في بعض الكلمات، يكون من الصحيح استخدام <b>'ي'</b> بدلاً من{" "}
-                  <b>'ى'</b>؛ لذا يُرجى مراجعة القواعد الإملائية لكل حالة.
-                </li>
-              </ul>
-              <p>⚠️ تأكد من وضع الهمزات بالشكل الصحيح</p>
-              <p>
-                ⚠️ تأكد من اختيار الحرف الصحيح في نهاية الكلمة: استخدم{" "}
-                <b>'ى'</b> بدلاً من <b>'ي'</b> في الحالات التي تستدعي ذلك،
-              </p>
+              <p>{f({ id: "arabicNameWarning" })}</p>
             </div>
           )}
         </div>
@@ -117,7 +97,7 @@ const AddPatient: React.FC = () => {
           <input
             type="tel"
             name="phone"
-            placeholder="📞Phone Number"
+            placeholder={f({ id: "phonePlaceholder" })}
             value={patient.phone}
             onChange={(e) =>
               dispatch({
@@ -134,7 +114,7 @@ const AddPatient: React.FC = () => {
           <input
             type="number"
             name="age"
-            placeholder="📅Age (optional)"
+            placeholder={f({ id: "agePlaceholder" })}
             value={patient.age || ""}
             onChange={handleInputChange}
           />
@@ -142,31 +122,87 @@ const AddPatient: React.FC = () => {
 
         {/* Address */}
         <div className="form-group">
-          <SearchComponent<Patient>
-            data={allPatients}
-            searchKey="address"
-            displayKey="address"
-            placeholder="🏠Address (optional)"
-            onSelect={(item) =>
-              dispatch({ type: "SET_ADDRESS", payload: item.address })
-            }
-          />
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder={f({ id: "addressPlaceholder" })}
+              name="address"
+              value={patient.address}
+              onChange={(e) =>
+                dispatch({ type: "SET_ADDRESS", payload: e.target.value })
+              }
+              onFocus={() => setShowAddressList(true)}
+              onBlur={() => setTimeout(() => setShowAddressList(false), 200)}
+            />
+            {showAddressList && (
+              <ul className="search-list visible">
+                {uniqueAddresses &&
+                  uniqueAddresses
+                    .filter((add) =>
+                      add.toLowerCase().includes(patient.address.toLowerCase()),
+                    )
+                    .map((add, index) => (
+                      <li
+                        key={index}
+                        onClick={(e) => {
+                          dispatch({ type: "SET_ADDRESS", payload: add });
+                        }}
+                      >
+                        {add}
+                      </li>
+                    ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Medical History */}
         <div className="form-group">
-          <SearchComponent<Patient>
-            data={allPatients}
-            searchKey="medicalHistory"
-            displayKey="medicalHistory"
-            placeholder="💊Medical History (optional)"
-            onSelect={(item) =>
-              dispatch({
-                type: "SET_MEDICAL_HISTORY",
-                payload: item.medicalHistory,
-              })
-            }
-          />
+          <div className="search-container">
+            <input
+              type="text"
+              name="medicalHistory"
+              placeholder={f({
+                id: "medicalHistoryPlaceholder",
+              })}
+              value={patient.medicalHistory || ""}
+              // onChange={handleInputChange}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_MEDICAL_HISTORY",
+                  payload: e.target.value,
+                })
+              }
+              onFocus={() => setShowMedicalHistoryList(true)}
+              onBlur={() =>
+                setTimeout(() => setShowMedicalHistoryList(false), 200)
+              }
+            />
+            {showMedicalHistoryList && (
+              <ul className="search-list visible">
+                {uniqueMedicalHistories &&
+                  uniqueMedicalHistories
+                    .filter((md) =>
+                      md
+                        .toLowerCase()
+                        .includes(patient.medicalHistory.toLowerCase()),
+                    )
+                    .map((md, index) => (
+                      <li
+                        key={index}
+                        onClick={(e) => {
+                          dispatch({
+                            type: "SET_MEDICAL_HISTORY",
+                            payload: md,
+                          });
+                        }}
+                      >
+                        {md}
+                      </li>
+                    ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Notes */}
@@ -174,19 +210,23 @@ const AddPatient: React.FC = () => {
           <textarea
             className={isArabic(patient.notes) ? "arabic" : ""}
             name="notes"
-            placeholder="📝Notes (optional)"
+            placeholder={f({ id: "notesPlaceholder" })}
             value={patient.notes || ""}
             onChange={handleInputChange}
           />
         </div>
 
         <button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : "Save"}
+          {isLoading ? f({ id: "savingButton" }) : f({ id: "submitButton" })}
         </button>
       </form>
 
-      {success && <p className="success">Patient registered successfully!</p>}
-      {isError && <p className="error">Error: {error?.message}</p>}
+      {success && <p className="success">{f({ id: "successMessage" })}</p>}
+      {isError && (
+        <p className="error">
+          {f({ id: "errorMessage" }, { error: error?.message })}
+        </p>
+      )}
     </div>
   );
 };

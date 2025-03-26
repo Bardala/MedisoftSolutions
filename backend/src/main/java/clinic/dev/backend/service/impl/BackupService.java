@@ -25,8 +25,9 @@ public class BackupService {
 
   private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
-  @Scheduled(cron = "0 0 0 * * 4") // Runs every Thursday at 12:00 AM
+  // @Scheduled(cron = "0 0 0 * * 4") // Runs every Thursday at 12:00 AM
   // @Scheduled(fixedDelay = 300000) // Runs every 5 minutes (300,000 ms)
+  @Scheduled(cron = "0 0 0 * * *") // Runs every day at 12:00 AM
   public void performBackup() {
     try {
       backupDatabase();

@@ -1,0 +1,18 @@
+{
+  "waitList": "قائمة الانتظار",
+  "position": "الدور",
+  "patient": "المريض",
+  "arrivedIn": "وصل في",
+  "actions": "الإجراءات",
+  "start": "بدء",
+  "complete": "إكمال",
+  "remove": "إزالة",
+  "callPatient": "استدعاء المريض",
+  "moveUp": "تحريك لأعلى",
+  "moveDown": "تحريك لأسفل",
+  "status.waiting": "في الانتظار",
+  "status.inProgress": "قيد التنفيذ",
+  "status.completed": "مكتمل",
+  "loading": "جاري التحميل...",
+  "error": "خطأ في تحميل قائمة الانتظار"
+}

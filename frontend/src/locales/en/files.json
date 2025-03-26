@@ -1,0 +1,12 @@
+{
+  "files.loading": "Loading...",
+  "files.error": "Error: {message}",
+  "files.delete.confirm": "Are you sure you want to delete this file?",
+  "files.delete.confirmAll": "Are you sure you want to delete these files?",
+  "files.delete.success": "File deleted successfully",
+  "files.delete.allSuccess": "All files deleted successfully",
+  "files.delete.error": "Error: {message}",
+  "files.delete.yes": "Yes, Delete",
+  "files.delete.cancel": "Cancel",
+  "files.delete.all": "Delete All Files"
+}

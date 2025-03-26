@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import "../styles/addAssistant.css";
 import { useAddAssistant } from "../hooks/useAddAssistant";
 import QRCodeComponent from "./QRCodeComponent";
@@ -20,45 +21,51 @@ const AddAssistant: React.FC = () => {
     qrUsername,
   } = useAddAssistant();
 
+  const intl = useIntl();
+
   return (
     <div className="add-assistant-container">
-      <h2 className="title">Add Assistant</h2>
+      <h2 className="title">{intl.formatMessage({ id: "title" })}</h2>
       <form onSubmit={handleSubmit} className="add-assistant-form">
         <input
           type="text"
-          placeholder="Username"
+          placeholder={intl.formatMessage({ id: "usernamePlaceholder" })}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
           type="text"
-          placeholder="Full Name"
+          placeholder={intl.formatMessage({ id: "fullNamePlaceholder" })}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder={intl.formatMessage({ id: "passwordPlaceholder" })}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <input
           type="number"
-          placeholder="Phone"
+          placeholder={intl.formatMessage({ id: "phonePlaceholder" })}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
         />
         <button type="submit" className="submit-button">
-          Create Assistant
+          {intl.formatMessage({ id: "submitButton" })}
         </button>
-        {error && <p className="error-message">{error}</p>}
+        {error && (
+          <p className="error-message">
+            {intl.formatMessage({ id: "errorMessage" })}
+          </p>
+        )}
         {success && (
           <p className="success-message">
-            Assistant account created successfully!
+            {intl.formatMessage({ id: "successMessage" })}
           </p>
         )}
       </form>
