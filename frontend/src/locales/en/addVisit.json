@@ -13,5 +13,7 @@
   "addVisit.paymentAmountLabel": "💵 Payment Amount",
   "addVisit.paymentAmountPlaceholder": "Enter Payment Amount 💵",
   "addVisit.recordVisitButton": "💾 Record Visit",
-  "addVisit.RecordedSuccessfully": "Recorded successfully!"
+  "addVisit.RecordedSuccessfully": "Recorded successfully!",
+  "patient.select": "Please select a patient",
+  "visit.payment.error": "Failed to record visit or payment."
 }

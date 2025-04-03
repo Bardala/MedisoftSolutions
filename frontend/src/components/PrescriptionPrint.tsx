@@ -2,7 +2,14 @@ import { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
 import "../styles/prescriptionPrint.css";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
-import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
+import {
+  clinicAddress,
+  clinicPhoneNumber,
+  doctorName,
+  prescriptionLogo,
+  programLogoImage,
+  whatsappImage,
+} from "../utils";
 import Table from "./Table";
 
 interface PrescriptionPrintProps {
@@ -135,7 +142,7 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
 
             <div className="doctor-info">
               <h1>الدكتور</h1>
-              <h1>محمد سمير الدسوقي</h1>
+              <h1>{doctorName}</h1>
               <h2>
                 <strong>أخصائي طب وجراحة الفم والأسنان </strong>
               </h2>
@@ -209,12 +216,9 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
                       alt="WhatsApp"
                       className="whatsapp-logo"
                     />
-                    📞 هاتف: <span>6461-554-0100</span>
+                    📞 هاتف: <span>{clinicPhoneNumber}</span>
                   </p>
-                  <p>
-                    📍 العنوان: خلف موقف طنطا ، بجوار مسجد عمر بن الخطاب -الباب
-                    الخلفى، كوم حمادة
-                  </p>
+                  <p>{clinicAddress}</p>
                   <p>
                     🕒 مواعيد العمل: يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف
                     الليل

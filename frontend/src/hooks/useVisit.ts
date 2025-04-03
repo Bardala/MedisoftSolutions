@@ -19,6 +19,7 @@ import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 import { useIntl } from "react-intl";
+import { doctorId } from "../utils";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");
@@ -40,6 +41,8 @@ export const useRecordVisit = () => {
 };
 
 export const useAddVisit = () => {
+  const { formatMessage: f } = useIntl();
+
   const { loggedInUser } = useLogin();
   const { doctorNotes, setDoctorNotes, createVisitMutation } = useRecordVisit();
   const {
@@ -47,7 +50,6 @@ export const useAddVisit = () => {
     setSelectedDentalProcedures,
     handleRecordVisitProcedures,
   } = useRecordVisitsProcedures();
-  const intl = useIntl();
   const { mutation: paymentMutation } = useRecordPayment();
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
@@ -74,13 +76,15 @@ export const useAddVisit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPatient) {
-      alert("Please select a patient");
+      alert(f({ id: "patient.select" }));
       return null;
     }
 
     const newVisit: CreateVisitReq = {
       patient: { id: selectedPatient?.id },
-      doctor: { id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : 1 },
+      doctor: {
+        id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : doctorId,
+      },
       ...(loggedInUser.role === "Assistant" && {
         assistant: { id: loggedInUser.id },
       }),
@@ -110,9 +114,7 @@ export const useAddVisit = () => {
       }
 
       // setSuccessMessage("Visit and payment recorded successfully!");
-      setSuccessMessage(
-        intl.formatMessage({ id: "visitAndPaymentSuccessMessage" }),
-      );
+      setSuccessMessage(f({ id: "visitAndPaymentSuccessMessage" }));
       setCreatedVisitDetails({
         visitId,
         patientName: selectedPatient.fullName,
@@ -143,7 +145,8 @@ export const useAddVisit = () => {
       return visit;
     } catch (error) {
       console.error("Error recording visit or payment:", error);
-      alert("Failed to record visit or payment.");
+
+      alert(f({ id: "visit.payment.error" }));
       return null;
     }
   };

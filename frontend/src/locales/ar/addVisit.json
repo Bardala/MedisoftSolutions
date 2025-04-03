@@ -13,5 +13,7 @@
   "addVisit.paymentAmountLabel": "💵 مبلغ الدفع",
   "addVisit.paymentAmountPlaceholder": "أدخل مبلغ الدفع 💵",
   "addVisit.recordVisitButton": "💾 تسجيل الزيارة",
-  "addVisit.RecordedSuccessfully": "تم التسجيل بنجاح!"
+  "addVisit.RecordedSuccessfully": "تم التسجيل بنجاح!",
+  "patient.select": "يرجى اختيار مريض",
+  "visit.payment.error": "فشل في تسجيل الزيارة أو الدفع."
 }

@@ -12,5 +12,8 @@
   "enterName": "أدخل اسمك",
   "enterPhone": "أدخل رقم هاتفك",
   "enterNewPassword": "أدخل كلمة مرور جديدة",
-  "repeatNewPassword": "أعد إدخال كلمة المرور الجديدة"
+  "repeatNewPassword": "أعد إدخال كلمة المرور الجديدة",
+   "password.mismatch": "كلمة المرور غير متطابقة، تحقق منها وحاول مرة أخرى",
+  "user.update.success": "تم تحديث معلومات المستخدم بنجاح!",
+  "user.update.error": "فشل في تحديث معلومات المستخدم."
 }

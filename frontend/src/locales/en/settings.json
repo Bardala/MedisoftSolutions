@@ -12,5 +12,8 @@
   "enterName": "Enter your name",
   "enterPhone": "Enter your phone",
   "enterNewPassword": "Enter new password",
-  "repeatNewPassword": "Repeat new password"
+  "repeatNewPassword": "Repeat new password",
+  "password.mismatch": "Password doesn't match, check it and try again",
+  "user.update.success": "User information updated successfully!",
+  "user.update.error": "Failed to update user information."
 }

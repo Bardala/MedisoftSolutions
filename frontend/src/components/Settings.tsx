@@ -27,7 +27,7 @@ const Settings = ({
   const { logout, loggedInUser } = useLogin();
   const { updateUserMutation } = useUpdateUser();
   const { locale, switchLanguage } = useContext(LanguageContext);
-  const intl = useIntl(); // React-Intl instance for placeholders
+  const { formatMessage: f } = useIntl(); // React-Intl instance for placeholders
 
   const [editing, setEditing] = useState(false);
   const [password, setPassword] = useState("");
@@ -44,18 +44,17 @@ const Settings = ({
     if (!updatedUser) return;
 
     try {
-      if (password !== repeatedPass)
-        alert("Password don't match, check it and try again");
+      if (password !== repeatedPass) alert(f({ id: "password.mismatch" }));
       else {
         updatedUser.password = password;
         await updateUserMutation.mutateAsync(updatedUser);
-        alert("User information updated successfully!");
+        alert(f({ id: "user.update.success" }));
         setEditing(false);
         logout();
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to update user information.");
+      alert(f({ id: "user.update.error" }));
     }
   };
 
@@ -103,7 +102,7 @@ const Settings = ({
                     )
                   }
                   required
-                  placeholder={intl.formatMessage({
+                  placeholder={f({
                     id: "enterName",
                     defaultMessage: "Enter your name",
                   })}
@@ -120,7 +119,7 @@ const Settings = ({
                     )
                   }
                   required
-                  placeholder={intl.formatMessage({
+                  placeholder={f({
                     id: "enterPhone",
                     defaultMessage: "Enter your phone",
                   })}
@@ -135,7 +134,7 @@ const Settings = ({
                 :
                 <input
                   type="password"
-                  placeholder={intl.formatMessage({
+                  placeholder={f({
                     id: "enterNewPassword",
                     defaultMessage: "Enter new password",
                   })}
@@ -151,7 +150,7 @@ const Settings = ({
                 :
                 <input
                   type="password"
-                  placeholder={intl.formatMessage({
+                  placeholder={f({
                     id: "repeatNewPassword",
                     defaultMessage: "Repeat new password",
                   })}
