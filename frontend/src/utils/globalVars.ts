@@ -1,4 +1,4 @@
-export const doctorId = 2;
+export const doctorId = 1;
 export const doctorUsername = "doctor";
 export const assistantUsername = "assistant";
 export const doctorName = "محمد سمير الدسوقي";

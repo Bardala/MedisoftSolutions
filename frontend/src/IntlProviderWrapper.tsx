@@ -50,6 +50,8 @@ import enFiles from "./locales/en/files.json";
 import arFiles from "./locales/ar/files.json";
 import enPresPrint from "./locales/en/prescriptionContainer.json";
 import arPresPrint from "./locales/ar/prescriptionContainer.json";
+import enSelectDoctor from "./locales/en/doctorSelect.json";
+import arSelectDoctor from "./locales/ar/doctorSelect.json";
 
 // Combine translations
 const messages = {
@@ -78,6 +80,7 @@ const messages = {
     ...enLogin,
     ...enFiles,
     ...enPresPrint,
+    ...enSelectDoctor,
   },
   ar: {
     ...arCommon,
@@ -104,6 +107,7 @@ const messages = {
     ...arLogin,
     ...arFiles,
     ...arPresPrint,
+    ...arSelectDoctor,
   },
 };
 

@@ -17,11 +17,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { callPatientForDoctor, handleSpeakName } from "../utils/speakUtils";
 import { useIntl } from "react-intl";
+import { DoctorSelect } from "./DoctorSelect";
+import { useDoctorSelection } from "../hooks/useDoctors";
 
-const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
+const QueuePage: React.FC = () => {
   const { formatMessage: f } = useIntl();
-  const { queue, isLoading, isError } = useFetchQueue(doctorId);
-  const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
+  const { selectedDoctorId } = useDoctorSelection();
+  const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
+  const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
   const { updatePositionMutation } = useUpdateQueuePosition();
 
@@ -50,7 +53,10 @@ const QueuePage: React.FC<{ doctorId: number }> = ({ doctorId }) => {
 
   return (
     <div className="queue-page">
-      <h1>{f({ id: "waitList" })}</h1>
+      <h1>
+        {f({ id: "waitList" })}
+        {<DoctorSelect />}
+      </h1>
 
       {/* Queue List */}
       <div className="queue-table-container">

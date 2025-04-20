@@ -208,13 +208,18 @@ const DailyFinancialReport = () => {
               enableActions={true}
             />
           ) : (
-            <Table
-              columns={paymentColumns}
-              data={unlinkedPayments}
-              onUpdate={updatePaymentMutation.mutate}
-              onDelete={deletePaymentMutation.mutate}
-              enableActions={true}
-            />
+            <>
+              {updatePaymentMutation.isError && (
+                <p className="error">{updatePaymentMutation?.error?.message}</p>
+              )}
+              <Table
+                columns={paymentColumns}
+                data={unlinkedPayments}
+                onUpdate={updatePaymentMutation.mutate}
+                onDelete={deletePaymentMutation.mutate}
+                enableActions={true}
+              />
+            </>
           )}
         </div>
 

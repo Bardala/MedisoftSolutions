@@ -9,12 +9,7 @@ import {
   useUpdateQueueStatus,
   useRemovePatientFromQueue,
 } from "../hooks/useQueue";
-import {
-  callNextPatient,
-  callPatientForDoctor,
-  doctorId,
-  isArabic,
-} from "../utils";
+import { callNextPatient, callPatientForDoctor, isArabic } from "../utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Medicines } from "./Medicines";
@@ -24,12 +19,17 @@ import { calculateRemainingBalance } from "../utils";
 import { PrescriptionsContainer } from "./PrescriptionsContainer";
 import { useUpdatePatient } from "../hooks/usePatient";
 import { useIntl } from "react-intl";
+import { DoctorSelect } from "./DoctorSelect";
+import { useDoctorSelection } from "../hooks/useDoctors";
 
 const CurrentPatientProfile = () => {
   const { formatMessage: f } = useIntl();
   const { loggedInUser } = useLogin();
-  const { queue, isLoading, isError } = useFetchQueue(doctorId);
-  const { updateStatusMutation } = useUpdateQueueStatus(doctorId);
+
+  const { selectedDoctorId } = useDoctorSelection();
+
+  const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
+  const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
   const { updatePatientMutation } = useUpdatePatient();
 
@@ -45,6 +45,13 @@ const CurrentPatientProfile = () => {
   const visit = visits ? visits[visits.length - 1] : null;
   const lastVisit =
     visits && visits.length > 1 ? visits[visits.length - 2] : null;
+
+  // Save selected doctor ID to localStorage when it changes
+  useEffect(() => {
+    if (loggedInUser.role === "Assistant" && selectedDoctorId) {
+      localStorage.setItem("selectedDoctorId", String(selectedDoctorId));
+    }
+  }, [selectedDoctorId, loggedInUser.role]);
 
   useEffect(() => {
     if (queue && queue.length > 0) {
@@ -96,6 +103,8 @@ const CurrentPatientProfile = () => {
     <div className="patient-profile-container">
       <div className="header-section">
         <h2>{f({ id: "currentPatient" })}</h2>
+
+        {<DoctorSelect />}
       </div>
 
       {currPatient ? (

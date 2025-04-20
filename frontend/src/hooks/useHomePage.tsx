@@ -4,7 +4,7 @@ import AddPatient from "../components/AddPatient";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
 
-import PatientProfile from "../components/PatientProfile";
+import PatientProfile from "../components/CurrentPatient";
 import Home from "../components/Home";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
@@ -12,7 +12,6 @@ import AddAssistant from "../components/AddAssistant";
 import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
 import QueuePage from "../components/Queue";
-import { doctorId } from "../utils";
 
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -20,7 +19,7 @@ export const useHomePage = (loggedInUser: User) => {
   const commonRoutes = {
     "/": <Home setSelectedOption={setSelectedOption} />,
     "/record-new-visit": <AddVisit />,
-    "/patients": <QueuePage doctorId={doctorId} />,
+    "/patients": <QueuePage />,
     "/reports": <DailyFinancialReport />,
     "/settings": <Settings setSelectedOption={setSelectedOption} />,
     "/patient-history": <GetRegistry />,
