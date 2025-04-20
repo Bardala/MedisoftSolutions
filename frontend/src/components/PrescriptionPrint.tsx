@@ -110,7 +110,9 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
   const medicineColumns = [
     {
       header: "اسم الدواء",
-      accessor: (row) => row.medicine.medicineName + "-" + row.medicine.dosage,
+      accessor: (row) =>
+        row.medicine.medicineName +
+        (row.medicine.dosage && " - " + row.medicine.dosage),
     },
     {
       header: "التعليمات",
