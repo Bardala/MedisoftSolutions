@@ -5,7 +5,7 @@ import "../styles/settings.css";
 
 import { useMutation } from "@tanstack/react-query";
 import { UpdateUserRes, User } from "../types";
-import { UpdateUserApi } from "../fetch/api";
+import { UpdateUserApi } from "../apis/userApis";
 import { ApiError } from "../fetch/ApiError";
 import { FormattedMessage, useIntl } from "react-intl";
 import { LanguageContext } from "../IntlProviderWrapper";

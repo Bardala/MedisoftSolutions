@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GetAllUsersApi } from "../fetch/api";
+import { GetAllUsersApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { User } from "../types";
 import { useState } from "react";

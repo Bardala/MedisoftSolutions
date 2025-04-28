@@ -10,13 +10,13 @@ import {
   VisitDentalProcedure,
 } from "../types";
 import { ApiError } from "../fetch/ApiError";
+import { useState } from "react";
 import {
+  UpdateVisitDentalProcedureApi,
+  RecordVisitDentalProcedureApi,
   DeleteVisitProcedureApi,
   GetVisitProceduresByVisitIdApi,
-  RecordVisitDentalProcedureApi,
-  UpdateVisitDentalProcedureApi,
-} from "../fetch/api";
-import { useState } from "react";
+} from "../apis";
 
 export const useUpdateVisitDentalProcedure = () => {
   const updateVisitDentalProcedureMutation = useMutation<

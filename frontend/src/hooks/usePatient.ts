@@ -8,14 +8,11 @@ import {
   UpdatePatientReq,
   UpdatePatientRes,
 } from "../types";
-import {
-  CreatePatientApi,
-  DeletePatientApi,
-  UpdatePatientApi,
-} from "../fetch/api";
+
 import { useState } from "react";
 
 import { useReducer } from "react";
+import { CreatePatientApi, UpdatePatientApi, DeletePatientApi } from "../apis";
 
 type PatientAction =
   | { type: "SET_FULL_NAME"; payload: string }

@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  AddToQueueApi,
-  CreateVisitApi,
-  DeleteVisitApi,
-  UpdateVisitApi,
-} from "../fetch/api";
+
 import {
   CreateVisitRes,
   CreateVisitReq,
@@ -20,6 +15,12 @@ import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 import { useIntl } from "react-intl";
 import { doctorId } from "../utils";
+import {
+  CreateVisitApi,
+  AddToQueueApi,
+  UpdateVisitApi,
+  DeleteVisitApi,
+} from "../apis";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");

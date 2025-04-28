@@ -4,7 +4,7 @@ import {
   UpdateQueueStatusApi,
   RemovePatientFromQueueApi,
   UpdateQueuePositionApi,
-} from "../fetch/api";
+} from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { QueueEntry, QueueStatus } from "../types";
 

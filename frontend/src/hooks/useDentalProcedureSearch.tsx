@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllDentalProceduresApi } from "../fetch/api";
+import { GetAllDentalProceduresApi } from "../apis";
 import { DentalProcedure } from "../types";
 
 export const useDentalProcedureSearch = () => {

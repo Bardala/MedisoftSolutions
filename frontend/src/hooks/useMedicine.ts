@@ -12,7 +12,7 @@ import {
   CreateMedicineApi,
   UpdateMedicineApi,
   DeleteMedicineApi,
-} from "../fetch/api";
+} from "../apis";
 
 export const useGetAllMedicines = () => {
   const query = useQuery<Medicine[], ApiError>(["medicines"], () =>

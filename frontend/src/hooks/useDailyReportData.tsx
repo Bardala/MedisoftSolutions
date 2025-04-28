@@ -1,9 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  WorkdayPaymentsApi,
-  WorkDayVisitApi,
-  DailyNewPatientsApi,
-} from "../fetch/api";
+
 import { ApiError } from "../fetch/ApiError";
 import {
   WorkdayPaymentsRes,
@@ -14,6 +10,11 @@ import {
   Payment,
 } from "../types";
 import { sortById } from "../utils/sort";
+import {
+  WorkdayPaymentsApi,
+  WorkDayVisitApi,
+  DailyNewPatientsApi,
+} from "../apis";
 
 export const useDailyReportData = (
   date = new Date().toISOString().split("T")[0],

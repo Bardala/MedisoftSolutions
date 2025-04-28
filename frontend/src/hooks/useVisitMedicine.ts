@@ -8,7 +8,7 @@ import {
   DeleteVisitMedicineApi,
   GetVisitMedicinesByVisitIdApi,
   GetVisitMedicinesByMedicineIdApi,
-} from "../fetch/api";
+} from "../apis";
 
 export const useGetAllVisitMedicines = () => {
   const query = useQuery<VisitMedicine[], ApiError>(["visit-medicines"], () =>

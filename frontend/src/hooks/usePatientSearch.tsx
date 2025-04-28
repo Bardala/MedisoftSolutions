@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllPatients } from "../fetch/api";
+import { GetAllPatients } from "../apis";
 import { Patient } from "../types";
 
 export const usePatientSearch = () => {

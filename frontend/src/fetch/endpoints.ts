@@ -35,7 +35,7 @@ export enum ENDPOINT {
   GET_ALL_VISITS = "/visits",
   GET_WORKDAY_VISITS = "/visits/workday",
 
-  // Dental Procedure APIs
+  // Procedure APIs
   CREATE_DENTAL_PROCEDURE = "/services",
   UPDATE_DENTAL_PROCEDURE = "/services/:id",
   DELETE_DENTAL_PROCEDURE = "/services/:id",
