@@ -7,6 +7,8 @@ import {
 } from "../hooks/useMedicine";
 import { useCreateVisitMedicine } from "../hooks/useVisitMedicine";
 import "../styles/prescriptionForm.css";
+import "../styles/searchComponent.css";
+import { useIntl } from "react-intl";
 
 interface PrescriptionFormProps {
   visit: Visit;
@@ -17,6 +19,7 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
   visit,
   onPrescriptionSubmit,
 }) => {
+  const { formatMessage: f } = useIntl();
   const [medicineName, setMedicineName] = useState("");
   const [dosage, setDosage] = useState("");
   const [frequency, setFrequency] = useState("");
@@ -25,6 +28,9 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(
     null,
   );
+  const [showDosageList, setShowDosageList] = useState(false);
+  const [showFrequencyList, setShowFrequencyList] = useState(false);
+  const [showInstructionsList, setShowInstructionsList] = useState(false);
 
   const { query: allMedicinesQuery } = useGetAllMedicines();
   const { createMutation: createMedicineMutation } = useCreateMedicine();
@@ -35,6 +41,18 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
   const storedMedicines = allMedicinesQuery.data?.sort((a, b) =>
     a.medicineName.localeCompare(b.medicineName),
   ) as unknown as Medicine[];
+  // Get unique values for suggestions
+  const uniqueDosages = Array.from(
+    new Set(storedMedicines?.map((m) => m.dosage) || []),
+  );
+  const uniqueFrequencies = Array.from(
+    new Set(storedMedicines?.map((m) => m.frequency) || []),
+  );
+  const uniqueInstructions = Array.from(
+    new Set(
+      storedMedicines?.map((m) => m.instructions || "").filter((i) => i),
+    ) || [],
+  );
 
   // Handle medicine selection from the list
   const handleMedicineSelect = (medicine: Medicine) => {
@@ -116,18 +134,18 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
 
   return (
     <div className="prescription-form">
-      <h3>Create Prescription</h3>
+      <h3>{f({ id: "createPrescription" })}</h3>
       <form onSubmit={handleSubmit}>
         {/* Medicine Search and Selection */}
         <div className="medicine-search">
           <input
             type="text"
-            placeholder="Search for medicine..."
+            placeholder={f({ id: "searchMedicine" })}
             value={medicineName}
             onChange={(e) => setMedicineName(e.target.value)}
           />
           {storedMedicines && (
-            <ul className="medicine-list">
+            <ul className="search-list visible">
               {storedMedicines
                 .filter((medicine) =>
                   medicine.medicineName
@@ -148,40 +166,122 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
 
         {/* Medicine Details */}
         <div className="medicine-details">
-          <input
+          {/* <input
             type="text"
             placeholder="Dosage"
             value={dosage}
             onChange={(e) => setDosage(e.target.value)}
             required
-          />
-          <input
+          /> */}
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder={f({ id: "dosage" })}
+              value={dosage}
+              onChange={(e) => setDosage(e.target.value)}
+              onFocus={() => setShowDosageList(true)}
+              onBlur={() => setTimeout(() => setShowDosageList(false), 200)}
+            />
+            {showDosageList && (
+              <ul className="search-list visible">
+                {uniqueDosages && (
+                  <ul className="medicine-list">
+                    {uniqueDosages
+                      .filter((d) =>
+                        d.toLowerCase().includes(dosage.toLowerCase()),
+                      )
+                      .map((d, index) => (
+                        <li key={index} onClick={(e) => setDosage(d)}>
+                          {d}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </ul>
+            )}
+          </div>
+          {/* <input
             type="text"
             placeholder="Frequency"
             value={frequency}
             onChange={(e) => setFrequency(e.target.value)}
             required
-          />
+          /> */}
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder={f({ id: "frequency" })}
+              value={frequency}
+              onChange={(e) => setFrequency(e.target.value)}
+              onFocus={() => setShowFrequencyList(true)}
+              onBlur={() => setTimeout(() => setShowFrequencyList(false), 200)}
+            />
+            {showFrequencyList && (
+              <ul className="search-list visible">
+                {uniqueFrequencies && (
+                  <ul className="medicine-list">
+                    {uniqueFrequencies
+                      .filter((f) =>
+                        f.toLowerCase().includes(frequency.toLowerCase()),
+                      )
+                      .map((f, index) => (
+                        <li key={index} onClick={() => setFrequency(f)}>
+                          {f}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </ul>
+            )}
+          </div>
           <input
             // type="number"
-            placeholder="Duration (days)"
+            placeholder={f({ id: "duration" })}
             value={duration > 0 ? duration : ""}
             onChange={(e) => setDuration(Number(e.target.value))}
             required
           />
-          <textarea
+          {/* <textarea
             placeholder="Instructions"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
-          />
+          /> */}
+          <div className="search-container">
+            <textarea
+              placeholder={f({ id: "instructions" })}
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              onFocus={() => setShowInstructionsList(true)}
+              onBlur={() =>
+                setTimeout(() => setShowInstructionsList(false), 200)
+              }
+            />
+            {showInstructionsList && (
+              <ul className="search-list visible">
+                {uniqueInstructions && (
+                  <ul className="medicine-list">
+                    {uniqueInstructions
+                      .filter((inst) =>
+                        inst.toLowerCase().includes(instructions.toLowerCase()),
+                      )
+                      .map((inst, index) => (
+                        <li key={index} onClick={() => setInstructions(inst)}>
+                          {inst}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </ul>
+            )}
+          </div>
         </div>
 
         <button type="submit">
           {selectedMedicine
             ? medicineName !== selectedMedicine.medicineName
-              ? "Add New Medicine to Prescription"
-              : "Update and Add to Prescription"
-            : "Add to Prescription"}
+              ? f({ id: "addNewMedicine" })
+              : f({ id: "updateMedicine" })
+            : f({ id: "addToPrescription" })}
         </button>
       </form>
     </div>

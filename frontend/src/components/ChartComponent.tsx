@@ -1,13 +1,16 @@
+import React from "react";
+import { useIntl } from "react-intl";
 import { Bar } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 
 export const ChartComponent = ({ weeklyStats }) => {
-  // Chart data
+  const intl = useIntl();
+
   const chartData = {
     labels: Object.keys(weeklyStats),
     datasets: [
       {
-        label: "Number of Visits",
+        label: intl.formatMessage({ id: "chartLabel" }),
         data: Object.values(weeklyStats),
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
@@ -20,21 +23,19 @@ export const ChartComponent = ({ weeklyStats }) => {
     responsive: true,
     plugins: {
       legend: { position: "top" },
-      title: { display: true, text: "Weekly Visits Statistics" },
+      title: { display: true, text: intl.formatMessage({ id: "chartTitle" }) },
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          stepSize: 2,
-        },
+        ticks: { stepSize: 2 },
       },
     },
   };
 
   return (
     <div className="chart-card">
-      <h3>Weekly Visits Statistics</h3>
+      <h3>{intl.formatMessage({ id: "chartTitle" })}</h3>
       <Bar data={chartData} options={chartOptions} />
     </div>
   );

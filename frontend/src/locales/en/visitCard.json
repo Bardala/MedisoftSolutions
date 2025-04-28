@@ -1,0 +1,15 @@
+{
+  "currentVisitDetails": "Current Visit Details",
+  "lastVisitDetails": "Last Visit Details",
+  "visitId": "Visit Id",
+  "visitDate": "Visit Date",
+  "doctorNotes": "Doctor Notes",
+  "addNotesPlaceholder": "Add notes here...",
+  "saveNotes": "Save Notes",
+  "cancel": "Cancel",
+  "notesSaved": "New changes \"{notes}\" have been saved",
+  "procedures": "Procedures",
+  "selectedDentalProcedures": "Selected Dental Procedures",
+  "remove": "Remove",
+  "add": "Add"
+}

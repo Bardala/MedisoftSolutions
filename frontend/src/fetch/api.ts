@@ -37,8 +37,6 @@ import {
   LoginReq,
   LoginRes,
   MonthlyDayInfo,
-  MonthlyDaysInfoReq,
-  MonthlyDaysInfoRes,
   MonthlySummaryReq,
   MonthlySummaryRes,
   Patient,
@@ -83,7 +81,8 @@ export const loginApi = (identifier: string, password: string) =>
 export const CurrUserinfoApi = () =>
   fetchFn<CurrUserinfoReq, CurrUserinfoRes>(ENDPOINT.CURR_USER_INFO);
 
-export const GetAllUsersApi = () => fetchFn(ENDPOINT.GET_ALL_USERS);
+export const GetAllUsersApi = () =>
+  fetchFn<void, User[]>(ENDPOINT.GET_ALL_USERS);
 
 export const CreateUserApi = (userInfo: CreateUserReq) => () =>
   fetchFn<CreateUserReq, CreateUserRes>(ENDPOINT.CREATE_USER, "POST", userInfo);

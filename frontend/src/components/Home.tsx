@@ -5,19 +5,19 @@ import {
   faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/home.css";
-import { useMonthlyReport } from "../hooks/useMonthlyReport";
 import { useDailyReportData } from "../hooks/useDailyReportData";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid"; // For unique notification IDs
 import { dailyTimeFormate } from "../utils";
 import { isEqual } from "lodash"; // For deep comparison
+import { useIntl } from "react-intl";
 
 const Home = ({
   setSelectedOption,
 }: {
   setSelectedOption: (option: string) => void;
 }) => {
-  // const { summary } = useMonthlyReport();
+  const { formatMessage: f } = useIntl();
   const { patients, visits, payments, totalPayments, isLoading, isError } =
     useDailyReportData();
 
@@ -36,26 +36,38 @@ const Home = ({
       return [
         ...patients.map((patient) => ({
           id: uuidv4(),
-          message: `🆕🤒 New patient registration: ${patient.fullName}, from: ${patient.address} `,
+          message: f(
+            { id: "new_patient_registered" },
+            {
+              name: patient.fullName,
+              address: patient.address || f({ id: "not_available" }),
+            },
+          ),
           time: new Date(patient.createdAt).toLocaleString(),
           createdAt: patient.createdAt,
         })),
         ...visits.map((visit) => ({
           id: uuidv4(),
-          message: `🏥 New visit recorded for patient: ${visit.patient.fullName}`,
+          message: f(
+            { id: "new_visit_recorded" },
+            { name: visit.patient.fullName },
+          ),
           time: new Date(visit.createdAt).toLocaleString(),
           createdAt: visit.createdAt,
         })),
         ...payments.map((payment) => ({
           id: uuidv4(),
-          message: `💰 Payment received: $${payment.amount} from ${payment.patient.fullName}`,
+          message: f(
+            { id: "payment_received" },
+            { amount: payment.amount, name: payment.patient.fullName },
+          ),
           time: new Date(payment.createdAt).toLocaleString(),
           createdAt: payment.createdAt,
         })),
       ];
     }
     return [];
-  }, [patients, visits, payments, isLoading, isError]);
+  }, [patients, visits, payments, isLoading, isError, f]);
 
   const sortedNotifications = useMemo(() => {
     return combinedData.sort(
@@ -83,61 +95,60 @@ const Home = ({
 
   return (
     <div className="home">
-      <h1>Welcome to the Dashboard</h1>
-      <p>Select an option from the menu to get started.</p>
+      <h1>{f({ id: "welcome_dashboard" })}</h1>
+      <p>{f({ id: "select_option" })}</p>
 
       {/* Dashboard Summary */}
       <section className="dashboard-summary">
         <div className="summary-item">
           <h3>🆕🤒{patients?.length || 0}</h3>
-          <p>New Patients</p>
+          <p>{f({ id: "daily_patients" })}</p>
         </div>
         <div className="summary-item">
           <h3>🏥{visits?.length || 0}</h3>
-          <p>Total Visits</p>
+          <p>{f({ id: "total_visits" })}</p>
         </div>
         <div className="summary-item">
           <h3>💰{totalPayments || 0}</h3>
-          <p>Total Payments</p>
+          <p>{f({ id: "total_payments" })}</p>
         </div>
       </section>
 
       {/* Quick Actions */}
       <section className="quick-actions">
-        <h3>Quick Actions</h3>
+        <h3>{f({ id: "quick_actions" })}</h3>
         <div className="actions">
           <button
             className="action-btn"
             onClick={() => setSelectedOption("/add-patient")}
           >
             <FontAwesomeIcon icon={faUserPlus} />
-            Add New Patient
+            {f({ id: "add_patient" })}
           </button>
           <button
             className="action-btn"
             onClick={() => setSelectedOption("/payments")}
           >
             <FontAwesomeIcon icon={faDollarSign} />
-            Add Payment
+            {f({ id: "home.add_payment" })}
           </button>
           <button
             className="action-btn"
             onClick={() => setSelectedOption("/record-new-visit")}
           >
             <FontAwesomeIcon icon={faPlusCircle} />
-            {/* View Appointments */}
-            Record New Visit
+            {f({ id: "record_visit" })}
           </button>
         </div>
       </section>
 
       {/* Notifications */}
       <section className="notifications">
-        <h3>Recent Notifications</h3>
+        <h3>{f({ id: "recent_notifications" })}</h3>
         {isLoading ? (
-          <p>Loading notifications...</p>
+          <p>{f({ id: "loading_notifications" })}</p>
         ) : isError ? (
-          <p>Error loading notifications</p>
+          <p>{f({ id: "error_notifications" })}</p>
         ) : notifications.length > 0 ? (
           <ul>
             {notifications.map((notification) => (
@@ -148,7 +159,7 @@ const Home = ({
             ))}
           </ul>
         ) : (
-          <p>There have been no operations performed today.</p>
+          <p>{f({ id: "no_operations" })}</p>
         )}
       </section>
     </div>

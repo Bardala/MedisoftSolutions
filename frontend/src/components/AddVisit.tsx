@@ -1,64 +1,77 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import { useAddVisit } from "../hooks/useVisit";
 import PatientSearch from "./PatientSearch";
-import DentalProcedureSearch from "./DentalProcedureSearch";
 import "../styles/addVisit.css";
 
 export const AddVisit: React.FC = () => {
+  const { formatMessage: f } = useIntl();
   const {
     setPaymentAmount,
-    handleDentalProcedureSelect,
     handlePatientSelect,
-    selectedDentalProcedures,
     selectedPatient,
     paymentAmount,
     handleSubmit,
     successMessage,
     createdVisitDetails,
     createdPaymentDetails,
+    isLoading,
   } = useAddVisit();
 
   return (
     <div className="add-visit-container">
-      <h2>📋Record Visit</h2>
+      <h2>{f({ id: "addVisit.recordVisitTitle" })}</h2>
 
       {successMessage && (
         <div className="success-message">
-          <p>✅ {successMessage}</p>
+          <p>
+            {f({ id: "addVisit.RecordedSuccessfully" }, { successMessage })}
+          </p>
+
           {createdVisitDetails && (
             <div>
-              <h3>🦷 Visit Details:</h3>
+              <h3>{f({ id: "addVisit.visitDetailsTitle" })}</h3>
               <p>
-                📄 Visit ID: <strong>{createdVisitDetails.visitId}</strong>
+                {f(
+                  { id: "addVisit.visitId" },
+                  { visitId: createdVisitDetails.visitId },
+                )}
               </p>
               <p>
-                👤 Patient: <strong>{createdVisitDetails.patientName}</strong>
+                {f(
+                  { id: "addVisit.patientName" },
+                  { patientName: createdVisitDetails.patientName },
+                )}
               </p>
               <p>
-                🩺 Doctor: <strong>{createdVisitDetails.doctorName}</strong>
+                {f(
+                  { id: "addVisit.recordedBy" },
+                  { doctorName: createdVisitDetails.doctorName },
+                )}
               </p>
-              <p>📝 Dental Procedures:</p>
-              {createdVisitDetails.procedures?.map((p, index) => (
-                <p key={index}>
-                  <strong>
-                    🔹 {p.arabicName}, {p.serviceName}
-                  </strong>
-                </p>
-              ))}
               <p>
-                📅 Visit Date: <strong>{createdVisitDetails.visitDate}</strong>
+                {f(
+                  { id: "addVisit.visitDate" },
+                  { visitDate: createdVisitDetails.visitDate },
+                )}
               </p>
             </div>
           )}
+
           {createdPaymentDetails && (
             <div>
-              <h3>💳 Payment Details:</h3>
+              <h3>{f({ id: "addVisit.paymentDetailsTitle" })}</h3>
               <p>
-                🔢 Payment ID:{" "}
-                <strong>{createdPaymentDetails.paymentId}</strong>
+                {f(
+                  { id: "addVisit.paymentId" },
+                  { paymentId: createdPaymentDetails.paymentId },
+                )}
               </p>
               <p>
-                💰 Amount: <strong>💵 {createdPaymentDetails.amount}</strong>
+                {f(
+                  { id: "addVisit.paymentAmount" },
+                  { amount: createdPaymentDetails.amount },
+                )}
               </p>
             </div>
           )}
@@ -66,44 +79,34 @@ export const AddVisit: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Patient Selection */}
         <PatientSearch onSelect={handlePatientSelect} />
         {selectedPatient && (
           <div className="selected-items">
-            Selected Patient: {selectedPatient.fullName} (
-            {selectedPatient.phone})
+            {f(
+              { id: "addVisit.selectedPatient" },
+              {
+                fullName: selectedPatient.fullName,
+                phone: selectedPatient.phone,
+              },
+            )}
           </div>
         )}
 
-        {/* Dental Procedure Selection */}
-        <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
-        {selectedDentalProcedures.length > 0 && (
-          <div className="selected-items">
-            Selected Dental Procedures:
-            <ul>
-              {selectedDentalProcedures.map((dp) => (
-                <li key={dp.id}>
-                  {dp.serviceName} ({dp.arabicName})
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Payment Amount Input */}
         <div className="form-group">
-          <label htmlFor="paymentAmount">💵Payment Amount</label>
+          <label htmlFor="paymentAmount">
+            {f({ id: "addVisit.paymentAmountLabel" })}
+          </label>
           <input
-            // type="number"
             id="paymentAmount"
-            placeholder="Enter Payment Amount 💵"
+            placeholder={f({ id: "addVisit.paymentAmountPlaceholder" })}
             value={paymentAmount > 0 ? paymentAmount : ""}
             onChange={(e) => setPaymentAmount(Number(e.target.value))}
-            // min="0"
-            // step="1"
           />
         </div>
-        <button type="submit">💾Record Visit</button>
+
+        <button type="submit" disabled={isLoading || !selectedPatient}>
+          {f({ id: "addVisit.recordVisitButton" })}
+        </button>
       </form>
     </div>
   );

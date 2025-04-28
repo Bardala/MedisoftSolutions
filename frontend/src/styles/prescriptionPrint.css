@@ -1,4 +1,4 @@
-/* General Styling */
+/* Prescription Styling (Not Affected by Dark Mode) */
 .prescription-print-container {
   font-family: "Cairo", sans-serif;
   max-width: 850px;
@@ -6,60 +6,89 @@
   padding: 20px;
   border-radius: 10px;
   background-color: #ffffff;
+  /* Explicit white background */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  color: #333;
+  color: #111;
+  /* Explicit dark text color */
   height: inherit;
 }
 
 /* Clinic Header */
 .clinic-header {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 3px solid #007bff;
-  padding-bottom: 15px;
+  justify-content: space-around;
+  border-bottom: 3px solid #004080;
+  /* Explicit dark blue */
+  padding-bottom: 4px;
+  padding-top: 4px;
   margin-bottom: 20px;
+  background: #d0e0ff;
+  /* Explicit light blue background */
+  border-radius: 10%;
 }
 
-/* .clinic-logo {
-  width: 80px;
-  height: auto;
-} */
+.doctor-info {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
 
 .clinic-logo {
-  width: 140px;
-  height: 140px;
-  margin-right: 20px;
-  border-radius: 50%;
-}
-
-.clinic-info {
-  text-align: right;
-}
-
-.clinic-info h1 {
-  margin: 0;
-  font-size: 22px;
-  color: #007bff;
+  width: 106px;
+  background: #d0e0ff;
 }
 
 .clinic-info p {
   margin: 2px 0;
   font-size: 14px;
-  color: #555;
+  color: #333;
+  /* Explicit dark text color */
+}
+
+/* Clinic Header */
+.clinic-info {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.doctor-info h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #004080;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  font-stretch: expanded;
+  /* Explicit dark blue */
+}
+
+.doctor-info h2 {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #111;
+  /* Explicit dark text color */
+}
+
+.clinic-separator {
+  width: 60%;
+  margin: 5px auto;
+  border: 1px solid #004080;
+  /* Explicit dark blue */
 }
 
 /* Printable Prescription Section */
 .printable-prescription {
-  background-color: white;
+  /* Explicit white background */
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #bbb;
+  /* Explicit dark border */
 }
 
 /* Prescription Header */
 .prescription-header {
-  background-color: #f3f3f3;
+  background-color: #d8d8d8;
+  /* Explicit light gray background */
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -70,6 +99,8 @@
   margin: 4px 0;
   font-size: 16px;
   font-weight: bold;
+  color: #111;
+  /* Explicit dark text color */
 }
 
 /* Table Styling */
@@ -81,20 +112,26 @@
 
 .prescription-table th,
 .prescription-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #aaa;
+  /* Explicit dark border */
   padding: 10px;
   text-align: center;
 }
 
 .prescription-table th {
-  background-color: #007bff;
+  background-color: #004080;
+  /* Explicit dark blue */
   color: white;
+  /* Explicit white text */
   font-size: 14px;
 }
 
 .prescription-table td {
   font-size: 14px;
-  color: #333;
+  color: #111;
+  /* Explicit dark text color */
+  background-color: #f8f8f8;
+  /* Explicit light gray background */
 }
 
 /* Signature Section */
@@ -103,12 +140,15 @@
   text-align: right;
   font-size: 16px;
   font-weight: bold;
+  color: #111;
+  /* Explicit dark text color */
 }
 
 .signature-line {
   display: inline-block;
   width: 200px;
-  border-top: 2px solid #333;
+  border-top: 2px solid #111;
+  /* Explicit dark line */
   margin-top: 10px;
 }
 
@@ -117,8 +157,10 @@
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #004080;
+  /* Explicit dark blue */
   color: white;
+  /* Explicit white text */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -129,24 +171,57 @@
 }
 
 .print-button:hover {
-  background-color: #0056b3;
+  background-color: #003366;
+  /* Explicit darker blue */
 }
 
 .prescription-footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-logo-container {
+  text-align: center;
+}
+
+.company-logo {
+  width: 80px;
+  height: auto;
+}
+
+.healing-message {
+  text-align: center;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: bold;
+  margin-top: 30px;
+  color: #004080;
+  /* Explicit dark blue */
+}
+
+.clinic-phone {
+  display: flex;
+}
+
+.whatsapp-logo {
+  width: 24px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.print-section-footer {
+  text-align: center;
+}
+
+.upper-footer {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
   align-items: flex-end;
 }
 
-.company-logo-container {
+.lower-footer {
   text-align: center;
-  margin-bottom: 10px;
-}
-
-.company-logo {
-  width: 60px;
-  height: auto;
 }
 
 /* Print-specific styles */

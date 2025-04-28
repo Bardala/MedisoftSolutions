@@ -1,6 +1,7 @@
 import React from "react";
 import { useDentalProcedureSearch } from "../hooks/useDentalProcedureSearch";
 import { DentalProcedure } from "../types";
+import { useIntl } from "react-intl";
 
 interface DentalProcedureSearchProps {
   onSelect: (dentalProcedure: DentalProcedure) => void;
@@ -9,6 +10,7 @@ interface DentalProcedureSearchProps {
 const DentalProcedureSearch: React.FC<DentalProcedureSearchProps> = ({
   onSelect,
 }) => {
+  const { formatMessage: f } = useIntl();
   const {
     dentalProcedures,
     selectedDentalProcedures,
@@ -25,17 +27,17 @@ const DentalProcedureSearch: React.FC<DentalProcedureSearchProps> = ({
 
   return (
     <div className="form-group">
-      <label htmlFor="dentalProcedure">🦷Select Dental Procedure</label>
+      <label htmlFor="dentalProcedure">{f({ id: "select" })}</label>
       <input
         type="text"
         id="dentalProcedure"
-        placeholder="Search by name or description"
+        placeholder={f({ id: "searchPlaceholder" })}
         value={searchTerm}
         onChange={handleSearch}
-        aria-label="Search for a dental procedure by name or description"
+        aria-label={f({ id: "searchPlaceholder" })}
       />
-      {isLoading && <p>Loading dental procedures...</p>}
-      {error && <p>Error loading dental procedures</p>}
+      {isLoading && <p>{f({ id: "loading" })}</p>}
+      {error && <p>{f({ id: "error" })}</p>}
       {searchTerm && dentalProcedures && dentalProcedures.length > 0 && (
         <ul className="search-results">
           {dentalProcedures.map((dentalProcedure) => (

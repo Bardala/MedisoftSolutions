@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "3.0.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -10,16 +10,19 @@
     "chart.js": "^4.4.7",
     "cra-template": "1.2.0",
     "http-proxy-middleware": "^3.0.3",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.0.4",
     "lodash": "^4.17.21",
     "qrcode.react": "^4.2.0",
-    "react": "^19.0.0",
+    "react": "^18.2.0",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^13.2.0",
     "react-icons": "^5.4.0",
+    "react-intl": "^7.1.6",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "react-to-print": "^3.0.5",
-    "typescript": "^4.9.5",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
@@ -48,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@tanstack/react-query-devtools": "^5.62.15",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -58,6 +62,7 @@
     "@types/qrcode.react": "^3.0.0",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "typescript": "^5.8.2"
   }
 }

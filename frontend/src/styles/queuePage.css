@@ -144,6 +144,7 @@
   form button {
     padding: var(--padding-small);
     font-size: var(--font-size-body);
+    width: inherit;
   }
 
   /* Status tags with fixed size */

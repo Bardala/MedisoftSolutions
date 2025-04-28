@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FormModal } from "./FormModel";
+import { useIntl } from "react-intl";
 
 export interface Column<T> {
   header: string;
@@ -25,6 +26,7 @@ const Table = <T extends Record<string, unknown>>({
   onUpdate,
   onDelete,
 }: TableProps<T>) => {
+  const { formatMessage: f } = useIntl();
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [rowToEdit, setRowToEdit] = useState<T | null>(null);
@@ -65,7 +67,7 @@ const Table = <T extends Record<string, unknown>>({
                 <th key={index}>{col.header}</th>
               ))}
             {enableActions && !expandableColumns && (
-              <th className="actions-column">More</th>
+              <th className="actions-column">{f({ id: "more" })}</th>
             )}
           </tr>
         </thead>

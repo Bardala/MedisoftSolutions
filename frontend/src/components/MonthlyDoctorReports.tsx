@@ -11,6 +11,7 @@ import {
 import "../styles/monthlyDoctorReports.css";
 import { useMonthlyReport } from "../hooks/useMonthlyReport";
 import { ChartComponent } from "./ChartComponent";
+import { useIntl } from "react-intl";
 
 ChartJS.register(
   CategoryScale,
@@ -22,6 +23,7 @@ ChartJS.register(
 );
 
 const MonthlyDentistReport = () => {
+  const { formatMessage: f } = useIntl();
   // todo: start year should be 2025 in production, but keep it 2020 for preview.
   const startYear = 2025;
   const currentYear = new Date().getFullYear();
@@ -45,13 +47,13 @@ const MonthlyDentistReport = () => {
 
   // Initialize weekly stats
   const weeklyStats = {
+    Saturday: 0,
     Sunday: 0,
     Monday: 0,
     Tuesday: 0,
     Wednesday: 0,
     Thursday: 0,
     Friday: 0,
-    Saturday: 0,
   };
 
   // Populate weekly stats with data from daysInfo
@@ -75,19 +77,18 @@ const MonthlyDentistReport = () => {
     weekdays[a] < weekdays[b] ? a : b,
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>{f({ id: "loading" })}</div>;
   if (isError)
     return (
       <div>
-        Error:
-        {summaryError && <p>{summaryError.message}</p>}
+        {f({ id: "error" })}:{summaryError && <p>{summaryError.message}</p>}
         {daysInfoError && <p>{daysInfoError.message}</p>}
       </div>
     );
 
   return (
     <div className="reports-container">
-      <h2>Monthly Report</h2>
+      <h2>{f({ id: "monthly_report" })}</h2>
 
       {/* Month and Year Selector */}
       <div className="month-year-selector">
@@ -100,7 +101,7 @@ const MonthlyDentistReport = () => {
               className="report-year-button"
               disabled={selectedYear >= currentYear}
               onClick={() => handleYearChange(1)}
-              title="Up"
+              title={f({ id: "up" })}
             >
               ▲
             </button>
@@ -108,14 +109,14 @@ const MonthlyDentistReport = () => {
               className="report-year-button"
               disabled={selectedYear === startYear}
               onClick={() => handleYearChange(-1)}
-              title="Down"
+              title={f({ id: "down" })}
             >
               ▼
             </button>
           </div>
         </label>
         <label>
-          Month:
+          {f({ id: "month" })}:
           <select value={selectedMonth} onChange={handleMonthChange}>
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -130,25 +131,29 @@ const MonthlyDentistReport = () => {
 
       {/* Monthly Summary Card */}
       <div className="summary-card">
-        <h3>Monthly Summary</h3>
+        <h3>{f({ id: "monthly_summary" })}</h3>
         <p>
-          Total Visits: <strong>{summary?.totalVisits || "-"}</strong>
+          {f({ id: "total_visits" })}:{" "}
+          <strong>{summary?.totalVisits || "-"}</strong>
         </p>
         <p>
-          Most Common Procedure:{" "}
+          {f({ id: "most_common_procedure" })}:{" "}
           <strong>{summary?.mostCommonProcedure || "-"}</strong>
         </p>
         <p>
-          Total Revenue: <strong>${summary?.totalRevenue || "-"}</strong>
+          {f({ id: "total_revenue" })}:{" "}
+          <strong>${summary?.totalRevenue || "-"}</strong>
         </p>
         <p>
-          Most Crowded Weekday: <strong>{mostCrowdedWeekday || "-"}</strong>
+          {f({ id: "most_crowded_weekday" })}:{" "}
+          <strong>{mostCrowdedWeekday || "-"}</strong>
         </p>
         <p>
-          Least Crowded Weekday: <strong>{leastCrowdedWeekday || "-"}</strong>
+          {f({ id: "least_crowded_weekday" })}:{" "}
+          <strong>{leastCrowdedWeekday || "-"}</strong>
         </p>
         <p>
-          New Patients This Month:{" "}
+          {f({ id: "new_patients" })}:{" "}
           <strong>{summary?.totalNewPatients || "-"}</strong>
         </p>
       </div>
@@ -183,23 +188,23 @@ const MonthlyDentistReport = () => {
 
       {/* Advice Section */}
       <div className="advice-card">
-        <h3>Advice for Better Management</h3>
+        <h3>{f({ id: "advice_management" })}</h3>
         <p>
-          <strong>Focus on:</strong> {mostCrowdedWeekday} for better scheduling
-          and resource allocation.
+          <strong>{f({ id: "focus_on" })}:</strong> {mostCrowdedWeekday}{" "}
+          {f({ id: "better_scheduling" })}
         </p>
         <p>
-          <strong>Promote appointments on:</strong> {leastCrowdedWeekday} to
-          balance the load.
+          <strong>{f({ id: "promote_appointments" })}:</strong>{" "}
+          {leastCrowdedWeekday} {f({ id: "balance_load" })}
         </p>
         <p>
-          <strong>Popular Procedure:</strong>{" "}
-          {summary?.mostCommonProcedure || "None"}. Consider offering promotions
-          or packages around this procedure.
+          <strong>{f({ id: "popular_procedure" })}:</strong>{" "}
+          {summary?.mostCommonProcedure || "None"}.{" "}
+          {f({ id: "consider_promotions" })}
         </p>
         <p>
-          <strong>Staffing Advice:</strong> Ensure adequate staff on{" "}
-          {mostCrowdedWeekday}.
+          <strong>{f({ id: "staffing_advice" })}:</strong>{" "}
+          {f({ id: "ensure_staff" })} {mostCrowdedWeekday}.
         </p>
       </div>
     </div>

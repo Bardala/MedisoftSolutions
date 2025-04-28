@@ -64,6 +64,11 @@
   --primary-brand-color: black;
   --secondary-brand-color: #e2e7e9;
   --logo-bg: var(--third-bg);
+
+  /* Error Colors */
+  --error-bg: #f8d7da;
+  --error-border: #f5c2c7;
+  --error-text: #842029;
 }
 
 :root.dark-mode {
@@ -125,6 +130,11 @@
   --primary-brand-color: #e2e7e9;
   --secondary-brand-color: black;
   --logo-bg: var(--fourth-bg);
+
+  /* Error Colors (Dark Mode) */
+  --error-bg: #2c0b0e;
+  --error-border: #842029;
+  --error-text: #f8d7da;
 }
 
 body {
@@ -153,13 +163,66 @@ body,
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1 {
+  font-size: 2.5rem;
   color: var(--primary-color);
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+  letter-spacing: -0.5px;
+  text-align: left;
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--fourth-color);
+  font-weight: 600;
+  margin: 1.2rem 0 0.8rem;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.75rem;
+  color: var(--third-color);
+  font-weight: 600;
+  margin: 1rem 0 0.7rem;
+  letter-spacing: -0.2px;
+  /* text-align: left; */
+}
+
+h4 {
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  font-weight: 500;
+  margin: 0.8rem 0 0.6rem;
+  /* text-align: left; */
+}
+
+h5 {
+  font-size: 1.25rem;
+  color: var(--text-color);
+  font-weight: 500;
+  margin: 0.6rem 0 0.5rem;
+  /* text-align: left; */
+}
+
+h6 {
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 400;
+  opacity: 0.8;
+  margin: 0.5rem 0 0.4rem;
+  /* text-align: left; */
+}
+
+.h7 {
+  font-size: 0.875rem;
+  color: var(--text-color);
+  font-weight: 400;
+  opacity: 0.7;
+  margin: 0.4rem 0 0.3rem;
+  /* text-align: left; */
+  display: block;
 }
 
 p {
@@ -286,6 +349,17 @@ form button:hover {
   font-size: var(--font-size-body);
 }
 
+.error {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
+  margin-top: var(--padding-small);
+  box-shadow: var(--shadow-light);
+  font-size: var(--font-size-body);
+}
+
 @media screen and (max-width: 768px) {
   .content.with-sidebar {
     margin-left: 0;
@@ -306,5 +380,43 @@ form button:hover {
 
   .home-content {
     border-left: none;
+  }
+
+  /* 👇 Heading sizes for small screens */
+  h1 {
+    font-size: 2rem;
+    /* Smaller */
+    text-align: center;
+    /* Centered for mobile */
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  h5 {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .h7 {
+    font-size: 0.75rem;
+    text-align: center;
   }
 }

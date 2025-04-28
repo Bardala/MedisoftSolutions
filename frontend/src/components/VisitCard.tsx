@@ -6,22 +6,26 @@ import {
   useGetVisitProceduresByVisitId,
   useRecordVisitsProcedures,
 } from "../hooks/useVisitDentalProcedure";
-import { Visit, VisitDentalProcedure } from "../types";
-import { dailyTimeFormate, monthlyTimeFormate } from "../utils";
+import { VisitAnalysis, VisitDentalProcedure } from "../types";
+import { dailyTimeFormate, isArabic, monthlyTimeFormate } from "../utils";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DentalProcedureSearch from "./DentalProcedureSearch";
+import { useIntl } from "react-intl";
+import { MedicineTable } from "./MedicineTable";
 
-export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
-  visit,
-  currVisit,
-}) => {
+export const VisitCard: FC<{
+  analyzedVisit: VisitAnalysis;
+  currVisit: boolean;
+}> = ({ analyzedVisit, currVisit }) => {
+  const { formatMessage: f } = useIntl();
   const { loggedInUser } = useLogin();
   const [doctorNotes, setDoctorNotes] = useState("");
   const { updateVisitMutation } = useUpdateVisit();
   const { query: currVisitProcedures } = useGetVisitProceduresByVisitId(
-    visit?.id,
+    analyzedVisit?.visit?.id,
   );
+  const visit = analyzedVisit.visit;
   const currVps = currVisitProcedures.data as VisitDentalProcedure[];
   const { deleteMutation: deleteVpMutation } = useDeleteVisitProcedure();
   const {
@@ -52,55 +56,61 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
 
   return (
     <div className="visit-details">
-      <h3>{currVisit ? "Current Visit Details" : "Last Visit Details"}</h3>
+      <h2>
+        {currVisit
+          ? f({ id: "currentVisitDetails" })
+          : f({ id: "lastVisitDetails" })}
+      </h2>
       <p>
-        <strong>Visit Id:</strong> {visit.id}
+        <strong>🆔 {f({ id: "visitId" })}:</strong> {visit.id}
       </p>
       <p>
-        <strong>Visit Date:</strong>{" "}
+        <strong> 📅 {f({ id: "visitDate" })}:</strong>{" "}
         {currVisit
           ? dailyTimeFormate(visit.createdAt)
           : monthlyTimeFormate(visit.createdAt)}
       </p>
-      <p>
-        <strong>Duration:</strong>{" "}
-        {visit.duration ? `${visit.duration} mins` : "N/A"}
-      </p>
       <div className="doctor-notes">
-        <strong>Doctor Notes:</strong>
+        <strong>📝 {f({ id: "doctorNotes" })}:</strong>
         {currVisit && loggedInUser.role === "Doctor" ? (
           <>
             <textarea
+              className={isArabic(doctorNotes) ? "arabic" : ""}
               value={doctorNotes}
               onChange={(e) => setDoctorNotes(e.target.value)}
               rows={4}
-              placeholder="Add notes here..."
+              placeholder={f({ id: "addNotesPlaceholder" })}
             />
-            <div className="notes-buttons">
-              <button className="save-button" onClick={handleSaveNotes}>
-                Save Notes
-              </button>
-              <button
-                className="cancel-button"
-                onClick={() => setDoctorNotes(visit.doctorNotes || "")}
-              >
-                Cancel
-              </button>
-            </div>
+            {doctorNotes !== visit.doctorNotes && (
+              <div className="notes-buttons">
+                <button className="save-button" onClick={handleSaveNotes}>
+                  {f({ id: "saveNotes" })}
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => setDoctorNotes(visit.doctorNotes || "")}
+                >
+                  {f({ id: "cancel" })}
+                </button>
+              </div>
+            )}
             {updateVisitMutation.isSuccess && (
               <p>
-                New changes "<strong>{doctorNotes}</strong>" have been saved
+                {f(
+                  { id: "notesSaved" },
+                  { notes: <strong>{doctorNotes}</strong> },
+                )}
               </p>
             )}
           </>
         ) : (
-          <p>{doctorNotes || "N/A"}</p>
+          <p>{doctorNotes || f({ id: "not_available" })}</p>
         )}
       </div>
 
       {currVps?.length > 0 && (
         <div className="selected-items">
-          Dental Procedures:
+          {f({ id: "procedures" })}:
           <ul>
             {currVps.map((vp) => (
               <li key={vp.id}>
@@ -110,7 +120,7 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
                   <button
                     className="action-button danger"
                     onClick={() => handleDeleteVp(vp)}
-                    title="Remove"
+                    title={f({ id: "remove" })}
                   >
                     <FontAwesomeIcon icon={faTrashAlt} />
                   </button>
@@ -123,11 +133,10 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
 
       {currVisit && loggedInUser.role === "Doctor" && (
         <div>
-          <span>Add Procedure</span>
           <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
           {selectedDentalProcedures.length > 0 && (
             <div className="selected-items">
-              Selected Dental Procedures:
+              {f({ id: "selectedDentalProcedures" })}:
               <ul>
                 {selectedDentalProcedures.map((dp) => (
                   <li key={dp.id}>
@@ -137,11 +146,11 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
               </ul>
               {selectedDentalProcedures.length > 0 && (
                 <>
-                  <button onClick={handleSubmitAddDp} title="Submit">
-                    Add
+                  <button onClick={handleSubmitAddDp} title={f({ id: "add" })}>
+                    {f({ id: "add" })}
                   </button>
                   <button onClick={() => setSelectedDentalProcedures([])}>
-                    Cancel
+                    {f({ id: "cancel" })}
                   </button>
                 </>
               )}
@@ -149,6 +158,47 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
           )}
         </div>
       )}
+
+      {loggedInUser.role === "Doctor" && (
+        <MedicineTable visit={visit} enableEditing={currVisit ? true : false} />
+      )}
     </div>
   );
 };
+
+// const procedure = () => {
+
+//   return (
+//     <div className="prescription-form">
+//         <h3>{f({ id: "createPrescription" })}</h3>
+//         <form onSubmit={handleSubmit}>
+//           {/* Medicine Search and Selection */}
+//           <div className="medicine-search">
+//             <input
+//               type="text"
+//               placeholder={f({ id: "searchMedicine" })}
+//               value={medicineName}
+//               onChange={(e) => setMedicineName(e.target.value)}
+//             />
+//             {storedMedicines && (
+//               <ul className="search-list visible">
+//                 {storedMedicines
+//                   .filter((medicine) =>
+//                     medicine.medicineName
+//                       .toLowerCase()
+//                       .includes(medicineName.toLowerCase()),
+//                   )
+//                   .map((medicine) => (
+//                     <li
+//                       key={medicine.id}
+//                       onClick={() => handleMedicineSelect(medicine)}
+//                     >
+//                       {medicine.medicineName} - {medicine.dosage}
+//                     </li>
+//                   ))}
+//               </ul>
+//             )}
+//           </div>
+//       </div>
+//   );
+// }

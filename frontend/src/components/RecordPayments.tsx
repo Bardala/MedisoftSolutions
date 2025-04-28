@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useIntl } from "react-intl"; // Import react-intl for translations
 import "../styles/cardComponents.css";
 import PatientSearch from "./PatientSearch";
 import { useRecordPayment } from "../hooks/usePayment";
@@ -8,12 +9,11 @@ import { isArabic } from "../utils";
 
 const RecordPayments: React.FC = () => {
   const { loggedInUser } = useLogin();
+  const { formatMessage: f } = useIntl(); // Initialize translations
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const { mutation: paymentMutation } = useRecordPayment();
   const [payments, setPayments] = useState([]);
-  const [paymentDetails, setPaymentDetails] = useState({
-    amount: 0,
-  });
+  const [paymentDetails, setPaymentDetails] = useState({ amount: 0 });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -39,7 +39,7 @@ const RecordPayments: React.FC = () => {
         ]);
         setPaymentDetails({ amount: 0 });
       } catch (error) {
-        console.error("Error recording payment:", error);
+        console.error(f({ id: "error_recording_payment" }), error);
       }
     }
   };
@@ -47,7 +47,7 @@ const RecordPayments: React.FC = () => {
   return (
     <div className="card-container">
       <div className="record-payments">
-        <h2>Record Payments</h2>
+        <h2>{f({ id: "record_payments" })}</h2>
         <PatientSearch onSelect={setSelectedPatient} />
 
         <form onSubmit={addPayment}>
@@ -55,15 +55,14 @@ const RecordPayments: React.FC = () => {
             className={isArabic(selectedPatient?.fullName) ? "arabic" : ""}
             type="text"
             name="name"
-            placeholder="Patient Name"
+            placeholder={f({ id: "patient_name" })}
             value={selectedPatient ? selectedPatient?.fullName : ""}
             readOnly
             required
           />
           <input
-            // type="number"
             name="amount"
-            placeholder="Amount Paid"
+            placeholder={f({ id: "amount_paid" })}
             value={paymentDetails.amount > 0 ? paymentDetails.amount : ""}
             onChange={handleInputChange}
             required
@@ -72,15 +71,15 @@ const RecordPayments: React.FC = () => {
             type="submit"
             disabled={!selectedPatient || !paymentDetails.amount}
           >
-            Add
+            {f({ id: "add_payment" })}
           </button>
         </form>
 
         <table>
           <thead>
             <tr>
-              <th>Patient Name</th>
-              <th>Amount Paid</th>
+              <th>{f({ id: "patient_name" })}</th>
+              <th>{f({ id: "amount_paid" })}</th>
             </tr>
           </thead>
           <tbody>

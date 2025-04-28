@@ -1,0 +1,19 @@
+{
+  "addVisit.recordVisitTitle": "📋 تسجيل زيارة",
+  "addVisit.successMessage": "✅ {successMessage}",
+  "addVisit.visitDetailsTitle": "🦷 تفاصيل الزيارة:",
+  "addVisit.visitId": "📄 معرف الزيارة: {visitId}",
+  "addVisit.patientName": "👤 المريض: {patientName}",
+  "addVisit.recordedBy": "🩺 المنفذ: {doctorName}",
+  "addVisit.visitDate": "📅 تاريخ الزيارة: {visitDate}",
+  "addVisit.paymentDetailsTitle": "💳 تفاصيل الدفع:",
+  "addVisit.paymentId": "🔢 معرف الدفع: {paymentId}",
+  "addVisit.paymentAmount": "💰 المبلغ: 💵 {amount}",
+  "addVisit.selectedPatient": "المريض المحدد: {fullName} ({phone})",
+  "addVisit.paymentAmountLabel": "💵 مبلغ الدفع (اختياري)",
+  "addVisit.paymentAmountPlaceholder": "أدخل مبلغ الدفع 💵",
+  "addVisit.recordVisitButton": "💾 تسجيل الزيارة",
+  "addVisit.RecordedSuccessfully": "تم التسجيل بنجاح!",
+  "patient.select": "يرجى اختيار مريض",
+  "visit.payment.error": "فشل في تسجيل الزيارة أو الدفع."
+}

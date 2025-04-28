@@ -1,0 +1,19 @@
+{
+  "currentPatient": "Current Patient Profile",
+  "name": "Name",
+  "phone": "Phone",
+  "medicalHistory": "Medical History",
+  "address": "Address",
+  "age": "Age",
+  "totalAmountPaid": "Total Amount Paid",
+  "remainingBalance": "Remaining Balance",
+  "patientNotes": "Patient Notes",
+  "addNotesPlaceholder": "Add notes here...",
+  "saveNotes": "Save Notes",
+  "cancel": "Cancel",
+  "noCurrentPatient": "No current patient found.",
+  "nextPatient": "Next Patient",
+  "loading": "Loading...",
+  "error": "Error: Something went wrong...",
+  "dentalChart": "Jaw"
+}

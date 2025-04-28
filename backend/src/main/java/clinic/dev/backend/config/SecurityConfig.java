@@ -39,7 +39,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(request -> {
           var corsConfig = new org.springframework.web.cors.CorsConfiguration();
           corsConfig.setAllowedOrigins(
-              List.of("http://localhost:3000", "http://192.168.1.2:3000", "https://192.168.1.2:8443"));
+              List.of("http://localhost:3000", "http://192.168.1.100:3000", "https://192.168.1.100:8443"));
           corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
           corsConfig.setAllowedHeaders(List.of("*"));
           corsConfig.setAllowCredentials(true);
@@ -48,7 +48,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll() // Allow access to uploads
-            .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.ico", "*.mp3").permitAll()
+            .requestMatchers(HttpMethod.GET, "/index.html", "*.jpg", "*.png", "*.svg", "*.ico", "*.mp3").permitAll()
             .requestMatchers(HttpMethod.GET, "/").permitAll()
             .requestMatchers(HttpMethod.GET, "/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/home").permitAll()

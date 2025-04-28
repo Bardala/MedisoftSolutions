@@ -1,0 +1,10 @@
+{
+  "title": "Add Assistant",
+  "usernamePlaceholder": "Username",
+  "fullNamePlaceholder": "Full Name",
+  "passwordPlaceholder": "Password",
+  "phonePlaceholder": "Phone",
+  "submitButton": "Create Assistant",
+  "successMessage": "Assistant account created successfully!",
+  "errorMessage": "An error occurred. Please try again."
+}

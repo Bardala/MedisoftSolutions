@@ -94,6 +94,76 @@ p {
   margin-right: 10px;
 }
 
+.info-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: red;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.info-message {
+  background-color: #fff8dc;
+  color: #333;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  white-space: pre-line;
+  max-width: 300px;
+  text-align: right;
+  position: absolute;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.address-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.clear-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 5px;
+  color: #888;
+}
+
+.clear-button:hover {
+  color: #333;
+}
+
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.address-suggestions li {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.address-suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
 @media (max-width: 480px) {
   .card-container {
     padding: var(--padding-small);

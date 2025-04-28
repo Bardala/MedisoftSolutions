@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { LoginProvider } from "./context/loginContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import IntlProviderWrapper from "./IntlProviderWrapper";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -17,8 +17,12 @@ root.render(
     <ThemeProvider>
       <LoginProvider>
         <React.StrictMode>
-          <App />
-          <ReactQueryDevtools />
+          {/* <I18nextProvider i18n={i18n}> */}
+          <IntlProviderWrapper>
+            <App />
+          </IntlProviderWrapper>
+          {/* </I18nextProvider> */}
+          {/* <ReactQueryDevtools /> */}
         </React.StrictMode>
       </LoginProvider>
     </ThemeProvider>

@@ -1,0 +1,300 @@
+.dental-chart {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  color: #333;
+}
+
+.chart-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.chart-header h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.controls {
+  background: #f8f9fa;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.control-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.controls select {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #dfe6e9;
+  background-color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.controls select:hover {
+  border-color: #b2bec3;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+}
+
+.legend-item.cavity {
+  background-color: #ff6b6b;
+}
+
+.legend-item.crown {
+  background-color: #feca57;
+  color: #333;
+}
+
+.legend-item.extracted {
+  background-color: #8395a7;
+}
+
+.legend-item.filled {
+  background-color: #1dd1a1;
+}
+
+.jaw-diagram {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.jaw-container {
+  width: 100%;
+  height: auto;
+}
+
+.selected-procedures {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.selected-procedures h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.procedures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.procedure-card {
+  padding: 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.procedure-card:hover {
+  transform: translateY(-2px);
+}
+
+.procedure-card.cavity {
+  background-color: rgba(255, 107, 107, 0.1);
+  border: 1px solid #ff6b6b;
+}
+
+.procedure-card.crown {
+  background-color: rgba(254, 202, 87, 0.1);
+  border: 1px solid #feca57;
+}
+
+.procedure-card.extracted {
+  background-color: rgba(131, 149, 167, 0.1);
+  border: 1px solid #8395a7;
+}
+
+.procedure-card.filled {
+  background-color: rgba(29, 209, 161, 0.1);
+  border: 1px solid #1dd1a1;
+}
+
+.tooth-id {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.procedure-type {
+  text-transform: capitalize;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  color: white;
+  font-weight: 500;
+}
+
+.procedure-card.cavity .procedure-type {
+  background-color: #ff6b6b;
+}
+
+.procedure-card.crown .procedure-type {
+  background-color: #feca57;
+  color: #333;
+}
+
+.procedure-card.extracted .procedure-type {
+  background-color: #8395a7;
+}
+
+.procedure-card.filled .procedure-type {
+  background-color: #1dd1a1;
+}
+
+.no-procedures {
+  color: #7f8c8d;
+  text-align: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .procedures-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+/* Updated CSS for larger teeth */
+.dental-chart {
+  max-width: 1200px;
+}
+
+/* .jaw-diagram {
+  padding: 2rem 1rem;
+}
+
+.jaw-container {
+  height: 650px;
+  align-items: center;
+} */
+
+.jaw-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px 0;
+}
+
+.jaw-container {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.tooth-group {
+  transition: transform 0.2s ease;
+}
+
+/* .tooth-group:hover {
+  transform: scale(1.05);
+} */
+
+/* Adjust legend and controls for larger layout */
+.controls-container {
+  padding: 1rem 2rem;
+}
+
+.legend-item {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+}
+
+/* Larger procedure cards */
+.procedures-grid {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.procedure-card {
+  padding: 1rem;
+}
+
+.tooth-id {
+  font-size: 1rem;
+}
+
+.procedure-type {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .jaw-container {
+    height: 550px;
+  }
+
+  .renderTooth {
+    width: 45px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .jaw-container {
+    height: 450px;
+  }
+
+  .renderTooth {
+    width: 40px;
+    height: 55px;
+  }
+
+  .procedures-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}

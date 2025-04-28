@@ -1,0 +1,19 @@
+{
+  "addVisit.recordVisitTitle": "📋 Record Visit",
+  "addVisit.successMessage": "✅ {successMessage}",
+  "addVisit.visitDetailsTitle": "🦷 Visit Details:",
+  "addVisit.visitId": "📄 Visit ID: {visitId}",
+  "addVisit.patientName": "👤 Patient: {patientName}",
+  "addVisit.recordedBy": "🩺 Recorded By: {doctorName}",
+  "addVisit.visitDate": "📅 Visit Date: {visitDate}",
+  "addVisit.paymentDetailsTitle": "💳 Payment Details:",
+  "addVisit.paymentId": "🔢 Payment ID: {paymentId}",
+  "addVisit.paymentAmount": "💰 Amount: 💵 {amount}",
+  "addVisit.selectedPatient": "Selected Patient: {fullName} ({phone})",
+  "addVisit.paymentAmountLabel": "💵 Payment Amount (Optional)",
+  "addVisit.paymentAmountPlaceholder": "Enter Payment Amount 💵",
+  "addVisit.recordVisitButton": "💾 Record Visit",
+  "addVisit.RecordedSuccessfully": "Recorded successfully!",
+  "patient.select": "Please select a patient",
+  "visit.payment.error": "Failed to record visit or payment."
+}

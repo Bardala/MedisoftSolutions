@@ -99,7 +99,8 @@
   background-color: var(--primary-hover);
 }
 
-@media (max-width: 768px) {
+/* Not good at table Samsung A7 */
+/* @media (max-width: 768px) {
   .roles {
     gap: 30px;
   }
@@ -117,7 +118,7 @@
   .password-section {
     width: 90%;
   }
-}
+} */
 
 @media (max-width: 480px) {
   .title {

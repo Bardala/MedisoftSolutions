@@ -1,0 +1,9 @@
+{
+  "medicineName": "اسم الدواء",
+  "dosage": "الجرعة",
+  "frequency": "التكرار",
+  "duration": "المدة (بالأيام)",
+  "instructions": "التعليمات",
+  "prescribedMedicines": "الأدوية الموصوفة",
+  "there_are_no_prescribed_medicines": "لم يتم تسجيل أدوية"
+}

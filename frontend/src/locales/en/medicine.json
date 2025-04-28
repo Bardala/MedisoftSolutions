@@ -1,0 +1,9 @@
+{
+  "medicineName": "Medicine Name",
+  "dosage": "Dosage",
+  "frequency": "Frequency",
+  "duration": "Duration (days)",
+  "instructions": "Instructions",
+  "prescribedMedicines": "Prescribed Medicines",
+  "there_are_no_prescribed_medicines": "There are no prescribed medicines"
+}

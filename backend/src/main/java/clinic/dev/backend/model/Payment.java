@@ -1,11 +1,14 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import clinic.dev.backend.constants.ErrorMsg;
 
 @Entity
 @Data
@@ -14,6 +17,7 @@ public class Payment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotNull(message = ErrorMsg.MUST_NOT_BE_NULL)
   private Double amount;
 
   @ManyToOne

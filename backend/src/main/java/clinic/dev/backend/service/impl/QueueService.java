@@ -3,6 +3,7 @@ package clinic.dev.backend.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.Queue;
@@ -83,6 +84,7 @@ public class QueueService {
    * @param newPosition the new position to set
    * @return the updated Queue object
    */
+  @Transactional
   public Queue updateQueuePosition(Long queueId, int newPosition) {
     Queue queue = queueRepository.findById(queueId)
         .orElseThrow(() -> new EntityNotFoundException("Queue entry not found with ID: " + queueId));
@@ -123,6 +125,7 @@ public class QueueService {
    *
    * @param queueId the ID of the queue entry
    */
+  @Transactional
   public void removePatientFromQueue(Long queueId) {
     Queue queue = queueRepository.findById(queueId)
         .orElseThrow(() -> new EntityNotFoundException("Queue entry not found with ID: " + queueId));

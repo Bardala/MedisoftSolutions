@@ -9,7 +9,6 @@ import {
 import {
   CreateVisitRes,
   CreateVisitReq,
-  DentalProcedure,
   Patient,
   UpdateVisitRes,
   Visit,
@@ -19,6 +18,8 @@ import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
+import { useIntl } from "react-intl";
+import { doctorId } from "../utils";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");
@@ -40,15 +41,15 @@ export const useRecordVisit = () => {
 };
 
 export const useAddVisit = () => {
+  const { formatMessage: f } = useIntl();
+
   const { loggedInUser } = useLogin();
   const { doctorNotes, setDoctorNotes, createVisitMutation } = useRecordVisit();
   const {
     selectedDentalProcedures,
     setSelectedDentalProcedures,
-    handleDentalProcedureSelect,
     handleRecordVisitProcedures,
   } = useRecordVisitsProcedures();
-
   const { mutation: paymentMutation } = useRecordPayment();
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
@@ -61,12 +62,17 @@ export const useAddVisit = () => {
     doctorName: string;
     visitDate: string;
     doctorNotes: string;
-    procedures: DentalProcedure[];
+    // procedures: DentalProcedure[];
   } | null>(null);
   const [createdPaymentDetails, setCreatedPaymentDetails] = useState<{
     paymentId: number;
     amount: number;
   } | null>(null);
+
+  const isLoading =
+    createVisitMutation.isLoading ||
+    paymentMutation.isLoading ||
+    visitPaymentMutation.isLoading;
 
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
@@ -74,14 +80,16 @@ export const useAddVisit = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPatient || selectedDentalProcedures.length === 0) {
-      alert("Please select a patient and at least one dental procedure.");
+    if (!selectedPatient) {
+      alert(f({ id: "patient.select" }));
       return null;
     }
 
     const newVisit: CreateVisitReq = {
       patient: { id: selectedPatient?.id },
-      doctor: { id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : 1 },
+      doctor: {
+        id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : doctorId,
+      },
       ...(loggedInUser.role === "Assistant" && {
         assistant: { id: loggedInUser.id },
       }),
@@ -110,14 +118,15 @@ export const useAddVisit = () => {
         }
       }
 
-      setSuccessMessage("Visit and payment recorded successfully!");
+      // setSuccessMessage("Visit and payment recorded successfully!");
+      setSuccessMessage(f({ id: "visitAndPaymentSuccessMessage" }));
       setCreatedVisitDetails({
         visitId,
         patientName: selectedPatient.fullName,
         doctorName: loggedInUser.name,
         visitDate: new Date().toLocaleString(),
         doctorNotes,
-        procedures: selectedDentalProcedures,
+        // procedures: selectedDentalProcedures,
       });
       setCreatedPaymentDetails(
         paymentResult
@@ -141,7 +150,8 @@ export const useAddVisit = () => {
       return visit;
     } catch (error) {
       console.error("Error recording visit or payment:", error);
-      alert("Failed to record visit or payment.");
+
+      alert(f({ id: "visit.payment.error" }));
       return null;
     }
   };
@@ -149,7 +159,7 @@ export const useAddVisit = () => {
   return {
     setDoctorNotes,
     setPaymentAmount,
-    handleDentalProcedureSelect,
+    // handleDentalProcedureSelect,
     handlePatientSelect,
     handleSubmit,
     selectedDentalProcedures,
@@ -160,6 +170,8 @@ export const useAddVisit = () => {
     successMessage,
     createdVisitDetails,
     createdPaymentDetails,
+
+    isLoading,
   };
 };
 

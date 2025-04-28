@@ -5,9 +5,11 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { SidebarProps } from "../types";
 import { useSidebar } from "../hooks/useSidebar";
 import { doctorImage, assistantImage } from "../utils";
+import { useIntl } from "react-intl";
 
 const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
   const { menuItems } = useSidebar(loggedInUser);
+  const { formatMessage: f } = useIntl();
   return (
     <div className="sidebar">
       <div className="sidebar-user-photo-container">
@@ -23,7 +25,7 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
       </div>
 
       <h3 className="sidebar-subtitle">
-        Welcome
+        {f({ id: "welcome" })}
         <br />
         {loggedInUser.name}
       </h3>

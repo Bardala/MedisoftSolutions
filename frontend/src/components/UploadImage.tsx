@@ -4,6 +4,7 @@ import "../styles/patientFiles.css";
 import { useMutation } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
 import { UploadFileApi } from "../fetch/api";
+import { useIntl } from "react-intl";
 
 interface UploadImageProps {
   patientId: string;
@@ -14,6 +15,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
   patientId,
   existingImageUrls = [],
 }) => {
+  const { formatMessage: f } = useIntl();
   const [files, setFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>(existingImageUrls);
   const [fileType, setFileType] = useState<string>("old_log");
@@ -27,7 +29,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
   >(async (req) => UploadFileApi(req), {
     onSuccess: () => console.log("success uploading"), // todo: add a success message after every upload
     onError: () => {
-      alert("Failed to upload file. Please try again.");
+      alert(f({ id: "error" }));
     },
   });
 
@@ -67,7 +69,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
       );
     }
 
-    alert("All files uploaded successfully!");
+    alert(f({ id: "success" }));
     setIsLoading(false);
     setFiles([]);
     setFilePreviews([]);
@@ -100,7 +102,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (files.length === 0) {
-      alert("Please select at least one file.");
+      alert(f({ id: "selectAtLeastOne" }));
       return;
     }
 
@@ -109,7 +111,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
 
   return (
     <div className="upload-image-container">
-      <h2>Upload Files</h2>
+      <h2>{f({ id: "uploadFiles" })}</h2>
       <form onSubmit={handleSubmit}>
         <div
           className="upload-dropzone"
@@ -138,7 +140,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
             className="file-label"
             onClick={() => fileInputRef.current?.click()}
           >
-            Select or Drag Files
+            {f({ id: "selectOrDrag" })}
           </label>
         </div>
 
@@ -160,7 +162,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
                   }}
                   className="remove-file-button"
                 >
-                  Remove
+                  {f({ id: "remove" })}
                 </button>
               </div>
             ))}
@@ -168,15 +170,15 @@ const UploadImage: React.FC<UploadImageProps> = ({
         )}
 
         <div className="file-type-select">
-          <label htmlFor="fileType">File Type:</label>
+          <label htmlFor="fileType">{f({ id: "fileType" })}:</label>
           <select
             id="fileType"
             value={fileType}
             onChange={handleFileTypeChange}
           >
-            <option value="old_log">Old Log</option>
-            <option value="x_ray">X-Ray</option>
-            <option value="medical_test">Medical Test</option>
+            <option value="old_log">{f({ id: "oldLog" })}</option>
+            <option value="x_ray">{f({ id: "xRay" })}</option>
+            <option value="medical_test">{f({ id: "medicalTest" })}</option>
           </select>
         </div>
 
@@ -187,10 +189,10 @@ const UploadImage: React.FC<UploadImageProps> = ({
             onClick={cancelFiles}
             disabled={isLoading}
           >
-            Cancel
+            {f({ id: "cancel" })}
           </button>
           <button type="submit" className="submit-button" disabled={isLoading}>
-            {isLoading ? "Uploading..." : "Upload Files"}
+            {isLoading ? f({ id: "uploading" }) : f({ id: "upload" })}
           </button>
         </div>
       </form>
