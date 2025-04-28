@@ -23,11 +23,14 @@ import { useDoctorSelection } from "../hooks/useDoctors";
 const QueuePage: React.FC = () => {
   const { formatMessage: f } = useIntl();
   const { selectedDoctorId } = useDoctorSelection();
-  const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
+  const { queue, isLoading: isLoadingQueue } = useFetchQueue(selectedDoctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
   const { updatePositionMutation } = useUpdateQueuePosition();
-
+  const isLoading =
+    isLoadingQueue ||
+    removePatientMutation.isLoading ||
+    updatePositionMutation.isLoading;
   const handleStatusChange = (queueId: number, status: QueueStatus) => {
     updateStatusMutation.mutate({ queueId, status });
 
@@ -47,9 +50,6 @@ const QueuePage: React.FC = () => {
   const handleUpdatePosition = (queueId: number, newPosition: number) => {
     updatePositionMutation.mutate({ queueId, newPosition });
   };
-
-  if (isLoading) return <div>{f({ id: "loading" })}</div>;
-  if (isError) return <div>{f({ id: "error" })}</div>;
 
   return (
     <div className="queue-page">
@@ -76,7 +76,7 @@ const QueuePage: React.FC = () => {
                   <div className="position-controls">
                     <button
                       className="icon-button"
-                      disabled={index === 0}
+                      disabled={index === 0 || isLoading}
                       onClick={() =>
                         handleUpdatePosition(entry.id, entry.position - 1)
                       }
@@ -87,7 +87,7 @@ const QueuePage: React.FC = () => {
                     <span>{entry.position}</span>
                     <button
                       className="icon-button"
-                      disabled={index === queue.length - 1}
+                      disabled={index === queue.length - 1 || isLoading}
                       onClick={() =>
                         handleUpdatePosition(entry.id, entry.position + 1)
                       }
@@ -124,6 +124,7 @@ const QueuePage: React.FC = () => {
                     className="action-button danger"
                     onClick={() => handleRemovePatient(entry.id)}
                     title={f({ id: "remove" })}
+                    disabled={isLoading}
                   >
                     <FontAwesomeIcon icon={faTrashAlt} />
                   </button>

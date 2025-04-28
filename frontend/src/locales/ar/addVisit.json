@@ -10,7 +10,7 @@
   "addVisit.paymentId": "🔢 معرف الدفع: {paymentId}",
   "addVisit.paymentAmount": "💰 المبلغ: 💵 {amount}",
   "addVisit.selectedPatient": "المريض المحدد: {fullName} ({phone})",
-  "addVisit.paymentAmountLabel": "💵 مبلغ الدفع",
+  "addVisit.paymentAmountLabel": "💵 مبلغ الدفع (اختياري)",
   "addVisit.paymentAmountPlaceholder": "أدخل مبلغ الدفع 💵",
   "addVisit.recordVisitButton": "💾 تسجيل الزيارة",
   "addVisit.RecordedSuccessfully": "تم التسجيل بنجاح!",

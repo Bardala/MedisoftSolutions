@@ -15,6 +15,7 @@ export const AddVisit: React.FC = () => {
     successMessage,
     createdVisitDetails,
     createdPaymentDetails,
+    isLoading,
   } = useAddVisit();
 
   return (
@@ -103,7 +104,9 @@ export const AddVisit: React.FC = () => {
           />
         </div>
 
-        <button type="submit">{f({ id: "addVisit.recordVisitButton" })}</button>
+        <button type="submit" disabled={isLoading || !selectedPatient}>
+          {f({ id: "addVisit.recordVisitButton" })}
+        </button>
       </form>
     </div>
   );

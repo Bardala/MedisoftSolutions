@@ -27,7 +27,7 @@ const extractDealAmounts = (notes: string): number[] => {
   if (!notes) return [];
 
   // Extract all deal amounts from the notes
-  const matches = notes.match(/(?:الاتفاق):\s*(\d+)/g);
+  const matches = notes.match(/(?:الاتفاق|Deal):\s*(\d+)/g);
   return matches
     ? matches.map((match) => parseFloat(match.replace(/\D/g, "")))
     : [];

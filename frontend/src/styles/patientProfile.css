@@ -8,6 +8,7 @@
   border-radius: var(--border-radius);
 }
 
+
 .profile-header {
   display: flex;
   flex-direction: row;
@@ -35,6 +36,16 @@
 .profile-header .icon svg {
   color: var(--primary-color);
   font-size: 2rem;
+}
+
+.current-patient {
+  color: var(--third-color);
+}
+
+.edit-patient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-header .icon:hover {

@@ -6,24 +6,26 @@ import {
   useGetVisitProceduresByVisitId,
   useRecordVisitsProcedures,
 } from "../hooks/useVisitDentalProcedure";
-import { Visit, VisitDentalProcedure } from "../types";
+import { VisitAnalysis, VisitDentalProcedure } from "../types";
 import { dailyTimeFormate, isArabic, monthlyTimeFormate } from "../utils";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DentalProcedureSearch from "./DentalProcedureSearch";
 import { useIntl } from "react-intl";
+import { MedicineTable } from "./MedicineTable";
 
-export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
-  visit,
-  currVisit,
-}) => {
+export const VisitCard: FC<{
+  analyzedVisit: VisitAnalysis;
+  currVisit: boolean;
+}> = ({ analyzedVisit, currVisit }) => {
   const { formatMessage: f } = useIntl();
   const { loggedInUser } = useLogin();
   const [doctorNotes, setDoctorNotes] = useState("");
   const { updateVisitMutation } = useUpdateVisit();
   const { query: currVisitProcedures } = useGetVisitProceduresByVisitId(
-    visit?.id,
+    analyzedVisit?.visit?.id,
   );
+  const visit = analyzedVisit.visit;
   const currVps = currVisitProcedures.data as VisitDentalProcedure[];
   const { deleteMutation: deleteVpMutation } = useDeleteVisitProcedure();
   const {
@@ -54,22 +56,22 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
 
   return (
     <div className="visit-details">
-      <h3>
+      <h2>
         {currVisit
           ? f({ id: "currentVisitDetails" })
           : f({ id: "lastVisitDetails" })}
-      </h3>
+      </h2>
       <p>
-        <strong>{f({ id: "visitId" })}:</strong> {visit.id}
+        <strong>🆔 {f({ id: "visitId" })}:</strong> {visit.id}
       </p>
       <p>
-        <strong>{f({ id: "visitDate" })}:</strong>{" "}
+        <strong> 📅 {f({ id: "visitDate" })}:</strong>{" "}
         {currVisit
           ? dailyTimeFormate(visit.createdAt)
           : monthlyTimeFormate(visit.createdAt)}
       </p>
       <div className="doctor-notes">
-        <strong>{f({ id: "doctorNotes" })}:</strong>
+        <strong>📝 {f({ id: "doctorNotes" })}:</strong>
         {currVisit && loggedInUser.role === "Doctor" ? (
           <>
             <textarea
@@ -108,7 +110,7 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
 
       {currVps?.length > 0 && (
         <div className="selected-items">
-          {f({ id: "dentalProcedures" })}:
+          {f({ id: "procedures" })}:
           <ul>
             {currVps.map((vp) => (
               <li key={vp.id}>
@@ -156,6 +158,47 @@ export const VisitCard: FC<{ visit: Visit; currVisit: boolean }> = ({
           )}
         </div>
       )}
+
+      {loggedInUser.role === "Doctor" && (
+        <MedicineTable visit={visit} enableEditing={currVisit ? true : false} />
+      )}
     </div>
   );
 };
+
+// const procedure = () => {
+
+//   return (
+//     <div className="prescription-form">
+//         <h3>{f({ id: "createPrescription" })}</h3>
+//         <form onSubmit={handleSubmit}>
+//           {/* Medicine Search and Selection */}
+//           <div className="medicine-search">
+//             <input
+//               type="text"
+//               placeholder={f({ id: "searchMedicine" })}
+//               value={medicineName}
+//               onChange={(e) => setMedicineName(e.target.value)}
+//             />
+//             {storedMedicines && (
+//               <ul className="search-list visible">
+//                 {storedMedicines
+//                   .filter((medicine) =>
+//                     medicine.medicineName
+//                       .toLowerCase()
+//                       .includes(medicineName.toLowerCase()),
+//                   )
+//                   .map((medicine) => (
+//                     <li
+//                       key={medicine.id}
+//                       onClick={() => handleMedicineSelect(medicine)}
+//                     >
+//                       {medicine.medicineName} - {medicine.dosage}
+//                     </li>
+//                   ))}
+//               </ul>
+//             )}
+//           </div>
+//       </div>
+//   );
+// }

@@ -5,6 +5,7 @@ import {
   faPills,
   faFileAlt,
   faPrint,
+  faTooth,
 } from "@fortawesome/free-solid-svg-icons";
 import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
@@ -51,6 +52,18 @@ const PatientProfileHeader = ({
 
       {loggedInUser.role === "Doctor" && (
         <>
+          <div
+            className="icon"
+            onClick={() =>
+              setExpandedSection(
+                expandedSection === "dentalChart" ? null : "dentalChart",
+              )
+            }
+          >
+            <FontAwesomeIcon icon={faTooth} />{" "}
+            <span>{f({ id: "dentalChart" })}</span>
+          </div>
+
           <div
             className="icon"
             onClick={() =>

@@ -14,5 +14,6 @@
   "noCurrentPatient": "لا يوجد مريض حالي.",
   "nextPatient": "المريض التالي",
   "loading": "جاري التحميل...",
-  "error": "خطأ: حدث خطأ ما..."
+  "error": "خطأ: حدث خطأ ما...",
+  "dentalChart": "الفك"
 }

@@ -9,18 +9,19 @@ import {
   useUpdateQueueStatus,
   useRemovePatientFromQueue,
 } from "../hooks/useQueue";
-import { callNextPatient, callPatientForDoctor, isArabic } from "../utils";
+import { analyzeVisits, callNextPatient, callPatientForDoctor } from "../utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Medicines } from "./Medicines";
 import PatientProfileHeader from "./PatientProfileHeader";
 import { useLogin } from "../context/loginContext";
-import { calculateRemainingBalance } from "../utils";
 import { PrescriptionsContainer } from "./PrescriptionsContainer";
-import { useUpdatePatient } from "../hooks/usePatient";
 import { useIntl } from "react-intl";
 import { DoctorSelect } from "./DoctorSelect";
 import { useDoctorSelection } from "../hooks/useDoctors";
+import DentalChart from "./DentalChart";
+import { PatientInfo } from "./PatientInfo";
+import { VisitTable } from "./VisitTable";
 
 const CurrentPatientProfile = () => {
   const { formatMessage: f } = useIntl();
@@ -31,20 +32,34 @@ const CurrentPatientProfile = () => {
   const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
   const { removePatientMutation } = useRemovePatientFromQueue();
-  const { updatePatientMutation } = useUpdatePatient();
 
   const [currPatient, setCurrPatient] = useState<Patient | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>("info");
-
-  const [patientNotes, setPatientNotes] = useState("");
 
   const patientRegistryData = usePatientRegistry(currPatient?.id)
     .patientRegistryQuery.data;
   const payments = patientRegistryData?.payments;
   const visits = patientRegistryData?.visits;
+  const analyzedVisits =
+    patientRegistryData &&
+    analyzeVisits(
+      patientRegistryData?.visits,
+      patientRegistryData?.visitDentalProcedure,
+      patientRegistryData?.visitPayments,
+      patientRegistryData?.visitMedicines,
+    );
+
   const visit = visits ? visits[visits.length - 1] : null;
   const lastVisit =
     visits && visits.length > 1 ? visits[visits.length - 2] : null;
+
+  const analyzedVisit = analyzedVisits
+    ? analyzedVisits[analyzedVisits.length - 1]
+    : null;
+  const lastAnalyzedVisit =
+    analyzedVisits && analyzedVisits.length > 1
+      ? analyzedVisits[analyzedVisits.length - 2]
+      : null;
 
   // Save selected doctor ID to localStorage when it changes
   useEffect(() => {
@@ -60,10 +75,6 @@ const CurrentPatientProfile = () => {
       setCurrPatient(null);
     }
   }, [queue]);
-
-  useEffect(() => {
-    if (currPatient) setPatientNotes(currPatient.notes);
-  }, [currPatient]);
 
   const handleNextPatient = async () => {
     if (!queue || queue.length === 0) return;
@@ -94,11 +105,6 @@ const CurrentPatientProfile = () => {
   if (isLoading) return <p>{f({ id: "loading" })}</p>;
   if (isError) return <p>{f({ id: "error" })}</p>;
 
-  function handleSavePatientNotes(): void {
-    currPatient.notes = patientNotes;
-    updatePatientMutation.mutate(currPatient);
-  }
-
   return (
     <div className="patient-profile-container">
       <div className="header-section">
@@ -109,7 +115,6 @@ const CurrentPatientProfile = () => {
 
       {currPatient ? (
         <>
-          {/* Reusable Header Component */}
           <PatientProfileHeader
             expandedSection={expandedSection}
             setExpandedSection={setExpandedSection}
@@ -118,80 +123,44 @@ const CurrentPatientProfile = () => {
           <div className="expandable-sections">
             {expandedSection === "info" && (
               <div className="patient-info">
-                <p>
-                  📛 <strong>{f({ id: "name" })}:</strong>{" "}
-                  {currPatient.fullName}
-                </p>
-                <p>
-                  📞 <strong>{f({ id: "phone" })}:</strong> {currPatient.phone}
-                </p>
-                <p>
-                  🏥 <strong>{f({ id: "medicalHistory" })}:</strong>{" "}
-                  {currPatient.medicalHistory || f({ id: "not_available" })}
-                </p>
-                <p>
-                  🏠 <strong>{f({ id: "address" })}:</strong>{" "}
-                  {currPatient.address || f({ id: "not_available" })}
-                </p>
-                <p>
-                  🎂 <strong>{f({ id: "age" })}:</strong>{" "}
-                  {currPatient.age || f({ id: "not_available" })}
-                </p>
-                {payments && (
-                  <p>
-                    💰 <strong>{f({ id: "totalAmountPaid" })}:</strong> $
-                    {payments.reduce((acc, payment) => acc + payment.amount, 0)}
-                  </p>
-                )}
-                <p>
-                  🔴 <strong>{f({ id: "remainingBalance" })}:</strong> $
-                  {calculateRemainingBalance(currPatient.notes, payments)}
-                </p>
-                <p>
-                  📝 <strong>{f({ id: "patientNotes" })}:</strong>{" "}
-                </p>
-                <>
-                  <textarea
-                    className={isArabic(patientNotes) ? "arabic" : ""}
-                    value={patientNotes}
-                    onChange={(e) => setPatientNotes(e.target.value)}
-                    rows={4}
-                    placeholder={f({ id: "addNotesPlaceholder" })}
-                    disabled={loggedInUser.role === "Assistant"}
-                  />
-                  {loggedInUser.role === "Doctor" &&
-                    patientNotes !== currPatient.notes && (
-                      <div className="notes-buttons">
-                        <button
-                          className="save-button"
-                          onClick={handleSavePatientNotes}
-                        >
-                          {f({ id: "saveNotes" })}
-                        </button>
-                        <button
-                          className="cancel-button"
-                          onClick={() =>
-                            setPatientNotes(currPatient?.notes || "")
-                          }
-                        >
-                          {f({ id: "cancel" })}
-                        </button>
-                      </div>
-                    )}
-                </>
+                <PatientInfo
+                  patient={currPatient}
+                  payments={payments}
+                  visits={visits}
+                />
               </div>
             )}
-            {expandedSection === "visits" && visit && (
-              <VisitCard visit={visit} currVisit={true} />
-            )}
-            {expandedSection === "visits" && lastVisit && (
-              <VisitCard visit={lastVisit} currVisit={false} />
-            )}
+
+            {/* Visits section */}
+            <div className="tables">
+              {expandedSection === "visits" && visit && (
+                <div className="visits-section">
+                  <VisitCard analyzedVisit={analyzedVisit} currVisit={true} />
+                </div>
+              )}
+
+              {expandedSection === "visits" && lastVisit && (
+                <>
+                  <div className="visits-section">
+                    <VisitCard
+                      analyzedVisit={lastAnalyzedVisit}
+                      currVisit={false}
+                    />
+                  </div>
+
+                  {/* Rest Visits Section */}
+                  <div className="expandable-sections">
+                    <VisitTable patientId={currPatient?.id} showVisits="Rest" />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {expandedSection === "dentalChart" && <DentalChart />}
             {expandedSection === "medicines" && <Medicines visit={visit} />}
             {expandedSection === "files" && (
-              <UserFiles patientId={currPatient.id} />
+              <UserFiles patientId={currPatient?.id} />
             )}
-            {/* New section for printing prescriptions */}
             {expandedSection === "prescriptionPrint" && (
               <PrescriptionsContainer visit={visit} />
             )}

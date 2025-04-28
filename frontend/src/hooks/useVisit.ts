@@ -69,6 +69,11 @@ export const useAddVisit = () => {
     amount: number;
   } | null>(null);
 
+  const isLoading =
+    createVisitMutation.isLoading ||
+    paymentMutation.isLoading ||
+    visitPaymentMutation.isLoading;
+
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
   };
@@ -165,6 +170,8 @@ export const useAddVisit = () => {
     successMessage,
     createdVisitDetails,
     createdPaymentDetails,
+
+    isLoading,
   };
 };
 

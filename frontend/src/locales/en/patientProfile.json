@@ -14,5 +14,6 @@
   "noCurrentPatient": "No current patient found.",
   "nextPatient": "Next Patient",
   "loading": "Loading...",
-  "error": "Error: Something went wrong..."
+  "error": "Error: Something went wrong...",
+  "dentalChart": "Jaw"
 }

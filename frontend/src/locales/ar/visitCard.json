@@ -1,6 +1,6 @@
 {
   "currentVisitDetails": "تفاصيل الزيارة الحالية",
-  "lastVisitDetails": "تفاصيل الزيارة الأخيرة",
+  "lastVisitDetails": "تفاصيل الزيارة السابقة",
   "visitId": "معرف الزيارة",
   "visitDate": "تاريخ الزيارة",
   "doctorNotes": "ملاحظات الطبيب",
@@ -8,7 +8,7 @@
   "saveNotes": "حفظ الملاحظات",
   "cancel": "إلغاء",
   "notesSaved": "تم حفظ التغييرات الجديدة \"{notes}\"",
-  "dentalProcedures": "إجراءات طب الأسنان",
+  "procedures": "التشخيص",
   "selectedDentalProcedures": "الإجراءات المختارة لطب الأسنان",
   "remove": "إزالة",
   "add": "إضافة"

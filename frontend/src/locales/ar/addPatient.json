@@ -9,6 +9,6 @@
   "submitButton": "حفظ",
   "savingButton": "جارٍ الحفظ...",
   "successMessage": "تم تسجيل المريض بنجاح!",
-  "errorMessage": "خطأ: {{error}}",
+  "errorMessage": "خطأ: {error}",
   "arabicNameWarning": "⚠️ يُرجى استخدام الكتابة العربية الصحيحة لتفادي الأخطاء في استدعاء المرضى."
 }

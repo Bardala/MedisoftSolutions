@@ -9,6 +9,6 @@
   "submitButton": "Save",
   "savingButton": "Saving...",
   "successMessage": "Patient registered successfully!",
-  "errorMessage": "Error: {{error}}",
+  "errorMessage": "Error: {error}",
   "arabicNameWarning": "⚠️ Please use proper Arabic spelling to avoid errors in patient calls."
 }

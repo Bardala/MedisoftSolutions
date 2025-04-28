@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 import { useCreatePatient } from "../hooks/usePatient";
 import "../styles/cardComponents.css";
-import { isArabic } from "../utils";
+import { isArabic, translateErrorMessage } from "../utils";
 import { usePatientSearch } from "../hooks/usePatientSearch";
 
 const AddPatient: React.FC = () => {
@@ -18,7 +18,7 @@ const AddPatient: React.FC = () => {
   const [showInfo, setShowInfo] = useState(false);
   const { allPatients } = usePatientSearch();
 
-  const { formatMessage: f } = useIntl();
+  const { formatMessage: f, locale } = useIntl();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -216,17 +216,23 @@ const AddPatient: React.FC = () => {
           />
         </div>
 
-        <button type="submit" disabled={isLoading}>
+        {success && <p className="success">{f({ id: "successMessage" })}</p>}
+        {isError && (
+          <p className="error">
+            {f(
+              { id: "errorMessage" },
+              { error: translateErrorMessage(error.errors.error, locale) },
+            )}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading || !patient.fullName || !patient.phone}
+        >
           {isLoading ? f({ id: "savingButton" }) : f({ id: "submitButton" })}
         </button>
       </form>
-
-      {success && <p className="success">{f({ id: "successMessage" })}</p>}
-      {isError && (
-        <p className="error">
-          {f({ id: "errorMessage" }, { error: error?.message })}
-        </p>
-      )}
     </div>
   );
 };

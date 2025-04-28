@@ -13,7 +13,7 @@
   "email": "Email",
   "password": "Password",
   "enter_password": "Enter your password",
-  "not_available": "Not Available",
+  "not_available": "N/A",
   "sunday": "Sunday",
   "monday": "Monday",
   "tuesday": "Tuesday",
@@ -21,5 +21,9 @@
   "thursday": "Thursday",
   "friday": "Friday",
   "saturday": "Saturday",
-  "more": "More"
+  "more": "More",
+  "id": "id🆔",
+  "there_is_no_visits_yet": "There is no visits yet",
+  "there_is_no_older_visits": "There is no older visits",
+  "call_patient_for_doctor": "Call Patient"
 }

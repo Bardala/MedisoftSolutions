@@ -20,12 +20,12 @@
   margin-bottom: var(--padding-medium);
 }
 
-h2,
+/* h2,
 h3 {
   font-size: calc(var(--font-size-title) - 8px);
   color: var(--primary-color);
   margin-top: var(--padding-medium);
-}
+} */
 
 h3 {
   font-size: calc(var(--font-size-body) + 4px);
