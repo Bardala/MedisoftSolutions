@@ -1,18 +1,22 @@
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import { useLogin } from "../context/loginContext";
 import { useUpdateVisit } from "../hooks/useVisit";
 import {
   useDeleteVisitProcedure,
   useGetVisitProceduresByVisitId,
-  useRecordVisitsProcedures,
 } from "../hooks/useVisitDentalProcedure";
 import { VisitAnalysis, VisitDentalProcedure } from "../types";
-import { dailyTimeFormate, isArabic, monthlyTimeFormate } from "../utils";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { dailyTimeFormate, dateFormate, isArabic } from "../utils";
+import {
+  faTrashAlt,
+  faChevronDown,
+  faChevronUp,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DentalProcedureSearch from "./DentalProcedureSearch";
 import { useIntl } from "react-intl";
 import { MedicineTable } from "./MedicineTable";
+import "../styles/visitCard.css";
 
 export const VisitCard: FC<{
   analyzedVisit: VisitAnalysis;
@@ -28,177 +32,178 @@ export const VisitCard: FC<{
   const visit = analyzedVisit.visit;
   const currVps = currVisitProcedures.data as VisitDentalProcedure[];
   const { deleteMutation: deleteVpMutation } = useDeleteVisitProcedure();
-  const {
-    handleDentalProcedureSelect,
-    selectedDentalProcedures,
-    handleRecordVisitProcedures,
-    setSelectedDentalProcedures,
-  } = useRecordVisitsProcedures();
+  const [showVisit, setShowVisit] = useState(currVisit); // Auto-expand current visit
 
   useEffect(() => {
     if (visit) setDoctorNotes(visit.doctorNotes || "");
   }, [visit]);
 
   const handleSaveNotes = () => {
-    if (visit) {
-      updateVisitMutation.mutate({ ...visit, doctorNotes });
-    }
+    if (visit) updateVisitMutation.mutate({ ...visit, doctorNotes });
   };
 
   const handleDeleteVp = (vp: VisitDentalProcedure) => {
-    deleteVpMutation.mutate(vp);
+    if (window.confirm(f({ id: "confirm_delete_procedure" }))) {
+      deleteVpMutation.mutate(vp);
+    }
   };
 
-  const handleSubmitAddDp = async () => {
-    await handleRecordVisitProcedures(visit.id);
-    setSelectedDentalProcedures([]);
-  };
+  const isDoctor = loggedInUser.role === "Doctor";
+  const isDoctorAndCurrVisit = currVisit && isDoctor;
 
   return (
-    <div className="visit-details">
-      <h2>
-        {currVisit
-          ? f({ id: "currentVisitDetails" })
-          : f({ id: "lastVisitDetails" })}
-      </h2>
-      <p>
-        <strong>🆔 {f({ id: "visitId" })}:</strong> {visit.id}
-      </p>
-      <p>
-        <strong> 📅 {f({ id: "visitDate" })}:</strong>{" "}
-        {currVisit
-          ? dailyTimeFormate(visit.createdAt)
-          : monthlyTimeFormate(visit.createdAt)}
-      </p>
-      <div className="doctor-notes">
-        <strong>📝 {f({ id: "doctorNotes" })}:</strong>
-        {currVisit && loggedInUser.role === "Doctor" ? (
-          <>
-            <textarea
-              className={isArabic(doctorNotes) ? "arabic" : ""}
-              value={doctorNotes}
-              onChange={(e) => setDoctorNotes(e.target.value)}
-              rows={4}
-              placeholder={f({ id: "addNotesPlaceholder" })}
-            />
-            {doctorNotes !== visit.doctorNotes && (
-              <div className="notes-buttons">
-                <button className="save-button" onClick={handleSaveNotes}>
-                  {f({ id: "saveNotes" })}
-                </button>
-                <button
-                  className="cancel-button"
-                  onClick={() => setDoctorNotes(visit.doctorNotes || "")}
-                >
-                  {f({ id: "cancel" })}
-                </button>
-              </div>
-            )}
-            {updateVisitMutation.isSuccess && (
-              <p>
-                {f(
-                  { id: "notesSaved" },
-                  { notes: <strong>{doctorNotes}</strong> },
-                )}
-              </p>
-            )}
-          </>
-        ) : (
-          <p>{doctorNotes || f({ id: "not_available" })}</p>
+    <div className={`visit-card ${currVisit ? "current-visit" : ""}`}>
+      <div
+        className="visit-card-header"
+        onClick={() => !currVisit && setShowVisit(!showVisit)}
+      >
+        <h3 className="visit-card-title">
+          {currVisit
+            ? f({ id: "currentVisitDetails" })
+            : f({ id: "lastVisitDetails" })}
+        </h3>
+        {!currVisit && (
+          <FontAwesomeIcon
+            icon={showVisit ? faChevronUp : faChevronDown}
+            className="toggle-icon"
+          />
         )}
       </div>
 
-      {currVps?.length > 0 && (
-        <div className="selected-items">
-          {f({ id: "procedures" })}:
-          <ul>
-            {currVps.map((vp) => (
-              <li key={vp.id}>
-                {vp.dentalProcedure.serviceName} (
-                {vp.dentalProcedure.arabicName})
-                {currVisit && loggedInUser.role === "Doctor" && (
-                  <button
-                    className="action-button danger"
-                    onClick={() => handleDeleteVp(vp)}
-                    title={f({ id: "remove" })}
-                  >
-                    <FontAwesomeIcon icon={faTrashAlt} />
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {showVisit && (
+        <div className="visit-card-content">
+          <div className="info-grid">
+            <div className="info-card">
+              <div className="card-icon">🆔</div>
+              <h4 className="card-title">{f({ id: "visitId" })}</h4>
+              <p className="card-content">{visit.id}</p>
+            </div>
 
-      {currVisit && loggedInUser.role === "Doctor" && (
-        <div>
-          <DentalProcedureSearch onSelect={handleDentalProcedureSelect} />
-          {selectedDentalProcedures.length > 0 && (
-            <div className="selected-items">
-              {f({ id: "selectedDentalProcedures" })}:
-              <ul>
-                {selectedDentalProcedures.map((dp) => (
-                  <li key={dp.id}>
-                    {dp.serviceName} ({dp.arabicName})
+            {!currVisit && (
+              <div className="info-card">
+                <div className="card-icon">📅</div>
+                <h4 className="card-title">{f({ id: "visitDate" })}</h4>
+                <p className="card-content">{dateFormate(visit.createdAt)}</p>
+              </div>
+            )}
+
+            <div className="info-card">
+              <div className="card-icon">🕒</div>
+              <h4 className="card-title">{f({ id: "arrived_at" })}</h4>
+              <p className="card-content">
+                {dailyTimeFormate(visit.createdAt)}
+              </p>
+            </div>
+          </div>
+
+          {/* Doctor Notes Section */}
+          <div className="notes-section">
+            <h4 className="section-title">
+              <span className="icon">📝</span>
+              {f({ id: "doctorNotes" })}
+            </h4>
+            {isDoctorAndCurrVisit ? (
+              <>
+                <textarea
+                  className={`notes-textarea ${
+                    isArabic(doctorNotes) ? "arabic" : ""
+                  }`}
+                  value={doctorNotes}
+                  onChange={(e) => setDoctorNotes(e.target.value)}
+                  rows={4}
+                  placeholder={f({ id: "addNotesPlaceholder" })}
+                />
+                {doctorNotes !== visit.doctorNotes && (
+                  <div className="notes-buttons">
+                    <button
+                      className="save-button"
+                      onClick={handleSaveNotes}
+                      disabled={updateVisitMutation.isLoading}
+                    >
+                      {updateVisitMutation.isLoading
+                        ? f({ id: "saving" })
+                        : f({ id: "saveNotes" })}
+                    </button>
+                    <button
+                      className="cancel-button"
+                      onClick={() => setDoctorNotes(visit.doctorNotes || "")}
+                      disabled={updateVisitMutation.isLoading}
+                    >
+                      {f({ id: "cancel" })}
+                    </button>
+                  </div>
+                )}
+                {updateVisitMutation.isSuccess && (
+                  <div className="status-message success">
+                    {f({ id: "notesSaved" })}
+                  </div>
+                )}
+                {updateVisitMutation.isError && (
+                  <div className="status-message error">
+                    {f({ id: "error_saving_notes" })}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="notes-content">
+                {doctorNotes || f({ id: "not_available" })}
+              </p>
+            )}
+          </div>
+
+          {/* Procedures List */}
+          {currVps?.length > 0 && (
+            <div className="procedures-section">
+              <h4 className="section-title">
+                <span className="icon">🦷</span>
+                {f({ id: "procedures" })}
+              </h4>
+              <ul className="procedures-list">
+                {currVps.map((vp) => (
+                  <li key={vp.id} className="procedure-item">
+                    <div className="procedure-info">
+                      <span className="procedure-name">
+                        {vp.dentalProcedure.serviceName}
+                      </span>
+                      <span className="procedure-arabic">
+                        ({vp.dentalProcedure.arabicName})
+                      </span>
+                    </div>
+                    {isDoctorAndCurrVisit && (
+                      <button
+                        className="delete-button"
+                        onClick={() => handleDeleteVp(vp)}
+                        title={f({ id: "remove" })}
+                        disabled={deleteVpMutation.isLoading}
+                      >
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          className={
+                            deleteVpMutation.isLoading ? "spinning" : ""
+                          }
+                        />
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
-              {selectedDentalProcedures.length > 0 && (
-                <>
-                  <button onClick={handleSubmitAddDp} title={f({ id: "add" })}>
-                    {f({ id: "add" })}
-                  </button>
-                  <button onClick={() => setSelectedDentalProcedures([])}>
-                    {f({ id: "cancel" })}
-                  </button>
-                </>
-              )}
+            </div>
+          )}
+
+          {/* Additional Components */}
+          {isDoctorAndCurrVisit && (
+            <div className="search-section">
+              <DentalProcedureSearch visit={visit} />
+            </div>
+          )}
+
+          {isDoctor && (
+            <div className="medicine-section">
+              <MedicineTable visit={visit} enableEditing={currVisit} />
             </div>
           )}
         </div>
       )}
-
-      {loggedInUser.role === "Doctor" && (
-        <MedicineTable visit={visit} enableEditing={currVisit ? true : false} />
-      )}
     </div>
   );
 };
-
-// const procedure = () => {
-
-//   return (
-//     <div className="prescription-form">
-//         <h3>{f({ id: "createPrescription" })}</h3>
-//         <form onSubmit={handleSubmit}>
-//           {/* Medicine Search and Selection */}
-//           <div className="medicine-search">
-//             <input
-//               type="text"
-//               placeholder={f({ id: "searchMedicine" })}
-//               value={medicineName}
-//               onChange={(e) => setMedicineName(e.target.value)}
-//             />
-//             {storedMedicines && (
-//               <ul className="search-list visible">
-//                 {storedMedicines
-//                   .filter((medicine) =>
-//                     medicine.medicineName
-//                       .toLowerCase()
-//                       .includes(medicineName.toLowerCase()),
-//                   )
-//                   .map((medicine) => (
-//                     <li
-//                       key={medicine.id}
-//                       onClick={() => handleMedicineSelect(medicine)}
-//                     >
-//                       {medicine.medicineName} - {medicine.dosage}
-//                     </li>
-//                   ))}
-//               </ul>
-//             )}
-//           </div>
-//       </div>
-//   );
-// }

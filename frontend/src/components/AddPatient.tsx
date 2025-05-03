@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { useCreatePatient } from "../hooks/usePatient";
 import "../styles/cardComponents.css";
 import { isArabic, translateErrorMessage } from "../utils";
-import { usePatientSearch } from "../hooks/usePatientSearch";
+import { useGetAllPatients } from "../hooks/usePatient";
 
 const AddPatient: React.FC = () => {
   const {
@@ -16,7 +16,7 @@ const AddPatient: React.FC = () => {
     dispatch,
   } = useCreatePatient();
   const [showInfo, setShowInfo] = useState(false);
-  const { allPatients } = usePatientSearch();
+  const { allPatients } = useGetAllPatients();
 
   const { formatMessage: f, locale } = useIntl();
 

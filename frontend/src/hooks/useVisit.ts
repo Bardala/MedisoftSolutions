@@ -14,7 +14,7 @@ import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 import { useIntl } from "react-intl";
-import { doctorId } from "../utils";
+import { LOCALS } from "../utils";
 import {
   CreateVisitApi,
   AddToQueueApi,
@@ -89,7 +89,10 @@ export const useAddVisit = () => {
     const newVisit: CreateVisitReq = {
       patient: { id: selectedPatient?.id },
       doctor: {
-        id: loggedInUser?.role === "Doctor" ? loggedInUser?.id : doctorId,
+        id:
+          loggedInUser?.role === "Doctor"
+            ? loggedInUser?.id
+            : Number(localStorage.getItem(LOCALS.SELECTED_DOCTOR_ID)),
       },
       ...(loggedInUser.role === "Assistant" && {
         assistant: { id: loggedInUser.id },

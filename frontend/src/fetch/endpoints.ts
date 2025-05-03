@@ -12,6 +12,7 @@ export enum ENDPOINT {
   GET_ALL_PATIENTS = "/patients",
   PATIENT_REGISTRY = "/patients/registry/:id",
   DAILY_NEW_PATIENTS = "/patients/dailyNew",
+  SEARCH_PATIENTS = "/patients/search",
 
   // User APIs
   HEALTH = "/users/health",

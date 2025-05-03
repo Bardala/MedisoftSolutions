@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import {
-  DentalProcedure,
+  Procedure,
   Medicine,
   Patient,
   Payment,
@@ -11,6 +11,7 @@ import {
   VisitMedicine,
   VisitPayment,
 } from "./";
+import { Pageable } from "./types";
 
 export interface LoginRes {
   token: string;
@@ -59,15 +60,15 @@ export interface CreateVisitPaymentReq {
 }
 export interface CreateVisitPaymentRes extends VisitPayment {}
 
-export interface CreateDentalProcedureReq extends DentalProcedure {}
-export interface CreateDentalProcedureRes extends DentalProcedure {}
+export interface CreateDentalProcedureReq extends Procedure {}
+export interface CreateDentalProcedureRes extends Procedure {}
 
-export type GetAllDentalProcedureReq = {};
-export type GetAllDentalProcedureRes = DentalProcedure[];
+export type GetAllProcedureReq = {};
+export type GetAllProcedureRes = Procedure[];
 
 export interface recordVisitDentalProcedureReq {
   visit: Pick<Visit, "id">;
-  dentalProcedure: Pick<DentalProcedure, "id">;
+  dentalProcedure: Pick<Procedure, "id">;
 }
 export interface recordVisitDentalProcedureRes extends VisitDentalProcedure {}
 
@@ -238,4 +239,22 @@ export interface GetMedicineByIdRes extends Medicine {}
 
 export interface GetAllMedicinesRes {
   medicines: Medicine[];
+}
+
+export interface PageRes<T> {
+  content: T[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
 }

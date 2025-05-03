@@ -9,6 +9,8 @@ import { UpdateUserApi } from "../apis/userApis";
 import { ApiError } from "../fetch/ApiError";
 import { FormattedMessage, useIntl } from "react-intl";
 import { LanguageContext } from "../IntlProviderWrapper";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 
 export const useUpdateUser = () => {
   const updateUserMutation = useMutation<UpdateUserRes, ApiError, User>(
@@ -61,9 +63,10 @@ const Settings = ({
   return (
     <div className="settings-container">
       <div className="card">
-        <h2 className="settings-title">
+        <h1 className="settings-title">
+          <FontAwesomeIcon icon={faCog} />{" "}
           <FormattedMessage id="settings" defaultMessage="Settings" />
-        </h2>
+        </h1>
 
         {loggedInUser?.role === "Doctor" && (
           <button

@@ -11,7 +11,6 @@ export const useFetchDoctors = () => {
     ["allDoctors"],
     async () => {
       const users = await GetAllUsersApi();
-      // Filter users with Doctor role
       return users.filter((user) => user.role === "Doctor");
     },
     {
@@ -30,7 +29,6 @@ export const useFetchDoctors = () => {
   };
 };
 
-// hooks/useSelectDoctor.ts
 export const useSelectDoctor = () => {
   const { loggedInUser } = useLogin();
   const queryClient = useQueryClient();

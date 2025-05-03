@@ -38,6 +38,11 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
   const { createMutation: createVisitMedicineMutation } =
     useCreateVisitMedicine();
 
+  const isLoading =
+    createMedicineMutation.isLoading ||
+    updateMedicineMutation.isLoading ||
+    createVisitMedicineMutation.isLoading;
+
   const storedMedicines = allMedicinesQuery.data?.sort((a, b) =>
     a.medicineName.localeCompare(b.medicineName),
   ) as unknown as Medicine[];
@@ -276,7 +281,7 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
           </div>
         </div>
 
-        <button type="submit">
+        <button type="submit" disabled={isLoading || !selectedMedicine}>
           {selectedMedicine
             ? medicineName !== selectedMedicine.medicineName
               ? f({ id: "addNewMedicine" })

@@ -1,54 +1,70 @@
 import React from "react";
 import { useDentalProcedureSearch } from "../hooks/useDentalProcedureSearch";
-import { DentalProcedure } from "../types";
+import { Visit } from "../types";
 import { useIntl } from "react-intl";
+import { useRecordVisitsProcedures } from "../hooks/useVisitDentalProcedure";
 
 interface DentalProcedureSearchProps {
-  onSelect: (dentalProcedure: DentalProcedure) => void;
+  visit: Visit;
 }
 
 const DentalProcedureSearch: React.FC<DentalProcedureSearchProps> = ({
-  onSelect,
+  visit,
 }) => {
   const { formatMessage: f } = useIntl();
   const {
     dentalProcedures,
-    selectedDentalProcedures,
+    selectedDentalProcedures: selectedDentalProceduresSearch,
     searchTerm,
     setSearchTerm,
-    handleDentalProcedureSelect,
+    handleDentalProcedureSelect: handleDentalProcedureSelectSearch,
     isLoading,
     error,
   } = useDentalProcedureSearch();
+  const {
+    handleDentalProcedureSelect,
+    selectedDentalProcedures,
+    handleRecordVisitProcedures,
+    setSelectedDentalProcedures,
+  } = useRecordVisitsProcedures();
+
+  // const { updateProcedureMutation } = useUpdateProcedure();
+  // const { deleteProcedureMutation } = useDeleteProcedure();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
+  const handleSubmitAddDp = async () => {
+    await handleRecordVisitProcedures(visit.id);
+    setSelectedDentalProcedures([]);
+  };
 
   return (
     <div className="form-group">
-      <label htmlFor="dentalProcedure">{f({ id: "select" })}</label>
+      <label htmlFor="dentalProcedure">
+        {f({ id: "dentalProcedure.select" })}
+      </label>
       <input
         type="text"
         id="dentalProcedure"
-        placeholder={f({ id: "searchPlaceholder" })}
+        placeholder={f({ id: "dentalProcedure.searchPlaceholder" })}
         value={searchTerm}
         onChange={handleSearch}
-        aria-label={f({ id: "searchPlaceholder" })}
+        aria-label={f({ id: "dentalProcedure.searchPlaceholder" })}
       />
-      {isLoading && <p>{f({ id: "loading" })}</p>}
-      {error && <p>{f({ id: "error" })}</p>}
+      {isLoading && <p>{f({ id: "dentalProcedure.loading" })}</p>}
+      {error && <p>{f({ id: "dentalProcedure.error" })}</p>}
       {searchTerm && dentalProcedures && dentalProcedures.length > 0 && (
         <ul className="search-results">
           {dentalProcedures.map((dentalProcedure) => (
             <li
               key={dentalProcedure.id}
               onClick={() => {
+                handleDentalProcedureSelectSearch(dentalProcedure);
                 handleDentalProcedureSelect(dentalProcedure);
-                onSelect(dentalProcedure);
               }}
               className={`search-result ${
-                selectedDentalProcedures.some(
+                selectedDentalProceduresSearch.some(
                   (dp) => dp.id === dentalProcedure.id,
                 )
                   ? "selected"
@@ -59,6 +75,29 @@ const DentalProcedureSearch: React.FC<DentalProcedureSearchProps> = ({
             </li>
           ))}
         </ul>
+      )}
+
+      {selectedDentalProcedures.length > 0 && (
+        <div className="selected-items">
+          {f({ id: "selectedDentalProcedures" })}:
+          <ul>
+            {selectedDentalProcedures.map((dp) => (
+              <li key={dp.id}>
+                {dp.serviceName} ({dp.arabicName})
+              </li>
+            ))}
+          </ul>
+          {selectedDentalProcedures.length > 0 && (
+            <>
+              <button onClick={handleSubmitAddDp} title={f({ id: "add" })}>
+                {f({ id: "add" })}
+              </button>
+              <button onClick={() => setSelectedDentalProcedures([])}>
+                {f({ id: "cancel" })}
+              </button>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

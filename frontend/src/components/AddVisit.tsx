@@ -3,9 +3,12 @@ import { useIntl } from "react-intl";
 import { useAddVisit } from "../hooks/useVisit";
 import PatientSearch from "./PatientSearch";
 import "../styles/addVisit.css";
+import { DoctorSelect } from "./DoctorSelect";
+import { useLogin } from "../context/loginContext";
 
 export const AddVisit: React.FC = () => {
   const { formatMessage: f } = useIntl();
+  const { loggedInUser } = useLogin();
   const {
     setPaymentAmount,
     handlePatientSelect,
@@ -20,7 +23,11 @@ export const AddVisit: React.FC = () => {
 
   return (
     <div className="add-visit-container">
-      <h2>{f({ id: "addVisit.recordVisitTitle" })}</h2>
+      <h2>
+        {f({ id: "addVisit.recordVisitTitle" })}
+
+        {loggedInUser.role === "Assistant" && <DoctorSelect />}
+      </h2>
 
       {successMessage && (
         <div className="success-message">

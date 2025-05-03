@@ -14,7 +14,9 @@ import {
   PatientRegistryRes,
   UpdatePatientReq,
   UpdatePatientRes,
+  PageRes,
 } from "../types";
+import { PatientSearchParams } from "../types/types";
 
 // *patient
 
@@ -32,7 +34,7 @@ export const PatientRegistryApi = (patientId: number) =>
     [patientId.toString()],
   );
 
-export const GetAllPatients = () =>
+export const GetAllPatientsApi = () =>
   fetchFn<GetAllPatientsReq, GetAllPatientsRes>(ENDPOINT.GET_ALL_PATIENTS);
 
 export const DailyNewPatientsApi = (date) =>
@@ -54,3 +56,27 @@ export const DeletePatientApi = (patientId: number) =>
     undefined,
     [patientId + ""],
   );
+
+export const PatientSearchApi = (
+  params: PatientSearchParams,
+  page = 0,
+  size = 20,
+) => {
+  const queryParams = new URLSearchParams();
+
+  // Add search parameters
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== "") {
+      queryParams.append(key, value.toString());
+    }
+  }
+
+  // Add pagination
+  queryParams.append("page", page.toString());
+  queryParams.append("size", size.toString());
+
+  return fetchFn<null, PageRes<Patient>>(
+    `${ENDPOINT.SEARCH_PATIENTS}?${queryParams.toString()}`,
+    "GET",
+  );
+};

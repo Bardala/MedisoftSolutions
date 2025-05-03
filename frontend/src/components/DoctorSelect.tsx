@@ -3,6 +3,7 @@ import { useDoctorSelection, useFetchDoctors } from "../hooks/useDoctors";
 import "../styles/doctorSelect.css";
 import { useLogin } from "../context/loginContext";
 import { useEffect } from "react";
+import { LOCALS } from "../utils";
 
 export const DoctorSelect = () => {
   const { loggedInUser } = useLogin();
@@ -13,7 +14,7 @@ export const DoctorSelect = () => {
   // Save selected doctor ID to localStorage when it changes
   useEffect(() => {
     if (loggedInUser.role === "Assistant" && selectedDoctorId) {
-      localStorage.setItem("selectedDoctorId", String(selectedDoctorId));
+      localStorage.setItem(LOCALS.SELECTED_DOCTOR_ID, String(selectedDoctorId));
     }
   }, [selectedDoctorId, loggedInUser.role]);
 

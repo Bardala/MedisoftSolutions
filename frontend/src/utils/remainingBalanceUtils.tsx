@@ -37,15 +37,20 @@ export const calculateRemainingBalance = (
   notes: string,
   payments: Payment[],
 ) => {
-  const deals = extractDealAmounts(notes);
-  if (deals.length === 0) return 0; // No deals found
+  const extractedDealAmounts = extractDealAmounts(notes);
 
   const totalPaid = payments
     ? payments.reduce((acc, payment) => acc + payment.amount, 0)
     : 0;
 
-  const totalDeals = deals.reduce((acc, amount) => acc + amount, 0);
-  const remainingBalance = totalDeals - totalPaid;
+  if (extractedDealAmounts.length === 0)
+    return { remainingBalance: 0, totalPaid, totalDealsAmount: 0 }; // No deals found
 
-  return remainingBalance;
+  const totalDealsAmount = extractedDealAmounts.reduce(
+    (acc, amount) => acc + amount,
+    0,
+  );
+  const remainingBalance = totalDealsAmount - totalPaid;
+
+  return { remainingBalance, totalDealsAmount, totalPaid };
 };

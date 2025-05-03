@@ -10,7 +10,11 @@ import {
   useRemovePatientFromQueue,
 } from "../hooks/useQueue";
 import { analyzeVisits, callNextPatient, callPatientForDoctor } from "../utils";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faProcedures,
+  faUserCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Medicines } from "./Medicines";
 import PatientProfileHeader from "./PatientProfileHeader";
@@ -31,14 +35,13 @@ const CurrentPatientProfile = () => {
 
   const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
-  const { removePatientMutation } = useRemovePatientFromQueue();
+  const { removePatientMutation } = useRemovePatientFromQueue(selectedDoctorId);
 
   const [currPatient, setCurrPatient] = useState<Patient | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>("info");
 
   const patientRegistryData = usePatientRegistry(currPatient?.id)
     .patientRegistryQuery.data;
-  const payments = patientRegistryData?.payments;
   const visits = patientRegistryData?.visits;
   const analyzedVisits =
     patientRegistryData &&
@@ -105,10 +108,20 @@ const CurrentPatientProfile = () => {
   if (isLoading) return <p>{f({ id: "loading" })}</p>;
   if (isError) return <p>{f({ id: "error" })}</p>;
 
+  const PatientInfoComponent = () =>
+    patientRegistryData ? (
+      <PatientInfo patientRegistry={patientRegistryData} />
+    ) : (
+      <p className="Loading">{f({ id: "loading" })}</p>
+    );
+
   return (
     <div className="patient-profile-container">
       <div className="header-section">
-        <h2>{f({ id: "currentPatient" })}</h2>
+        <h1>
+          <FontAwesomeIcon icon={faProcedures} />{" "}
+          {f({ id: "sidebar.currentPatient" })}
+        </h1>
 
         {<DoctorSelect />}
       </div>
@@ -122,36 +135,26 @@ const CurrentPatientProfile = () => {
 
           <div className="expandable-sections">
             {expandedSection === "info" && (
-              <div className="patient-info">
-                <PatientInfo
-                  patient={currPatient}
-                  payments={payments}
-                  visits={visits}
-                />
-              </div>
+              <div className="patient-info">{PatientInfoComponent()}</div>
             )}
 
             {/* Visits section */}
             <div className="tables">
               {expandedSection === "visits" && visit && (
-                <div className="visits-section">
-                  <VisitCard analyzedVisit={analyzedVisit} currVisit={true} />
-                </div>
+                <VisitCard analyzedVisit={analyzedVisit} currVisit={true} />
               )}
 
               {expandedSection === "visits" && lastVisit && (
                 <>
-                  <div className="visits-section">
-                    <VisitCard
-                      analyzedVisit={lastAnalyzedVisit}
-                      currVisit={false}
-                    />
-                  </div>
+                  <VisitCard
+                    analyzedVisit={lastAnalyzedVisit}
+                    currVisit={false}
+                  />
 
                   {/* Rest Visits Section */}
-                  <div className="expandable-sections">
-                    <VisitTable patientId={currPatient?.id} showVisits="Rest" />
-                  </div>
+                  {/* <div className="visit-card"> */}
+                  <VisitTable patientId={currPatient?.id} showVisits="Rest" />
+                  {/* </div> */}
                 </>
               )}
             </div>
@@ -170,17 +173,28 @@ const CurrentPatientProfile = () => {
         <p>{f({ id: "noCurrentPatient" })}</p>
       )}
 
-      {loggedInUser.role === "Doctor" && queue?.length > 1 && (
-        <div className="next-patient-section">
-          <p className="next-patient-name">
-            <strong>{f({ id: "nextPatient" })}:</strong>{" "}
-            {queue[1].patient.fullName}
-          </p>
-          <button onClick={handleNextPatient} className="next-patient-button">
-            <FontAwesomeIcon icon={faArrowRight} />
-          </button>
-        </div>
-      )}
+      {loggedInUser.role === "Doctor" &&
+        queue?.length >= 1 &&
+        (queue.length > 1 ? (
+          <div className="next-patient-section">
+            <p className="next-patient-name">
+              <strong>{f({ id: "nextPatient" })}:</strong>{" "}
+              {queue[1].patient.fullName}
+            </p>
+            <button onClick={handleNextPatient} className="next-patient-button">
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          </div>
+        ) : (
+          <div className="next-patient-section">
+            <p className="next-patient-name">
+              {f({ id: "noNextPatientMessage" })}
+            </p>
+            <button onClick={handleNextPatient} className="next-patient-button">
+              <FontAwesomeIcon icon={faUserCheck} />
+            </button>
+          </div>
+        ))}
     </div>
   );
 };

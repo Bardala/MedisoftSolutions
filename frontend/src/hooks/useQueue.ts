@@ -8,14 +8,14 @@ import {
 import { ApiError } from "../fetch/ApiError";
 import { QueueEntry, QueueStatus } from "../types";
 
+// Fetch Queue
 export const useFetchQueue = (doctorId: number) => {
   const fetchQueueQuery = useQuery<QueueEntry[], ApiError>(
     ["queue", doctorId],
     () => FetchQueueApi(doctorId),
     {
       enabled: !!doctorId,
-      refetchOnMount: "always",
-      refetchInterval: 1000,
+      refetchInterval: 5000,
     },
   );
 
@@ -23,9 +23,11 @@ export const useFetchQueue = (doctorId: number) => {
     queue: fetchQueueQuery.data,
     isError: fetchQueueQuery.isError,
     isLoading: fetchQueueQuery.isLoading,
+    refetch: fetchQueueQuery.refetch,
   };
 };
 
+// Update Queue Status
 export const useUpdateQueueStatus = (doctorId: number) => {
   const queryClient = useQueryClient();
 
@@ -34,24 +36,33 @@ export const useUpdateQueueStatus = (doctorId: number) => {
     ApiError,
     { queueId: number; status: QueueStatus }
   >(({ queueId, status }) => UpdateQueueStatusApi({ queueId, status }), {
-    onSuccess: () => queryClient.invalidateQueries(["queue", doctorId]),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["queue", doctorId]);
+    },
   });
 
   return { updateStatusMutation };
 };
 
-export const useRemovePatientFromQueue = () => {
+// Remove Patient from Queue
+export const useRemovePatientFromQueue = (doctorId: number) => {
   const queryClient = useQueryClient();
 
-  const removePatientMutation = useMutation(RemovePatientFromQueueApi, {
-    onSuccess: (_, doctorId) =>
-      queryClient.invalidateQueries(["queue", doctorId]),
+  const removePatientMutation = useMutation<
+    unknown,
+    ApiError,
+    { queueId: number }
+  >(({ queueId }) => RemovePatientFromQueueApi({ queueId }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["queue", doctorId]);
+    },
   });
 
   return { removePatientMutation };
 };
 
-export const useUpdateQueuePosition = () => {
+// Update Queue Position
+export const useUpdateQueuePosition = (doctorId: number) => {
   const queryClient = useQueryClient();
 
   const updatePositionMutation = useMutation<
@@ -62,60 +73,11 @@ export const useUpdateQueuePosition = () => {
     ({ queueId, newPosition }) =>
       UpdateQueuePositionApi({ queueId, newPosition }),
     {
-      onSuccess: (_, doctorId) =>
-        queryClient.invalidateQueries(["queue", doctorId]),
+      onSuccess: () => {
+        queryClient.invalidateQueries(["queue", doctorId]);
+      },
     },
   );
 
   return { updatePositionMutation };
 };
-
-// export const useQueue = (doctorId: number) => {
-//   const queryClient = useQueryClient();
-
-//   const {
-//     data: queue,
-//     isLoading,
-//     isError,
-//   } = useQuery<QueueEntry[], ApiError>(
-//     ["queue", doctorId],
-//     () => FetchQueueApi(doctorId),
-//     {
-//       enabled: !!doctorId,
-//       refetchInterval: 5000,
-//     },
-//   );
-
-//   const updateStatusMutation = useMutation<
-//     QueueEntry,
-//     ApiError,
-//     { queueId: number; status: QueueStatus }
-//   >(({ queueId, status }) => UpdateQueueStatusApi({ queueId, status }), {
-//     onSuccess: () => queryClient.invalidateQueries(["queue", doctorId]),
-//   });
-
-//   const removePatientMutation = useMutation(RemovePatientFromQueueApi, {
-//     onSuccess: () => queryClient.invalidateQueries(["queue", doctorId]),
-//   });
-
-//   const updatePositionMutation = useMutation<
-//     QueueEntry,
-//     ApiError,
-//     { queueId: number; newPosition: number }
-//   >(
-//     ({ queueId, newPosition }) =>
-//       UpdateQueuePositionApi({ queueId, newPosition }),
-//     {
-//       onSuccess: () => queryClient.invalidateQueries(["queue", doctorId]),
-//     },
-//   );
-
-//   return {
-//     updatePositionMutation,
-//     removePatientMutation,
-//     updateStatusMutation,
-//     queue,
-//     isLoading,
-//     isError,
-//   };
-// };

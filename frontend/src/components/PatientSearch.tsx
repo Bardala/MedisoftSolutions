@@ -1,33 +1,39 @@
-import React from "react";
-import { usePatientSearch } from "../hooks/usePatientSearch";
+import { FC } from "react";
+import { useIntl } from "react-intl";
 import { Patient } from "../types";
 import { isArabic } from "../utils";
-import { useIntl } from "react-intl";
+import { usePatientSearch } from "../hooks/usePatient";
 
 interface PatientSearchProps {
   onSelect: (patient: Patient) => void;
 }
 
-const PatientSearch: React.FC<PatientSearchProps> = ({ onSelect }) => {
+const PatientSearch: FC<PatientSearchProps> = ({ onSelect }) => {
   const { formatMessage: f } = useIntl();
 
   const {
     patients,
-    searchTerm,
-    setSearchTerm,
+    searchParams,
+    setSearchParams,
     handlePatientSelect,
-    isLoading,
     error,
   } = usePatientSearch();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value.toLowerCase());
+    const value = e.target.value.toLowerCase();
+    // Use the special 'patient' param that searches both name and phone
+    setSearchParams({ patient: value });
   };
 
   const handleSelect = (patient: Patient) => {
     handlePatientSelect(patient);
-    onSelect(patient);
+    onSelect(patient); // Notify parent component
+    // Clear search after selection
+    setSearchParams({});
   };
+
+  // Get the current search term for input value
+  const searchTerm = searchParams.patient || "";
 
   return (
     <div className="form-group">
@@ -41,9 +47,9 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ onSelect }) => {
         onChange={handleSearch}
         aria-label={f({ id: "search_placeholder" })}
       />
-      {isLoading && <p>{f({ id: "loading_patients" })}</p>}
+
       {error && <p>{f({ id: "error_loading_patients" })}</p>}
-      {searchTerm && patients && patients.length > 0 && (
+      {searchTerm && patients.length > 0 && (
         <ul className="search-results arabic">
           {patients.map((patient) => (
             <li

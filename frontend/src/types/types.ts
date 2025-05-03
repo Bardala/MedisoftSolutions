@@ -41,7 +41,7 @@ export interface Visit {
   createdAt?: Date;
 }
 
-export interface DentalProcedure {
+export interface Procedure {
   id?: number;
   serviceName: string;
   arabicName: string;
@@ -70,7 +70,7 @@ export interface Payment {
 export interface VisitDentalProcedure {
   id?: number;
   visit: Visit;
-  dentalProcedure: DentalProcedure;
+  dentalProcedure: Procedure;
 }
 
 export interface VisitMedicine {
@@ -98,7 +98,7 @@ export interface VisitPayment {
 
 export interface VisitAnalysis {
   visit: Visit;
-  procedures: DentalProcedure[];
+  procedures: Procedure[];
   payment: Payment;
   medicines: Medicine[];
 }
@@ -121,4 +121,31 @@ export interface QueueEntry {
   createdAt?: Date;
   updatedAt?: Date;
   estimatedWaitTime?: Date;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+// export const PatientSearchApi = (searchTerm: string, page = 0, size = 20) =>
+//   fetchFn<null, PageRes<Patient>>(
+//     `${ENDPOINT.SEARCH_PATIENTS}?term=${searchTerm}&page=${page}&size=${size}`,
+//     "GET",
+//   );
+
+export interface PatientSearchParams {
+  patient?: string; // Searches both name and phone
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  age?: number;
+  medicalHistory?: string;
 }

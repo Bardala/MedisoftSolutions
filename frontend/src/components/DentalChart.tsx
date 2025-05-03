@@ -196,6 +196,7 @@ const DentalChart: React.FC = () => {
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getLinearPosition = (index: number, spacing = 60) => {
     return {
       x: index * spacing,

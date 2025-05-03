@@ -10,7 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/api/v1/patients")
@@ -50,7 +54,7 @@ public class PatientController {
   }
 
   @GetMapping("/registry/{id}")
-  public ResponseEntity<ApiRes<PatientRegistryRes>> getPatientRegistry(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<PatientRegistryRes>> getPatientRegistry(@PathVariable("id") Long id) {
     PatientRegistryRes patientRegistry = patientService.getPatientRegistry(id);
     return ResponseEntity.ok(new ApiRes<>(patientRegistry));
   }
@@ -69,6 +73,21 @@ public class PatientController {
       date = LocalDate.now();
     }
     List<Patient> patients = patientService.getDailyNewPatientsForDate(date);
+    return ResponseEntity.ok(new ApiRes<>(patients));
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<ApiRes<Page<Patient>>> searchPatients(
+      @RequestParam Map<String, String> allParams,
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "size", defaultValue = "20") int size) {
+
+    // Remove pagination parameters from the search criteria
+    Map<String, String> searchParams = new HashMap<>(allParams);
+    searchParams.remove("page");
+    searchParams.remove("size");
+
+    Page<Patient> patients = patientService.searchPatients(searchParams, page, size);
     return ResponseEntity.ok(new ApiRes<>(patients));
   }
 }

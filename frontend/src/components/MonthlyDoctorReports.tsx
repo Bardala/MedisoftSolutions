@@ -12,6 +12,9 @@ import "../styles/monthlyDoctorReports.css";
 import { useMonthlyReport } from "../hooks/useMonthlyReport";
 import { ChartComponent } from "./ChartComponent";
 import { useIntl } from "react-intl";
+import { MonthlyCharts } from "./MonthlyCharts";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { ToggleStatsData } from "./ToggleStatsData";
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +32,7 @@ const MonthlyDentistReport = () => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [showStats, setShowStats] = useState(false);
 
   const { summary, daysInfo, isError, isLoading, summaryError, daysInfoError } =
     useMonthlyReport(selectedYear, selectedMonth);
@@ -88,7 +92,12 @@ const MonthlyDentistReport = () => {
 
   return (
     <div className="reports-container">
-      <h2>{f({ id: "monthly_report" })}</h2>
+      <ToggleStatsData
+        header={f({ id: "monthlyReports" })}
+        setShowStats={setShowStats}
+        showStats={showStats}
+        dataIcon={faCalendarAlt}
+      />
 
       {/* Month and Year Selector */}
       <div className="month-year-selector">
@@ -129,84 +138,101 @@ const MonthlyDentistReport = () => {
         </label>
       </div>
 
-      {/* Monthly Summary Card */}
-      <div className="summary-card">
-        <h3>{f({ id: "monthly_summary" })}</h3>
-        <p>
-          {f({ id: "total_visits" })}:{" "}
-          <strong>{summary?.totalVisits || "-"}</strong>
-        </p>
-        <p>
-          {f({ id: "most_common_procedure" })}:{" "}
-          <strong>{summary?.mostCommonProcedure || "-"}</strong>
-        </p>
-        <p>
-          {f({ id: "total_revenue" })}:{" "}
-          <strong>${summary?.totalRevenue || "-"}</strong>
-        </p>
-        <p>
-          {f({ id: "most_crowded_weekday" })}:{" "}
-          <strong>{mostCrowdedWeekday || "-"}</strong>
-        </p>
-        <p>
-          {f({ id: "least_crowded_weekday" })}:{" "}
-          <strong>{leastCrowdedWeekday || "-"}</strong>
-        </p>
-        <p>
-          {f({ id: "new_patients" })}:{" "}
-          <strong>{summary?.totalNewPatients || "-"}</strong>
-        </p>
-      </div>
+      {showStats ? (
+        <>
+          {/*Statistics Card */}
+          <ChartComponent weeklyStats={weeklyStats} />
 
-      {/* Calendar View */}
-      <div className="calendar">
-        {Array.from({ length: daysInMonth }, (_, i) => {
-          const day = i + 1;
-          const date = new Date(selectedYear, selectedMonth - 1, day);
-          const dayName = date.toLocaleString("en-US", { weekday: "short" });
-          const dayInfo = daysInfo?.find(
-            (info) => new Date(info.date).getDate() === day,
-          );
+          <MonthlyCharts
+            year={selectedYear}
+            month={selectedMonth}
+            daysInfo={daysInfo}
+            summary={summary}
+          />
+        </>
+      ) : (
+        <>
+          {/* Monthly Summary Card */}
+          <div className="summary-card">
+            <h3>{f({ id: "monthly_summary" })}</h3>
+            <p>
+              {f({ id: "total_visits" })}:{" "}
+              <strong>{summary?.totalVisits || "-"}</strong>
+            </p>
+            <p>
+              {f({ id: "most_common_procedure" })}:{" "}
+              <strong>{summary?.mostCommonProcedure || "-"}</strong>
+            </p>
+            <p>
+              {f({ id: "total_revenue" })}:{" "}
+              <strong>${summary?.totalRevenue || "-"}</strong>
+            </p>
+            <p>
+              {f({ id: "most_crowded_weekday" })}:{" "}
+              <strong>{mostCrowdedWeekday || "-"}</strong>
+            </p>
+            <p>
+              {f({ id: "least_crowded_weekday" })}:{" "}
+              <strong>{leastCrowdedWeekday || "-"}</strong>
+            </p>
+            <p>
+              {f({ id: "new_patients" })}:{" "}
+              <strong>{summary?.totalNewPatients || "-"}</strong>
+            </p>
+          </div>
 
-          return (
-            <div key={day} className="calendar-day">
-              <div className="date">
-                {dayName} {day}
-              </div>
-              <div className="day-data">
-                <p>{dayInfo?.totalVisits || "-"}</p>
-                <p className="small-text">{dayInfo?.mostProcedure || "-"}</p>
-                <p>${dayInfo?.totalRevenue || "-"}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+          {/* Calendar View */}
+          <div className="calendar">
+            {Array.from({ length: daysInMonth }, (_, i) => {
+              const day = i + 1;
+              const date = new Date(selectedYear, selectedMonth - 1, day);
+              const dayName = date.toLocaleString("en-US", {
+                weekday: "short",
+              });
+              const dayInfo = daysInfo?.find(
+                (info) => new Date(info.date).getDate() === day,
+              );
 
-      {/* Weekly Statistics Card */}
-      <ChartComponent weeklyStats={weeklyStats} />
+              return (
+                <div key={day} className="calendar-day">
+                  <div className="date">
+                    {dayName} {day}
+                  </div>
+                  <div className="day-data">
+                    <p>{dayInfo?.totalVisits || "-"}</p>
+                    <p className="small-text">
+                      {dayInfo?.mostProcedure || "-"}
+                    </p>
+                    <p>${dayInfo?.totalRevenue || "-"}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-      {/* Advice Section */}
-      <div className="advice-card">
-        <h3>{f({ id: "advice_management" })}</h3>
-        <p>
-          <strong>{f({ id: "focus_on" })}:</strong> {mostCrowdedWeekday}{" "}
-          {f({ id: "better_scheduling" })}
-        </p>
-        <p>
-          <strong>{f({ id: "promote_appointments" })}:</strong>{" "}
-          {leastCrowdedWeekday} {f({ id: "balance_load" })}
-        </p>
-        <p>
-          <strong>{f({ id: "popular_procedure" })}:</strong>{" "}
-          {summary?.mostCommonProcedure || "None"}.{" "}
-          {f({ id: "consider_promotions" })}
-        </p>
-        <p>
-          <strong>{f({ id: "staffing_advice" })}:</strong>{" "}
-          {f({ id: "ensure_staff" })} {mostCrowdedWeekday}.
-        </p>
-      </div>
+          {/* Advice Section */}
+          <div className="advice-card">
+            <h3>{f({ id: "advice_management" })}</h3>
+            <p>
+              <strong>{f({ id: "focus_on" })}:</strong> {mostCrowdedWeekday}{" "}
+              {f({ id: "better_scheduling" })}
+            </p>
+            <p>
+              <strong>{f({ id: "promote_appointments" })}:</strong>{" "}
+              {leastCrowdedWeekday} {f({ id: "balance_load" })}
+            </p>
+            <p>
+              <strong>{f({ id: "popular_procedure" })}:</strong>{" "}
+              {summary?.mostCommonProcedure || "None"}.{" "}
+              {f({ id: "consider_promotions" })}
+            </p>
+            <p>
+              <strong>{f({ id: "staffing_advice" })}:</strong>{" "}
+              {f({ id: "ensure_staff" })} {mostCrowdedWeekday}.
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 };
