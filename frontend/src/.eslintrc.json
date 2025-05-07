@@ -1,0 +1,11 @@
+{
+  "env": {
+    "serviceworker": true
+  },
+  "rules": {
+    "no-restricted-globals": ["error", {
+      "name": "self",
+      "message": "Use `globalThis` instead."
+    }]
+  }
+}

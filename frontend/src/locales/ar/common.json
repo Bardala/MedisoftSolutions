@@ -62,5 +62,63 @@
   "age_phase_teen": "مراهق",
   "age_phase_adult": "بالغ",
   "age_phase_middle": "متوسط العمر",
-  "age_phase_senior": "كبير السن"
+  "age_phase_senior": "كبير السن",
+
+  "L.E": "ج.م",
+
+  "daily_revenue": "الإيرادات اليومية",
+  "daily_visits": "الزيارات اليومية",
+  "revenue_chart_description": "يعرض اتجاهات الدخل خلال الشهر. تشير القمم إلى أيام الإيرادات المرتفعة، بينما تشير القيعان إلى فترات الهدوء. يساعد في تقييم الأداء المالي.",
+  "visits_chart_description": "يعرض عدد زيارات المرضى لكل يوم. يساعد في تحديد الأيام المزدحمة والأيام الهادئة.",
+  "amount": "المبلغ",
+  "date": "التاريخ",
+
+  "weekday_density_chart_title": "كثافة الزيارات حسب أيام الأسبوع",
+  "weekday_density_chart_description": "يعرض كيف تتوزع زيارات المرضى عبر أيام الأسبوع. مفيد لتحسين جدول الموظفين وتحديد أيام الذروة.",
+  "visit_density": "عدد الزيارات",
+  "x_axis_label": "أيام الأسبوع",
+  "y_axis_label": "عدد الزيارات",
+
+  "new_notification": "إشعار جديد",
+  "loading_notifications": "جاري تحميل الإشعارات...",
+  "error_notifications": "فشل في تحميل الإشعارات.",
+  "no_notifications_to_show": "لا توجد إشعارات للعرض.",
+
+  "clinicSettings.title": "تعديل معلومات العيادة",
+  "clinicSettings.doctorSection": "معلومات الطبيب",
+  "clinicSettings.clinicSection": "التواصل وساعات العمل",
+  "clinicSettings.backupSection": "النسخ الاحتياطي والملفات",
+  "clinicSettings.visualSection": "الواجهة البصرية",
+  "clinicSettings.notesSection": "الرسائل والملاحظات",
+  "clinicSettings.language": "اللغة",
+
+  "clinicSettings.doctorName": "اسم الطبيب",
+  "clinicSettings.doctorTitle": "اللقب الوظيفي",
+  "clinicSettings.doctorQualification": "المؤهل العلمي",
+
+  "clinicSettings.clinicAddress": "عنوان العيادة",
+  "clinicSettings.clinicPhoneNumber": "رقم هاتف العيادة",
+  "clinicSettings.clinicEmail": "البريد الإلكتروني للعيادة",
+  "clinicSettings.workingHours": "ساعات العمل",
+
+  "clinicSettings.backupDbPath": "مسار نسخة قاعدة البيانات",
+  "clinicSettings.backupImagesPath": "مسار نسخة الصور",
+  "clinicSettings.fileUploadDir": "مسار رفع الملفات",
+
+  "clinicSettings.prescriptionLogoPath": "مسار شعار الوصفة",
+  "clinicSettings.programLogoPath": "مسار شعار البرنامج",
+  "clinicSettings.whatsappLogoPath": "مسار شعار واتساب",
+
+  "clinicSettings.healingMessage": "رسالة الشفاء",
+  "clinicSettings.printFooterNotes": "ملاحظات أسفل الصفحة",
+
+  "clinicSettings.save": "حفظ الإعدادات",
+
+  "clinicSettings.languageSection": "إعدادات اللغة",
+  "clinicSettings.phoneSection": "إعدادات الهاتف",
+  "clinicSettings.backupIntervalDays": "فترة النسخ الاحتياطي (أيام)",
+  "clinicSettings.phoneSupportsWhatsapp": "رقم الهاتف يدعم واتساب",
+  "clinicSettings.backupEnabled": "تفعيل النسخ الاحتياطي التلقائي",
+
+  "day_format": "{day} {month}"
 }

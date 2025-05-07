@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import "../styles/monthlyDoctorReports.css";
 import { useMonthlyReport } from "../hooks/useMonthlyReport";
-import { ChartComponent } from "./ChartComponent";
+import { MonthlyWeekDayChart } from "./MonthlyWeekDayChart";
 import { useIntl } from "react-intl";
 import { MonthlyCharts } from "./MonthlyCharts";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
@@ -141,7 +141,7 @@ const MonthlyDentistReport = () => {
       {showStats ? (
         <>
           {/*Statistics Card */}
-          <ChartComponent weeklyStats={weeklyStats} />
+          <MonthlyWeekDayChart weeklyStats={weeklyStats} />
 
           <MonthlyCharts
             year={selectedYear}
@@ -165,7 +165,9 @@ const MonthlyDentistReport = () => {
             </p>
             <p>
               {f({ id: "total_revenue" })}:{" "}
-              <strong>${summary?.totalRevenue || "-"}</strong>
+              <strong>
+                {summary?.totalRevenue || "-"} {f({ id: "L.E" })}
+              </strong>
             </p>
             <p>
               {f({ id: "most_crowded_weekday" })}:{" "}
@@ -203,7 +205,9 @@ const MonthlyDentistReport = () => {
                     <p className="small-text">
                       {dayInfo?.mostProcedure || "-"}
                     </p>
-                    <p>${dayInfo?.totalRevenue || "-"}</p>
+                    <p>
+                      {dayInfo?.totalRevenue || "0"} {f({ id: "L.E" })}
+                    </p>
                   </div>
                 </div>
               );

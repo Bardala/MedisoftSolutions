@@ -75,7 +75,7 @@ const DailyFinancialReport = () => {
     },
     {
       header: f({ id: "amountPaid" }),
-      accessor: (row) => `$${row?.amountPaid}`,
+      accessor: (row) => `${row?.amountPaid} ${f({ id: "L.E" })}`,
     },
     {
       header: f({ id: "visitTime" }),
@@ -89,7 +89,10 @@ const DailyFinancialReport = () => {
       header: f({ id: "patientName" }),
       accessor: (row) => row?.patient.fullName,
     },
-    { header: f({ id: "amount" }), accessor: (row) => `$${row?.amount}` },
+    {
+      header: f({ id: "amount" }),
+      accessor: (row) => `${row?.amount} ${f({ id: "L.E" })}`,
+    },
     {
       header: f({ id: "date" }),
       accessor: (row) => dailyTimeFormate(row.createdAt),
@@ -173,7 +176,9 @@ const DailyFinancialReport = () => {
           <div className="stats">
             <p>
               {f({ id: "totalRevenue" })}:{" "}
-              <strong>${totalPayments || 0}</strong>
+              <strong>
+                {totalPayments || 0} {f({ id: "L.E" })}
+              </strong>
             </p>
             <p>
               {f({ id: "totalPayments" })}:{" "}

@@ -55,8 +55,6 @@ export const PatientsTable = () => {
     },
   ];
 
-  console.log("patients", patients);
-
   return (
     <>
       {isLoading && <p>{f({ id: "loading_patients" })}</p>}

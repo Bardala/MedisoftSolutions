@@ -81,10 +81,10 @@
 
 		<!-- Sqlite init -->
 		<dependency>
-        <groupId>org.xerial</groupId>
-        <artifactId>sqlite-jdbc</artifactId>
-				<version>3.25.2</version>
-    </dependency>
+				<groupId>org.xerial</groupId>
+				<artifactId>sqlite-jdbc</artifactId>
+				<version>3.45.1.0</version> <!-- Latest as of early 2025 -->
+		</dependency>
 		<dependency>
 				<groupId>org.hibernate.orm</groupId>
 				<artifactId>hibernate-community-dialects</artifactId>

@@ -79,14 +79,14 @@ button:disabled {
 }
 
 /* Success Message */
-.success {
+/* .success {
   background-color: var(--success-bg);
   border: 1px solid var(--success-border);
   color: var(--success-text);
   padding: var(--padding-small);
   border-radius: var(--border-radius);
   margin-top: var(--padding-medium);
-}
+} */
 
 .payment-header-container {
   display: flex;

@@ -22,6 +22,9 @@ export const useDailyReportData = (
   const dailyPaymentQuery = useQuery<WorkdayPaymentsRes, ApiError>(
     ["daily payments", date],
     () => WorkdayPaymentsApi(date),
+    {
+      refetchOnWindowFocus: true,
+    },
   );
 
   const dailyVisitsQuery = useQuery<WorkdayVisitsRes, ApiError>(

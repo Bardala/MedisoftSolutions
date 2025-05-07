@@ -12,6 +12,8 @@ import AddAssistant from "../components/AddAssistant";
 import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
 import QueuePage from "../components/Queue";
+import { ClinicSettings } from "../components/ClinicSettings";
+import { EditUserInfo } from "../components/EditUserInfo";
 
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -26,11 +28,13 @@ export const useHomePage = (loggedInUser: User) => {
     "/patient-profile": <PatientProfile />,
     "/add-patient": <AddPatient />,
     "/payments": <RecordPayments />,
+    "/update-user-info": <EditUserInfo />,
   };
 
   const doctorRoutes = {
     "/monthly-reports": <MonthlyDoctorReports />,
     "/add-assistant": <AddAssistant />,
+    "/clinic-settings": <ClinicSettings />,
   };
 
   const renderContent = () =>

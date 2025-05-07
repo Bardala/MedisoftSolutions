@@ -222,7 +222,8 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                       </div>
                       <div className="battery-cap"></div>
                       <span className="balance-text">
-                        ${paidAmount || 0} / ${totalDeal || 0}
+                        {paidAmount || 0} {f({ id: "L.E" })} / {totalDeal || 0}{" "}
+                        {f({ id: "L.E" })}
                       </span>
                     </div>
                   </>
@@ -232,7 +233,9 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                     <h4 className="card-title">
                       {f({ id: "total_amount_paid" })}
                     </h4>
-                    <p className="card-content">{paidAmount || 0}</p>
+                    <p className="card-content">
+                      {paidAmount || 0} {f({ id: "L.E" })}
+                    </p>
                   </>
                 )}
               </div>

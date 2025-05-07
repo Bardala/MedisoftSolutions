@@ -5,9 +5,16 @@ import {
   faSearch,
   faFileArchive,
   faProcedures,
+  IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
-import { MenuItem, User } from "../types";
+import { User } from "../types";
 import { useIntl } from "react-intl";
+
+export interface MenuItem {
+  label: string;
+  link: string;
+  icon: IconDefinition; // FontAwesomeIcon type
+}
 
 export const useSidebar = (loggedInUser: User) => {
   const { formatMessage } = useIntl(); // Get translation function

@@ -94,7 +94,7 @@
   }
 
   .summary-item {
-    width: 100%;
+    width: -webkit-fill-available;
     margin-bottom: var(--padding-small);
     box-shadow: var(--shadow-light);
   }

@@ -316,8 +316,6 @@ export const usePatientSearch = () => {
     setPage((prev) => Math.max(prev - 1, 0));
   };
 
-  console.log("patients", searchResponse?.content);
-
   return {
     ...pageQuery,
     patients: searchResponse?.content || [],

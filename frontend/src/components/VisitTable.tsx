@@ -27,7 +27,9 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
     {
       header: f({ id: "payment" }),
       accessor: (row: { payment: Payment }) =>
-        row.payment ? `$${row.payment.amount}` : f({ id: "not_available" }),
+        row.payment
+          ? `${row.payment.amount} ${f({ id: "L.E" })}`
+          : f({ id: "not_available" }),
     },
     {
       header: f({ id: "date" }),

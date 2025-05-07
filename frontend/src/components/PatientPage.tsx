@@ -10,7 +10,6 @@ import {
   sortById,
   findUnlinkedPayments,
 } from "../utils";
-import { PatientCharts } from "./PatientCharts";
 import { PatientInfo } from "./PatientInfo";
 import Table from "./Table";
 import UserFiles from "./UserFiles";
@@ -35,7 +34,7 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
     },
     {
       header: f({ id: "amount" }),
-      accessor: (row) => `$${row?.amount}`,
+      accessor: (row) => `${row?.amount} ${f({ id: "L.E" })}`,
     },
     {
       header: f({ id: "date" }),

@@ -149,3 +149,36 @@ export interface PatientSearchParams {
   age?: number;
   medicalHistory?: string;
 }
+
+export interface NotificationType {
+  id: string;
+  message: string;
+  createdAt: Date;
+  type: "Patient" | "Payment" | "Visit";
+}
+
+export interface IClinicSettings {
+  id?: number;
+  doctorId: number;
+  doctorName: string;
+  doctorTitle: string;
+  doctorQualification: string;
+
+  clinicAddress: string;
+  clinicPhoneNumber: string;
+  clinicEmail: string;
+  workingHours: string;
+
+  backupDbPath: string;
+  backupImagesPath: string;
+
+  prescriptionLogoPath: string;
+  healingMessage: string;
+  printFooterNotes: string;
+  language: string;
+
+  phoneSupportsWhatsapp: boolean;
+
+  backupEnabled: boolean;
+  backupIntervalDays: number;
+}

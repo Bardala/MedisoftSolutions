@@ -1,8 +1,9 @@
 import { useIntl } from "react-intl";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { FC } from "react";
-import { LineElement, PointElement } from "chart.js";
 import {
+  LineElement,
+  PointElement,
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -11,21 +12,13 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  ChartOptions,
 } from "chart.js";
 import { MonthlyDayInfo, MonthlySummaryRes } from "../types";
 
 ChartJS.register(
   LineElement,
   PointElement,
-  // already registered:
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-);
-
-ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
@@ -51,74 +44,185 @@ export const MonthlyCharts: FC<MonthlyReportProps> = ({
   const { formatMessage } = useIntl();
   const isData = daysInfo && summary;
 
-  const dailyRevenueData = {
-    labels: daysInfo?.map((day) => new Date(day.date).toLocaleDateString()),
-    datasets: [
-      {
-        label: formatMessage({ id: "daily_revenue" }),
-        data: daysInfo?.map((day) => day.totalRevenue),
-        borderColor: "rgba(75, 192, 192, 1)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        tension: 0.4,
-        fill: true,
-      },
-    ],
+  const sortedDays = [...daysInfo].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+
+  const chartDescriptions = {
+    revenue: formatMessage({
+      id: "revenue_chart_description",
+      defaultMessage:
+        "Shows daily income trends. Peaks indicate high-revenue days, valleys show slower periods. Compare with visits to understand patient spending patterns.",
+    }),
+    visits: formatMessage({
+      id: "visits_chart_description",
+      defaultMessage:
+        "Displays patient visit frequency. Taller bars mean busier days. Helps with staff scheduling and identifying peak demand periods.",
+    }),
   };
 
+  // const dailyRevenueData = {
+  //   labels: sortedDays.map((day) => new Date(day.date).getDate().toString()),
+  //   datasets: [
+  //     {
+  //       label: formatMessage({ id: "daily_revenue" }),
+  //       data: sortedDays.map((day) => day.totalRevenue),
+  //       borderColor: "rgba(75, 192, 192, 1)",
+  //       backgroundColor: "rgba(75, 192, 192, 0.2)",
+  //       tension: 0.4,
+  //       fill: true,
+  //     },
+  //   ],
+  // };
+
   const dailyVisitsData = {
-    labels: daysInfo?.map((day) => new Date(day.date).toLocaleDateString()),
+    labels: sortedDays.map((day) => new Date(day.date).getDate().toString()),
     datasets: [
       {
         label: formatMessage({ id: "daily_visits" }),
-        data: isData && daysInfo?.map((day) => day.totalVisits),
+        data: sortedDays.map((day) => day.totalVisits),
         backgroundColor: "rgba(153, 102, 255, 0.6)",
       },
     ],
   };
 
-  const mostCommonProcedureData = {
-    labels: [summary?.mostCommonProcedure || formatMessage({ id: "no_data" })],
+  // const lineOptions = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: { position: "top" } as const,
+  //     title: {
+  //       display: true,
+  //       text: chartDescriptions.revenue, // Title on top of the chart
+  //     },
+  //   },
+  //   scales: {
+  //     x: {
+  //       title: {
+  //         display: true,
+  //         text: formatMessage({ id: "date" }),
+  //       },
+  //     },
+  //     y: {
+  //       title: {
+  //         display: true,
+  //         text: formatMessage({ id: "amount" }),
+  //       },
+  //     },
+  //   },
+  // };
+
+  const barOptoins = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" } as const,
+      title: {
+        display: true,
+        text: chartDescriptions.visits, // Title on top of the chart
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: formatMessage({ id: "date" }),
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: formatMessage({ id: "y_axis_label" }),
+        },
+      },
+    },
+  };
+
+  const combinedLineData = {
+    labels: sortedDays.map((day) => new Date(day.date).getDate().toString()),
     datasets: [
       {
-        label: formatMessage({ id: "common_procedures" }),
-        data: [1], // Just a representation; consider enhancing this with real frequency distribution if available
-        backgroundColor: ["#FF6384"],
+        label: formatMessage({ id: "daily_revenue" }),
+        data: sortedDays.map((day) => day.totalRevenue),
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        tension: 0.4,
+        fill: false,
+        yAxisID: "y", // attach to left axis
+      },
+      {
+        label: formatMessage({ id: "daily_visits" }),
+        data: sortedDays.map((day) => day.totalVisits),
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        tension: 0.4,
+        fill: false,
+        yAxisID: "y1", // attach to right axis for clarity
       },
     ],
   };
 
-  const baseOptions = {
+  const combinedLineOptions: ChartOptions<"line"> = {
     responsive: true,
     plugins: {
-      legend: { position: "top" } as const,
+      legend: { position: "top" },
+      title: {
+        display: true,
+        text: formatMessage({
+          id: "combined_chart_description",
+          defaultMessage: "Daily Revenue and Visit Trends",
+        }),
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: formatMessage({ id: "date" }),
+        },
+      },
+      y: {
+        type: "linear" as const,
+        display: true,
+        position: "left",
+        title: {
+          display: true,
+          text: formatMessage({ id: "amount" }),
+        },
+      },
+      y1: {
+        type: "linear" as const,
+        display: true,
+        position: "right",
+        title: {
+          display: true,
+          text: formatMessage({ id: "visits" }),
+        },
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
     },
   };
 
   return (
     isData && (
       <>
-        {/* Visits by Hour */}
+        {/* Revenue Trend */}
         <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800 col-span-1 md:col-span-2">
           <h3 className="text-lg font-semibold mb-2">
-            {formatMessage({ id: "visits_by_hour" })}
+            {formatMessage({ id: "daily_revenue" })}
           </h3>
-          <Line data={dailyRevenueData} options={baseOptions} />
+
+          {/* <Line data={dailyRevenueData} options={lineOptions} /> */}
+          <Line data={combinedLineData} options={combinedLineOptions} />
         </div>
 
-        {/* Visits */}
+        {/* Visit Frequency */}
         <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800">
           <h3 className="text-lg font-semibold mb-2">
             {formatMessage({ id: "monthly_visits" })}
           </h3>
-          <Bar data={dailyVisitsData} options={baseOptions} />
-        </div>
 
-        {/* Procedure Types */}
-        <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800 col-span-1 md:col-span-2">
-          <h3 className="text-lg font-semibold mb-2">
-            {formatMessage({ id: "procedure_frequency" })}
-          </h3>
-          <Pie data={mostCommonProcedureData} options={baseOptions} />
+          <Bar data={dailyVisitsData} options={barOptoins} />
         </div>
       </>
     )

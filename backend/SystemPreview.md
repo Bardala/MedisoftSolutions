@@ -18,6 +18,7 @@ A dental clinic management system that allows a single doctor to manage multiple
    - [**Visit Medicines Table**](#9-visit-medicines-table)
    - [**Patient Files Table**](#10-patient-files-table)
    - [**Queue Table**](#11-queue-table)
+   - [**Settings Table**](#12-settings-table)
 
 3. [**Relationships**](#relationships)
 4. [**Doctor Controls**](#doctor-controls)
@@ -220,6 +221,32 @@ Manages patient queue for visits.
 | estimated_wait_time | INT       | NULLABLE (minutes)                         |
 | created_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable   |
 | updated_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP on update        |
+
+## **12. Settings Table**
+
+| Column Name               | Data Type   | Description                                             |
+| ------------------------- | ----------- | ------------------------------------------------------- |
+| `id`                      | `INT` (PK)  | Unique identifier                                       |
+| `clinic_name`             | `VARCHAR`   | Optional display name of the clinic                     |
+| `doctor_id`               | `INT`       | Linked to the users table, marks head doctor            |
+| `doctor_name`             | `VARCHAR`   | Shown on the prescription                               |
+| `doctor_title`            | `VARCHAR`   | e.g. "أخصائي طب وجراحة الفم والأسنان"                   |
+| `doctor_qualification`    | `VARCHAR`   | e.g. "القصر العيني"                                     |
+| `clinic_address`          | `TEXT`      | Formatted address                                       |
+| `clinic_phone_number`     | `VARCHAR`   | Displayed on prescription/footer                        |
+| `clinic_email`            | `VARCHAR`   | Email for the clinic                                    |
+| `working_hours`           | `TEXT`      | e.g. "يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف الليل" |
+| `backup_db_path`          | `TEXT`      | Local backup path for DB                                |
+| `backup_images_path`      | `TEXT`      | Path for image backup                                   |
+| `prescription_logo_path`  | `TEXT`      | Logo to show on prescription                            |
+| `healing_message`         | `TEXT`      | Custom footer message like "مع تمنياتنا بالشفاء العاجل" |
+| `print_footer_notes`      | `TEXT`      | Any extra footer notes                                  |
+| `language`                | `VARCHAR`   | Default UI language (e.g., 'ar', 'en')                  |
+| `phone_supports_whatsapp` | `BOOLEAN`   | Whether the phone supports WhatsApp                     |
+| `backup_duration_enabled` | `BOOLEAN`   | Whether the backup duration feature is enabled or not   |
+| `backup_duration`         | `INT`       | Duration for backup frequency (e.g., hours or days)     |
+| `created_at`              | `TIMESTAMP` | Record creation time                                    |
+| `updated_at`              | `TIMESTAMP` | Last time this setting was updated                      |
 
 ---
 

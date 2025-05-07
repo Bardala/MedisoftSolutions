@@ -16,5 +16,7 @@
   "loading": "Loading...",
   "error": "Error: Something went wrong...",
   "dentalChart": "Jaw",
-  "noNextPatientMessage": "There are no more patients. Clear the current one to finish."
+  "noNextPatientMessage": "There are no more patients. Clear the current one to finish.",
+
+  "call_patient": "Call patient"
 }

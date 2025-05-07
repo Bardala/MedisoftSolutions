@@ -89,4 +89,9 @@ export enum ENDPOINT {
   DELETE_VISIT_MEDICINE = "/visit-medicines/:id",
   GET_VISIT_MEDICINES_BY_VISIT_ID = "/visit-medicines/visit/:visitId",
   GET_VISIT_MEDICINES_BY_MEDICINE_ID = "/visit-medicines/medicine/:medicineId",
+
+  // Settings APIs
+  GET_CLINIC_SETTINGS = "/settings",
+  CREATE_CLINIC_SETTINGS = "/settings",
+  UPDATE_CLINIC_SETTINGS = "/settings/:id",
 }

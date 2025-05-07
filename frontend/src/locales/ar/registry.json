@@ -13,7 +13,7 @@
   "patient_registered_on": "🕒 مسجل في",
   "patient_notes": "📝 ملاحظات:",
   "total_amount_paid": "💵 إجمالي المبلغ المدفوع",
-  "remaining_balance": "🔴 باقى الحساب: ${balance}",
+  "remaining_balance": "🔴 باقى الحساب: {balance} ج.م",
   "save_notes": "حفظ الملاحظات",
   "cancel": "إلغاء",
   "update_patient_details": "تحديث بيانات المريض",
