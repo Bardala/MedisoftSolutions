@@ -18,6 +18,10 @@ public class DentalProcedure {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false)
+  private Clinic clinic;
+
   @NotBlank(message = "Service name must not be blank")
   @Column(name = "service_name", length = 150, nullable = false, unique = true)
   private String serviceName;

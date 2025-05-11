@@ -22,8 +22,101 @@
   "friday": "Friday",
   "saturday": "Saturday",
   "more": "More",
-  "id": "id🆔",
+  "id": "🆔",
   "there_is_no_visits_yet": "There is no visits yet",
   "there_is_no_older_visits": "There is no older visits",
-  "call_patient_for_doctor": "Call Patient"
+  "call_patient_for_doctor": "Call Patient",
+
+  "manageProcedures": "Manage Procedures",
+  "createNewProcedure": "Create New Procedure",
+  "serviceName": "Service Name",
+  "arabicName": "Arabic Name",
+  "price": "Price",
+  "editProcedure": "Edit Procedure",
+  "proceduresList": "Procedures List",
+  "creating": "Creating...",
+  "updating": "Updating...",
+  "deleting": "Deleting...",
+  "noProcedureFound": "No procedure found. Create a new one:",
+  "newServiceName": "New service name",
+  "newArabicName": "New Arabic name",
+
+  "monthly_payments": "Monthly Payments",
+  "monthly_visits": "Monthly Visits",
+  "procedure_frequency": "Procedure Frequency",
+  "visits_by_hour": "Visits by Hour",
+  "patient_charts_title": "Patient Statistics",
+  "view_charts": "View Statistics",
+  "view_table": "View Table",
+
+  "hourly_visit_chart": "Hourly Visit Density (6AM – 6AM)",
+  "hour_label": "Hour of Day",
+  "visit_label": "Number of Visits",
+  "tooltip_visits": "{count} visit",
+  "tooltip_visits_plural": "{count} visits",
+
+  "age_distribution": "Age Distribution",
+  "patients_by_age_phase": "Patients by Age Phase",
+  "age_phase_child": "Child",
+  "age_phase_teen": "Teen",
+  "age_phase_adult": "Adult",
+  "age_phase_middle": "Middle",
+  "age_phase_senior": "Senior",
+
+  "L.E": "L.E",
+
+  "daily_revenue": "Daily Revenue",
+  "daily_visits": "Daily Visits",
+  "revenue_chart_description": "Shows income trends across the month. Peaks show busy revenue days, valleys show low-income days. Helps evaluate financial performance.",
+  "visits_chart_description": "Displays the number of patient visits per day. Helps identify peak clinic days and low-activity ones.",
+  "amount": "Amount",
+  "date": "Date",
+
+  "weekday_density_chart_title": "Visit Density by Weekday",
+  "weekday_density_chart_description": "Shows how visits are distributed across weekdays. Useful for optimizing staff schedules and identifying peak demand days.",
+  "visit_density": "Number of Visits",
+  "x_axis_label": "Weekdays",
+  "y_axis_label": "Visit Count",
+
+  "new_notification": "New Notification",
+  "loading_notifications": "Loading notifications...",
+  "error_notifications": "Failed to load notifications.",
+  "no_notifications_to_show": "No notifications to show.",
+
+  "clinicSettings.title": "Edit Clinic Information",
+  "clinicSettings.doctorSection": "Doctor Information",
+  "clinicSettings.clinicSection": "Clinic Contact & Working Hours",
+  "clinicSettings.backupSection": "Backup and Files",
+  "clinicSettings.visualSection": "Visual Customization",
+  "clinicSettings.notesSection": "Messages and Notes",
+  "clinicSettings.language": "Language",
+
+  "clinicSettings.doctorName": "Doctor Name",
+  "clinicSettings.doctorTitle": "Doctor Title",
+  "clinicSettings.doctorQualification": "Doctor Qualification",
+
+  "clinicSettings.clinicAddress": "Clinic Address",
+  "clinicSettings.clinicPhoneNumber": "Clinic Phone Number",
+  "clinicSettings.clinicEmail": "Clinic Email",
+  "clinicSettings.workingHours": "Working Hours",
+
+  "clinicSettings.backupDbPath": "Backup DB Path",
+  "clinicSettings.backupImagesPath": "Backup Images Path",
+  "clinicSettings.fileUploadDir": "File Upload Directory",
+
+  "clinicSettings.prescriptionLogoPath": "Prescription Logo Path",
+  "clinicSettings.programLogoPath": "Program Logo Path",
+  "clinicSettings.whatsappLogoPath": "WhatsApp Logo Path",
+
+  "clinicSettings.healingMessage": "Healing Message",
+  "clinicSettings.printFooterNotes": "Print Footer Notes",
+
+  "clinicSettings.save": "Save Settings",
+  "clinicSettings.languageSection": "Language Settings",
+  "clinicSettings.phoneSection": "Phone Settings",
+  "clinicSettings.backupIntervalDays": "Backup Interval (Days)",
+  "clinicSettings.phoneSupportsWhatsapp": "Phone Number Supports WhatsApp",
+  "clinicSettings.backupEnabled": "Enable Automatic Backups",
+
+  "day_format": "{day} {month}"
 }

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GetAllUsersApi } from "../fetch/api";
+import { GetAllUsersApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { User } from "../types";
 import { useState } from "react";
@@ -11,7 +11,6 @@ export const useFetchDoctors = () => {
     ["allDoctors"],
     async () => {
       const users = await GetAllUsersApi();
-      // Filter users with Doctor role
       return users.filter((user) => user.role === "Doctor");
     },
     {
@@ -30,7 +29,6 @@ export const useFetchDoctors = () => {
   };
 };
 
-// hooks/useSelectDoctor.ts
 export const useSelectDoctor = () => {
   const { loggedInUser } = useLogin();
   const queryClient = useQueryClient();

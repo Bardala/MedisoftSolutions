@@ -1,4 +1,4 @@
-package clinic.dev.backend.dto;
+package clinic.dev.backend.dto.visit;
 
 import clinic.dev.backend.model.*;
 import lombok.Data;

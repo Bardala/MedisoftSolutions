@@ -32,6 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Autowired
   private UserDetailsServiceImpl userDetailsService;
 
+  @Autowired
+  private AuthContext authContext;
+
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     // Exclude the following endpoints from JWT authentication filter
@@ -80,6 +83,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     token = authorizationHeader.substring(7);
+    String username = jwtUtil.extractUsername(token);
+    Long clinicId = jwtUtil.extractClinicId(token);
+    Long userId = jwtUtil.extractUserId(token);
+    String role = jwtUtil.extractRole(token);
 
     if (token.length() == 0) {
       sendErrorResponse(response, "Unauthorized", "Authorization header is missing or invalid.");
@@ -105,6 +112,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Set the authentication in the context
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        authContext.setClinicId(clinicId);
+        authContext.setUsername(username);
+        authContext.setRole(role);
+        authContext.setUserId(userId);
       } else if (identifier == null) {
         sendErrorResponse(response, "Unauthorized", "Invalid or missing user information in token.");
         return;

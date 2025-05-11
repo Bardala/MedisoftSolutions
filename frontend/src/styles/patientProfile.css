@@ -1,12 +1,8 @@
 /* Base styles */
-.patient-profile-container {
-  /* background-color: var(--secondary-bg);
-  color: var(--secondary-color);
-  margin: auto;
-  max-width: 100%; */
+/* .patient-profile-container {
   padding: 4px;
   border-radius: var(--border-radius);
-}
+} */
 
 
 .profile-header {
@@ -30,7 +26,7 @@
   color: var(--secondary-color);
   cursor: pointer;
   padding: 10px;
-  gap: 5px;
+  gap: 2px;
 }
 
 .profile-header .icon svg {
@@ -87,38 +83,6 @@
   border-radius: var(--border-radius);
   margin: var(--padding-small);
 }
-
-/* .next-patient-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--padding-small);
-  width: 100%;
-} */
-
-/* .next-patient-name {
-  margin: 0;
-  font-size: var(--font-size-body);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
-
-/* .next-patient-button {
-  background-color: var(--primary-color);
-  color: var(--white);
-  padding: var(--padding-small) var(--padding-medium);
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-body);
-  cursor: pointer;
-  box-shadow: var(--shadow-light);
-  width: 100%;
-}
-
-.next-patient-button:hover {
-  background-color: var(--primary-hover);
-} */
 
 .patient-info,
 .visit-details {
@@ -190,11 +154,6 @@
   margin: var(--padding-small);
 }
 
-.next-patient-button {
-  width: auto;
-  padding: var(--padding-small) var(--padding-medium);
-}
-
 .next-patient-name {
   margin: 0;
   font-size: var(--font-size-body);
@@ -204,6 +163,7 @@
 }
 
 .next-patient-button {
+  width: auto;
   background-color: var(--primary-color);
   color: var(--white);
   padding: var(--padding-small) var(--padding-medium);
@@ -248,11 +208,31 @@
   margin-left: 10px;
 }
 
-/* Media query for small screens */
+.expandable-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+
 @media (max-width: 600px) {
+
+  .profile-header,
+  .expandable-sections,
+  .next-patient-section {
+    padding: 4px;
+    margin: 4px;
+  }
+
   .header-section {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .header-section h2 {
+    padding: 4px;
   }
 
   .profile-header .icon {

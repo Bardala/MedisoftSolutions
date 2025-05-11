@@ -6,6 +6,7 @@ import Table from "./Table";
 import {
   faExchangeAlt,
   faCalendarAlt,
+  faFileArchive,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -13,6 +14,8 @@ import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
 import { useDeleteVisit } from "../hooks/useVisit";
 import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
+import { DailyReportCharts } from "./DailyReportChart";
+import { ToggleStatsData } from "./ToggleStatsData";
 
 const DailyFinancialReport = () => {
   const { formatMessage: f } = useIntl();
@@ -25,6 +28,7 @@ const DailyFinancialReport = () => {
   const { deleteVisitMutation } = useDeleteVisit();
   const { updatePaymentMutation } = useUpdatePayment();
   const { deletePaymentMutation } = useDeletePayment();
+  const [showStats, setShowStats] = useState(false);
 
   // Fetch data for the selected date
   const { patients, visits, payments, totalPayments, isError, isLoading } =
@@ -71,7 +75,7 @@ const DailyFinancialReport = () => {
     },
     {
       header: f({ id: "amountPaid" }),
-      accessor: (row) => `$${row?.amountPaid}`,
+      accessor: (row) => `${row?.amountPaid} ${f({ id: "L.E" })}`,
     },
     {
       header: f({ id: "visitTime" }),
@@ -85,7 +89,10 @@ const DailyFinancialReport = () => {
       header: f({ id: "patientName" }),
       accessor: (row) => row?.patient.fullName,
     },
-    { header: f({ id: "amount" }), accessor: (row) => `$${row?.amount}` },
+    {
+      header: f({ id: "amount" }),
+      accessor: (row) => `${row?.amount} ${f({ id: "L.E" })}`,
+    },
     {
       header: f({ id: "date" }),
       accessor: (row) => dailyTimeFormate(row.createdAt),
@@ -108,7 +115,7 @@ const DailyFinancialReport = () => {
   ];
 
   const patientColumns = [
-    { header: f({ id: "patient_id" }), accessor: "id" },
+    { header: f({ id: "id" }), accessor: "id" },
     { header: f({ id: "patientName" }), accessor: "fullName" },
     { header: f({ id: "phone" }), accessor: "phone", expandable: true },
     {
@@ -138,7 +145,13 @@ const DailyFinancialReport = () => {
 
   return (
     <div className="card-container">
-      <h2>{f({ id: "dailyReport" })}</h2>
+      {/* <h2>{f({ id: "dailyReport" })}</h2> */}
+      <ToggleStatsData
+        header={f({ id: "dailyReports" })}
+        dataIcon={faFileArchive}
+        showStats={showStats}
+        setShowStats={setShowStats}
+      />
 
       {/* Date Picker */}
       {loggedInUser.role === "Doctor" && (
@@ -156,82 +169,95 @@ const DailyFinancialReport = () => {
         </div>
       )}
 
-      <div className="stats">
-        <p>
-          {f({ id: "totalRevenue" })}: <strong>${totalPayments || 0}</strong>
-        </p>
-        <p>
-          {f({ id: "totalPayments" })}: <strong>{payments?.length || 0}</strong>
-        </p>
-        <p>
-          {f({ id: "totalVisits" })}: <strong>{visits?.length || 0}</strong>
-        </p>
-        <p>
-          {f({ id: "newPatients" })}: <strong>{patients?.length || 0}</strong>
-        </p>
-      </div>
-
-      <div className="tables">
-        <div className="visits-section">
-          <h3>{f({ id: "dailyVisits" })}</h3>
-          <Table
-            columns={linkedVisitColumns}
-            data={linkedVisits}
-            onDelete={deleteVisitMutation.mutate}
-            enableActions={true}
-          />
-        </div>
-
-        <div className="payment-section">
-          {/* Header for Table */}
-          <div className="payment-header-container">
-            <h3>
-              {convertPaymentTable
-                ? f({ id: "allPayments" })
-                : f({ id: "unlinkedPayments" })}
-            </h3>
-            <button
-              onClick={() => setConvertPaymentTable(!convertPaymentTable)}
-              className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-            >
-              <FontAwesomeIcon icon={faExchangeAlt} />
-            </button>
+      {showStats ? (
+        <DailyReportCharts date={selectedDate} />
+      ) : (
+        <>
+          <div className="stats">
+            <p>
+              {f({ id: "totalRevenue" })}:{" "}
+              <strong>
+                {totalPayments || 0} {f({ id: "L.E" })}
+              </strong>
+            </p>
+            <p>
+              {f({ id: "totalPayments" })}:{" "}
+              <strong>{payments?.length || 0}</strong>
+            </p>
+            <p>
+              {f({ id: "totalVisits" })}: <strong>{visits?.length || 0}</strong>
+            </p>
+            <p>
+              {f({ id: "newPatients" })}:{" "}
+              <strong>{patients?.length || 0}</strong>
+            </p>
           </div>
 
-          {/* Toggle Between Tables */}
-          {convertPaymentTable ? (
-            <Table
-              columns={paymentColumns}
-              data={payments}
-              onUpdate={updatePaymentMutation.mutate}
-              onDelete={deletePaymentMutation.mutate}
-              enableActions={true}
-            />
-          ) : (
-            <>
-              {updatePaymentMutation.isError && (
-                <p className="error">{updatePaymentMutation?.error?.message}</p>
-              )}
+          <div className="tables">
+            <div className="visits-section">
+              <h3>{f({ id: "dailyVisits" })}</h3>
               <Table
-                columns={paymentColumns}
-                data={unlinkedPayments}
-                onUpdate={updatePaymentMutation.mutate}
-                onDelete={deletePaymentMutation.mutate}
+                columns={linkedVisitColumns}
+                data={linkedVisits}
+                onDelete={deleteVisitMutation.mutate}
                 enableActions={true}
               />
-            </>
-          )}
-        </div>
+            </div>
 
-        <div className="new-patients-section">
-          <h3>{f({ id: "dailyNewPatients" })}</h3>
-          <Table
-            columns={patientColumns}
-            data={patients || []}
-            enableActions={true}
-          />
-        </div>
-      </div>
+            <div className="payment-section">
+              {/* Header for Table */}
+              <div className="payment-header-container">
+                <h3>
+                  {convertPaymentTable
+                    ? f({ id: "allPayments" })
+                    : f({ id: "unlinkedPayments" })}
+                </h3>
+                <button
+                  onClick={() => setConvertPaymentTable(!convertPaymentTable)}
+                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                >
+                  <FontAwesomeIcon icon={faExchangeAlt} />
+                </button>
+              </div>
+
+              {/* Toggle Between Tables */}
+              {convertPaymentTable ? (
+                <Table
+                  columns={paymentColumns}
+                  data={payments}
+                  onUpdate={updatePaymentMutation.mutate}
+                  onDelete={deletePaymentMutation.mutate}
+                  enableActions={true}
+                />
+              ) : (
+                <>
+                  {updatePaymentMutation.isError && (
+                    <p className="error">
+                      {updatePaymentMutation?.error?.message}
+                    </p>
+                  )}
+                  <Table
+                    columns={paymentColumns}
+                    data={unlinkedPayments}
+                    onUpdate={updatePaymentMutation.mutate}
+                    onDelete={deletePaymentMutation.mutate}
+                    enableActions={true}
+                  />
+                </>
+              )}
+            </div>
+
+            <div className="new-patients-section">
+              <h3>{f({ id: "dailyNewPatients" })}</h3>
+              <Table
+                columns={patientColumns}
+                data={patients || []}
+                enableActions={true}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

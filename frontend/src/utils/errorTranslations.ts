@@ -3,6 +3,10 @@ const errorTranslations: Record<string, { en: string; ar: string }> = {
     en: "This name already exists, change it.",
     ar: "هذا الاسم موجود بالفعل، الرجاء تغييره.",
   },
+  "Patient not found": {
+    en: "Patient not found",
+    ar: "هذا المريض غير موجود",
+  },
   // You can add more error mappings here
 };
 

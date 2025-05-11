@@ -15,5 +15,8 @@
   "nextPatient": "المريض التالي",
   "loading": "جاري التحميل...",
   "error": "خطأ: حدث خطأ ما...",
-  "dentalChart": "الفك"
+  "dentalChart": "الفك",
+  "noNextPatientMessage": "لا يوجد مرضى آخرون. أزل المريض الحالي لإنهاء الجلسة.",
+
+  "call_patient": "اتصل بالمريض"
 }

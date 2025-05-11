@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { LOCALS } from "../utils/localStorage";
-import { CurrUserinfoApi, loginApi } from "../fetch/api";
+import { CurrUserinfoApi } from "../apis/userApis";
+import { loginApi } from "../apis/authApis";
 import { LoginContextType, LoginProviderProps, User } from "../types";
 import { ApiError } from "../fetch/ApiError";
 

@@ -12,4 +12,7 @@ public interface PatientFileRepo extends JpaRepository<PatientFile, Long> {
   List<PatientFile> findByPatientId(Long patientId);
 
   void deleteByPatientId(Long patientId);
+
+  List<PatientFile> findByClinicId(Long clinicId);
+
 }

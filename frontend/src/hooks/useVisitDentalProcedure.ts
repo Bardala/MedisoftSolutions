@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DeleteVisitProcedureRes,
-  DentalProcedure,
+  Procedure,
   GetVisitProceduresByVisitIdReq,
   GetVisitProceduresByVisitIdRes,
   recordVisitDentalProcedureReq,
@@ -10,13 +10,13 @@ import {
   VisitDentalProcedure,
 } from "../types";
 import { ApiError } from "../fetch/ApiError";
+import { useState } from "react";
 import {
+  UpdateVisitDentalProcedureApi,
+  RecordVisitDentalProcedureApi,
   DeleteVisitProcedureApi,
   GetVisitProceduresByVisitIdApi,
-  RecordVisitDentalProcedureApi,
-  UpdateVisitDentalProcedureApi,
-} from "../fetch/api";
-import { useState } from "react";
+} from "../apis";
 
 export const useUpdateVisitDentalProcedure = () => {
   const updateVisitDentalProcedureMutation = useMutation<
@@ -48,10 +48,10 @@ export const useRecordVisitsProcedures = () => {
   const { recordVisitDentalProcedureMutation } =
     useRecordVisitDentalProcedure();
   const [selectedDentalProcedures, setSelectedDentalProcedures] = useState<
-    DentalProcedure[]
+    Procedure[]
   >([]);
 
-  const handleDentalProcedureSelect = (dentalProcedure: DentalProcedure) => {
+  const handleDentalProcedureSelect = (dentalProcedure: Procedure) => {
     setSelectedDentalProcedures((prev) => [...prev, dentalProcedure]);
   };
 

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetVisitPaymentsRes } from "../types";
 import { ApiError } from "../fetch/ApiError";
-import { GetVisitPaymentApi } from "../fetch/api";
+import { GetVisitPaymentApi } from "../apis";
 
 export const useGetVisitPayment = (patientId: number) => {
   const visitPaymentQuery = useQuery<GetVisitPaymentsRes, ApiError>(

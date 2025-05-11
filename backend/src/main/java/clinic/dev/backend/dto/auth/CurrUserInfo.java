@@ -9,4 +9,5 @@ public class CurrUserInfo {
   private String role;
   private String phone;
   private String name;
+  private Long clinicId;
 }

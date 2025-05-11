@@ -2,15 +2,9 @@ import { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
 import "../styles/prescriptionPrint.css";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
-import {
-  clinicAddress,
-  clinicPhoneNumber,
-  doctorName,
-  prescriptionLogo,
-  programLogoImage,
-  whatsappImage,
-} from "../utils";
+import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
 import Table from "./Table";
+import { useGetClinicSettings } from "../hooks/useClinicSettings";
 
 interface PrescriptionPrintProps {
   visit: Visit;
@@ -18,7 +12,10 @@ interface PrescriptionPrintProps {
 
 export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
+  const { query: clinicSettingsQuery } = useGetClinicSettings();
   const visitMedicines: VisitMedicine[] = query.data || [];
+
+  const settings = clinicSettingsQuery.data;
 
   // Split medicines into chunks of 5
   const chunkArray = (array: VisitMedicine[], size: number) => {
@@ -130,107 +127,109 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
 
   return (
     <div id="print-section" className="prescription-print-container">
-      {medicineChunks.map((chunk, index) => (
-        <div key={index} className="prescription-chunk">
-          {/* Clinic Header */}
-          <div className="clinic-header">
-            <div className="clinic-logo-container">
-              <img
-                src={prescriptionLogo}
-                alt="Clinic Logo"
-                className="clinic-logo"
-              />
-            </div>
-
-            <div className="doctor-info">
-              <h1>الدكتور</h1>
-              <h1>{doctorName}</h1>
-              <h2>
-                <strong>أخصائي طب وجراحة الفم والأسنان </strong>
-              </h2>
-              <h2>
-                <strong>القصر العيني</strong>
-              </h2>
-            </div>
-          </div>
-
-          {/* Prescription Content */}
-          <div className="printable-prescription">
-            {/* <h2>الروشتة الطبية</h2> */}
-            <div className="prescription-header">
-              <p>
-                <strong>اسم المريض:</strong> {visit.patient.fullName}
-              </p>
-              {visit.patient.age && (
-                <p>
-                  <strong>العمر: </strong> {visit.patient.age + " سنة" || "N/A"}
-                </p>
-              )}
-              <p>
-                <strong>تاريخ الزيارة:</strong>{" "}
-                {new Date(visit.createdAt).toLocaleDateString("en-GB")}
-              </p>
-            </div>
-
-            {/* Medicines Table */}
-            {chunk.length > 0 && (
-              <div className="prescription-table">
-                <Table
-                  columns={medicineColumns}
-                  data={chunk}
-                  enableActions={false}
+      {settings &&
+        medicineChunks.map((chunk, index) => (
+          <div key={index} className="prescription-chunk">
+            {/* Clinic Header */}
+            <div className="clinic-header">
+              <div className="clinic-logo-container">
+                <img
+                  src={prescriptionLogo}
+                  alt="Clinic Logo"
+                  className="clinic-logo"
                 />
               </div>
-            )}
 
-            {/* Footer with signature & logo */}
-            <div className="prescription-footer">
-              <div className="upper-footer">
-                <div className="signature-section">
+              <div className="doctor-info">
+                <h1>الدكتور</h1>
+                <h1>{settings.doctorName}</h1>
+                <h2>
+                  <strong>{settings.doctorTitle}</strong>
+                </h2>
+                <h2>
+                  <strong>{settings.doctorQualification}</strong>
+                </h2>
+              </div>
+            </div>
+
+            {/* Prescription Content */}
+            <div className="printable-prescription">
+              <div className="prescription-header">
+                <p>
+                  <strong>اسم المريض:</strong> {visit.patient.fullName}
+                </p>
+                {visit.patient.age && (
                   <p>
-                    <strong>: توقيع الطبيب</strong>
+                    <strong>العمر: </strong> {visit.patient.age + " سنة"}
                   </p>
-                  <p>________________________</p>
-                </div>
-
-                <div className="company-logo-container">
-                  <img
-                    src={programLogoImage}
-                    alt="MediSoft Logo"
-                    className="company-logo"
-                  />
-                </div>
+                )}
+                <p>
+                  <strong>تاريخ الزيارة:</strong>{" "}
+                  {new Date(visit.createdAt).toLocaleDateString("en-GB")}
+                </p>
               </div>
 
-              <div className="lower-footer">
-                {/* Centered message at bottom */}
-                <div className="healing-message">
-                  <p>مع تمنياتنا بالشفاء العاجل</p>
+              {/* Medicines Table */}
+              {chunk.length > 0 && (
+                <div className="prescription-table">
+                  <Table
+                    columns={medicineColumns}
+                    data={chunk}
+                    enableActions={false}
+                  />
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="prescription-footer">
+                <div className="upper-footer">
+                  <div className="signature-section">
+                    <p>
+                      <strong>: توقيع الطبيب</strong>
+                    </p>
+                    <p>________________________</p>
+                  </div>
+
+                  <div className="company-logo-container">
+                    <img
+                      src={programLogoImage}
+                      alt="MediSoft Logo"
+                      className="company-logo"
+                    />
+                  </div>
                 </div>
 
-                <hr className="clinic-separator" />
+                <div className="lower-footer">
+                  {/* Healing Message */}
+                  <div className="healing-message">
+                    <p>{settings.healingMessage}</p>
+                  </div>
 
-                {/* Clinic Info */}
-                <div className="clinic-info">
-                  <p>
-                    <img
-                      src={whatsappImage}
-                      alt="WhatsApp"
-                      className="whatsapp-logo"
-                    />
-                    📞 هاتف: <span>{clinicPhoneNumber}</span>
-                  </p>
-                  <p>{clinicAddress}</p>
-                  <p>
-                    🕒 مواعيد العمل: يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف
-                    الليل
-                  </p>
+                  <hr className="clinic-separator" />
+
+                  {/* Clinic Info */}
+                  <div className="clinic-info">
+                    <p>
+                      <img
+                        src={whatsappImage}
+                        alt="WhatsApp"
+                        className="whatsapp-logo"
+                      />
+                      📞 هاتف: <span>{settings.clinicPhoneNumber}</span>
+                    </p>
+                    <p>{settings.clinicAddress}</p>
+                    <p>{settings.workingHours}</p>
+                  </div>
+
+                  {/* Optional Print Footer Notes */}
+                  {settings.printFooterNotes && (
+                    <p className="footer-notes">{settings.printFooterNotes}</p>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
 
       {/* Print Button */}
       <button className="print-button" onClick={handlePrint}>

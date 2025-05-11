@@ -32,19 +32,89 @@ const nameCorrections: Record<string, string> = {
 };
 
 // ! Didn't play audio well, synchronization didn't work properly.
+// export const speak = (text: string, lang = "en-US", gender = "female") => {
+//   if (!("speechSynthesis" in window)) {
+//     console.error("Speech synthesis not supported in this browser.");
+//     return;
+//   }
+
+//   const playAudio = (src: string) =>
+//     new Promise<void>((resolve, reject) => {
+//       const audio = new Audio(src);
+//       audio.onended = () => resolve();
+//       audio.onerror = (err) => reject(err);
+//       audio.play();
+//     });
+
+//   const speakText = (text: string, lang: string, gender: string) =>
+//     new Promise<void>((resolve) => {
+//       const utterance = new SpeechSynthesisUtterance(text);
+//       utterance.lang = lang;
+//       utterance.volume = 1;
+//       utterance.rate = 0.7;
+//       utterance.pitch = 1;
+
+//       const setVoice = () => {
+//         const voices = window.speechSynthesis.getVoices();
+//         const genderFilter = gender === "male" ? /male/i : /female/i;
+//         const voice = voices.find(
+//           (v) => v.lang.startsWith(lang) && genderFilter.test(v.name),
+//         );
+
+//         if (voice) {
+//           utterance.voice = voice;
+//         }
+//       };
+
+//       if (window.speechSynthesis.getVoices().length === 0) {
+//         window.speechSynthesis.onvoiceschanged = setVoice;
+//       } else {
+//         setVoice();
+//       }
+
+//       utterance.onend = () => resolve();
+//       window.speechSynthesis.speak(utterance);
+//     });
+
+//   playAudio("simple-notification.mp3")
+//     .then(() => speakText(text, lang, gender))
+//     .then(() => playAudio("simple-notification.mp3"))
+//     .catch((err) => console.error("Error in speech sequence:", err));
+// };
+
 export const speak = (text: string, lang = "en-US", gender = "female") => {
   if (!("speechSynthesis" in window)) {
     console.error("Speech synthesis not supported in this browser.");
     return;
   }
 
-  const playAudio = (src: string) =>
-    new Promise<void>((resolve, reject) => {
+  const checkAudio = (src: string): Promise<boolean> =>
+    new Promise((resolve) => {
+      const audio = new Audio();
+      audio.src = src;
+
+      audio.addEventListener("canplaythrough", () => resolve(true), {
+        once: true,
+      });
+      audio.addEventListener("error", () => resolve(false), { once: true });
+
+      audio.load();
+    });
+
+  const playAudio = async (src: string): Promise<void> => {
+    const isPlayable = await checkAudio(src);
+    if (!isPlayable) {
+      console.warn(`Audio file ${src} not available or failed to load.`);
+      return;
+    }
+
+    return new Promise<void>((resolve, reject) => {
       const audio = new Audio(src);
       audio.onended = () => resolve();
       audio.onerror = (err) => reject(err);
-      audio.play();
+      audio.play().catch(reject);
     });
+  };
 
   const speakText = (text: string, lang: string, gender: string) =>
     new Promise<void>((resolve) => {

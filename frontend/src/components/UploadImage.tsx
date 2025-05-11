@@ -3,7 +3,7 @@ import { UploadFileReq, UploadFileRes } from "../types";
 import "../styles/patientFiles.css";
 import { useMutation } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
-import { UploadFileApi } from "../fetch/api";
+import { UploadFileApi } from "../apis/patientFilesApis";
 import { useIntl } from "react-intl";
 
 interface UploadImageProps {

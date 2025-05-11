@@ -13,6 +13,7 @@ import {
   faCheckCircle,
   faTrashAlt,
   faVolumeUp,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { callPatientForDoctor, handleSpeakName } from "../utils/speakUtils";
@@ -25,8 +26,8 @@ const QueuePage: React.FC = () => {
   const { selectedDoctorId } = useDoctorSelection();
   const { queue, isLoading: isLoadingQueue } = useFetchQueue(selectedDoctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
-  const { removePatientMutation } = useRemovePatientFromQueue();
-  const { updatePositionMutation } = useUpdateQueuePosition();
+  const { removePatientMutation } = useRemovePatientFromQueue(selectedDoctorId);
+  const { updatePositionMutation } = useUpdateQueuePosition(selectedDoctorId);
   const isLoading =
     isLoadingQueue ||
     removePatientMutation.isLoading ||
@@ -54,7 +55,7 @@ const QueuePage: React.FC = () => {
   return (
     <div className="queue-page">
       <h1>
-        {f({ id: "waitList" })}
+        <FontAwesomeIcon icon={faUsers} /> {f({ id: "waitList" })}
         {<DoctorSelect />}
       </h1>
 

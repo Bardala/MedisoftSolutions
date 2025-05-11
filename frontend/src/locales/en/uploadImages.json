@@ -10,6 +10,5 @@
   "upload": "Upload Files",
   "uploading": "Uploading...",
   "selectAtLeastOne": "Please select at least one file.",
-  "success": "All files uploaded successfully!",
   "error": "Failed to upload file. Please try again."
 }

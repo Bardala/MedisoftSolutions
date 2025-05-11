@@ -69,6 +69,11 @@
   --error-bg: #f8d7da;
   --error-border: #f5c2c7;
   --error-text: #842029;
+
+  --label-color: #265a9f;
+  /* Label text like "Patient ID", etc. */
+  --info-card-header: #1d4b87;
+  /* Optional override for headers */
 }
 
 :root.dark-mode {
@@ -169,7 +174,7 @@ h1 {
   font-weight: 700;
   margin: 1.5rem 0 1rem;
   letter-spacing: -0.5px;
-  text-align: left;
+  /* text-align: left; */
 }
 
 h2 {

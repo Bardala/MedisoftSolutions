@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllDentalProceduresApi } from "../fetch/api";
-import { DentalProcedure } from "../types";
+import { GetAllProceduresApi } from "../apis";
+import { Procedure } from "../types";
 
 export const useDentalProcedureSearch = () => {
   const [selectedDentalProcedures, setSelectedDentalProcedures] = useState<
-    DentalProcedure[]
+    Procedure[]
   >([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -13,9 +13,9 @@ export const useDentalProcedureSearch = () => {
     data: dentalProcedures,
     isLoading,
     error,
-  } = useQuery(["dentalProcedures"], GetAllDentalProceduresApi);
+  } = useQuery(["dentalProcedures"], GetAllProceduresApi);
 
-  const handleDentalProcedureSelect = (dentalProcedure: DentalProcedure) => {
+  const handleDentalProcedureSelect = (dentalProcedure: Procedure) => {
     setSelectedDentalProcedures((prev) => [...prev, dentalProcedure]);
     setSearchTerm(""); // Clear search term after selection
   };

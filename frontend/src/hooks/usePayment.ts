@@ -1,10 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  CreatePaymentApi,
-  CreateVisitPaymentApi,
-  DeletePaymentApi,
-  UpdatePaymentApi,
-} from "../fetch/api";
+
 import {
   CreatePaymentReq,
   CreatePaymentRes,
@@ -15,6 +10,12 @@ import {
   UpdatePaymentRes,
 } from "../types";
 import { ApiError } from "../fetch/ApiError";
+import {
+  CreatePaymentApi,
+  CreateVisitPaymentApi,
+  UpdatePaymentApi,
+  DeletePaymentApi,
+} from "../apis";
 
 export const useRecordPayment = () => {
   const queryClient = useQueryClient();

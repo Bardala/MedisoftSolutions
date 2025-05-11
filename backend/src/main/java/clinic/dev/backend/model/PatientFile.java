@@ -17,6 +17,10 @@ public class PatientFile {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "clinic_id", nullable = false) // Clinic is required for each patient file
+  private Clinic clinic;
+
   /** Reference to the associated patient. */
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_id", nullable = false)

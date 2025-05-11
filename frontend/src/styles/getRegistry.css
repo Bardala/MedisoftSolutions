@@ -79,14 +79,14 @@ button:disabled {
 }
 
 /* Success Message */
-.success {
+/* .success {
   background-color: var(--success-bg);
   border: 1px solid var(--success-border);
   color: var(--success-text);
   padding: var(--padding-small);
   border-radius: var(--border-radius);
   margin-top: var(--padding-medium);
-}
+} */
 
 .payment-header-container {
   display: flex;
@@ -98,6 +98,12 @@ button:disabled {
 .payment-header {
   font-size: 1.125rem;
   font-weight: 600;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Responsive Design Enhancements */

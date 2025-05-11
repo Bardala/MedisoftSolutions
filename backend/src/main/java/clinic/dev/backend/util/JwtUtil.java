@@ -1,53 +1,100 @@
 package clinic.dev.backend.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import clinic.dev.backend.exceptions.ExpiredTokenException;
 import clinic.dev.backend.exceptions.InvalidTokenException;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class JwtUtil {
+  private final Key signingKey;
+  private final long expirationTimeMs;
 
-  // todo: Change to a strong secret key in .env
-  private final String SECRET_KEY_STRING = "my_secret_key_which_should_be_at_least_32_character_long";
-  private final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 day
+  public JwtUtil(
+      @Value("${token.secret-key}") String secretKey,
+      @Value("${token.expiration-time-ms:86400000}") long expirationTimeMs // Default 24h
+  ) {
+    // Validate configuration
+    Objects.requireNonNull(secretKey, "JWT secret key must not be null");
+    if (secretKey.length() < 32) {
+      throw new IllegalArgumentException(
+          "JWT secret key must be at least 32 characters long");
+    }
 
-  private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
-
-  public String generateToken(String username) {
-    Map<String, Object> claims = new HashMap<>();
-    return createToken(claims, username);
+    this.signingKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    this.expirationTimeMs = expirationTimeMs;
   }
 
-  private String createToken(Map<String, Object> claims, String subject) {
+  public String generateToken(String username, Long userId, String role, Long clinicId) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("clinicId", clinicId);
+    claims.put("userId", userId);
+    claims.put("role", role);
+
     return Jwts.builder()
         .setClaims(claims)
-        .setSubject(subject)
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-        .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+        .setSubject(username)
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
+        .signWith(signingKey, SignatureAlgorithm.HS256)
         .compact();
   }
 
-  public boolean validateToken(String token, String username) throws InvalidTokenException, ExpiredTokenException {
-    final String extractedUsername = extractUsername(token);
+  public boolean validateToken(String token, String username)
+      throws InvalidTokenException, ExpiredTokenException {
+    try {
+      final String extractedUsername = extractUsername(token);
 
-    if (isTokenExpired(token))
-      throw new ExpiredTokenException("The token has expired.");
+      if (isTokenExpired(token)) {
+        throw new ExpiredTokenException("Token has expired");
+      }
 
-    if (!extractedUsername.equals(username))
-      throw new InvalidTokenException("The token is invalid.");
+      if (!extractedUsername.equals(username)) {
+        throw new InvalidTokenException("Token is invalid");
+      }
 
-    return true; // Token is valid
+      return true;
+    } catch (SecurityException | IllegalArgumentException e) {
+      throw new InvalidTokenException("Invalid token signature");
+    }
+  }
+
+  public String refreshToken(String oldToken) throws InvalidTokenException {
+    try {
+      Claims claims = extractAllClaims(oldToken);
+      claims.setIssuedAt(new Date());
+      claims.setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs));
+
+      return Jwts.builder()
+          .setClaims(claims)
+          .signWith(signingKey, SignatureAlgorithm.HS256)
+          .compact();
+    } catch (ExpiredJwtException ex) {
+      // Allow refreshing expired (but otherwise valid) tokens
+      Claims claims = ex.getClaims();
+      return Jwts.builder()
+          .setClaims(claims)
+          .setIssuedAt(new Date())
+          .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
+          .signWith(signingKey, SignatureAlgorithm.HS256)
+          .compact();
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new InvalidTokenException("Cannot refresh invalid token");
+    }
   }
 
   private boolean isTokenExpired(String token) {
@@ -62,9 +109,21 @@ public class JwtUtil {
     return extractAllClaims(token).getSubject();
   }
 
+  public Long extractClinicId(String token) {
+    return extractAllClaims(token).get("clinicId", Long.class);
+  }
+
+  public Long extractUserId(String token) {
+    return extractAllClaims(token).get("userId", Long.class);
+  }
+
+  public String extractRole(String token) {
+    return extractAllClaims(token).get("role", String.class);
+  }
+
   private Claims extractAllClaims(String token) {
     return Jwts.parserBuilder()
-        .setSigningKey(SECRET_KEY)
+        .setSigningKey(signingKey)
         .build()
         .parseClaimsJws(token)
         .getBody();

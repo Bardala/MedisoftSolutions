@@ -8,9 +8,10 @@ import "../styles/home.css";
 import { useDailyReportData } from "../hooks/useDailyReportData";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid"; // For unique notification IDs
-import { dailyTimeFormate } from "../utils";
 import { isEqual } from "lodash"; // For deep comparison
 import { useIntl } from "react-intl";
+import { Notifications } from "./Notifications";
+import { NotificationType } from "../types";
 
 const Home = ({
   setSelectedOption,
@@ -21,9 +22,7 @@ const Home = ({
   const { patients, visits, payments, totalPayments, isLoading, isError } =
     useDailyReportData();
 
-  const [notifications, setNotifications] = useState<
-    { id: string; message: string; time: string }[]
-  >([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   // Use refs to store previous values of patients, visits, and payments
   const prevPatientsRef = useRef<typeof patients>([]);
@@ -34,36 +33,42 @@ const Home = ({
   const combinedData = useMemo(() => {
     if (!isLoading && !isError) {
       return [
-        ...patients.map((patient) => ({
-          id: uuidv4(),
-          message: f(
-            { id: "new_patient_registered" },
-            {
-              name: patient.fullName,
-              address: patient.address || f({ id: "not_available" }),
-            },
-          ),
-          time: new Date(patient.createdAt).toLocaleString(),
-          createdAt: patient.createdAt,
-        })),
-        ...visits.map((visit) => ({
-          id: uuidv4(),
-          message: f(
-            { id: "new_visit_recorded" },
-            { name: visit.patient.fullName },
-          ),
-          time: new Date(visit.createdAt).toLocaleString(),
-          createdAt: visit.createdAt,
-        })),
-        ...payments.map((payment) => ({
-          id: uuidv4(),
-          message: f(
-            { id: "payment_received" },
-            { amount: payment.amount, name: payment.patient.fullName },
-          ),
-          time: new Date(payment.createdAt).toLocaleString(),
-          createdAt: payment.createdAt,
-        })),
+        ...patients.map(
+          (patient): NotificationType => ({
+            id: uuidv4() as string,
+            message: f(
+              { id: "new_patient_registered" },
+              {
+                name: patient.fullName,
+                address: patient.address || f({ id: "not_available" }),
+              },
+            ),
+            createdAt: patient.createdAt,
+            type: "Patient",
+          }),
+        ),
+        ...visits.map(
+          (visit): NotificationType => ({
+            id: uuidv4() as string,
+            message: f(
+              { id: "new_visit_recorded" },
+              { name: visit.patient.fullName },
+            ),
+            createdAt: visit.createdAt,
+            type: "Visit",
+          }),
+        ),
+        ...payments.map(
+          (payment): NotificationType => ({
+            id: uuidv4() as string,
+            message: f(
+              { id: "payment_received" },
+              { amount: payment.amount, name: payment.patient.fullName },
+            ),
+            createdAt: payment.createdAt,
+            type: "Payment",
+          }),
+        ),
       ];
     }
     return [];
@@ -92,6 +97,15 @@ const Home = ({
     prevVisitsRef.current = visits;
     prevPaymentsRef.current = payments;
   }, [sortedNotifications, patients, visits, payments]);
+
+  const NotificationsComponent = () =>
+    notifications && (
+      <Notifications
+        notifications={notifications}
+        isError={isError}
+        isLoading={isLoading}
+      />
+    );
 
   return (
     <div className="home">
@@ -143,25 +157,7 @@ const Home = ({
       </section>
 
       {/* Notifications */}
-      <section className="notifications">
-        <h3>{f({ id: "recent_notifications" })}</h3>
-        {isLoading ? (
-          <p>{f({ id: "loading_notifications" })}</p>
-        ) : isError ? (
-          <p>{f({ id: "error_notifications" })}</p>
-        ) : notifications.length > 0 ? (
-          <ul>
-            {notifications.map((notification) => (
-              <li key={notification.id}>
-                <p>{notification.message}</p>
-                <span>{dailyTimeFormate(notification.time)}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>{f({ id: "no_operations" })}</p>
-        )}
-      </section>
+      {NotificationsComponent()}
     </div>
   );
 };
