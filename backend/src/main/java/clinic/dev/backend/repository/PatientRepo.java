@@ -1,5 +1,6 @@
 package clinic.dev.backend.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,24 @@ public interface PatientRepo extends JpaRepository<Patient, Long>, JpaSpecificat
   List<Patient> findByPhoneContaining(String phone, Pageable pageable);
 
   List<Patient> findByFullNameContainingIgnoreCase(String name, Pageable pageable);
+
+  List<Patient> findByClinicId(Long clinicId);
+
+  List<Patient> findByClinicIdAndFullNameContainingIgnoreCase(Long clinicId, String name, Pageable pageable);
+
+  List<Patient> findByClinicIdAndPhoneContaining(Long clinicId, String phone, Pageable pageable);
+
+  void deleteAllByClinicId(Long clinicId);
+
+  Optional<Patient> findByIdAndClinicId(Long id, Long clinicId);
+
+  List<Patient> findByCreatedAtBetweenAndClinicId(LocalDateTime start, LocalDateTime end, Long clinicId);
+
+  List<Patient> findAllByClinicId(Long clinicId);
+
+  boolean existsByFullNameAndClinicId(String fullName, Long clinicId);
+
+  boolean existsByIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByIdAndClinicId(Long id, Long clinicId);
 }

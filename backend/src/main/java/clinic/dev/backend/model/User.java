@@ -11,7 +11,9 @@ import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.validation.RoleConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -19,10 +21,16 @@ import lombok.Data;
     @Index(name = "idx_username", columnList = "username"),
     @Index(name = "idx_phone", columnList = "phone")
 })
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false, unique = true)
+  private Clinic clinic;
 
   @NotBlank
   @Pattern(regexp = "^[\\S]+$", message = "Username must not contain spaces")

@@ -2,7 +2,9 @@ package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,8 @@ import clinic.dev.backend.constants.ErrorMsg;
 @Entity
 @Data
 @Table(name = "visits")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Visit {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +26,10 @@ public class Visit {
   @JoinColumn(name = "patient_id", nullable = false)
   @NotNull(message = ErrorMsg.USER_CANNOT_BE_NULL)
   private Patient patient;
+
+  @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false)
+  private Clinic clinic;
 
   @ManyToOne
   @JoinColumn(name = "doctor_id", nullable = false)

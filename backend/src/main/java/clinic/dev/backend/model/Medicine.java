@@ -20,6 +20,10 @@ public class Medicine {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false)
+  private Clinic clinic;
+
   @NotBlank(message = ErrorMsg.FIELD_MUST_NOT_BE_BLANK)
   @Column(name = "medicine_name", length = 150, nullable = false, unique = true)
   private String medicineName;

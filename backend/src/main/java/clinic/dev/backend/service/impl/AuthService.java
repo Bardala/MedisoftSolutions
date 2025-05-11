@@ -40,7 +40,11 @@ public class AuthService implements AuthServiceBase {
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
       UserDetails user = userDetailsService.loadUserByUsername(username);
-      return jwtUtil.generateToken(user.getUsername());
+
+      User dbUser = userRepo.findByUsername(username)
+          .orElseThrow(() -> new UserNotFoundException(ErrorMsg.USER_NOT_FOUND_WITH_USERNAME));
+
+      return jwtUtil.generateToken(user.getUsername(), dbUser.getId(), dbUser.getRole(), dbUser.getClinic().getId());
     } catch (UsernameNotFoundException ex) {
       throw new UserNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
     } catch (BadCredentialsException ex) {
@@ -53,6 +57,7 @@ public class AuthService implements AuthServiceBase {
   @Override
   public CurrUserInfo getCurrUser(String token) throws AuthenticationException {
     String username = jwtUtil.extractUsername(token);
+    Long clinicId = jwtUtil.extractClinicId(token);
     Optional<User> user = userRepo.findByUsername(username);
 
     if (!user.isPresent()) {
@@ -65,6 +70,7 @@ public class AuthService implements AuthServiceBase {
     currUserInfo.setRole(user.get().getRole());
     currUserInfo.setPhone(user.get().getPhone());
     currUserInfo.setName(user.get().getName());
+    currUserInfo.setClinicId(clinicId);
 
     return currUserInfo;
   }

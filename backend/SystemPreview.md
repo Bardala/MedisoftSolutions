@@ -306,3 +306,41 @@ The updated schema reflects all Java entities including:
 - Proper timestamp handling with `@CreationTimestamp` and `@UpdateTimestamp`
 - Consistent BIGINT IDs across all tables
 - Not nullable constraints matching entity annotations
+
+```mermaid
+pie
+    title Token Compromise Impact
+    "1-hour token" : 4.2
+    "24-hour token" : 100
+```
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant AuthDB
+
+    User->>Frontend: Logs in (username/password)
+    Frontend->>Backend: POST /login
+    Backend->>AuthDB: Validate credentials
+    AuthDB-->>Backend: User data
+    Backend->>Frontend: HTTP/1.1 200 OK
+    Backend->>Frontend: Set-Cookie: refresh_token=xyz
+    Backend->>Frontend: Body: {access_token: abc, expires_in: 3600}
+
+    loop Every API call
+        Frontend->>Backend: API request (Bearer abc)
+        alt Token valid
+            Backend-->>Frontend: 200 OK (data)
+        else Token expired
+            Backend-->>Frontend: 401 Unauthorized
+            Frontend->>Backend: POST /refresh (Cookie: refresh_token=xyz)
+            Backend->>AuthDB: Validate refresh token
+            AuthDB-->>Backend: Valid
+            Backend->>Frontend: HTTP/1.1 200 OK
+            Backend->>Frontend: Body: {new_access_token: def, expires_in: 3600}
+            Frontend->>Backend: Retry request (Bearer def)
+        end
+    end
+```

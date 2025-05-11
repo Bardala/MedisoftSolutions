@@ -36,13 +36,48 @@ public class DataInitializationService {
   @Autowired
   private PaymentRepo paymentRepo;
 
+  @Autowired
+  private ClinicRepo clinicRepo;
+
+  @Autowired
+  private ClinicLimitsRepo clinicLimitsRepo;
+
   @PostConstruct
   public void populateData() {
+    addClinic(); // Initialize clinic first since other entities depend on it
     addUsers();
     addPatients();
     addMedicines();
     addVisitsAndMedicines();
     addPayments();
+  }
+
+  private void addClinic() {
+    if (clinicRepo.count() == 0) {
+      // Create and save default clinic
+      Clinic clinic = Clinic.builder()
+          .name("Default Clinic")
+          .address("123 Main St")
+          .phoneNumber("+1234567890")
+          .email("contact@defaultclinic.com")
+          .phoneSupportsWhatsapp(true)
+          .build();
+
+      clinic = clinicRepo.save(clinic);
+
+      // Create and save default limits
+      ClinicLimits limits = ClinicLimits.builder()
+          .maxUsers(10)
+          .maxFileStorageMb(500)
+          .allowFileUpload(true)
+          .clinic(clinic)
+          .build();
+      clinicLimitsRepo.save(limits);
+
+      // Update clinic with relationships
+      clinic.setClinicLimits(limits);
+      clinicRepo.save(clinic);
+    }
   }
 
   private void addUsers() {

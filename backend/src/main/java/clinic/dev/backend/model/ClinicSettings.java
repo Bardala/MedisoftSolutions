@@ -1,7 +1,10 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,15 +14,18 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "clinic_settings")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClinicSettings {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  // Doctor info, // todo: Remove it
-  @Column(name = "doctor_id")
-  private Long doctorId;
+  @OneToOne
+  @JoinColumn(name = "clinic_id", nullable = false, unique = true)
+  private Clinic clinic;
 
   @Column(name = "doctor_name")
   private String doctorName;
@@ -30,33 +36,12 @@ public class ClinicSettings {
   @Column(name = "doctor_qualification")
   private String doctorQualification;
 
-  // Clinic info
-  @Column(name = "clinic_address", columnDefinition = "TEXT")
-  private String clinicAddress;
-
-  @Column(name = "clinic_phone_number")
-  private String clinicPhoneNumber;
-
-  @Column(name = "clinic_email")
-  private String clinicEmail;
-
-  @Column(name = "working_hours", columnDefinition = "TEXT")
-  private String workingHours;
-
   // Paths
   @Column(name = "backup_db_path", columnDefinition = "TEXT")
   private String backupDbPath;
 
   @Column(name = "backup_images_path", columnDefinition = "TEXT")
   private String backupImagesPath;
-
-  // Logos and Print Config
-  @Column(name = "prescription_logo_path")
-  private String prescriptionLogoPath;
-
-  // New field: whether the phone supports whatsapp
-  @Column(name = "phone_supports_whatsapp")
-  private Boolean phoneSupportsWhatsapp;
 
   @Column(name = "healing_message", columnDefinition = "TEXT")
   private String healingMessage;

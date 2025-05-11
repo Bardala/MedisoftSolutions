@@ -17,4 +17,8 @@ public interface VisitDentalProcedureRepo extends JpaRepository<VisitDentalProce
   void deleteByDentalProcedureId(Long id);
 
   void deleteByVisitId(Long id);
+
+  void deleteByVisitPatientIdAndClinicId(Long id, Long clinicId);
+
+  List<VisitDentalProcedure> findByVisitPatientIdAndClinicId(Long id, Long clinicId);
 }

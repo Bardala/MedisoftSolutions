@@ -46,4 +46,18 @@ public class AuthController {
     CurrUserInfo currUser = authService.getCurrUser(token);
     return ResponseEntity.ok(new ApiRes<>(currUser));
   }
+
+  // todo: Refresh endpoint
+  // @PostMapping("/refresh")
+  // public ResponseEntity<AuthResponse>
+  // refreshToken(@CookieValue("refresh_token") String refreshToken) {
+  // if (!jwtUtil.validateRefreshToken(refreshToken)) {
+  // throw new InvalidTokenException("Invalid refresh token");
+  // }
+
+  // User user = userService.getUserFromRefreshToken(refreshToken);
+  // String newAccessToken = jwtUtil.generateAccessToken(user);
+
+  // return ResponseEntity.ok(new AuthResponse(newAccessToken, 3600));
+  // }
 }

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ClinicSettingsRepo extends JpaRepository<ClinicSettings, Long> {
 
   ClinicSettings findTopByOrderByIdDesc();
+
+  void deleteByClinicId(Long id);
 }

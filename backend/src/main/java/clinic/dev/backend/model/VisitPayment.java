@@ -1,11 +1,15 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Table(name = "visit_payments")
+@NoArgsConstructor
+@AllArgsConstructor
 public class VisitPayment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +22,8 @@ public class VisitPayment {
   @ManyToOne
   @JoinColumn(name = "payment_id", nullable = false)
   private Payment payment;
+
+  @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false, columnDefinition = "bigint default 1")
+  private Clinic clinic;
 }

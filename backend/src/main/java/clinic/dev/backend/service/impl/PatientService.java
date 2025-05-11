@@ -1,16 +1,24 @@
 package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.dto.patient.PatientRegistryRes;
+import clinic.dev.backend.dto.patient.PatientReqDTO;
+import clinic.dev.backend.dto.patient.PatientResDTO;
+import clinic.dev.backend.dto.payment.PaymentResDTO;
+import clinic.dev.backend.dto.visit.VisitResDTO;
+import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
+import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
+import clinic.dev.backend.dto.visitProcedure.VisitProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
+import clinic.dev.backend.util.AuthContext;
 import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
-// import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,149 +57,174 @@ public class PatientService {
   @Autowired
   private QueueRepo queueRepo;
 
-  @Transactional
-  public Patient create(Patient patient) {
-    if (patientRepo.existsByFullName(patient.getFullName())) {
-      throw new IllegalArgumentException("This name already exists, change it.");
-    }
+  @Autowired
+  private AuthContext authContext;
 
-    return patientRepo.save(patient);
+  @Transactional
+  public PatientResDTO create(PatientReqDTO request) {
+    Long clinicId = authContext.getClinicId();
+
+    if (patientRepo.existsByFullNameAndClinicId(request.fullName(), clinicId))
+      throw new IllegalArgumentException("Patient name already exists in this clinic");
+
+    Patient patient = request.toEntity(new Clinic(clinicId));
+    return PatientResDTO.fromEntity(patientRepo.save(patient));
   }
 
   @Transactional
-  public Patient update(Patient updatedPatient) {
-    return patientRepo.save(updatedPatient);
+  public PatientResDTO update(Long id, PatientReqDTO req) {
+    Long clinicId = authContext.getClinicId();
+
+    Patient existing = patientRepo.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+    req.updateEntity(existing, new Clinic(clinicId));
+
+    return PatientResDTO.fromEntity(patientRepo.save(existing));
   }
 
   @Transactional
   public void delete(Long id) {
-    queueRepo.deleteByPatientId(id);
-    visitPaymentRepo.deleteByVisitPatientId(id);
-    visitMedicineRepo.deleteByVisitPatientId(id);
-    visitDentalProcedureRepo.deleteByVisitPatientId(id);
-    visitRepo.deleteByPatientId(id);
-    paymentRepo.deleteByPatientId(id);
+    Long clinicId = authContext.getClinicId();
+    // First verify the patient belongs to the clinic
+    if (!patientRepo.existsByIdAndClinicId(id, clinicId)) {
+      throw new UnauthorizedAccessException("Patient not found in your clinic");
+    }
+
+    queueRepo.deleteByPatientIdAndClinicId(id, clinicId);
+    visitPaymentRepo.deleteByVisitPatientIdAndClinicId(id, clinicId);
+    visitMedicineRepo.deleteByVisitPatientIdAndClinicId(id, clinicId);
+    visitDentalProcedureRepo.deleteByVisitPatientIdAndClinicId(id, clinicId);
+    visitRepo.deleteByPatientIdAndClinicId(id, clinicId);
+    paymentRepo.deleteByPatientIdAndClinicId(id, clinicId);
 
     patientFileService.deletePatientFiles(id);
 
-    patientRepo.deleteById(id);
+    patientRepo.deleteByIdAndClinicId(id, clinicId);
   }
 
-  public Patient getById(Long id) {
-    return patientRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+  // Simplified getter using DTO
+  @Transactional(readOnly = true)
+  public PatientResDTO getClinicPatientById(Long id) {
+    Long clinicId = authContext.getClinicId();
+    return patientRepo.findByIdAndClinicId(id, clinicId)
+        .map(PatientResDTO::fromEntity)
+        .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
   }
 
   public List<Patient> getAll() {
-    return patientRepo.findAll();
+    Long clinicId = authContext.getClinicId();
+    return patientRepo.findAllByClinicId(clinicId);
   }
 
   @Transactional
-  public void deleteAll() {
-    patientRepo.deleteAll();
+  public void deleteAllByClinicId(Long clinicId) {
+    authContext.validateAdminAccess(); // Will throw if not admin
+    if (!authContext.getClinicId().equals(clinicId)) {
+      throw new UnauthorizedAccessException("Not authorized for this clinic");
+    }
+    patientRepo.deleteAllByClinicId(clinicId);
   }
 
-  // todo: Create a native sql query for this method for avoiding redundancy data
   @Transactional(readOnly = true)
   public PatientRegistryRes getPatientRegistry(Long id) {
-    Patient patient = getById(id);
+    Long clinicId = authContext.getClinicId();
+    PatientResDTO patient = getClinicPatientById(id);
     PatientRegistryRes dto = new PatientRegistryRes();
 
     dto.setPatient(patient);
-    dto.setVisits(visitRepo.findByPatientId(patient.getId()));
-    dto.setPayments(paymentRepo.findByPatientId(patient.getId()));
-    dto.setVisitDentalProcedure(visitDentalProcedureRepo.findByVisitPatientId(patient.getId()));
-    dto.setVisitMedicines(visitMedicineRepo.findByVisitPatientId(patient.getId()));
-    dto.setVisitPayments(visitPaymentRepo.findByVisitPatientId(patient.getId()));
+    dto.setVisits(
+        visitRepo.findByPatientIdAndClinicId(patient.id(), clinicId).stream().map(VisitResDTO::fromEntity).toList());
+    dto.setPayments(paymentRepo.findByPatientIdAndClinicId(patient.id(), clinicId).stream()
+        .map(PaymentResDTO::fromEntity).toList());
+    dto.setVisitDentalProcedure(visitDentalProcedureRepo.findByVisitPatientIdAndClinicId(patient.id(), clinicId)
+        .stream().map(VisitProcedureResDTO::fromEntity).toList());
+    dto.setVisitMedicines(visitMedicineRepo.findByVisitPatientIdAndClinicId(patient.id(), clinicId).stream()
+        .map(VisitMedicineResDTO::fromEntity).toList());
+    dto.setVisitPayments(visitPaymentRepo.findByVisitPatientIdAndClinicId(patient.id(), clinicId).stream()
+        .map(vp -> VisitPaymentResDTO.fromEntity(vp)).toList());
     return dto;
   }
 
   @Transactional(readOnly = true)
   public List<PatientRegistryRes> AllPatientsRegistry() {
-    List<Patient> patients = patientRepo.findAll();
-    return patients.stream().map(patient -> {
-      return getPatientRegistry(patient.getId());
-    }).collect(Collectors.toList());
-  }
-
-  @Transactional(readOnly = true)
-  public List<Patient> dailyNewPatients() {
-    LocalDateTime referenceDate = LocalDateTime.now();
-    LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0)); // 6 AM today
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
-
-    // if the current time is after 12 AM and before 6 AM
-    if (referenceDate.isBefore(workdayStart)) {
-      LocalDateTime at12Am = referenceDate.with(LocalTime.MIN); // 12 AM today
-      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM today
-
-      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am);
-
-      // Now we have to get the patients from the previous day from 6 AM to 12 AM
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-
-      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am);
-
-      patientsFrom0to6Am.addAll(patientsAfter6AmYesterday);
-
-      return patientsFrom0to6Am;
-    }
-
-    return getPatientsAtThisPeriod(workdayStart, workdayEnd);
-  }
-
-  @Transactional(readOnly = true)
-  public List<Patient> getDailyNewPatientsForDate(LocalDate date) {
-    LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
-
-    // If the date is today and the current time is before 6 AM, adjust the period
-    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
-      LocalDateTime at12Am = date.atTime(LocalTime.MIN); // 12 AM on the given date
-      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM on the given date
-
-      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am);
-
-      // Get patients from the previous day (6 AM to 12 AM)
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am);
-
-      patientsFrom0to6Am.addAll(patientsAfter6AmYesterday);
-
-      return patientsFrom0to6Am;
-    }
-
-    return getPatientsAtThisPeriod(workdayStart, workdayEnd);
-  }
-
-  @Transactional(readOnly = true)
-  public List<Patient> getPatientsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
-    return patientRepo.findAll().stream()
-        .filter(
-            patient -> !patient.getCreatedAt().isBefore(start) && patient.getCreatedAt().isBefore(end))
+    Long clinicId = authContext.getClinicId();
+    List<Patient> patients = patientRepo.findAllByClinicId(clinicId);
+    return patients.stream()
+        .map(patient -> getPatientRegistry(patient.getId()))
         .collect(Collectors.toList());
   }
 
-  // @Transactional(readOnly = true)
-  // public Page<Patient> searchPatients(String searchTerm, int page, int size) {
-  // // Fetch all patients (consider adding a method to fetch in batches for large
-  // // datasets)
-  // List<Patient> allPatients = patientRepo.findAll();
+  @Transactional(readOnly = true)
+  public List<PatientResDTO> dailyNewPatients() {
+    Long clinicId = authContext.getClinicId();
+    LocalDateTime referenceDate = LocalDateTime.now();
+    LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0));
+    LocalDateTime workdayEnd = workdayStart.plusHours(24);
 
-  // // Filter patients based on search term
-  // List<Patient> filteredPatients = allPatients.stream()
-  // .filter(patient ->
-  // patient.getFullName().toLowerCase().contains(searchTerm.toLowerCase()) ||
-  // patient.getPhone().contains(searchTerm))
-  // .collect(Collectors.toList());
+    if (referenceDate.isBefore(workdayStart)) {
+      LocalDateTime at12Am = referenceDate.with(LocalTime.MIN);
+      LocalDateTime at6Am = at12Am.plusHours(6);
 
-  // // Implement pagination manually
-  // return paginateList(filteredPatients, page, size);
-  // }
+      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am, clinicId);
+      List<PatientResDTO> result = patientsFrom0to6Am.stream()
+          .map(PatientResDTO::fromEntity)
+          .collect(Collectors.toList());
+
+      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
+      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am, clinicId);
+
+      result.addAll(patientsAfter6AmYesterday.stream()
+          .map(PatientResDTO::fromEntity)
+          .collect(Collectors.toList()));
+
+      return result;
+    }
+
+    return getPatientsAtThisPeriod(workdayStart, workdayEnd, clinicId).stream()
+        .map(PatientResDTO::fromEntity)
+        .collect(Collectors.toList());
+  }
 
   @Transactional(readOnly = true)
-  public Page<Patient> searchPatients(Map<String, String> searchParams, int page, int size) {
+  public List<PatientResDTO> getDailyNewPatientsForDate(LocalDate date) {
+    Long clinicId = authContext.getClinicId();
+    LocalDateTime workdayStart = date.atTime(6, 0);
+    LocalDateTime workdayEnd = workdayStart.plusHours(24);
+
+    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
+      LocalDateTime at12Am = date.atTime(LocalTime.MIN);
+      LocalDateTime at6Am = at12Am.plusHours(6);
+
+      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am, clinicId);
+      List<PatientResDTO> result = patientsFrom0to6Am.stream()
+          .map(PatientResDTO::fromEntity)
+          .collect(Collectors.toList());
+
+      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
+      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am, clinicId);
+
+      result.addAll(patientsAfter6AmYesterday.stream()
+          .map(PatientResDTO::fromEntity)
+          .collect(Collectors.toList()));
+
+      return result;
+    }
+
+    return getPatientsAtThisPeriod(workdayStart, workdayEnd, clinicId).stream()
+        .map(PatientResDTO::fromEntity)
+        .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public Page<PatientResDTO> searchPatients(Map<String, String> searchParams, int page, int size) {
+    Long clinicId = authContext.getClinicId();
+
     Specification<Patient> spec = (root, query, cb) -> {
       List<Predicate> predicates = new ArrayList<>();
+
+      // Filter by clinic ID through the clinic association
+      predicates.add(cb.equal(root.get("clinic").get("id"), clinicId));
 
       for (Map.Entry<String, String> entry : searchParams.entrySet()) {
         String key = entry.getKey();
@@ -230,26 +263,12 @@ public class PatientService {
       return cb.and(predicates.toArray(new Predicate[0]));
     };
 
-    return patientRepo.findAll(spec, PageRequest.of(page, size));
+    Page<Patient> patientPage = patientRepo.findAll(spec, PageRequest.of(page, size));
+    return patientPage.map(PatientResDTO::fromEntity);
   }
 
-  // private Page<Patient> paginateList(List<Patient> items, int page, int size) {
-  // // Validate page and size
-  // size = Math.min(size, 20); // Ensure max 20 items per page
-  // int totalItems = items.size();
-  // // int totalPages = (int) Math.ceil((double) totalItems / size);
-
-  // // Calculate start and end index
-  // int start = Math.min(page * size, totalItems);
-  // int end = Math.min((page + 1) * size, totalItems);
-
-  // // Get sublist for current page
-  // List<Patient> pageContent = items.subList(start, end);
-
-  // // Create Page object
-  // return new PageImpl<>(
-  // pageContent,
-  // PageRequest.of(page, size),
-  // totalItems);
-  // }
+  @Transactional(readOnly = true)
+  public List<Patient> getPatientsAtThisPeriod(LocalDateTime start, LocalDateTime end, Long clinicId) {
+    return patientRepo.findByCreatedAtBetweenAndClinicId(start, end, clinicId);
+  }
 }

@@ -35,6 +35,10 @@ public class Queue {
   private Long id;
 
   @ManyToOne
+  @JoinColumn(name = "clinic_id", nullable = false) // Clinic is required for each queue entry
+  private Clinic clinic;
+
+  @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
   @NotNull(message = "Patient cannot be null")
   private Patient patient;
