@@ -64,35 +64,84 @@ A dental clinic management system that allows a single doctor to manage multiple
 
 # **Database Design**
 
-## **1. Users Table**
+## **1. Clinic Table**
 
-Stores all system users (doctor and assistants).
+Core clinic information and settings.
+
+| **Column Name**         | **Type**     | **Constraints**                          |
+| ----------------------- | ------------ | ---------------------------------------- |
+| id                      | BIGINT       | Primary Key, Auto-Increment              |
+| name                    | VARCHAR(100) | NOT NULL                                 |
+| address                 | TEXT         | NULLABLE                                 |
+| phone_number            | VARCHAR(20)  | NULLABLE                                 |
+| email                   | VARCHAR(100) | NULLABLE                                 |
+| logo_url                | VARCHAR(255) | NULLABLE                                 |
+| working_hours           | TEXT         | NULLABLE                                 |
+| phone_supports_whatsapp | BOOLEAN      | DEFAULT FALSE                            |
+| created_at              | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+| updated_at              | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP on update      |
+
+## **2. ClinicLimits Table**
+
+Clinic subscription limits and features.
+
+| **Column Name**         | **Type** | **Constraints**                   |
+| ----------------------- | -------- | --------------------------------- |
+| id                      | BIGINT   | Primary Key, Auto-Increment       |
+| clinic_id               | BIGINT   | Foreign Key -> Clinic(id), UNIQUE |
+| max_users               | INT      | NULLABLE                          |
+| max_file_storage_mb     | INT      | NULLABLE                          |
+| max_patient_records     | INT      | NULLABLE                          |
+| allow_file_upload       | BOOLEAN  | DEFAULT TRUE                      |
+| allow_multiple_branches | BOOLEAN  | DEFAULT FALSE                     |
+| allow_billing_feature   | BOOLEAN  | DEFAULT TRUE                      |
+
+## **3. ClinicSettings Table**
+
+Clinic-specific configurations.
+
+| **Column Name**       | **Type**     | **Constraints**                          |
+| --------------------- | ------------ | ---------------------------------------- |
+| id                    | BIGINT       | Primary Key, Auto-Increment              |
+| clinic_id             | BIGINT       | Foreign Key -> Clinic(id), UNIQUE        |
+| doctor_name           | VARCHAR(100) | NULLABLE                                 |
+| doctor_title          | VARCHAR(100) | NULLABLE                                 |
+| doctor_qualification  | VARCHAR(100) | NULLABLE                                 |
+| backup_db_path        | TEXT         | NULLABLE                                 |
+| backup_images_path    | TEXT         | NULLABLE                                 |
+| healing_message       | TEXT         | NULLABLE                                 |
+| print_footer_notes    | TEXT         | NULLABLE                                 |
+| language              | VARCHAR(10)  | DEFAULT 'en'                             |
+| backup_enabled        | BOOLEAN      | DEFAULT FALSE                            |
+| backup_frequency_cron | VARCHAR(20)  | NULLABLE                                 |
+| created_at            | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+| updated_at            | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP on update      |
+
+## **4. Users Table**
+
+All system users with authentication.
 
 | **Column Name** | **Type**     | **Constraints**                          |
 | --------------- | ------------ | ---------------------------------------- |
 | id              | BIGINT       | Primary Key, Auto-Increment              |
-| username        | VARCHAR(100) | NOT NULL, UNIQUE, No spaces allowed      |
+| clinic_id       | BIGINT       | Foreign Key -> Clinic(id), NOT NULL      |
+| username        | VARCHAR(20)  | NOT NULL, UNIQUE, No spaces allowed      |
 | password        | VARCHAR(255) | NOT NULL                                 |
 | name            | VARCHAR(200) | NOT NULL                                 |
 | phone           | VARCHAR(20)  | NOT NULL, UNIQUE                         |
-| role            | VARCHAR      | 'Doctor' or 'Assistant' (validated)      |
+| role            | VARCHAR(10)  | 'Admin','Doctor' or 'Assistant'          |
 | profile_picture | VARCHAR(255) | NULLABLE                                 |
 | created_at      | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
 
-### **Explanation:**
+## **5. Patients Table**
 
-- Uses Spring Security's `UserDetails` interface for authentication
-- Phone and username are unique identifiers
-- Role is validated to ensure only 'Doctor' or 'Assistant' values
-
-## **2. Patients Table**
-
-Stores patient information.
+Patient medical records.
 
 | **Column Name** | **Type**     | **Constraints**                          |
 | --------------- | ------------ | ---------------------------------------- |
 | id              | BIGINT       | Primary Key, Auto-Increment              |
-| full_name       | VARCHAR(200) | NOT NULL, UNIQUE                         |
+| clinic_id       | BIGINT       | Foreign Key -> Clinic(id), NOT NULL      |
+| full_name       | VARCHAR(200) | NOT NULL, Clinic-scoped UNIQUE           |
 | age             | INT          | NULLABLE                                 |
 | notes           | TEXT         | NULLABLE                                 |
 | phone           | VARCHAR(20)  | NOT NULL                                 |
@@ -100,156 +149,126 @@ Stores patient information.
 | medical_history | VARCHAR(500) | NULLABLE                                 |
 | created_at      | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
 
-### **Explanation:**
+## **6. PatientFiles Table**
 
-- `full_name` must be unique
-- `phone` is required but not unique (family members may share)
-- `medical_history` limited to 500 characters
-
-## **3. Services (Dental Procedures) Table**
-
-Stores dental services provided by the clinic.
-
-| **Column Name** | **Type**      | **Constraints**             |
-| --------------- | ------------- | --------------------------- |
-| id              | BIGINT        | Primary Key, Auto-Increment |
-| service_name    | VARCHAR(150)  | NOT NULL, UNIQUE            |
-| arabic_name     | VARCHAR(150)  | NOT NULL                    |
-| description     | VARCHAR(1000) | NULLABLE                    |
-| cost            | DOUBLE        | NOT NULL                    |
-
-### **Explanation:**
-
-- Contains both English and Arabic names for services
-- Cost stored as DOUBLE precision
-
-## **4. Medicines Table**
-
-Stores all medicines prescribed by the doctor.
+Patient documents and attachments.
 
 | **Column Name** | **Type**     | **Constraints**                          |
 | --------------- | ------------ | ---------------------------------------- |
 | id              | BIGINT       | Primary Key, Auto-Increment              |
-| medicine_name   | VARCHAR(150) | NOT NULL, UNIQUE                         |
-| dosage          | VARCHAR      | NOT NULL (e.g., "500 mg")                |
-| frequency       | VARCHAR      | NOT NULL (e.g., "Twice a day")           |
-| duration        | INT          | NOT NULL (e.g., 7 days)                  |
-| instructions    | TEXT         | NULLABLE                                 |
-| created_at      | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
-
-## **5. Visits Table**
-
-Tracks patient visits.
-
-| **Column Name** | **Type**  | **Constraints**                          |
-| --------------- | --------- | ---------------------------------------- |
-| id              | BIGINT    | Primary Key, Auto-Increment              |
-| patient_id      | BIGINT    | Foreign Key -> Patients(id), NOT NULL    |
-| doctor_id       | BIGINT    | Foreign Key -> Users(id), NOT NULL       |
-| assistant_id    | BIGINT    | Foreign Key -> Users(id), NULLABLE       |
-| wait            | INT       | NULLABLE (wait time in minutes)          |
-| duration        | INT       | NULLABLE (visit duration in minutes)     |
-| doctor_notes    | TEXT      | NULLABLE                                 |
-| created_at      | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable |
-
-## **6. Payments Table**
-
-Tracks payments made by patients.
-
-| **Column Name** | **Type**  | **Constraints**                          |
-| --------------- | --------- | ---------------------------------------- |
-| id              | BIGINT    | Primary Key, Auto-Increment              |
-| patient_id      | BIGINT    | Foreign Key -> Patients(id), NOT NULL    |
-| recorded_by     | BIGINT    | Foreign Key -> Users(id), NOT NULL       |
-| amount          | DOUBLE    | NOT NULL                                 |
-| created_at      | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable |
-
-## **7. Visit Payments Table**
-
-Links payments to specific visits.
-
-| **Column Name** | **Type** | **Constraints**                       |
-| --------------- | -------- | ------------------------------------- |
-| id              | BIGINT   | Primary Key, Auto-Increment           |
-| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL   |
-| payment_id      | BIGINT   | Foreign Key -> Payments(id), NOT NULL |
-
-## **8. Visit Services Table**
-
-Links services to specific visits.
-
-| **Column Name** | **Type** | **Constraints**                              |
-| --------------- | -------- | -------------------------------------------- |
-| id              | BIGINT   | Primary Key, Auto-Increment                  |
-| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL          |
-| service_id      | BIGINT   | Foreign Key -> DentalProcedure(id), NOT NULL |
-
-## **9. Visit Medicines Table**
-
-Links medicines to specific visits.
-
-| **Column Name** | **Type** | **Constraints**                        |
-| --------------- | -------- | -------------------------------------- |
-| id              | BIGINT   | Primary Key, Auto-Increment            |
-| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL    |
-| medicine_id     | BIGINT   | Foreign Key -> Medicines(id), NOT NULL |
-
-## **10. Patient Files Table**
-
-Stores patient-related files (x-rays, medical tests, etc.).
-
-| **Column Name** | **Type**     | **Constraints**                          |
-| --------------- | ------------ | ---------------------------------------- |
-| id              | BIGINT       | Primary Key, Auto-Increment              |
+| clinic_id       | BIGINT       | Foreign Key -> Clinic(id), NOT NULL      |
 | patient_id      | BIGINT       | Foreign Key -> Patients(id), NOT NULL    |
 | file_type       | VARCHAR(50)  | NOT NULL                                 |
 | description     | VARCHAR(200) | NULLABLE                                 |
 | file_path       | VARCHAR(300) | NULLABLE                                 |
 | created_at      | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
 
+## **7. Procedures Table**
+
+Dental services offered.
+
+| **Column Name** | **Type**      | **Constraints**                     |
+| --------------- | ------------- | ----------------------------------- |
+| id              | BIGINT        | Primary Key, Auto-Increment         |
+| clinic_id       | BIGINT        | Foreign Key -> Clinic(id), NOT NULL |
+| service_name    | VARCHAR(150)  | NOT NULL, UNIQUE                    |
+| arabic_name     | VARCHAR(150)  | NOT NULL                            |
+| description     | VARCHAR(1000) | NULLABLE                            |
+| cost            | DOUBLE        | NOT NULL                            |
+
+## **8. Medicines Table**
+
+Prescription medications.
+
+| **Column Name** | **Type**     | **Constraints**                          |
+| --------------- | ------------ | ---------------------------------------- |
+| id              | BIGINT       | Primary Key, Auto-Increment              |
+| clinic_id       | BIGINT       | Foreign Key -> Clinic(id), NOT NULL      |
+| medicine_name   | VARCHAR(150) | NOT NULL, UNIQUE                         |
+| dosage          | VARCHAR(50)  | NOT NULL                                 |
+| frequency       | VARCHAR(50)  | NOT NULL                                 |
+| duration        | INT          | NOT NULL                                 |
+| instructions    | TEXT         | NULLABLE                                 |
+| created_at      | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+
+## **9. Visits Table**
+
+Patient appointment records.
+
+| **Column Name** | **Type**  | **Constraints**                          |
+| --------------- | --------- | ---------------------------------------- |
+| id              | BIGINT    | Primary Key, Auto-Increment              |
+| clinic_id       | BIGINT    | Foreign Key -> Clinic(id), NOT NULL      |
+| patient_id      | BIGINT    | Foreign Key -> Patients(id), NOT NULL    |
+| doctor_id       | BIGINT    | Foreign Key -> Users(id), NOT NULL       |
+| assistant_id    | BIGINT    | Foreign Key -> Users(id), NULLABLE       |
+| wait            | INT       | NULLABLE (minutes)                       |
+| duration        | INT       | NULLABLE (minutes)                       |
+| doctor_notes    | TEXT      | NULLABLE                                 |
+| created_at      | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+
+## **10. Payments Table**
+
+Financial transactions.
+
+| **Column Name** | **Type**  | **Constraints**                          |
+| --------------- | --------- | ---------------------------------------- |
+| id              | BIGINT    | Primary Key, Auto-Increment              |
+| clinic_id       | BIGINT    | Foreign Key -> Clinic(id), NOT NULL      |
+| patient_id      | BIGINT    | Foreign Key -> Patients(id), NOT NULL    |
+| recorded_by     | BIGINT    | Foreign Key -> Users(id), NOT NULL       |
+| amount          | DOUBLE    | NOT NULL                                 |
+| created_at      | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+
 ## **11. Queue Table**
 
-Manages patient queue for visits.
+Patient queue management.
 
-| **Column Name**     | **Type**  | **Constraints**                            |
-| ------------------- | --------- | ------------------------------------------ |
-| id                  | BIGINT    | Primary Key, Auto-Increment                |
-| patient_id          | BIGINT    | Foreign Key -> Patients(id), NOT NULL      |
-| doctor_id           | BIGINT    | Foreign Key -> Users(id), NOT NULL         |
-| assistant_id        | BIGINT    | Foreign Key -> Users(id), NULLABLE         |
-| position            | INT       | NOT NULL                                   |
-| status              | VARCHAR   | NOT NULL (WAITING, IN_PROGRESS, COMPLETED) |
-| estimated_wait_time | INT       | NULLABLE (minutes)                         |
-| created_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable   |
-| updated_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP on update        |
+| **Column Name**     | **Type**  | **Constraints**                          |
+| ------------------- | --------- | ---------------------------------------- |
+| id                  | BIGINT    | Primary Key, Auto-Increment              |
+| clinic_id           | BIGINT    | Foreign Key -> Clinic(id), NOT NULL      |
+| patient_id          | BIGINT    | Foreign Key -> Patients(id), NOT NULL    |
+| doctor_id           | BIGINT    | Foreign Key -> Users(id), NOT NULL       |
+| assistant_id        | BIGINT    | Foreign Key -> Users(id), NULLABLE       |
+| position            | INT       | NOT NULL                                 |
+| status              | VARCHAR   | WAITING/IN_PROGRESS/COMPLETED            |
+| estimated_wait_time | INT       | NULLABLE (minutes)                       |
+| created_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP, Not updatable |
+| updated_at          | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP on update      |
 
-## **12. Settings Table**
+## **12. VisitProcedure Table**
 
-| Column Name               | Data Type   | Description                                             |
-| ------------------------- | ----------- | ------------------------------------------------------- |
-| `id`                      | `INT` (PK)  | Unique identifier                                       |
-| `clinic_name`             | `VARCHAR`   | Optional display name of the clinic                     |
-| `doctor_id`               | `INT`       | Linked to the users table, marks head doctor            |
-| `doctor_name`             | `VARCHAR`   | Shown on the prescription                               |
-| `doctor_title`            | `VARCHAR`   | e.g. "أخصائي طب وجراحة الفم والأسنان"                   |
-| `doctor_qualification`    | `VARCHAR`   | e.g. "القصر العيني"                                     |
-| `clinic_address`          | `TEXT`      | Formatted address                                       |
-| `clinic_phone_number`     | `VARCHAR`   | Displayed on prescription/footer                        |
-| `clinic_email`            | `VARCHAR`   | Email for the clinic                                    |
-| `working_hours`           | `TEXT`      | e.g. "يوميًا عدا الجمعة من 12 ظهرًا حتى 12 منتصف الليل" |
-| `backup_db_path`          | `TEXT`      | Local backup path for DB                                |
-| `backup_images_path`      | `TEXT`      | Path for image backup                                   |
-| `prescription_logo_path`  | `TEXT`      | Logo to show on prescription                            |
-| `healing_message`         | `TEXT`      | Custom footer message like "مع تمنياتنا بالشفاء العاجل" |
-| `print_footer_notes`      | `TEXT`      | Any extra footer notes                                  |
-| `language`                | `VARCHAR`   | Default UI language (e.g., 'ar', 'en')                  |
-| `phone_supports_whatsapp` | `BOOLEAN`   | Whether the phone supports WhatsApp                     |
-| `backup_duration_enabled` | `BOOLEAN`   | Whether the backup duration feature is enabled or not   |
-| `backup_duration`         | `INT`       | Duration for backup frequency (e.g., hours or days)     |
-| `created_at`              | `TIMESTAMP` | Record creation time                                    |
-| `updated_at`              | `TIMESTAMP` | Last time this setting was updated                      |
+Services performed during visits.
 
----
+| **Column Name** | **Type** | **Constraints**                         |
+| --------------- | -------- | --------------------------------------- |
+| id              | BIGINT   | Primary Key, Auto-Increment             |
+| clinic_id       | BIGINT   | Foreign Key -> Clinic(id), NOT NULL     |
+| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL     |
+| service_id      | BIGINT   | Foreign Key -> Procedures(id), NOT NULL |
+
+## **13. VisitMedicine Table**
+
+Medications prescribed during visits.
+
+| **Column Name** | **Type** | **Constraints**                        |
+| --------------- | -------- | -------------------------------------- |
+| id              | BIGINT   | Primary Key, Auto-Increment            |
+| clinic_id       | BIGINT   | Foreign Key -> Clinic(id), NOT NULL    |
+| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL    |
+| medicine_id     | BIGINT   | Foreign Key -> Medicines(id), NOT NULL |
+
+## **14. VisitPayment Table**
+
+Payments linked to visits.
+
+| **Column Name** | **Type** | **Constraints**                       |
+| --------------- | -------- | ------------------------------------- |
+| id              | BIGINT   | Primary Key, Auto-Increment           |
+| clinic_id       | BIGINT   | Foreign Key -> Clinic(id), NOT NULL   |
+| visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL   |
+| payment_id      | BIGINT   | Foreign Key -> Payments(id), NOT NULL |
 
 # **Relationships**
 
@@ -298,15 +317,6 @@ Manages patient queue for visits.
    Restricted access based on doctor's settings
 
 ---
-
-The updated schema reflects all Java entities including:
-
-- Added `PatientFile` entity for medical documents
-- Enhanced `Queue` system with status tracking
-- Bilingual service names in `DentalProcedure`
-- Proper timestamp handling with `@CreationTimestamp` and `@UpdateTimestamp`
-- Consistent BIGINT IDs across all tables
-- Not nullable constraints matching entity annotations
 
 # **Sequence Diagrams**
 
