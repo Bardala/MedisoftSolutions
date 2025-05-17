@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
   }
 
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ApiRes<Object>> handleBadRequestException(BadRequestException ex) {
+    ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
+
   // Handle validation errors (e.g., @NotBlank, @NotNull, etc.)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiRes<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -49,7 +55,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidCredentialsException.class)
   public ResponseEntity<ApiRes<String>> handleInvalidCredentialsException(InvalidCredentialsException ex) {
     ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
   }
 
   // Handle UserNotFoundException

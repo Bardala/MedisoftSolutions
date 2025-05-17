@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "visit_payments")
 @NoArgsConstructor
 @AllArgsConstructor
-public class VisitPayment {
+public class VisitPayment { // todo: add constraints (paymentId, visitId), and check their existence
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

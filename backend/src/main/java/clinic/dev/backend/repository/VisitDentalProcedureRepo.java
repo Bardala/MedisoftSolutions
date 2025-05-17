@@ -1,6 +1,7 @@
 package clinic.dev.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,14 @@ public interface VisitDentalProcedureRepo extends JpaRepository<VisitDentalProce
   void deleteByVisitPatientIdAndClinicId(Long id, Long clinicId);
 
   List<VisitDentalProcedure> findByVisitPatientIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByDentalProcedureIdAndClinicId(Long id, Long clinicId);
+
+  Optional<VisitDentalProcedure> findByIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByIdAndClinicId(Long id, Long clinicId);
+
+  List<VisitDentalProcedure> findAllByClinicId(Long clinicId);
+
+  List<VisitDentalProcedure> findByVisitIdAndClinicId(Long visitId, Long clinicId);
 }

@@ -18,6 +18,11 @@ import clinic.dev.backend.constants.ErrorMsg;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Visit {
+
+  public Visit(Long id) {
+    this.id = id;
+  };
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -1,19 +1,19 @@
 package clinic.dev.backend.service;
 
-import clinic.dev.backend.model.VisitMedicine;
+import clinic.dev.backend.dto.visitMedicine.VisitMedicineReqDTO;
+import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
 import java.util.List;
-import java.util.Optional;
 
 public interface VisitMedicineServiceBase {
-  List<VisitMedicine> findAll();
+  List<VisitMedicineResDTO> findAll();
 
-  Optional<VisitMedicine> findById(Long id);
+  VisitMedicineResDTO findById(Long id);
 
-  VisitMedicine save(VisitMedicine visitMedicine);
+  VisitMedicineResDTO save(VisitMedicineReqDTO req);
 
   void deleteById(Long id);
 
-  List<VisitMedicine> getByVisit(Long visitId); // Get VisitMedicines by Visit ID
+  List<VisitMedicineResDTO> getByVisit(Long visitId); // Get VisitMedicines by Visit ID
 
-  List<VisitMedicine> getByMedicine(Long medicineId); // Get VisitMedicines by Medicine ID
+  List<VisitMedicineResDTO> getByMedicine(Long medicineId); // Get VisitMedicines by Medicine ID
 }

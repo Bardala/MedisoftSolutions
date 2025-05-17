@@ -1,6 +1,7 @@
 package clinic.dev.backend.controller;
 
-import clinic.dev.backend.model.VisitMedicine;
+import clinic.dev.backend.dto.visitMedicine.VisitMedicineReqDTO;
+import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
 import clinic.dev.backend.service.impl.VisitMedicineService;
 import clinic.dev.backend.util.ApiRes;
 
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/visit-medicines")
@@ -20,21 +20,21 @@ public class VisitMedicineController {
   private VisitMedicineService visitMedicineService;
 
   @GetMapping
-  public ResponseEntity<ApiRes<List<VisitMedicine>>> getAllVisitMedicines() {
-    List<VisitMedicine> visitMedicines = visitMedicineService.findAll();
+  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getAllVisitMedicines() {
+    List<VisitMedicineResDTO> visitMedicines = visitMedicineService.findAll();
     return new ResponseEntity<>(new ApiRes<>(visitMedicines), HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ApiRes<VisitMedicine>> getVisitMedicineById(@PathVariable Long id) {
-    Optional<VisitMedicine> visitMedicine = visitMedicineService.findById(id);
-    return visitMedicine.map(value -> new ResponseEntity<>(new ApiRes<>(value), HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  public ResponseEntity<ApiRes<VisitMedicineResDTO>> getVisitMedicineById(@PathVariable Long id) {
+    VisitMedicineResDTO vm = visitMedicineService.findById(id);
+    return ResponseEntity.ok(new ApiRes<>(vm));
   }
 
   @PostMapping
-  public ResponseEntity<ApiRes<VisitMedicine>> createVisitMedicine(@RequestBody VisitMedicine visitMedicine) {
-    VisitMedicine savedVisitMedicine = visitMedicineService.save(visitMedicine);
+  public ResponseEntity<ApiRes<VisitMedicineResDTO>> createVisitMedicine(
+      @RequestBody VisitMedicineReqDTO visitMedicine) {
+    VisitMedicineResDTO savedVisitMedicine = visitMedicineService.save(visitMedicine);
     return new ResponseEntity<>(new ApiRes<>(savedVisitMedicine), HttpStatus.CREATED);
   }
 
@@ -45,14 +45,14 @@ public class VisitMedicineController {
   }
 
   @GetMapping("/visit/{visitId}")
-  public ResponseEntity<ApiRes<List<VisitMedicine>>> getByVisit(@PathVariable Long visitId) {
-    List<VisitMedicine> visitMedicines = visitMedicineService.getByVisit(visitId);
+  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByVisit(@PathVariable Long visitId) {
+    List<VisitMedicineResDTO> visitMedicines = visitMedicineService.getByVisit(visitId);
     return ResponseEntity.ok(new ApiRes<>(visitMedicines));
   }
 
   @GetMapping("/medicine/{medicineId}")
-  public ResponseEntity<ApiRes<List<VisitMedicine>>> getByMedicine(@PathVariable Long medicineId) {
-    List<VisitMedicine> visitMedicines = visitMedicineService.getByMedicine(medicineId);
+  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByMedicine(@PathVariable Long medicineId) {
+    List<VisitMedicineResDTO> visitMedicines = visitMedicineService.getByMedicine(medicineId);
     return ResponseEntity.ok(new ApiRes<>(visitMedicines));
   }
 }

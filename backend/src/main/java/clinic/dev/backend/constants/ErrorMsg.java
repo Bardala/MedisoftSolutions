@@ -58,6 +58,7 @@ public class ErrorMsg {
   public static final String USERNAME_OR_PHONE_MUST_NOT_BE_NULL = "Username or phone must not be null";
   public static final String FULLNAME_IS_REQUIRED = "FullName is required";
   public static final String PHONE_IS_REQUIRED = "Phone number is required";
+  public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
 
   private ErrorMsg() {
   }

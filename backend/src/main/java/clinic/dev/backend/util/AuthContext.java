@@ -32,9 +32,13 @@ public class AuthContext {
   }
 
   public void validateAdminAccess() {
-    if (!"Admin".equalsIgnoreCase(role)) {
+    if (!"Admin".equalsIgnoreCase(role))
       throw new UnauthorizedAccessException("Only Admin users can perform this action");
-    }
+  }
+
+  public void validateAdminOrDoctorAccess() {
+    if ("Assistant".equalsIgnoreCase(role))
+      throw new UnauthorizedAccessException("Assistant users can not perform this action");
   }
 
   // Optional: More granular role checks

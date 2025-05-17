@@ -2,7 +2,9 @@ package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * We used DentalProcedure word instead of Service to prevent errors whiling
@@ -13,7 +15,9 @@ import lombok.Data;
 @Table(name = "services", uniqueConstraints = {
     @UniqueConstraint(columnNames = "service_name")
 })
-public class DentalProcedure {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Procedure {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -36,10 +40,12 @@ public class DentalProcedure {
   @Column(name = "cost", nullable = false)
   private Double cost;
 
-  public DentalProcedure() {
+  public Procedure(Long id) {
+    this.id = id;
   }
 
-  public DentalProcedure(String serviceName, String arabicName, String description, double cost) {
+  // todo: Remove
+  public Procedure(String serviceName, String arabicName, String description, double cost) {
     this.serviceName = serviceName;
     this.arabicName = arabicName;
     this.description = description;

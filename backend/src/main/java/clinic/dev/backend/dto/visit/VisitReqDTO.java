@@ -14,24 +14,24 @@ public record VisitReqDTO(
     Integer duration,
     String doctorNotes) {
 
-  public Visit toEntity(Patient patient, Clinic clinic, User doctor, User assistant) {
+  public Visit toEntity(Long clinicId) {
     return new Visit(
         null,
-        patient,
-        clinic,
-        doctor,
-        assistant,
+        new Patient(patientId),
+        new Clinic(clinicId),
+        new User(doctorId),
+        assistantId == null ? null : new User(assistantId),
         waitTime,
         duration,
         doctorNotes,
         null);
   }
 
-  public void updateEntity(Visit visit, Patient patient, Clinic clinic, User doctor, User assistant) {
-    visit.setPatient(patient);
-    visit.setClinic(clinic);
-    visit.setDoctor(doctor);
-    visit.setAssistant(assistant);
+  public void updateEntity(Visit visit, Long clinicId) {
+    visit.setPatient(new Patient(patientId));
+    visit.setClinic(new Clinic(clinicId));
+    visit.setDoctor(new User(doctorId));
+    visit.setAssistant(assistantId == null ? null : new User(assistantId));
     visit.setWait(this.waitTime());
     visit.setDuration(this.duration());
     visit.setDoctorNotes(this.doctorNotes());

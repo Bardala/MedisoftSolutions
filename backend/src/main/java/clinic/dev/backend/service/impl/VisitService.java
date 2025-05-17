@@ -1,9 +1,14 @@
 package clinic.dev.backend.service.impl;
 
+import clinic.dev.backend.dto.visit.VisitReqDTO;
+import clinic.dev.backend.dto.visit.VisitResDTO;
+import clinic.dev.backend.exceptions.ResourceNotFoundException;
+
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
 import clinic.dev.backend.repository.VisitRepo;
+import clinic.dev.backend.util.AuthContext;
 import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +32,32 @@ public class VisitService {
   @Autowired
   private VisitPaymentRepo visitPaymentRepo;
 
+  @Autowired
+  private AuthContext authContext;
+
   @Transactional
-  public Visit create(Visit visit) {
-    return visitRepo.save(visit);
+  public VisitResDTO create(VisitReqDTO req) {
+    Long clinicId = authContext.getClinicId();
+
+    Visit visit = req.toEntity(clinicId);
+
+    visitRepo.save(visit);
+
+    return VisitResDTO.fromEntity(visit);
   }
 
   @Transactional
-  public Visit update(Visit updatedVisit) {
-    Visit existingVisit = getById(updatedVisit.getId());
-    existingVisit.setAssistant(updatedVisit.getAssistant());
-    existingVisit.setDoctor(updatedVisit.getDoctor());
-    existingVisit.setDoctorNotes(updatedVisit.getDoctorNotes());
-    existingVisit.setDuration(updatedVisit.getDuration());
-    existingVisit.setPatient(updatedVisit.getPatient());
-    existingVisit.setWait(updatedVisit.getWait());
+  public VisitResDTO update(Long id, VisitReqDTO req) {
+    Long clinicId = authContext.getClinicId();
 
-    return visitRepo.save(existingVisit);
+    Visit visit = visitRepo.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
+
+    req.updateEntity(visit, clinicId);
+
+    visitRepo.save(visit);
+
+    return VisitResDTO.fromEntity(visit);
   }
 
   @Transactional
@@ -52,40 +67,24 @@ public class VisitService {
     visitRepo.deleteById(id);
   }
 
-  public Visit getById(Long id) {
-    return visitRepo.findById(id).orElseThrow(() -> new RuntimeException("Visit not found"));
+  public VisitResDTO getById(Long id) {
+    Long clinicId = authContext.getClinicId();
+
+    Visit visit = visitRepo.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
+
+    return VisitResDTO.fromEntity(visit);
   }
 
-  public List<Visit> getAll() {
-    return visitRepo.findAll();
+  public List<VisitResDTO> getAll() {
+    Long clinicId = authContext.getClinicId();
+
+    List<Visit> visits = visitRepo.findAllByClinicId(clinicId);
+
+    return visits.stream().map(VisitResDTO::fromEntity).toList();
   }
 
-  public List<Visit> getTodayVisits() {
-    LocalDateTime referenceDate = LocalDateTime.now();
-    LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0)); // 6 AM today
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
-
-    // if the current time is after 12 AM and before 6 AM
-    if (referenceDate.isBefore(workdayStart)) {
-      LocalDateTime at12Am = referenceDate.with(LocalTime.MIN); // 12 AM today
-      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM today
-
-      List<Visit> visitsFrom0to6Am = getVisitsAtThisPeriod(at12Am, at6Am);
-
-      // Now we have to get the visits from the previous day from 6 AM to 12 AM
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-
-      List<Visit> visitsAfter6AmYesterday = getVisitsAtThisPeriod(after6AmYesterday, at12Am);
-
-      visitsFrom0to6Am.addAll(visitsAfter6AmYesterday);
-
-      return visitsFrom0to6Am;
-    }
-
-    return getVisitsAtThisPeriod(workdayStart, workdayEnd);
-  }
-
-  public List<Visit> getVisitsForDate(LocalDate date) {
+  public List<VisitResDTO> getVisitsForDate(LocalDate date) {
     LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
     LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
 
@@ -102,13 +101,13 @@ public class VisitService {
 
       visitsFrom0to6Am.addAll(visitsAfter6AmYesterday);
 
-      return visitsFrom0to6Am;
+      return visitsFrom0to6Am.stream().map(VisitResDTO::fromEntity).toList();
     }
 
-    return getVisitsAtThisPeriod(workdayStart, workdayEnd);
+    return getVisitsAtThisPeriod(workdayStart, workdayEnd).stream().map(VisitResDTO::fromEntity).toList();
   }
 
-  public List<Visit> getVisitsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
+  private List<Visit> getVisitsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
     return visitRepo.findAll().stream()
         .filter(
             visit -> !visit.getCreatedAt().isBefore(start) && visit.getCreatedAt().isBefore(end))

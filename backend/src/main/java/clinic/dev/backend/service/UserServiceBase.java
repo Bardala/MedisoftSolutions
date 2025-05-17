@@ -3,31 +3,34 @@ package clinic.dev.backend.service;
 import java.util.List;
 
 import clinic.dev.backend.dto.auth.SignupRequest;
-import clinic.dev.backend.model.User;
+import clinic.dev.backend.dto.user.UserReqDTO;
+import clinic.dev.backend.dto.user.UserResDTO;
 
 public interface UserServiceBase {
-  User signup(SignupRequest signupRequest);
+  UserResDTO signup(SignupRequest signupRequest);
 
-  User getById(Long id);
+  UserResDTO create(UserReqDTO req);
 
-  User getByUsername(String username);
+  UserResDTO getById(Long id);
 
-  User getByPhone(String phone);
+  UserResDTO getByUsername(String username);
 
-  List<User> getAll();
+  UserResDTO getByPhone(String phone);
 
-  List<User> getByRole(String role);
+  List<UserResDTO> getAll();
 
-  User update(User user);
+  List<UserResDTO> getByRole(String role);
 
-  Boolean deleteById(Long id);
+  UserResDTO update(Long id, UserReqDTO req) throws IllegalAccessException;
 
-  Boolean deleteByUsername(String username);
+  void deleteById(Long id);
 
-  Boolean deleteByPhone(String phone);
+  void deleteByUsername(String username);
 
-  Boolean deleteAll();
+  void deleteByPhone(String phone);
+
+  void deleteAll();
 
   // reset password
-  Boolean resetPassword(String username, String newPassword);
+  void resetPassword(String newPassword);
 }

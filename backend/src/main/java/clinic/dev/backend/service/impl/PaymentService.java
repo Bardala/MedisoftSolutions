@@ -1,8 +1,12 @@
 package clinic.dev.backend.service.impl;
 
+import clinic.dev.backend.dto.payment.PaymentReqDTO;
+import clinic.dev.backend.dto.payment.PaymentResDTO;
+import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.repository.PaymentRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
+import clinic.dev.backend.util.AuthContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,36 +27,51 @@ public class PaymentService {
   @Autowired
   private VisitPaymentRepo visitPaymentRepo;
 
+  @Autowired
+  private AuthContext authContext;
+
   @Transactional
-  public Payment create(Payment payment) {
-    return paymentRepo.save(payment);
+  public PaymentResDTO create(PaymentReqDTO req) {
+    Payment payment = req.toEntity(getClinicId());
+
+    return PaymentResDTO.fromEntity(paymentRepo.save(payment));
+  }
+
+  private Long getClinicId() {
+    return authContext.getClinicId();
   }
 
   @Transactional
-  public Payment update(Payment updatedPayment) {
-    Payment existingPayment = getById(updatedPayment.getId());
-    existingPayment.setRecordedBy(updatedPayment.getRecordedBy());
-    existingPayment.setPatient(updatedPayment.getPatient());
-    existingPayment.setAmount(updatedPayment.getAmount());
-    existingPayment.setCreatedAt(updatedPayment.getCreatedAt());
-    return paymentRepo.save(existingPayment);
+  public PaymentResDTO update(Long id, PaymentReqDTO req) {
+
+    Payment payment = paymentRepo.findByIdAndClinicId(id, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
+
+    req.updateEntity(payment, getClinicId());
+
+    return PaymentResDTO.fromEntity(paymentRepo.save(payment));
   }
 
   @Transactional
   public void delete(Long id) {
-    visitPaymentRepo.deleteByPaymentId(id);
-    paymentRepo.deleteById(id);
+    visitPaymentRepo.deleteByPaymentIdAndClinicId(id, getClinicId());
+    paymentRepo.deleteByIdAndClinicId(id, getClinicId());
   }
 
-  public Payment getById(Long id) {
-    return paymentRepo.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
+  public PaymentResDTO getById(Long id) {
+    Payment payment = paymentRepo
+        .findByIdAndClinicId(id, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+    return PaymentResDTO.fromEntity(payment);
   }
 
-  public List<Payment> getAll() {
-    return paymentRepo.findAll();
+  public List<PaymentResDTO> getAll() {
+    List<Payment> payments = paymentRepo.findAllByClinicId(getClinicId());
+
+    return payments.stream().map(PaymentResDTO::fromEntity).toList();
   }
 
-  public List<Payment> getPaymentsForWorkday() {
+  public List<PaymentResDTO> getPaymentsForWorkday() {
     LocalDateTime referenceDate = LocalDateTime.now();
     LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0)); // 6 AM today
     LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
@@ -71,13 +90,13 @@ public class PaymentService {
 
       paymentsFrom0to6Am.addAll(paymentsAfter6AmYesterday);
 
-      return paymentsFrom0to6Am;
+      return paymentsFrom0to6Am.stream().map(PaymentResDTO::fromEntity).toList();
     }
 
-    return getPaymentsAtThisPeriod(workdayStart, workdayEnd);
+    return getPaymentsAtThisPeriod(workdayStart, workdayEnd).stream().map(PaymentResDTO::fromEntity).toList();
   }
 
-  public List<Payment> getPaymentsForDate(LocalDate date) {
+  public List<PaymentResDTO> getPaymentsForDate(LocalDate date) {
     LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
     LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
 
@@ -94,10 +113,10 @@ public class PaymentService {
 
       paymentsFrom0to6Am.addAll(paymentsAfter6AmYesterday);
 
-      return paymentsFrom0to6Am;
+      return paymentsFrom0to6Am.stream().map(PaymentResDTO::fromEntity).toList();
     }
 
-    return getPaymentsAtThisPeriod(workdayStart, workdayEnd);
+    return getPaymentsAtThisPeriod(workdayStart, workdayEnd).stream().map(PaymentResDTO::fromEntity).toList();
   }
 
   public long countPaymentsForToday() {
@@ -105,7 +124,7 @@ public class PaymentService {
     LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0));
     LocalDateTime workdayEnd = workdayStart.plusHours(24);
 
-    return paymentRepo.findAll().stream()
+    return paymentRepo.findAllByClinicId(getClinicId()).stream()
         .filter(
             payment -> !payment.getCreatedAt().isBefore(workdayStart) && payment.getCreatedAt().isBefore(workdayEnd))
         .count();
@@ -116,15 +135,15 @@ public class PaymentService {
     LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0));
     LocalDateTime workdayEnd = workdayStart.plusHours(24);
 
-    return paymentRepo.findAll().stream()
+    return paymentRepo.findAllByClinicId(getClinicId()).stream()
         .filter(
             payment -> !payment.getCreatedAt().isBefore(workdayStart) && payment.getCreatedAt().isBefore(workdayEnd))
         .mapToDouble(Payment::getAmount)
         .sum();
   }
 
-  public List<Payment> getPaymentsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
-    return paymentRepo.findAll().stream()
+  private List<Payment> getPaymentsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
+    return paymentRepo.findAllByClinicId(getClinicId()).stream()
         .filter(
             payment -> !payment.getCreatedAt().isBefore(start) && payment.getCreatedAt().isBefore(end))
         .collect(Collectors.toList());

@@ -23,6 +23,7 @@ A dental clinic management system that allows a single doctor to manage multiple
 3. [**Relationships**](#relationships)
 4. [**Doctor Controls**](#doctor-controls)
 5. [**Assistants Controls**](#assistants-controls)
+6. [**Sequence Diagrams**](#sequence diagrams)
 
 # **Key Features and Explanations**
 
@@ -307,12 +308,9 @@ The updated schema reflects all Java entities including:
 - Consistent BIGINT IDs across all tables
 - Not nullable constraints matching entity annotations
 
-```mermaid
-pie
-    title Token Compromise Impact
-    "1-hour token" : 4.2
-    "24-hour token" : 100
-```
+# **Sequence Diagrams**
+
+## **1. Authentication Flow (Refresh Token API)**
 
 ```mermaid
 sequenceDiagram
@@ -344,3 +342,122 @@ sequenceDiagram
         end
     end
 ```
+
+## Patient Creation Flow:
+
+Comprehensive sequence diagram for patient creation flow across all layers:
+
+```mermaid
+sequenceDiagram
+    actor Client as Client (Frontend/Browser)
+    participant Controller as PatientController
+    participant Service as PatientService
+    participant Auth as AuthContext
+    participant Repository as PatientRepo
+    participant Entity as Patient Entity
+    participant DTO as PatientResDTO
+
+    Client->>Controller: POST /api/v1/patients (PatientReqDTO)
+    activate Controller
+
+    Controller->>Service: create(req)
+    activate Service
+
+    Service->>Auth: getClinicId()
+    activate Auth
+    Auth-->>Service: clinicId
+    deactivate Auth
+
+    Service->>Repository: existsByFullNameAndClinicId(fullName, clinicId)
+    activate Repository
+    alt Patient exists
+        Repository-->>Service: true
+        Service-->>Controller: throws IllegalArgumentException
+        Controller-->>Client: 400 Bad Request (Error in ApiRes)
+    else Patient doesn't exist
+        Repository-->>Service: false
+        deactivate Repository
+
+        Service->>DTO: toEntity(new Clinic(clinicId))
+        activate DTO
+        DTO-->>Service: Patient entity
+        deactivate DTO
+
+        Service->>Repository: save(patient)
+        activate Repository
+        Repository->>Entity: persist()
+        activate Entity
+        Entity-->>Repository: saved patient
+        deactivate Entity
+        Repository-->>Service: saved patient
+        deactivate Repository
+
+        Service->>DTO: fromEntity(patient)
+        activate DTO
+        DTO-->>Service: PatientResDTO
+        deactivate DTO
+        Service-->>Controller: PatientResDTO
+    end
+
+    deactivate Service
+
+    Controller->>ApiRes: new ApiRes<>(createdPatient)
+    activate ApiRes
+    ApiRes-->>Controller: response object
+    deactivate ApiRes
+
+    Controller-->>Client: 200 OK (ApiRes<PatientResDTO>)
+    deactivate Controller
+```
+
+### Key components illustrated:
+
+1. Flow Initiation:
+
+   - Client makes POST request to PatientController
+
+2. Validation Layer:
+
+   - AuthContext provides clinicId for tenant isolation
+
+   - Repository checks for existing patient name
+
+3. Business Logic:
+
+   - PatientReqDTO converts to Entity
+
+   - Service handles uniqueness validation
+
+4. Persistence:
+
+   - PatientRepo saves the entity
+
+   - Database-level constraints enforced
+
+5. Response Formation:
+
+   - Entity converts to PatientResDTO
+
+   - Wrapped in standardized ApiRes format
+
+6. Error Handling:
+
+   - Duplicate name case shown in alt path
+
+   - Returns 400 with error message
+
+7. Success Flow:
+
+   - Returns 200 with created patient data
+
+The diagram shows:
+
+- Clear layer separation (Controller → Service → Repository)
+
+- DTO transformations
+
+- Auth context integration
+
+- Database interaction
+
+- Response formatting

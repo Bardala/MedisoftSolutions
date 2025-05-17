@@ -1,6 +1,7 @@
 package clinic.dev.backend.controller;
 
-import clinic.dev.backend.model.Visit;
+import clinic.dev.backend.dto.visit.VisitReqDTO;
+import clinic.dev.backend.dto.visit.VisitResDTO;
 import clinic.dev.backend.service.impl.VisitService;
 import clinic.dev.backend.util.ApiRes;
 
@@ -20,43 +21,43 @@ public class VisitController {
   private VisitService visitService;
 
   @PostMapping
-  public ResponseEntity<ApiRes<Visit>> createVisit(@RequestBody Visit visit) {
-    Visit createdVisit = visitService.create(visit);
+  public ResponseEntity<ApiRes<VisitResDTO>> createVisit(@RequestBody VisitReqDTO visit) {
+    VisitResDTO createdVisit = visitService.create(visit);
     return ResponseEntity.ok(new ApiRes<>(createdVisit));
   }
 
-  @PutMapping()
-  public ResponseEntity<ApiRes<Visit>> updateVisit(@RequestBody Visit visit) {
-    Visit updatedVisit = visitService.update(visit);
+  @PutMapping("/{id}")
+  public ResponseEntity<ApiRes<VisitResDTO>> updateVisit(@PathVariable("id") Long id, @RequestBody VisitReqDTO visit) {
+    VisitResDTO updatedVisit = visitService.update(id, visit);
     return ResponseEntity.ok(new ApiRes<>(updatedVisit));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteVisit(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteVisit(@PathVariable("id") Long id) {
     visitService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ApiRes<Visit>> getVisitById(@PathVariable Long id) {
-    Visit visit = visitService.getById(id);
+  public ResponseEntity<ApiRes<VisitResDTO>> getVisitById(@PathVariable("id") Long id) {
+    VisitResDTO visit = visitService.getById(id);
     return ResponseEntity.ok(new ApiRes<>(visit));
   }
 
   @GetMapping
-  public ResponseEntity<ApiRes<List<Visit>>> getAllVisits() {
-    List<Visit> visits = visitService.getAll();
+  public ResponseEntity<ApiRes<List<VisitResDTO>>> getAllVisits() {
+    List<VisitResDTO> visits = visitService.getAll();
     return ResponseEntity.ok(new ApiRes<>(visits));
   }
 
   @GetMapping("/workday")
-  public ResponseEntity<ApiRes<List<Visit>>> getWorkdayVisits(
+  public ResponseEntity<ApiRes<List<VisitResDTO>>> getWorkdayVisits(
       @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
     // If no date is provided, use the current date
     if (date == null) {
       date = LocalDate.now();
     }
-    List<Visit> workdayVisits = visitService.getVisitsForDate(date);
+    List<VisitResDTO> workdayVisits = visitService.getVisitsForDate(date);
     return ResponseEntity.ok(new ApiRes<>(workdayVisits));
   }
 }

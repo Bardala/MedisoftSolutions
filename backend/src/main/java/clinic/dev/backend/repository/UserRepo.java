@@ -36,4 +36,26 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
   List<User> findByClinicIdAndRole(Long clinicId, String role);
 
+  Optional<User> findByIdAndClinicId(Long id, Long clinicId);
+
+  Optional<User> findByUsernameAndClinicId(String username, Long clinicId);
+
+  Optional<User> findByPhoneAndClinicId(String phone, Long clinicId);
+
+  List<User> findAllByClinicId(Long clinicId);
+
+  List<User> findByRoleAndClinicId(String role, Long clinicId);
+
+  void deleteByIdAndClinicId(Long id, Long clinicId);
+
+  boolean existsByIdAndClinicId(Long id, Long clinicId);
+
+  void deleteUserByUsernameAndClinicId(String username, Long clinicId);
+
+  void deleteUserByPhoneAndClinicId(String phone, Long clinicId);
+
+  boolean existsByPhoneAndClinicId(String phone, Long clinicId);
+
+  boolean existsByUsernameAndClinicId(String username, Long clinicId);
+
 }

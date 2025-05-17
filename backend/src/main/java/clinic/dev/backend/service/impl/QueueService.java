@@ -2,92 +2,79 @@ package clinic.dev.backend.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import clinic.dev.backend.model.Patient;
+import clinic.dev.backend.dto.queue.QueueReqDTO;
+import clinic.dev.backend.dto.queue.QueueResDTO;
+import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Queue;
+import clinic.dev.backend.model.Queue.Status;
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.repository.PatientRepo;
 import clinic.dev.backend.repository.QueueRepo;
 import clinic.dev.backend.repository.UserRepo;
-import jakarta.persistence.EntityNotFoundException;
+import clinic.dev.backend.util.AuthContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class QueueService {
 
-  private final QueueRepo queueRepository;
-  private final PatientRepo patientRepository;
-  private final UserRepo userRepository;
+  @Autowired
+  private QueueRepo queueRepository;
+  @Autowired
+  private UserRepo userRepo;
+  @Autowired
+  private AuthContext authContext;
 
-  /**
-   * Adds a patient to the queue for a specific doctor.
-   *
-   * @param patientId   the ID of the patient
-   * @param doctorId    the ID of the doctor
-   * @param assistantId the ID of the assistant (optional)
-   * @return the saved Queue object
-   */
-  public Queue addPatientToQueue(Long patientId, Long doctorId, Long assistantId) {
-    Patient patient = patientRepository.findById(patientId)
-        .orElseThrow(() -> new EntityNotFoundException("Patient not found with ID: " + patientId));
-    User doctor = userRepository.findById(doctorId)
-        .orElseThrow(() -> new EntityNotFoundException("Doctor not found with ID: " + doctorId));
-    User assistant = assistantId != null
-        ? userRepository.findById(assistantId).orElse(null)
-        : null;
-
-    // Calculate the next position in the queue for the doctor
-    int nextPosition = queueRepository.findMaxPositionByDoctorId(doctorId).orElse(0) + 1;
-
-    Queue queue = new Queue();
-    queue.setPatient(patient);
-    queue.setDoctor(doctor);
-    queue.setAssistant(assistant);
-    queue.setPosition(nextPosition);
-    queue.setStatus(Queue.Status.WAITING);
-
-    return queueRepository.save(queue);
+  private Long getClinicId() {
+    return authContext.getClinicId();
   }
 
-  /**
-   * Retrieves the queue for a specific doctor.
-   *
-   * @param doctorId the ID of the doctor
-   * @return the list of Queue objects
-   */
-  public List<Queue> getQueueForDoctor(Long doctorId) {
-    return queueRepository.findByDoctorIdOrderByPositionAsc(doctorId);
+  public QueueResDTO addPatientToQueue(QueueReqDTO req) {
+
+    Integer nextPosition = queueRepository
+        .findMaxPositionByDoctorId(req.doctorId())
+        .orElse(0) + 1;
+    Status status = Status.WAITING;
+
+    User assistant = userRepo
+        .findByIdAndClinicId(req.assistantId(), getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Assistant not found")),
+
+        doctor = userRepo
+            .findByIdAndClinicId(req.doctorId(), getClinicId())
+            .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+    if (!assistant.getRole().equals("Assistant"))
+      throw new BadRequestException("User with id: " + assistant.getId() + " is not an assistant");
+    if (doctor.getRole().equals("Assistant")) // doctor can be Admin or Doctor, but can't be Assistant
+      throw new BadRequestException("User with id: " + assistant.getId() + " is not a doctor");
+
+    Queue queue = req.toEntity(getClinicId(), nextPosition, status);
+    return QueueResDTO.fromEntity(queueRepository.save(queue));
   }
 
-  /**
-   * Updates the status of a queue entry.
-   *
-   * @param queueId the ID of the queue entry
-   * @param status  the new status to set
-   * @return the updated Queue object
-   */
-  public Queue updateQueueStatus(Long queueId, Queue.Status status) {
-    Queue queue = queueRepository.findById(queueId)
-        .orElseThrow(() -> new EntityNotFoundException("Queue entry not found with ID: " + queueId));
+  public List<QueueResDTO> getQueueForDoctor(Long doctorId) {
+    return queueRepository
+        .findByDoctorIdAndClinicIdOrderByPositionAsc(doctorId, getClinicId()).stream()
+        .map(QueueResDTO::fromEntity).toList();
+  }
+
+  public QueueResDTO updateQueueStatus(Long queueId, Status status) {
+    Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
 
     queue.setStatus(status);
-    return queueRepository.save(queue);
+    return QueueResDTO.fromEntity(queueRepository.save(queue));
   }
 
-  /**
-   * Updates the position of a patient in the queue.
-   *
-   * @param queueId     the ID of the queue entry
-   * @param newPosition the new position to set
-   * @return the updated Queue object
-   */
   @Transactional
-  public Queue updateQueuePosition(Long queueId, int newPosition) {
-    Queue queue = queueRepository.findById(queueId)
-        .orElseThrow(() -> new EntityNotFoundException("Queue entry not found with ID: " + queueId));
+  public QueueResDTO updateQueuePosition(Long queueId, int newPosition) {
+    Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
 
     int oldPosition = queue.getPosition();
     Long doctorId = queue.getDoctor().getId();
@@ -117,18 +104,13 @@ public class QueueService {
 
     // Set the new position for the current queue entry
     queue.setPosition(newPosition);
-    return queueRepository.save(queue);
+    return QueueResDTO.fromEntity(queueRepository.save(queue));
   }
 
-  /**
-   * Removes a patient from the queue.
-   *
-   * @param queueId the ID of the queue entry
-   */
   @Transactional
   public void removePatientFromQueue(Long queueId) {
-    Queue queue = queueRepository.findById(queueId)
-        .orElseThrow(() -> new EntityNotFoundException("Queue entry not found with ID: " + queueId));
+    Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
 
     int removedPosition = queue.getPosition();
     Long doctorId = queue.getDoctor().getId();
@@ -137,7 +119,7 @@ public class QueueService {
     List<Queue> doctorQueue = queueRepository.findByDoctorIdOrderByPositionAsc(doctorId);
 
     // Remove the queue entry
-    queueRepository.deleteById(queueId);
+    queueRepository.deleteByIdAndClinicId(queueId, getClinicId());
 
     // Shift positions of entries after the removed position
     for (Queue entry : doctorQueue) {
@@ -146,5 +128,13 @@ public class QueueService {
         queueRepository.save(entry);
       }
     }
+  }
+
+  public QueueResDTO getQueueByPosition(Long doctorId, Integer position) {
+    Queue queue = queueRepository
+        .findByDoctorIdAndPositionAndClinicId(doctorId, position, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
+
+    return QueueResDTO.fromEntity(queue);
   }
 }

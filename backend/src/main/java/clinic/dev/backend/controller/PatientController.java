@@ -27,7 +27,7 @@ public class PatientController {
   private PatientService patientService;
 
   @PostMapping
-  public ResponseEntity<ApiRes<PatientResDTO>> createPatient(@RequestBody PatientReqDTO req) {
+  public ResponseEntity<ApiRes<PatientResDTO>> createPatient(@Valid @RequestBody PatientReqDTO req) {
     PatientResDTO createdPatient = patientService.create(req);
     return ResponseEntity.ok(new ApiRes<>(createdPatient));
   }

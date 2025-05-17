@@ -1,6 +1,7 @@
 package clinic.dev.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -19,5 +20,11 @@ public interface PaymentRepo extends JpaRepository<Payment, Long> {
   void deleteByPatientIdAndClinicId(Long id, Long clinicId);
 
   List<Payment> findByPatientIdAndClinicId(Long id, Long clinicId);
+
+  Optional<Payment> findByIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByIdAndClinicId(Long id, Long clinicId);
+
+  List<Payment> findAllByClinicId(Long clinicId);
 
 }

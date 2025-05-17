@@ -21,7 +21,7 @@ public class VisitDentalProcedure {
 
   @ManyToOne
   @JoinColumn(name = "service_id", nullable = false)
-  private DentalProcedure dentalProcedure;
+  private Procedure dentalProcedure;
 
   @ManyToOne
   @JoinColumn(name = "clinic_id", nullable = false, columnDefinition = "bigint default 1")

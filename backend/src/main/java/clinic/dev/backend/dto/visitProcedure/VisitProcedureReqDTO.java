@@ -1,27 +1,26 @@
 package clinic.dev.backend.dto.visitProcedure;
 
 import clinic.dev.backend.model.Clinic;
-import clinic.dev.backend.model.DentalProcedure;
+import clinic.dev.backend.model.Procedure;
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.model.VisitDentalProcedure;
 import jakarta.validation.constraints.NotNull;
 
 public record VisitProcedureReqDTO(
     @NotNull(message = "Visit ID is required") Long visitId,
-    @NotNull(message = "Service ID is required") Long dentalProcedureId) {
+    @NotNull(message = "Service ID is required") Long procedureId) {
 
-  public VisitDentalProcedure toEntity(Visit visit, DentalProcedure dentalProcedure, Clinic clinic) {
+  public VisitDentalProcedure toEntity(Long clinicId) {
     return new VisitDentalProcedure(
         null,
-        visit,
-        dentalProcedure,
-        clinic);
+        new Visit(visitId),
+        new Procedure(procedureId),
+        new Clinic(clinicId));
   }
 
-  public void updateEntity(VisitDentalProcedure procedure, Visit visit, DentalProcedure dentalProcedure,
-      Clinic clinic) {
-    procedure.setVisit(visit);
-    procedure.setDentalProcedure(dentalProcedure);
-    procedure.setClinic(clinic);
+  public void updateEntity(VisitDentalProcedure vm, Long clinicId) {
+    vm.setVisit(new Visit(visitId));
+    vm.setDentalProcedure(new Procedure(procedureId));
+    vm.setClinic(new Clinic(clinicId));
   }
 }

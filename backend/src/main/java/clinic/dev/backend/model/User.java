@@ -24,6 +24,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
+
+  public User(Long id) {
+    this.id = id;
+  };
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -34,7 +39,9 @@ public class User implements UserDetails {
 
   @NotBlank
   @Pattern(regexp = "^[\\S]+$", message = "Username must not contain spaces")
-  @Column(unique = true, nullable = false)
+  @Column(unique = true, nullable = false, updatable = false)
+  @Size(min = 3, max = 20, message = "Username must be 3-20 characters")
+  @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Only letters, numbers, dots, underscores and hyphens allowed")
   private String username;
 
   @NotBlank(message = ErrorMsg.PASSWORD_IS_REQUIRED)
@@ -49,8 +56,9 @@ public class User implements UserDetails {
   private String phone;
 
   @NotNull
-  @RoleConstraint(message = "Invalid role. Allowed roles are 'Doctor' and 'Assistant'")
-  private String role; // e.g., 'Doctor', 'Assistant'
+  @RoleConstraint(message = "Invalid role. Allowed roles are 'Admin', 'Doctor' and 'Assistant'")
+  // @Enumerated(EnumType.STRING)
+  private String role; // e.g., 'Doctor', 'Assistant', 'Admin'
 
   @Column(nullable = true)
   private String profilePicture;
@@ -82,5 +90,9 @@ public class User implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true; // Implement logic if needed
+  }
+
+  public enum UserRole {
+    Admin, Doctor, Assistant
   }
 }

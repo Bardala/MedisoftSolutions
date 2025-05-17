@@ -2,6 +2,7 @@ package clinic.dev.backend.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -24,4 +25,12 @@ public interface VisitPaymentRepo extends JpaRepository<VisitPayment, Long> {
   void deleteByVisitPatientIdAndClinicId(Long id, Long clinicId);
 
   List<VisitPayment> findByVisitPatientIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByPaymentIdAndClinicId(Long id, Long clinicId);
+
+  Optional<VisitPayment> findByIdAndClinicId(Long id, Long clinicId);
+
+  void deleteByIdAndClinicId(Long id, Long clinicId);
+
+  List<VisitPayment> findAllByClinicId(Long clinicId);
 }

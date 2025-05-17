@@ -1,7 +1,13 @@
 package clinic.dev.backend.service.impl;
 
+import clinic.dev.backend.dto.visitPayment.VisitPaymentReqDTO;
+import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
+import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.model.VisitPayment;
 import clinic.dev.backend.repository.VisitPaymentRepo;
+import clinic.dev.backend.util.AuthContext;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,30 +19,50 @@ public class VisitPaymentService {
   @Autowired
   private VisitPaymentRepo visitPaymentRepo;
 
-  public VisitPayment create(VisitPayment visitPayment) {
-    return visitPaymentRepo.save(visitPayment);
+  @Autowired
+  private AuthContext authContext;
+
+  // ! check existence of Visit and Payment
+  public VisitPaymentResDTO create(VisitPaymentReqDTO req) {
+
+    return VisitPaymentResDTO
+        .fromEntity(visitPaymentRepo.save(req.toEntity(req.visitId(), req.paymentId(), authContext.getClinicId())));
   }
 
-  public VisitPayment update(Long id, VisitPayment updatedVisitPayment) {
-    VisitPayment existingVisitPayment = getById(id);
-    existingVisitPayment.setVisit(updatedVisitPayment.getVisit());
-    existingVisitPayment.setPayment(updatedVisitPayment.getPayment());
-    return visitPaymentRepo.save(existingVisitPayment);
+  @Transactional // ! check existence of Visit and Payment
+  public VisitPaymentResDTO update(Long id, VisitPaymentReqDTO req) {
+    VisitPayment existingVisitPayment = visitPaymentRepo
+        .findByIdAndClinicId(id, authContext.getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("VisitPayment not found"));
+
+    req.updateEntity(existingVisitPayment, authContext.getClinicId());
+
+    return VisitPaymentResDTO.fromEntity(existingVisitPayment);
   }
 
   public void delete(Long id) {
     visitPaymentRepo.deleteById(id);
   }
 
-  public VisitPayment getById(Long id) {
-    return visitPaymentRepo.findById(id).orElseThrow(() -> new RuntimeException("VisitPayment not found"));
+  public VisitPaymentResDTO getById(Long id) {
+    return VisitPaymentResDTO
+        .fromEntity(visitPaymentRepo
+            .findByIdAndClinicId(id, authContext.getClinicId())
+            .orElseThrow(() -> new ResourceNotFoundException("VisitPayment not found")));
   }
 
-  public List<VisitPayment> getByPatientId(Long patientId) {
-    return visitPaymentRepo.findByVisitPatientId(patientId);
+  public List<VisitPaymentResDTO> getByPatientId(Long patientId) {
+    return visitPaymentRepo
+        .findByVisitPatientIdAndClinicId(patientId, authContext.getClinicId()).stream()
+        .map(VisitPaymentResDTO::fromEntity)
+        .toList();
   }
 
-  public List<VisitPayment> getAll() {
-    return visitPaymentRepo.findAll();
+  public List<VisitPaymentResDTO> getAll() {
+    return visitPaymentRepo
+        .findAllByClinicId(authContext.getClinicId())
+        .stream()
+        .map(VisitPaymentResDTO::fromEntity)
+        .toList();
   }
 }

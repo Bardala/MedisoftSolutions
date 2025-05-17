@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// todo: Add unique constraints (medicineId, visitId)
 @Entity
 @Data
 @Table(name = "visit_medicines")

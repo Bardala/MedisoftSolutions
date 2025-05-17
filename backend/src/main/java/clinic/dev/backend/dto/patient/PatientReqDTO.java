@@ -28,12 +28,12 @@ public record PatientReqDTO(
   }
 
   public void updateEntity(Patient patient, Clinic clinic) {
-    patient.setFullName(this.fullName());
-    patient.setPhone(this.phone());
-    patient.setAge(this.age());
-    patient.setAddress(this.address());
-    patient.setMedicalHistory(this.medicalHistory());
-    patient.setNotes(this.notes());
+    patient.setFullName(fullName);
+    patient.setPhone(phone);
+    patient.setAge(age);
+    patient.setAddress(address);
+    patient.setMedicalHistory(medicalHistory);
+    patient.setNotes(notes);
     patient.setClinic(clinic);
   }
 }

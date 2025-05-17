@@ -1,10 +1,10 @@
 package clinic.dev.backend.service.impl;
 
+import clinic.dev.backend.dto.medicine.MedicineReqDTO;
+import clinic.dev.backend.dto.medicine.MedicineResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
-import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.Medicine;
-import clinic.dev.backend.repository.ClinicRepo;
 import clinic.dev.backend.repository.MedicineRepo;
 import clinic.dev.backend.repository.VisitMedicineRepo;
 import clinic.dev.backend.util.AuthContext;
@@ -26,74 +26,66 @@ public class MedicineService {
   @Autowired
   private AuthContext authContext;
 
-  @Autowired
-  private ClinicRepo clinicRepo;
-
-  private Clinic getClinic() {
-    Long clinicId = authContext.getClinicId();
-    return clinicRepo.findById(clinicId).orElseThrow(() -> new ResourceNotFoundException("Clinic not found"));
+  private Long getClinicId() {
+    return authContext.getClinicId();
   }
 
   @Transactional
-  public Medicine create(Medicine medicine) {
-    Long clinicId = authContext.getClinicId();
-    medicine.setClinic(getClinic());
+  public MedicineResDTO create(MedicineReqDTO req) {
+    authContext.validateAdminOrDoctorAccess();
+
+    Medicine medicine = req.toEntity(getClinicId());
 
     // Check if medicine with same name already exists in this clinic
-    if (medicineRepo.existsByMedicineNameAndClinicId(medicine.getMedicineName(), clinicId)) {
+    if (medicineRepo.existsByMedicineNameAndClinicId(medicine.getMedicineName(), getClinicId())) {
       throw new IllegalArgumentException("Medicine with this name already exists in your clinic");
     }
 
-    return medicineRepo.save(medicine);
+    return MedicineResDTO.fromEntity(medicineRepo.save(medicine));
   }
 
   @Transactional
-  public Medicine update(Medicine updatedMedicine) {
-    Long clinicId = authContext.getClinicId();
+  public MedicineResDTO update(Long id, MedicineReqDTO req) {
+    authContext.validateAdminOrDoctorAccess();
 
-    // Verify the medicine belongs to this clinic
-    Medicine existing = medicineRepo.findByIdAndClinicId(updatedMedicine.getId(), clinicId)
-        .orElseThrow(() -> new ResourceNotFoundException("Medicine not found in your clinic"));
+    Medicine medicine = medicineRepo
+        .findByIdAndClinicId(id, getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
 
-    // Ensure clinic ID can't be changed
-    updatedMedicine.setClinic(getClinic());
+    req.updateEntity(medicine);
 
-    // If name changed, check for duplicates
-    if (!existing.getMedicineName().equals(updatedMedicine.getMedicineName()) &&
-        medicineRepo.existsByMedicineNameAndClinicId(updatedMedicine.getMedicineName(), clinicId)) {
-      throw new IllegalArgumentException("Another medicine with this name already exists in your clinic");
-    }
-
-    return medicineRepo.save(updatedMedicine);
+    // If the method is @Transactional (yours is), you can omit save() because
+    // changes are automatically flushed at the end of the transaction:
+    return MedicineResDTO.fromEntity(medicine);
   }
 
   @Transactional
   public void delete(Long id) {
-    Long clinicId = authContext.getClinicId();
+    authContext.validateAdminOrDoctorAccess();
 
     // Verify the medicine belongs to this clinic
-    if (!medicineRepo.existsByIdAndClinicId(id, clinicId)) {
+    if (!medicineRepo.existsByIdAndClinicId(id, getClinicId())) {
       throw new UnauthorizedAccessException("Medicine not found in your clinic");
     }
 
-    visitMedicineRepo.deleteByMedicineIdAndClinicId(id, clinicId);
-    medicineRepo.deleteByIdAndClinicId(id, clinicId);
+    visitMedicineRepo.deleteByMedicineIdAndClinicId(id, getClinicId());
+    medicineRepo.deleteByIdAndClinicId(id, getClinicId());
   }
 
-  public Medicine getById(Long id) {
-    Long clinicId = authContext.getClinicId();
-    return medicineRepo.findByIdAndClinicId(id, clinicId)
+  public MedicineResDTO getById(Long id) {
+    Medicine medicine = medicineRepo
+        .findByIdAndClinicId(id, getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Medicine not found in your clinic"));
+
+    return MedicineResDTO.fromEntity(medicine);
   }
 
-  public List<Medicine> getAll() {
-    Long clinicId = authContext.getClinicId();
-    return medicineRepo.findAllByClinicId(clinicId);
+  public List<MedicineResDTO> getAll() {
+    return medicineRepo.findAllByClinicId(getClinicId()).stream().map(MedicineResDTO::fromEntity).toList();
   }
 
   // Additional useful methods
   public List<Medicine> searchByName(String name) {
-    Long clinicId = authContext.getClinicId();
-    return medicineRepo.findByMedicineNameContainingIgnoreCaseAndClinicId(name, clinicId);
+    return medicineRepo.findByMedicineNameContainingIgnoreCaseAndClinicId(name, getClinicId());
   }
 }

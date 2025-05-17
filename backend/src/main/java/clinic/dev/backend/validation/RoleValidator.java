@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RoleValidator implements ConstraintValidator<RoleConstraint, String> {
 
-  private final List<String> acceptedRoles = Arrays.asList("Doctor", "Assistant");
+  private final List<String> acceptedRoles = Arrays.asList("Doctor", "Assistant", "Admin");
 
   @Override
   public void initialize(RoleConstraint constraintAnnotation) {

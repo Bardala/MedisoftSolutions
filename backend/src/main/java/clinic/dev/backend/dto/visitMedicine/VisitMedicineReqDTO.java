@@ -10,17 +10,17 @@ public record VisitMedicineReqDTO(
     @NotNull(message = "Visit ID is required") Long visitId,
     @NotNull(message = "Medicine ID is required") Long medicineId) {
 
-  public VisitMedicine toEntity(Visit visit, Medicine medicine, Clinic clinic) {
+  public VisitMedicine toEntity(Long clinicId) {
     return new VisitMedicine(
         null,
-        visit,
-        medicine,
-        clinic);
+        new Visit(visitId),
+        new Medicine(medicineId),
+        new Clinic(clinicId));
   }
 
-  public void updateEntity(VisitMedicine visitMedicine, Visit visit, Medicine medicine, Clinic clinic) {
-    visitMedicine.setVisit(visit);
-    visitMedicine.setMedicine(medicine);
-    visitMedicine.setClinic(clinic);
+  public void updateEntity(VisitMedicine vm, Long clinicId) {
+    vm.setVisit(new Visit(visitId));
+    vm.setMedicine(new Medicine(medicineId));
+    vm.setClinic(new Clinic(clinicId));
   }
 }

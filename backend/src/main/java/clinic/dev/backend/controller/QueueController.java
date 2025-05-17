@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import clinic.dev.backend.dto.queue.AddPatientToQueueReq;
-import clinic.dev.backend.model.Queue;
+import clinic.dev.backend.dto.queue.QueueReqDTO;
+import clinic.dev.backend.dto.queue.QueueResDTO;
+import clinic.dev.backend.model.Queue.Status;
 import clinic.dev.backend.service.impl.QueueService;
 import clinic.dev.backend.util.ApiRes;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,67 +28,44 @@ public class QueueController {
 
   private final QueueService queueService;
 
-  /**
-   * Adds a patient to the queue.
-   *
-   * @param request the request body containing patient, doctor, and assistant IDs
-   * @return the saved Queue object
-   */
   @PostMapping
-  public ResponseEntity<ApiRes<Queue>> addPatientToQueue(@RequestBody AddPatientToQueueReq request) {
-    Queue queue = queueService.addPatientToQueue(
-        request.getPatientId(),
-        request.getDoctorId(),
-        request.getAssistantId());
+  public ResponseEntity<ApiRes<QueueResDTO>> addPatientToQueue(@RequestBody @Valid QueueReqDTO request) {
+    QueueResDTO queue = queueService.addPatientToQueue(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiRes<>(queue));
   }
 
-  /**
-   * Retrieves the queue for a specific doctor.
-   *
-   * @param doctorId the ID of the doctor
-   * @return the list of Queue objects
-   */
   @GetMapping("/doctor/{doctorId}")
-  public ResponseEntity<ApiRes<List<Queue>>> getQueueForDoctor(@PathVariable Long doctorId) {
-    List<Queue> queue = queueService.getQueueForDoctor(doctorId);
+  public ResponseEntity<ApiRes<List<QueueResDTO>>> getQueueForDoctor(@PathVariable("doctorId") Long doctorId) {
+    List<QueueResDTO> queue = queueService.getQueueForDoctor(doctorId);
     return ResponseEntity.ok(new ApiRes<>(queue));
   }
 
-  /**
-   * Updates the position of a patient in the queue.
-   *
-   * @param queueId     the ID of the queue entry
-   * @param newPosition the new position
-   * @return the updated Queue object
-   */
+  @GetMapping("/doctor/{doctorId}/queue/{position}")
+  public ResponseEntity<ApiRes<QueueResDTO>> getQueueByPosition(
+      @PathVariable("doctorId") Long doctorId,
+      @PathVariable("position") Integer position) {
+
+    QueueResDTO queue = queueService.getQueueByPosition(doctorId, position);
+    return ResponseEntity.ok(new ApiRes<>(queue));
+  }
+
   @PutMapping("/{queueId}/position")
-  public ResponseEntity<ApiRes<Queue>> updateQueuePosition(@PathVariable Long queueId, @RequestBody int newPosition) {
-    Queue queue = queueService.updateQueuePosition(queueId, newPosition);
+  public ResponseEntity<ApiRes<QueueResDTO>> updateQueuePosition(@PathVariable("queueId") Long queueId,
+      @RequestBody int newPosition) {
+    System.out.println("New Position: " + newPosition);
+    QueueResDTO queue = queueService.updateQueuePosition(queueId, newPosition);
     return ResponseEntity.ok(new ApiRes<>(queue));
   }
 
-  /**
-   * Updates the status of a queue entry.
-   *
-   * @param queueId the ID of the queue entry
-   * @param status  the new status
-   * @return the updated Queue object
-   */
   @PutMapping("/{queueId}/status")
-  public ResponseEntity<ApiRes<Queue>> updateQueueStatus(@PathVariable Long queueId,
-      @RequestBody Queue.Status status) {
-    Queue queue = queueService.updateQueueStatus(queueId, status);
+  public ResponseEntity<ApiRes<QueueResDTO>> updateQueueStatus(@PathVariable("queueId") Long queueId,
+      @RequestBody Status status) {
+    QueueResDTO queue = queueService.updateQueueStatus(queueId, status);
     return ResponseEntity.ok(new ApiRes<>(queue));
   }
 
-  /**
-   * Removes a patient from the queue.
-   *
-   * @param queueId the ID of the queue entry
-   */
   @DeleteMapping("/{queueId}")
-  public ResponseEntity<ApiRes<Void>> removePatientFromQueue(@PathVariable Long queueId) {
+  public ResponseEntity<ApiRes<Void>> removePatientFromQueue(@PathVariable("queueId") Long queueId) {
     queueService.removePatientFromQueue(queueId);
     return ResponseEntity.noContent().build();
   }
