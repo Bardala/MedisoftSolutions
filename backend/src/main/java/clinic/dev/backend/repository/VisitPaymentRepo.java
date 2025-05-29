@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.model.VisitPayment;
 
@@ -33,4 +36,30 @@ public interface VisitPaymentRepo extends JpaRepository<VisitPayment, Long> {
   void deleteByIdAndClinicId(Long id, Long clinicId);
 
   List<VisitPayment> findAllByClinicId(Long clinicId);
+
+  @Query("""
+          SELECT new clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO(
+              vp.id,
+              v.id,
+
+              p.id,
+              p.amount,
+              pt.fullName,
+              pt.phone,
+              u.id,
+              u.name,
+              p.createdAt,
+
+              c.id
+          )
+          FROM VisitPayment vp
+          JOIN vp.visit v
+          JOIN vp.payment p
+          JOIN p.patient pt
+          JOIN p.recordedBy u
+          JOIN vp.clinic c
+          WHERE vp.id = :id AND c.id = :clinicId
+      """)
+  Optional<VisitPaymentResDTO> findVisitPaymentDtoByIdAndClinicId(@Param("id") Long id,
+      @Param("clinicId") Long clinicId);
 }

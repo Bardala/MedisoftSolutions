@@ -73,6 +73,12 @@ public class PaymentController {
     return ResponseEntity.ok(new ApiRes<>(workdayPaymentsSummary));
   }
 
+  @GetMapping("/batch")
+  public ResponseEntity<ApiRes<List<PaymentResDTO>>> getPaymentsByIds(
+      @RequestParam List<Long> ids) {
+    List<PaymentResDTO> payments = paymentService.getPaymentsByIds(ids);
+    return ResponseEntity.ok(new ApiRes<>(payments));
+  }
 }
 
 @Data

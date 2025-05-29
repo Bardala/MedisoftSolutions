@@ -60,4 +60,11 @@ public class VisitController {
     List<VisitResDTO> workdayVisits = visitService.getVisitsForDate(date);
     return ResponseEntity.ok(new ApiRes<>(workdayVisits));
   }
+
+  @GetMapping("/batch")
+  public ResponseEntity<ApiRes<List<VisitResDTO>>> getVisitsByIds(
+      @RequestParam List<Long> ids) {
+    List<VisitResDTO> visits = visitService.getVisitsByIds(ids);
+    return ResponseEntity.ok(new ApiRes<>(visits));
+  }
 }

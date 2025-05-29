@@ -15,4 +15,5 @@ public interface DentalProcedureRepo extends JpaRepository<Procedure, Long> {
 
   List<Procedure> findAllByClinicId(Long clinicId);
 
+  List<Procedure> findByIdInAndClinicId(List<Long> ids, Long clinicId);
 }

@@ -42,4 +42,6 @@ public interface PatientRepo extends JpaRepository<Patient, Long>, JpaSpecificat
   boolean existsByIdAndClinicId(Long id, Long clinicId);
 
   void deleteByIdAndClinicId(Long id, Long clinicId);
+
+  List<Patient> findByIdInAndClinicId(List<Long> ids, Long clinicId);
 }

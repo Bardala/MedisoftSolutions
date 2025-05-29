@@ -7,6 +7,7 @@ import clinic.dev.backend.model.VisitMedicine;
 import clinic.dev.backend.repository.VisitMedicineRepo;
 import clinic.dev.backend.service.VisitMedicineServiceBase;
 import clinic.dev.backend.util.AuthContext;
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,10 +45,28 @@ public class VisitMedicineService implements VisitMedicineServiceBase {
   }
 
   @Override // todo: check existence of Visit and Medicine
-  public VisitMedicineResDTO save(VisitMedicineReqDTO req) {
-    VisitMedicine vm = req.toEntity(getClinicId());
+  @Transactional
+  public VisitMedicineResDTO create(VisitMedicineReqDTO req) {
+    Long clinicId = getClinicId();
+    VisitMedicine vm = req.toEntity(clinicId);
+    vm = visitMedicineRepository.save(vm);
 
-    return VisitMedicineResDTO.fromEntity(visitMedicineRepository.save(vm));
+    return visitMedicineRepository.findVisitMedicineDtoByIdAndClinicId(vm.getId(), clinicId)
+        .orElseThrow(() -> new RuntimeException("VisitMedicine not found after save"));
+  }
+
+  @Transactional
+  public VisitMedicineResDTO update(Long id, VisitMedicineReqDTO req) {
+    Long clinicId = getClinicId();
+
+    VisitMedicine vm = visitMedicineRepository.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("VisitMedicine not found"));
+
+    req.updateEntity(vm, clinicId);
+    visitMedicineRepository.save(vm);
+
+    return visitMedicineRepository.findVisitMedicineDtoByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new RuntimeException("Failed to load visit medicine after update"));
   }
 
   @Override

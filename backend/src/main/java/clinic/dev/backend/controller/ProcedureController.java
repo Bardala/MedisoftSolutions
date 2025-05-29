@@ -17,37 +17,43 @@ import java.util.List;
 public class ProcedureController {
 
     @Autowired
-    private ProcedureService serviceService;
+    private ProcedureService procedureService;
 
     @PostMapping
     public ResponseEntity<ApiRes<ProcedureResDTO>> createService(@RequestBody @Valid ProcedureReqDTO service) {
-        ProcedureResDTO createdDentalProcedure = serviceService.create(service);
+        ProcedureResDTO createdDentalProcedure = procedureService.create(service);
         return ResponseEntity.ok(new ApiRes<>(createdDentalProcedure));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiRes<ProcedureResDTO>> updateDentalProcedure(@PathVariable("id") Long id,
             @RequestBody @Valid ProcedureReqDTO service) {
-        ProcedureResDTO updatedDentalProcedure = serviceService.update(id, service);
+        ProcedureResDTO updatedDentalProcedure = procedureService.update(id, service);
         return ResponseEntity.ok(new ApiRes<>(updatedDentalProcedure));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDentalProcedure(@PathVariable("id") Long id) {
-        serviceService.delete(id);
+        procedureService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiRes<ProcedureResDTO>> getDentalProcedureById(@PathVariable("id") Long id) {
-        ProcedureResDTO service = serviceService.getById(id);
+        ProcedureResDTO service = procedureService.getById(id);
         return ResponseEntity.ok(new ApiRes<>(service));
     }
 
     @GetMapping
     public ResponseEntity<ApiRes<List<ProcedureResDTO>>> getAllDentalProcedures() {
-        List<ProcedureResDTO> services = serviceService.getAll();
+        List<ProcedureResDTO> services = procedureService.getAll();
         return ResponseEntity.ok(new ApiRes<>(services));
     }
 
+    @GetMapping("/batch")
+    public ResponseEntity<ApiRes<List<ProcedureResDTO>>> getProceduresByIds(
+            @RequestParam("ids") List<Long> ids) {
+        List<ProcedureResDTO> procedures = procedureService.getProceduresByIds(ids);
+        return ResponseEntity.ok(new ApiRes<>(procedures));
+    }
 }

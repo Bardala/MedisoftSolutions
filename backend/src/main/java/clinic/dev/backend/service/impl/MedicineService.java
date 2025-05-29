@@ -4,6 +4,7 @@ import clinic.dev.backend.dto.medicine.MedicineReqDTO;
 import clinic.dev.backend.dto.medicine.MedicineResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Medicine;
 import clinic.dev.backend.repository.MedicineRepo;
 import clinic.dev.backend.repository.VisitMedicineRepo;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MedicineService {
@@ -45,12 +48,12 @@ public class MedicineService {
   }
 
   @Transactional
-  public MedicineResDTO update(Long id, MedicineReqDTO req) {
+  public MedicineResDTO update(MedicineReqDTO req) {
     authContext.validateAdminOrDoctorAccess();
 
     Medicine medicine = medicineRepo
-        .findByIdAndClinicId(id, getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
+        .findByMedicineNameAndClinicId(req.medicineName(), getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Medicine with this name not found"));
 
     req.updateEntity(medicine);
 
@@ -87,5 +90,31 @@ public class MedicineService {
   // Additional useful methods
   public List<Medicine> searchByName(String name) {
     return medicineRepo.findByMedicineNameContainingIgnoreCaseAndClinicId(name, getClinicId());
+  }
+
+  public List<MedicineResDTO> getMedicinesByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      throw new BadRequestException("Medicine IDs cannot be empty");
+    }
+
+    List<Medicine> medicines = medicineRepo.findByIdInAndClinicId(ids, authContext.getClinicId());
+
+    if (medicines.size() != ids.size()) {
+      Set<Long> foundIds = medicines.stream()
+          .map(Medicine::getId)
+          .collect(Collectors.toSet());
+
+      List<Long> missingIds = ids.stream()
+          .filter(id -> !foundIds.contains(id))
+          .collect(Collectors.toList());
+
+      throw new ResourceNotFoundException(
+          "Some Medicine not found or not accessible: " + missingIds);
+    }
+
+    return medicines.stream()
+        .map(MedicineResDTO::fromEntity)
+        .collect(Collectors.toList());
+
   }
 }

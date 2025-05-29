@@ -25,10 +25,10 @@ public class MedicineController {
     return ResponseEntity.ok(new ApiRes<>(createdMedicine));
   }
 
-  @PutMapping("{id}")
-  public ResponseEntity<ApiRes<MedicineResDTO>> updateMedicine(@PathVariable("id") Long id,
+  @PutMapping
+  public ResponseEntity<ApiRes<MedicineResDTO>> updateMedicine(
       @Valid @RequestBody MedicineReqDTO medicine) {
-    MedicineResDTO updatedMedicine = medicineService.update(id, medicine);
+    MedicineResDTO updatedMedicine = medicineService.update(medicine);
     return ResponseEntity.ok(new ApiRes<>(updatedMedicine));
   }
 
@@ -47,6 +47,13 @@ public class MedicineController {
   @GetMapping
   public ResponseEntity<ApiRes<List<MedicineResDTO>>> getAllMedicines() {
     List<MedicineResDTO> medicines = medicineService.getAll();
+    return ResponseEntity.ok(new ApiRes<>(medicines));
+  }
+
+  @GetMapping("/batch")
+  public ResponseEntity<ApiRes<List<MedicineResDTO>>> getMedicinesByIds(
+      @RequestParam("ids") List<Long> ids) {
+    List<MedicineResDTO> medicines = medicineService.getMedicinesByIds(ids);
     return ResponseEntity.ok(new ApiRes<>(medicines));
   }
 }

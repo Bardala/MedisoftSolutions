@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 })
 @NoArgsConstructor
 @AllArgsConstructor
-public class Procedure {
+public class Procedure { // todo: Add createdAt
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

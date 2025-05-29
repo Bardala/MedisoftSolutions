@@ -3,6 +3,7 @@ package clinic.dev.backend.service.impl;
 import clinic.dev.backend.dto.visitProcedure.VisitProcedureReqDTO;
 import clinic.dev.backend.dto.visitProcedure.VisitProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.model.VisitDentalProcedure;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.util.AuthContext;
 import jakarta.transaction.Transactional;
@@ -25,13 +26,28 @@ public class VisitProcedureService {
   private AuthContext authContext;
 
   // todo: check existence of Visit and Procedure
+  @Transactional
   public VisitProcedureResDTO create(VisitProcedureReqDTO req) {
+    Long clinicId = authContext.getClinicId();
+    VisitDentalProcedure vdp = req.toEntity(clinicId);
+    vdp = visitDentalProcedureRepo.save(vdp);
 
-    return VisitProcedureResDTO
-        .fromEntity(
-            visitDentalProcedureRepo
-                .save(req
-                    .toEntity(authContext.getClinicId())));
+    return visitDentalProcedureRepo.findVisitProcedureDtoByIdAndClinicId(vdp.getId(), clinicId)
+        .orElseThrow(() -> new RuntimeException("VisitProcedure not found after save"));
+  }
+
+  @Transactional
+  public VisitProcedureResDTO update(Long id, VisitProcedureReqDTO req) {
+    Long clinicId = authContext.getClinicId();
+
+    VisitDentalProcedure vdp = visitDentalProcedureRepo.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("VisitProcedure not found"));
+
+    req.updateEntity(vdp, clinicId);
+    visitDentalProcedureRepo.save(vdp);
+
+    return visitDentalProcedureRepo.findVisitProcedureDtoByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new RuntimeException("Failed to load visit procedure after update"));
   }
 
   // ? I think this method do nothing

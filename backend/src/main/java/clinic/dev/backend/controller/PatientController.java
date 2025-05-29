@@ -95,4 +95,11 @@ public class PatientController {
     Page<PatientResDTO> patients = patientService.searchPatients(searchParams, page, size);
     return ResponseEntity.ok(new ApiRes<>(patients));
   }
+
+  @GetMapping("/batch")
+  public ResponseEntity<ApiRes<List<PatientResDTO>>> getPatientsByIds(
+      @RequestParam List<Long> ids) {
+    List<PatientResDTO> patients = patientService.getPatientsByIds(ids);
+    return ResponseEntity.ok(new ApiRes<>(patients));
+  }
 }

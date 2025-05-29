@@ -58,4 +58,6 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
   boolean existsByUsernameAndClinicId(String username, Long clinicId);
 
+  List<User> findByIdInAndClinicId(List<Long> ids, Long clinicId);
+
 }

@@ -8,10 +8,14 @@ public record PaymentResDTO(
     Long id,
     Long clinicId,
     Double amount,
+
     Long patientId,
     String patientName,
+    String patientPhone,
+
     Long recordedById,
     String recordedByName,
+
     LocalDateTime createdAt) {
 
   public static PaymentResDTO fromEntity(Payment payment) {
@@ -19,10 +23,14 @@ public record PaymentResDTO(
         payment.getId(),
         payment.getClinic().getId(),
         payment.getAmount(),
+
         payment.getPatient().getId(),
         payment.getPatient().getFullName(),
+        payment.getPatient().getPhone(),
+
         payment.getRecordedBy().getId(),
         payment.getRecordedBy().getName(),
+
         payment.getCreatedAt());
   }
 }

@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
   }
 
+  @ExceptionHandler(UnauthorizedAccessException.class)
+  public ResponseEntity<ApiRes<Object>> handleUnauthorizedAccessException(RuntimeException ex) {
+    ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+  }
+
   @ExceptionHandler(BadRequestException.class)
   public ResponseEntity<ApiRes<Object>> handleBadRequestException(BadRequestException ex) {
     ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));

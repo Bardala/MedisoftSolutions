@@ -69,4 +69,10 @@ public class QueueController {
     queueService.removePatientFromQueue(queueId);
     return ResponseEntity.noContent().build();
   }
+
+  @GetMapping("/{patientId}/checkIn")
+  public ResponseEntity<ApiRes<Boolean>> CheckPatientInQueue(@PathVariable("patientId") Long patientId) {
+    Boolean res = queueService.CheckPatientInQueue(patientId);
+    return ResponseEntity.ok(new ApiRes<>(res));
+  }
 }

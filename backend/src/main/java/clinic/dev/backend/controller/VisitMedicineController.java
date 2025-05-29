@@ -4,6 +4,7 @@ import clinic.dev.backend.dto.visitMedicine.VisitMedicineReqDTO;
 import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
 import clinic.dev.backend.service.impl.VisitMedicineService;
 import clinic.dev.backend.util.ApiRes;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,32 +27,32 @@ public class VisitMedicineController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ApiRes<VisitMedicineResDTO>> getVisitMedicineById(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<VisitMedicineResDTO>> getVisitMedicineById(@PathVariable("id") Long id) {
     VisitMedicineResDTO vm = visitMedicineService.findById(id);
     return ResponseEntity.ok(new ApiRes<>(vm));
   }
 
   @PostMapping
   public ResponseEntity<ApiRes<VisitMedicineResDTO>> createVisitMedicine(
-      @RequestBody VisitMedicineReqDTO visitMedicine) {
-    VisitMedicineResDTO savedVisitMedicine = visitMedicineService.save(visitMedicine);
+      @Valid @RequestBody VisitMedicineReqDTO visitMedicine) {
+    VisitMedicineResDTO savedVisitMedicine = visitMedicineService.create(visitMedicine);
     return new ResponseEntity<>(new ApiRes<>(savedVisitMedicine), HttpStatus.CREATED);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ApiRes<Void>> deleteVisitMedicine(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Void>> deleteVisitMedicine(@PathVariable("id") Long id) {
     visitMedicineService.deleteById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @GetMapping("/visit/{visitId}")
-  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByVisit(@PathVariable Long visitId) {
+  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByVisit(@PathVariable("visitId") Long visitId) {
     List<VisitMedicineResDTO> visitMedicines = visitMedicineService.getByVisit(visitId);
     return ResponseEntity.ok(new ApiRes<>(visitMedicines));
   }
 
   @GetMapping("/medicine/{medicineId}")
-  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByMedicine(@PathVariable Long medicineId) {
+  public ResponseEntity<ApiRes<List<VisitMedicineResDTO>>> getByMedicine(@PathVariable("medicineId") Long medicineId) {
     List<VisitMedicineResDTO> visitMedicines = visitMedicineService.getByMedicine(medicineId);
     return ResponseEntity.ok(new ApiRes<>(visitMedicines));
   }

@@ -2,7 +2,7 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
-import clinic.dev.backend.service.UserServiceBase;
+import clinic.dev.backend.service.impl.UserService;
 import clinic.dev.backend.util.ApiRes;
 import jakarta.validation.Valid;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class UserController {
 
   @Autowired
-  private UserServiceBase userService;
+  private UserService userService;
 
   @GetMapping("/health")
   public ResponseEntity<String> health() {
@@ -97,5 +97,12 @@ public class UserController {
   public ResponseEntity<Void> resetPassword(@RequestBody String newPassword) {
     userService.resetPassword(newPassword);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping("/batch")
+  public ResponseEntity<ApiRes<List<UserResDTO>>> getUsersByIds(
+      @RequestParam List<Long> ids) {
+    List<UserResDTO> users = userService.getUsersByIds(ids);
+    return ResponseEntity.ok(new ApiRes<>(users));
   }
 }

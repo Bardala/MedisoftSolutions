@@ -23,25 +23,33 @@ public class VisitPaymentService {
   private AuthContext authContext;
 
   // ! check existence of Visit and Payment
+  @Transactional
   public VisitPaymentResDTO create(VisitPaymentReqDTO req) {
+    Long clinicId = authContext.getClinicId();
+    VisitPayment visitPayment = req.toEntity(req.visitId(), req.paymentId(), clinicId);
+    visitPayment = visitPaymentRepo.save(visitPayment);
 
-    return VisitPaymentResDTO
-        .fromEntity(visitPaymentRepo.save(req.toEntity(req.visitId(), req.paymentId(), authContext.getClinicId())));
+    return visitPaymentRepo.findVisitPaymentDtoByIdAndClinicId(visitPayment.getId(), clinicId)
+        .orElseThrow(() -> new RuntimeException("VisitPayment not found after save"));
   }
 
-  @Transactional // ! check existence of Visit and Payment
+  @Transactional
   public VisitPaymentResDTO update(Long id, VisitPaymentReqDTO req) {
-    VisitPayment existingVisitPayment = visitPaymentRepo
-        .findByIdAndClinicId(id, authContext.getClinicId())
+    Long clinicId = authContext.getClinicId();
+
+    VisitPayment existingVisitPayment = visitPaymentRepo.findByIdAndClinicId(id, clinicId)
         .orElseThrow(() -> new ResourceNotFoundException("VisitPayment not found"));
 
-    req.updateEntity(existingVisitPayment, authContext.getClinicId());
+    req.updateEntity(existingVisitPayment, clinicId);
+    visitPaymentRepo.save(existingVisitPayment);
 
-    return VisitPaymentResDTO.fromEntity(existingVisitPayment);
+    return visitPaymentRepo.findVisitPaymentDtoByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new RuntimeException("Failed to load visit payment after update"));
   }
 
+  @Transactional
   public void delete(Long id) {
-    visitPaymentRepo.deleteById(id);
+    visitPaymentRepo.deleteByIdAndClinicId(id, authContext.getClinicId());
   }
 
   public VisitPaymentResDTO getById(Long id) {

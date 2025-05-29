@@ -9,7 +9,7 @@ public interface VisitMedicineServiceBase {
 
   VisitMedicineResDTO findById(Long id);
 
-  VisitMedicineResDTO save(VisitMedicineReqDTO req);
+  VisitMedicineResDTO create(VisitMedicineReqDTO req);
 
   void deleteById(Long id);
 

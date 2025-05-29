@@ -9,6 +9,7 @@ import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
 import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
 import clinic.dev.backend.dto.visitProcedure.VisitProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
@@ -28,6 +29,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -270,5 +272,34 @@ public class PatientService {
   @Transactional(readOnly = true)
   public List<Patient> getPatientsAtThisPeriod(LocalDateTime start, LocalDateTime end, Long clinicId) {
     return patientRepo.findByCreatedAtBetweenAndClinicId(start, end, clinicId);
+  }
+
+  public List<PatientResDTO> getPatientsByIds(List<Long> ids) {
+    // Validate input
+    if (ids == null || ids.isEmpty()) {
+      throw new BadRequestException("Patient IDs cannot be empty");
+    }
+
+    // Fetch patients in a single query
+    List<Patient> patients = patientRepo.findByIdInAndClinicId(ids, authContext.getClinicId());
+
+    // Handle missing patients
+    if (patients.size() != ids.size()) {
+      Set<Long> foundIds = patients.stream()
+          .map(Patient::getId)
+          .collect(Collectors.toSet());
+
+      List<Long> missingIds = ids.stream()
+          .filter(id -> !foundIds.contains(id))
+          .collect(Collectors.toList());
+
+      throw new ResourceNotFoundException(
+          "Some patients not found or not accessible: " + missingIds);
+    }
+
+    return patients.stream()
+        .map(PatientResDTO::fromEntity)
+        .collect(Collectors.toList());
+
   }
 }

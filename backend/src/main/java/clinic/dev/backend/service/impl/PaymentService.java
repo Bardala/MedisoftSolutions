@@ -3,6 +3,7 @@ package clinic.dev.backend.service.impl;
 import clinic.dev.backend.dto.payment.PaymentReqDTO;
 import clinic.dev.backend.dto.payment.PaymentResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.repository.PaymentRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,26 +32,32 @@ public class PaymentService {
   @Autowired
   private AuthContext authContext;
 
-  @Transactional
-  public PaymentResDTO create(PaymentReqDTO req) {
-    Payment payment = req.toEntity(getClinicId());
-
-    return PaymentResDTO.fromEntity(paymentRepo.save(payment));
-  }
-
   private Long getClinicId() {
     return authContext.getClinicId();
   }
 
   @Transactional
+  public PaymentResDTO create(PaymentReqDTO req) {
+    Long clinicId = getClinicId();
+    Payment payment = req.toEntity(clinicId);
+    payment = paymentRepo.save(payment);
+
+    return paymentRepo.findPaymentDtoByIdAndClinicId(payment.getId(), clinicId)
+        .orElseThrow(() -> new RuntimeException("Payment not found after save"));
+  }
+
+  @Transactional
   public PaymentResDTO update(Long id, PaymentReqDTO req) {
+    Long clinicId = getClinicId();
 
-    Payment payment = paymentRepo.findByIdAndClinicId(id, getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
+    Payment payment = paymentRepo.findByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 
-    req.updateEntity(payment, getClinicId());
+    req.updateEntity(payment, clinicId);
+    paymentRepo.save(payment);
 
-    return PaymentResDTO.fromEntity(paymentRepo.save(payment));
+    return paymentRepo.findPaymentDtoByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new RuntimeException("Failed to load payment after update"));
   }
 
   @Transactional
@@ -149,4 +157,29 @@ public class PaymentService {
         .collect(Collectors.toList());
   }
 
+  public List<PaymentResDTO> getPaymentsByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      throw new BadRequestException("Payment IDs cannot be empty");
+    }
+
+    List<Payment> payments = paymentRepo.findByIdInAndClinicId(ids, authContext.getClinicId());
+
+    if (payments.size() != ids.size()) {
+      Set<Long> foundIds = payments.stream()
+          .map(Payment::getId)
+          .collect(Collectors.toSet());
+
+      List<Long> missingIds = ids.stream()
+          .filter(id -> !foundIds.contains(id))
+          .collect(Collectors.toList());
+
+      throw new ResourceNotFoundException(
+          "Some Payment not found or not accessible: " + missingIds);
+    }
+
+    return payments.stream()
+        .map(PaymentResDTO::fromEntity)
+        .collect(Collectors.toList());
+
+  }
 }

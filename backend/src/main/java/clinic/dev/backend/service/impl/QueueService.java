@@ -33,28 +33,35 @@ public class QueueService {
     return authContext.getClinicId();
   }
 
+  @Transactional
   public QueueResDTO addPatientToQueue(QueueReqDTO req) {
-
     Integer nextPosition = queueRepository
         .findMaxPositionByDoctorId(req.doctorId())
         .orElse(0) + 1;
     Status status = Status.WAITING;
 
-    User assistant = userRepo
-        .findByIdAndClinicId(req.assistantId(), getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("Assistant not found")),
+    User doctor = userRepo
+        .findByIdAndClinicId(req.doctorId(), getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
-        doctor = userRepo
-            .findByIdAndClinicId(req.doctorId(), getClinicId())
-            .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
-
-    if (!assistant.getRole().equals("Assistant"))
-      throw new BadRequestException("User with id: " + assistant.getId() + " is not an assistant");
     if (doctor.getRole().equals("Assistant")) // doctor can be Admin or Doctor, but can't be Assistant
-      throw new BadRequestException("User with id: " + assistant.getId() + " is not a doctor");
+      throw new BadRequestException("User with id: " + doctor.getId() + " is not a doctor");
+
+    if (req.assistantId() != null) {
+      User assistant = userRepo
+          .findByIdAndClinicId(req.assistantId(), getClinicId())
+          .orElseThrow(() -> new ResourceNotFoundException("Assistant not found"));
+
+      if (!assistant.getRole().equals("Assistant"))
+        throw new BadRequestException("User with id: " + assistant.getId() + " is not an assistant");
+    }
 
     Queue queue = req.toEntity(getClinicId(), nextPosition, status);
-    return QueueResDTO.fromEntity(queueRepository.save(queue));
+
+    queueRepository.save(queue);
+
+    return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
+        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
   }
 
   public List<QueueResDTO> getQueueForDoctor(Long doctorId) {
@@ -63,12 +70,15 @@ public class QueueService {
         .map(QueueResDTO::fromEntity).toList();
   }
 
+  @Transactional
   public QueueResDTO updateQueueStatus(Long queueId, Status status) {
     Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
 
     queue.setStatus(status);
-    return QueueResDTO.fromEntity(queueRepository.save(queue));
+
+    return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
+        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
   }
 
   @Transactional
@@ -104,7 +114,8 @@ public class QueueService {
 
     // Set the new position for the current queue entry
     queue.setPosition(newPosition);
-    return QueueResDTO.fromEntity(queueRepository.save(queue));
+    return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
+        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
   }
 
   @Transactional
@@ -135,6 +146,11 @@ public class QueueService {
         .findByDoctorIdAndPositionAndClinicId(doctorId, position, getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
 
-    return QueueResDTO.fromEntity(queue);
+    return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
+        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
+  }
+
+  public Boolean CheckPatientInQueue(Long patientId) {
+    return queueRepository.existsByPatientIdAndClinicId(patientId, getClinicId());
   }
 }

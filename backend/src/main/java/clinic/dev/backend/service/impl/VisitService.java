@@ -3,7 +3,7 @@ package clinic.dev.backend.service.impl;
 import clinic.dev.backend.dto.visit.VisitReqDTO;
 import clinic.dev.backend.dto.visit.VisitResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
-
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,10 +41,10 @@ public class VisitService {
     Long clinicId = authContext.getClinicId();
 
     Visit visit = req.toEntity(clinicId);
+    visit = visitRepo.save(visit);
 
-    visitRepo.save(visit);
-
-    return VisitResDTO.fromEntity(visit);
+    return visitRepo.findDtoByIdAndClinicId(visit.getId(), clinicId)
+        .orElseThrow(() -> new RuntimeException("Visit not found after save"));
   }
 
   @Transactional
@@ -54,10 +55,10 @@ public class VisitService {
         .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
 
     req.updateEntity(visit, clinicId);
-
     visitRepo.save(visit);
 
-    return VisitResDTO.fromEntity(visit);
+    return visitRepo.findDtoByIdAndClinicId(id, clinicId)
+        .orElseThrow(() -> new RuntimeException("Failed to load visit after update"));
   }
 
   @Transactional
@@ -70,10 +71,10 @@ public class VisitService {
   public VisitResDTO getById(Long id) {
     Long clinicId = authContext.getClinicId();
 
-    Visit visit = visitRepo.findByIdAndClinicId(id, clinicId)
+    VisitResDTO visitResDto = visitRepo.findDtoByIdAndClinicId(id, clinicId)
         .orElseThrow(() -> new ResourceNotFoundException("Visit not found"));
 
-    return VisitResDTO.fromEntity(visit);
+    return visitResDto;
   }
 
   public List<VisitResDTO> getAll() {
@@ -112,6 +113,32 @@ public class VisitService {
         .filter(
             visit -> !visit.getCreatedAt().isBefore(start) && visit.getCreatedAt().isBefore(end))
         .collect(Collectors.toList());
+  }
+
+  public List<VisitResDTO> getVisitsByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      throw new BadRequestException("Visit IDs cannot be empty");
+    }
+
+    List<Visit> visits = visitRepo.findByIdInAndClinicId(ids, authContext.getClinicId());
+
+    if (visits.size() != ids.size()) {
+      Set<Long> foundIds = visits.stream()
+          .map(Visit::getId)
+          .collect(Collectors.toSet());
+
+      List<Long> missingIds = ids.stream()
+          .filter(id -> !foundIds.contains(id))
+          .collect(Collectors.toList());
+
+      throw new ResourceNotFoundException(
+          "Some Visit not found or not accessible: " + missingIds);
+    }
+
+    return visits.stream()
+        .map(VisitResDTO::fromEntity)
+        .collect(Collectors.toList());
+
   }
 }
 

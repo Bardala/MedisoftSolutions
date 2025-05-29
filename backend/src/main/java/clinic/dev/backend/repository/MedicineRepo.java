@@ -25,4 +25,6 @@ public interface MedicineRepo extends JpaRepository<Medicine, Long> {
   List<Medicine> findAllByClinicId(Long clinicId);
 
   List<Medicine> findByMedicineNameContainingIgnoreCaseAndClinicId(String name, Long clinicId);
+
+  List<Medicine> findByIdInAndClinicId(List<Long> ids, Long clinicId);
 }

@@ -3,6 +3,7 @@ package clinic.dev.backend.service.impl;
 import clinic.dev.backend.dto.procedure.ProcedureReqDTO;
 import clinic.dev.backend.dto.procedure.ProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Procedure;
 import clinic.dev.backend.repository.DentalProcedureRepo;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProcedureService {
@@ -72,5 +75,31 @@ public class ProcedureService {
 
   public void deleteAll() {
     procedureRepo.deleteAll();
+  }
+
+  public List<ProcedureResDTO> getProceduresByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      throw new BadRequestException("Procedure IDs cannot be empty");
+    }
+
+    List<Procedure> procedures = procedureRepo.findByIdInAndClinicId(ids, authContext.getClinicId());
+
+    if (procedures.size() != ids.size()) {
+      Set<Long> foundIds = procedures.stream()
+          .map(Procedure::getId)
+          .collect(Collectors.toSet());
+
+      List<Long> missingIds = ids.stream()
+          .filter(id -> !foundIds.contains(id))
+          .collect(Collectors.toList());
+
+      throw new ResourceNotFoundException(
+          "Some Procedure not found or not accessible: " + missingIds);
+    }
+
+    return procedures.stream()
+        .map(ProcedureResDTO::fromEntity)
+        .collect(Collectors.toList());
+
   }
 }
