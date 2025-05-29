@@ -1,15 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { GetVisitPaymentsRes } from "../types";
 import { ApiError } from "../fetch/ApiError";
-import { GetVisitPaymentApi } from "../apis";
+import { VisitPaymentApi } from "../apis";
+import { VisitPaymentResDTO } from "../dto";
 
 export const useGetVisitPayment = (patientId: number) => {
-  const visitPaymentQuery = useQuery<GetVisitPaymentsRes, ApiError>(
+  const visitPaymentQuery = useQuery<VisitPaymentResDTO, ApiError>(
     ["visit-payments", patientId],
-    () => GetVisitPaymentApi(patientId),
-    {
-      enabled: !!patientId,
-    },
+    () => VisitPaymentApi.getByPatient(patientId),
+    { enabled: !!patientId },
   );
 
   return { visitPaymentQuery };

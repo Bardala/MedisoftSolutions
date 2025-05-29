@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { useLogin } from "../context/loginContext";
 import { User } from "../types";
-import { useUpdateUser } from "./Settings";
+import { useUpdateUser } from "../hooks/useUser";
+import { UserReqDTO } from "../dto";
 
 export const EditUserInfo = () => {
   const { logout, loggedInUser } = useLogin();
@@ -19,7 +20,7 @@ export const EditUserInfo = () => {
       if (password !== repeatedPass) alert(f({ id: "password.mismatch" }));
       else {
         updatedUser.password = password;
-        await updateUserMutation.mutateAsync(updatedUser);
+        await updateUserMutation.mutateAsync(updatedUser as UserReqDTO);
         alert(f({ id: "user.update.success" }));
         logout();
       }

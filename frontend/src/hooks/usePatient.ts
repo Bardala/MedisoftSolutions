@@ -1,15 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
-import {
-  CreatePatientReq,
-  CreatePatientRes,
-  DeletePatientRes,
-  PageRes,
-  Patient,
-  PatientSearchParams,
-  UpdatePatientReq,
-  UpdatePatientRes,
-} from "../types";
+import { Patient, PatientSearchParams } from "../types";
 
 import { useEffect, useState } from "react";
 
@@ -18,11 +9,11 @@ import {
   CreatePatientApi,
   UpdatePatientApi,
   DeletePatientApi,
-  FetchQueueApi,
   GetAllPatientsApi,
   PatientSearchApi,
+  PatientApi,
 } from "../apis";
-import { useFetchDoctors } from "./useDoctors";
+import { PageRes, PatientReqDTO, PatientResDTO } from "../dto";
 
 type PatientAction =
   | { type: "SET_FULL_NAME"; payload: string }
@@ -62,6 +53,7 @@ const initialPatientState: Patient = {
   notes: "",
   address: "",
   medicalHistory: "",
+  clinicId: undefined,
 };
 
 export const useCreatePatient = () => {
@@ -70,15 +62,15 @@ export const useCreatePatient = () => {
   const [state, dispatch] = useReducer(patientReducer, initialPatientState);
 
   const createPatientMutation = useMutation<
-    CreatePatientRes,
+    PatientResDTO,
     ApiError,
-    CreatePatientReq
+    PatientReqDTO
   >(CreatePatientApi(state), {
     onSuccess: (data) => {
-      queryClient.setQueryData<Patient[]>(["patients"], (currPatients = []) => [
-        ...currPatients,
-        data,
-      ]);
+      queryClient.setQueryData<PatientReqDTO[]>(
+        ["patients"],
+        (currPatients = []) => [...currPatients, data],
+      );
       setSuccess(true);
     },
     onError: () => {
@@ -99,55 +91,20 @@ export const useCreatePatient = () => {
 
 export const useUpdatePatient = () => {
   const updatePatientMutation = useMutation<
-    UpdatePatientRes,
+    PatientResDTO,
     ApiError,
-    UpdatePatientReq
+    PatientReqDTO
   >((newInfo) => UpdatePatientApi(newInfo));
 
   return { updatePatientMutation };
 };
 
 export const useDeletePatient = () => {
-  const deletePatientMutation = useMutation<DeletePatientRes, ApiError, number>(
+  const deletePatientMutation = useMutation<void, ApiError, number>(
     (patientId) => DeletePatientApi(patientId),
   );
 
   return { deletePatientMutation };
-};
-
-export const useIsPatientInAnyQueue = (patientId?: number) => {
-  const [isInQueue, setIsInQueue] = useState(false);
-  const { doctors, isLoading: isDoctorsLoading } = useFetchDoctors();
-
-  useEffect(() => {
-    if (!patientId || !doctors || doctors.length === 0) return;
-
-    let cancelled = false;
-
-    const checkAllQueues = async () => {
-      for (const doctor of doctors) {
-        const res = await FetchQueueApi(doctor.id); // directly use the API
-        if (!cancelled && res.some((entry) => entry.patient.id === patientId)) {
-          setIsInQueue(true);
-          return;
-        }
-      }
-      if (!cancelled) {
-        setIsInQueue(false);
-      }
-    };
-
-    checkAllQueues();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [patientId, doctors]);
-
-  return {
-    isInQueue,
-    isLoading: isDoctorsLoading,
-  };
 };
 
 export const useGetAllPatients = () => {
@@ -164,101 +121,6 @@ export const useGetAllPatients = () => {
   };
 };
 
-// export const usePatientSearch = () => {
-//   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-//   const [searchParams, setSearchParams] = useState<PatientSearchParams | null>(
-//     {},
-//   );
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [page, setPage] = useState(0);
-//   const [showAllPatients, setShowAllPatients] = useState(false);
-
-//   const pageQuery = useQuery<PageRes<Patient>, ApiError>(
-//     ["patients", "search", searchParams, page, showAllPatients],
-//     () => {
-//       // When showAllPatients is true or search params exist, make the API call
-//       if (
-//         showAllPatients ||
-//         Object.values(searchParams).some(
-//           (param) => param !== undefined && param !== null && param !== "",
-//         )
-//       ) {
-//         return PatientSearchApi(searchParams, page);
-//       }
-
-//       return null as unknown as PageRes<Patient>;
-//     },
-//     {
-//       keepPreviousData: true,
-//       // staleTime: 5000,
-//     },
-//   );
-
-//   const {
-//     data: searchResponse,
-//     isLoading,
-//     error,
-//     refetch,
-//     isPreviousData, // Useful for pagination
-//   } = pageQuery;
-
-//   // Debounce the search term
-//   useEffect(() => {
-//     if (searchTerm.trim()) {
-//       const debounceTimer = setTimeout(() => {
-//         setPage(0); // Reset to first page on new search
-//         refetch();
-//       }, 300);
-
-//       return () => clearTimeout(debounceTimer);
-//     }
-//   }, [searchTerm, refetch]);
-
-//   const handlePatientSelect = (patient: Patient) => {
-//     setSelectedPatient(patient);
-//     setSearchTerm("");
-//     setPage(0);
-//   };
-
-//   // Handle pagination controls
-//   const handleNextPage = () => {
-//     if (
-//       !isPreviousData &&
-//       searchResponse &&
-//       page < searchResponse.totalPages - 1
-//     ) {
-//       setPage((prev) => prev + 1);
-//     }
-//   };
-
-//   const handlePrevPage = () => {
-//     setPage((prev) => Math.max(prev - 1, 0));
-//   };
-
-//   return {
-//     ...pageQuery,
-//     patients: pageQuery.data?.content || [],
-//     selectedPatient,
-//     searchParams,
-//     setSearchParams,
-//     handlePatientSelect,
-//     isLoading,
-//     error,
-//     setShowAllPatients,
-//     pagination: {
-//       currentPage: page,
-//       totalPages: pageQuery.data?.totalPages || 0,
-//       totalResults: searchResponse?.totalElements || 0,
-//       handleNextPage,
-//       handlePrevPage,
-//       setPage,
-//       hasMore: pageQuery.data ? page < pageQuery.data.totalPages - 1 : false,
-//     },
-//     totalResults: searchResponse?.totalElements || 0,
-//   };
-// };
-
-/**Slightly Best Performance */
 export const usePatientSearch = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [searchParams, setSearchParams] = useState<PatientSearchParams>({});
@@ -284,7 +146,7 @@ export const usePatientSearch = () => {
       (param) => param !== undefined && param !== null && param !== "",
     );
 
-  const pageQuery = useQuery<PageRes<Patient>, ApiError>(
+  const pageQuery = useQuery<PageRes<PatientResDTO>, ApiError>(
     ["patients", "search", debouncedSearchParams, page, showAllPatients],
     () => PatientSearchApi(debouncedSearchParams, page),
     {
@@ -339,4 +201,43 @@ export const usePatientSearch = () => {
     },
     totalResults: searchResponse?.totalElements || 0,
   };
+};
+
+export const useGetPatientBatch = (ids: number[]) => {
+  const patientsBatchQuery = useQuery<PatientResDTO[], ApiError>(
+    ["patients", "batch", ids],
+    () => PatientApi.getBatch(ids),
+    { enabled: ids.length > 0 },
+  );
+
+  return {
+    data: patientsBatchQuery.data,
+    isError: patientsBatchQuery.isError,
+    isLoading: patientsBatchQuery.isLoading,
+    error: patientsBatchQuery.error,
+  };
+};
+
+export const useGetPatient = (patientId: number) => {
+  const query = useQuery<PatientResDTO, ApiError>(
+    ["patients", patientId],
+    () => PatientApi.Get(patientId),
+    { enabled: !!patientId },
+  );
+
+  return {
+    patientRes: query.data,
+    error: query.error,
+    isLoading: query.isLoading,
+    isError: query.isError,
+  };
+};
+
+export const useGetDailyPatients = (date: string) => {
+  const dailyNewPatientsQuery = useQuery<PatientResDTO[], ApiError>(
+    ["patients", "daily new", date],
+    () => PatientApi.getDaily(date),
+  );
+
+  return { dailyNewPatientsQuery };
 };

@@ -6,7 +6,7 @@
   "patient_details": "{fullName}",
   "patient_id": "🆔: {id}",
   "patient_phone": "📞 الهاتف: {phone}",
-  "patient_age": "🎂 العمر: {age}",
+  "patient_age": "🎂 العمر",
   "patient_address": "🏠 العنوان",
   "patient_medical_history": "🏥 التاريخ الطبي",
   "patient_visits": "📅 عدد الزيارات: {visits}",

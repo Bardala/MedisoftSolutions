@@ -1,17 +1,14 @@
 import { useState, useEffect, FC } from "react";
 import { useIntl } from "react-intl";
 import { useLogin } from "../context/loginContext";
-import {
-  useDeletePatient,
-  useIsPatientInAnyQueue,
-  useUpdatePatient,
-} from "../hooks/usePatient";
+import { useDeletePatient, useUpdatePatient } from "../hooks/usePatient";
+import { useIsPatientInAnyQueue } from "../hooks/useQueue";
 import { PatientRegistryRes } from "../types";
 import { timeFormate, calculateRemainingBalance, isArabic } from "../utils";
 import { UpdateModel } from "./UpdateModel";
 import { ToggleStatsData } from "./ToggleStatsData";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { PatientCharts, PatientVisitsByHourChart } from "./PatientCharts";
+import { PatientCharts } from "./PatientCharts";
 import {
   Chart as ChartJS,
   LineElement,
@@ -149,51 +146,37 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
 
             {/* Visualizations Row */}
             <div className="visualizations-row">
-              {/* Age Visualization */}
-              <div className="visualization-card age-visualization">
+              {/* <div className="visualization-card age-visualization">
                 <h3 className="visualization-title">
                   {f(
                     { id: "patient_age" },
                     { age: patient.age || f({ id: "not_available" }) },
                   )}
                 </h3>
-                <div className="age-timeline">
-                  {agePhases.map((phase) => (
-                    <div
-                      key={phase.name}
-                      className={`phase ${
-                        currentPhase.name === phase.name ? "active" : ""
-                      }`}
-                      style={{
-                        width: `${
-                          (phase.range[1] - phase.range[0] + 1) * 1.5
-                        }%`,
-                        backgroundColor: phase.color,
-                      }}
-                    >
-                      <span className="phase-emoji">{phase.emoji}</span>
-                      <span className="phase-label">{`${f({
-                        id: `age_phase_${phase.name.toLowerCase()}`,
-                      })}`}</span>
-                      {currentPhase.name === phase.name && (
-                        <div
-                          className="age-marker"
-                          style={{
-                            left: `${
-                              ((patient.age - phase.range[0]) /
-                                (phase.range[1] - phase.range[0])) *
-                              100
-                            }%`,
-                          }}
-                        >
-                          <div className="marker-line"></div>
-                          <div className="marker-dot"></div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                <AgePhaseBadge />
+
+                <div className="age-progress-bar">
+                {agePhases.map((phase) => {
+                    const isCurrent = currentPhase.name === phase.name;
+                    return (
+                      <div
+                        key={phase.name}
+                        className={`age-segment ${isCurrent ? "current" : ""}`}
+                        style={{
+                          flex: phase.range[1] - phase.range[0] + 1,
+                          backgroundColor: phase.color,
+                        }}
+                        title={f({
+                          id: `age_phase_${phase.name.toLowerCase()}`,
+                        })}
+                      >
+                        <span className="emoji">{phase.emoji}</span>
+                        {isCurrent && <span className="indicator" />}
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
+              </div> */}
 
               {/* Balance Visualization */}
               <div className="visualization-card balance-visualization">
@@ -241,18 +224,24 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
               </div>
             </div>
 
-            {/* Visits Chart */}
-            {visits && visits.length > 0 && (
-              <div className="visits-visualization">
-                <h3 className="section-title">
-                  {f({ id: "patient_visits" }, { visits: visits.length })}
-                </h3>
-                <PatientVisitsByHourChart visits={visits} />
-              </div>
-            )}
-
             {/* Info Cards Grid */}
             <div className="info-grid">
+              <div className="info-card age-card">
+                <div className="card-icon">{currentPhase.emoji}</div>
+                <h4 className="card-title">{f({ id: "patient_age" })}</h4>
+                <p className="card-content">
+                  {patient.age} —{" "}
+                  {f({ id: `age_phase_${currentPhase.name.toLowerCase()}` })}
+                </p>
+              </div>
+
+              {/* Visits Count Card */}
+              <div className="info-card visits-card">
+                <div className="card-icon">📅</div>
+                <h4 className="card-title">{f({ id: "total_visits" })}</h4>
+                <p className="card-content">{visits?.length || 0}</p>
+              </div>
+
               <div className="info-card address-card">
                 <div className="card-icon">📍</div>
                 <h4 className="card-title">{f({ id: "patient_address" })}</h4>

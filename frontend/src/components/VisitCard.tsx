@@ -5,7 +5,7 @@ import {
   useDeleteVisitProcedure,
   useGetVisitProceduresByVisitId,
 } from "../hooks/useVisitDentalProcedure";
-import { VisitAnalysis, VisitDentalProcedure } from "../types";
+import { VisitAnalysis } from "../types";
 import { dailyTimeFormate, dateFormate, isArabic } from "../utils";
 import {
   faTrashAlt,
@@ -27,10 +27,10 @@ export const VisitCard: FC<{
   const [doctorNotes, setDoctorNotes] = useState("");
   const { updateVisitMutation } = useUpdateVisit();
   const { query: currVisitProcedures } = useGetVisitProceduresByVisitId(
-    analyzedVisit?.visit?.id,
+    analyzedVisit.visit.id,
   );
   const visit = analyzedVisit.visit;
-  const currVps = currVisitProcedures.data as VisitDentalProcedure[];
+  const currVps = currVisitProcedures.data;
   const { deleteMutation: deleteVpMutation } = useDeleteVisitProcedure();
   const [showVisit, setShowVisit] = useState(currVisit); // Auto-expand current visit
 
@@ -39,12 +39,18 @@ export const VisitCard: FC<{
   }, [visit]);
 
   const handleSaveNotes = () => {
-    if (visit) updateVisitMutation.mutate({ ...visit, doctorNotes });
+    if (visit)
+      updateVisitMutation.mutate({
+        ...visit,
+        doctorNotes,
+        patientId: visit.patientId,
+        doctorId: visit.doctorId,
+      });
   };
 
-  const handleDeleteVp = (vp: VisitDentalProcedure) => {
+  const handleDeleteVp = (vpId: number) => {
     if (window.confirm(f({ id: "confirm_delete_procedure" }))) {
-      deleteVpMutation.mutate(vp);
+      deleteVpMutation.mutate(vpId);
     }
   };
 
@@ -162,17 +168,15 @@ export const VisitCard: FC<{
                 {currVps.map((vp) => (
                   <li key={vp.id} className="procedure-item">
                     <div className="procedure-info">
-                      <span className="procedure-name">
-                        {vp.dentalProcedure.serviceName}
-                      </span>
+                      <span className="procedure-name">{vp.procedureName}</span>
                       <span className="procedure-arabic">
-                        ({vp.dentalProcedure.arabicName})
+                        {vp.procedureArabicName}
                       </span>
                     </div>
                     {isDoctorAndCurrVisit && (
                       <button
                         className="delete-button"
-                        onClick={() => handleDeleteVp(vp)}
+                        onClick={() => handleDeleteVp(vp.id)}
                         title={f({ id: "remove" })}
                         disabled={deleteVpMutation.isLoading}
                       >

@@ -3,10 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useLogin } from "../context/loginContext";
 import "../styles/settings.css";
 
-import { useMutation } from "@tanstack/react-query";
-import { UpdateUserRes, User } from "../types";
-import { UpdateUserApi } from "../apis/userApis";
-import { ApiError } from "../fetch/ApiError";
 import { FormattedMessage } from "react-intl";
 import { LanguageContext } from "../IntlProviderWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,14 +14,6 @@ import {
   faSignOutAlt,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-
-export const useUpdateUser = () => {
-  const updateUserMutation = useMutation<UpdateUserRes, ApiError, User>(
-    (updatedUser) => UpdateUserApi(updatedUser),
-  );
-
-  return { updateUserMutation };
-};
 
 const Settings = ({
   setSelectedOption,

@@ -43,29 +43,13 @@ const DailyFinancialReport = () => {
   );
 
   const linkedVisitColumns = [
-    { header: f({ id: "visitId" }), accessor: (row) => row.id },
     {
       header: f({ id: "patientName" }),
-      accessor: (row) => row?.patient.fullName,
+      accessor: (row) => row?.patientName,
     },
     {
       header: f({ id: "phone" }),
-      accessor: (row) => row?.patient.phone,
-      expandable: true,
-    },
-    {
-      header: f({ id: "patientNotes" }),
-      accessor: (row) => row?.patient.notes || f({ id: "not_available" }),
-      expandable: true,
-    },
-    {
-      header: f({ id: "patientAddress" }),
-      accessor: (row) => row?.patient.address || f({ id: "not_available" }),
-      expandable: true,
-    },
-    {
-      header: f({ id: "patientAge" }),
-      accessor: (row) => row?.patient.age || f({ id: "not_available" }),
+      accessor: (row) => row?.patientPhone,
       expandable: true,
     },
     {
@@ -84,27 +68,21 @@ const DailyFinancialReport = () => {
   ];
 
   const paymentColumns = [
-    { header: f({ id: "paymentId" }), accessor: (row) => row?.id },
     {
       header: f({ id: "patientName" }),
-      accessor: (row) => row?.patient.fullName,
+      accessor: (row) => row?.patientName,
     },
     {
-      header: f({ id: "amount" }),
+      header: f({ id: "amountPaid" }),
       accessor: (row) => `${row?.amount} ${f({ id: "L.E" })}`,
     },
     {
-      header: f({ id: "date" }),
+      header: f({ id: "registeredAt" }),
       accessor: (row) => dailyTimeFormate(row.createdAt),
     },
     {
-      header: f({ id: "patientNotes" }),
-      accessor: (row) => row?.patient.notes || f({ id: "not_available" }),
-      expandable: true,
-    },
-    {
       header: f({ id: "recordedBy" }),
-      accessor: (row) => row.recordedBy.name,
+      accessor: (row) => row.recordedByName,
       expandable: true,
     },
     {
@@ -115,7 +93,6 @@ const DailyFinancialReport = () => {
   ];
 
   const patientColumns = [
-    { header: f({ id: "id" }), accessor: "id" },
     { header: f({ id: "patientName" }), accessor: "fullName" },
     { header: f({ id: "phone" }), accessor: "phone", expandable: true },
     {

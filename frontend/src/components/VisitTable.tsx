@@ -21,10 +21,6 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
 
   const visitColumns = [
     {
-      header: f({ id: "visit_id" }),
-      accessor: (row: { visit: Visit }) => row.visit.id,
-    },
-    {
       header: f({ id: "payment" }),
       accessor: (row: { payment: Payment }) =>
         row.payment
@@ -40,7 +36,7 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
       header: f({ id: "notes" }),
       accessor: (row: { visit: Visit }) =>
         row.visit.doctorNotes || f({ id: "not_available" }),
-      expandable: true,
+      // expandable: true,
     },
     {
       header: f({ id: "procedures" }),

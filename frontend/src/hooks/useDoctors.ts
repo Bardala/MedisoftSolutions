@@ -1,13 +1,13 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetAllUsersApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
-import { User } from "../types";
 import { useState } from "react";
 import { useLogin } from "../context/loginContext";
 import { doctorId } from "../utils";
+import { UserResDTO } from "../dto";
 
 export const useFetchDoctors = () => {
-  const fetchDoctorsQuery = useQuery<User[], ApiError>(
+  const fetchDoctorsQuery = useQuery<UserResDTO[], ApiError>(
     ["allDoctors"],
     async () => {
       const users = await GetAllUsersApi();

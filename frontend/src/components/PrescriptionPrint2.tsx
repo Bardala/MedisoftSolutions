@@ -2,9 +2,10 @@ import { FC } from "react";
 import { Visit, VisitMedicine } from "../types";
 import "../styles/prescriptionPrint2.css";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
-import { useGetClinicSettings } from "../hooks/useClinicSettings";
 import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
 import Table from "./Table";
+import { useGetPatient } from "../hooks/usePatient";
+import { useGetClinicSettings, useGetCurrentClinic } from "../hooks/useClinic";
 
 interface PrescriptionPrint2Props {
   visit: Visit;
@@ -13,12 +14,16 @@ interface PrescriptionPrint2Props {
 export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
   const visitMedicines: VisitMedicine[] = query.data || [];
-  const { query: clinicSettingsQuery } = useGetClinicSettings();
-  const settings = clinicSettingsQuery.data;
+  const { data: settings } = useGetClinicSettings();
+  const { data: clinic } = useGetCurrentClinic();
+  const { patientRes: patient } = useGetPatient(visit.patientId);
 
   // Split medicines into chunks of 5
-  const chunkArray = (array: VisitMedicine[], size: number) => {
-    const result = [];
+  const chunkArray = (
+    array: VisitMedicine[],
+    size: number,
+  ): VisitMedicine[][] => {
+    const result: VisitMedicine[][] = [];
     for (let i = 0; i < array.length; i += size) {
       result.push(array.slice(i, i + size));
     }
@@ -106,19 +111,19 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
   const medicineColumns = [
     {
       header: "اسم الدواء",
-      accessor: (row) => row.medicine.medicineName + "-" + row.medicine.dosage,
+      accessor: (row) => row.medicineName + "-" + row.medicineDosage,
     },
     {
       header: "التعليمات",
-      accessor: (row) => row.medicine.instructions || "-",
+      accessor: (row) => row.medicineInstruction || "-",
     },
     {
       header: "عدد الجرعات",
-      accessor: (row) => row.medicine.frequency || "-",
+      accessor: (row) => row.medicineFrequency || "-",
     },
     {
       header: "المدة (بالأيام)",
-      accessor: (row) => row.medicine.duration || "-",
+      accessor: (row) => row.medicineDuration || "-",
     },
   ];
 
@@ -152,14 +157,15 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
             {/* Prescription Content */}
             <div className="printable-prescription2">
               <div className="prescription-header2">
-                <p>
-                  <strong>اسم المريض:</strong> {visit.patient.fullName}
-                </p>
-                {visit.patient.age && (
-                  <p>
-                    <strong>العمر: </strong>{" "}
-                    {visit.patient.age + " سنة" || "N/A"}
-                  </p>
+                {patient && (
+                  <>
+                    <p>
+                      <strong>اسم المريض:</strong> {patient.fullName}
+                    </p>
+                    <p>
+                      <strong>العمر: </strong> {patient.age + " سنة"}
+                    </p>
+                  </>
                 )}
                 <p>
                   <strong>تاريخ الزيارة:</strong>{" "}
@@ -208,15 +214,17 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
                   {/* Clinic Info */}
                   <div className="clinic-info2">
                     <p>
-                      <img
-                        src={whatsappImage}
-                        alt="WhatsApp"
-                        className="whatsapp-logo2"
-                      />
-                      📞 هاتف: <span>{settings.clinicPhoneNumber}</span>
+                      {clinic.phoneSupportsWhatsapp && (
+                        <img
+                          src={whatsappImage}
+                          alt="WhatsApp"
+                          className="whatsapp-logo"
+                        />
+                      )}
+                      📞 هاتف: <span>{clinic.phoneNumber}</span>
                     </p>
-                    <p>{settings.clinicAddress}</p>
-                    <p>{settings.workingHours}</p>
+                    <p>{clinic.address}</p>
+                    <p>{clinic.workingHours}</p>
                   </div>
 
                   {/* Optional Print Footer Notes */}

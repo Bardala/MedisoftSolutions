@@ -1,15 +1,17 @@
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
-import { Visit, VisitMedicine } from "../types";
+import { Visit } from "../types";
 import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
 import Table from "./Table";
 import "../styles/chunk1.css";
+import { useGetPatient } from "../hooks/usePatient";
 
 export const Chunk1 = ({ visit }: { visit: Visit }) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
-  const visitMedicines: VisitMedicine[] = query.data || [];
+  const visitMedicines = query.data || [];
+  const { patientRes: patient } = useGetPatient(visit.patientId);
 
   // Split medicines into chunks of 5
-  const chunkArray = (array: VisitMedicine[], size: number) => {
+  const chunkArray = (array, size: number) => {
     const result = [];
     for (let i = 0; i < array.length; i += size) {
       result.push(array.slice(i, i + size));
@@ -140,13 +142,15 @@ export const Chunk1 = ({ visit }: { visit: Visit }) => {
           <div className="printable-prescription">
             <h2>الروشتة الطبية</h2>
             <div className="prescription-header">
-              <p>
-                <strong>اسم المريض:</strong> {visit.patient.fullName}
-              </p>
-              {visit.patient.age && (
-                <p>
-                  <strong>العمر: </strong> {visit.patient.age + " سنة" || "N/A"}
-                </p>
+              {patient && (
+                <>
+                  <p>
+                    <strong>اسم المريض:</strong> {patient.fullName}
+                  </p>
+                  <p>
+                    <strong>العمر: </strong> {patient.age + " سنة" || "N/A"}
+                  </p>
+                </>
               )}
               <p>
                 <strong>تاريخ الزيارة:</strong>{" "}

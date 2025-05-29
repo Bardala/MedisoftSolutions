@@ -1,18 +1,13 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import {
-  FetchQueueApi,
-  UpdateQueueStatusApi,
-  RemovePatientFromQueueApi,
-  UpdateQueuePositionApi,
-} from "../apis";
+import { QueueApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
-import { QueueEntry, QueueStatus } from "../types";
+import { QueueStatus } from "../types";
+import { QueueResDTO } from "../dto";
 
-// Fetch Queue
 export const useFetchQueue = (doctorId: number) => {
-  const fetchQueueQuery = useQuery<QueueEntry[], ApiError>(
+  const fetchQueueQuery = useQuery<QueueResDTO[], ApiError>(
     ["queue", doctorId],
-    () => FetchQueueApi(doctorId),
+    () => QueueApi.GetEntries(doctorId),
     {
       enabled: !!doctorId,
       refetchInterval: 5000,
@@ -32,10 +27,10 @@ export const useUpdateQueueStatus = (doctorId: number) => {
   const queryClient = useQueryClient();
 
   const updateStatusMutation = useMutation<
-    QueueEntry,
+    QueueResDTO,
     ApiError,
     { queueId: number; status: QueueStatus }
-  >(({ queueId, status }) => UpdateQueueStatusApi({ queueId, status }), {
+  >(({ queueId, status }) => QueueApi.UpdateStatus({ queueId, status }), {
     onSuccess: () => {
       queryClient.invalidateQueries(["queue", doctorId]);
     },
@@ -52,7 +47,7 @@ export const useRemovePatientFromQueue = (doctorId: number) => {
     unknown,
     ApiError,
     { queueId: number }
-  >(({ queueId }) => RemovePatientFromQueueApi({ queueId }), {
+  >(({ queueId }) => QueueApi.RemovePatient({ queueId }), {
     onSuccess: () => {
       queryClient.invalidateQueries(["queue", doctorId]);
     },
@@ -66,12 +61,12 @@ export const useUpdateQueuePosition = (doctorId: number) => {
   const queryClient = useQueryClient();
 
   const updatePositionMutation = useMutation<
-    QueueEntry,
+    QueueResDTO,
     ApiError,
     { queueId: number; newPosition: number }
   >(
     ({ queueId, newPosition }) =>
-      UpdateQueuePositionApi({ queueId, newPosition }),
+      QueueApi.UpdatePosition({ queueId, newPosition }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["queue", doctorId]);
@@ -80,4 +75,32 @@ export const useUpdateQueuePosition = (doctorId: number) => {
   );
 
   return { updatePositionMutation };
+};
+
+export const useIsPatientInAnyQueue = (patientId: number) => {
+  const isInQueueQuery = useQuery<boolean, ApiError>(
+    ["queue-patients", patientId],
+    () => QueueApi.CheckPatient(patientId),
+    { enabled: !!patientId },
+  );
+
+  return {
+    isInQueue: isInQueueQuery.data,
+    isLoading: isInQueueQuery.isLoading,
+  };
+};
+
+export const useGetQueueByPosition = (doctorId: number, position: number) => {
+  const query = useQuery<QueueResDTO, ApiError>(
+    ["queue", doctorId, "position", position],
+    () => QueueApi.GetByPosition(doctorId, position),
+    { enabled: !!doctorId && !!position },
+  );
+
+  return {
+    queueRes: query.data,
+    error: query.error,
+    isError: query.isError,
+    isLoading: query.isLoading,
+  };
 };

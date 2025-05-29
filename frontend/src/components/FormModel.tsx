@@ -21,7 +21,7 @@ export const FormModal = <T extends Record<string, any>>({
       const { id, createdAt, ...rest } = obj as unknown as Patient;
       return rest;
     } else if ("amount" in obj) {
-      const { id, createdAt, patient, recordedBy, ...rest } =
+      const { id, createdAt, patientId, recordedById, ...rest } =
         obj as unknown as Payment;
       return rest;
     } else {

@@ -69,8 +69,8 @@ export const ProcedureSearch: FC<{ visit: Visit }> = ({ visit }) => {
     }
 
     await recordVisitDentalProcedureMutation.mutateAsync({
-      visit: { id: visit.id },
-      dentalProcedure: { id: procedure.id },
+      visitId: visit.id,
+      procedureId: procedure.id,
     });
 
     setArabicName("");

@@ -24,18 +24,23 @@ if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
   });
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 15 * 60 * 1000, // 15 minutes
+    },
+  },
+});
 
 root.render(
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <LoginProvider>
         <React.StrictMode>
-          {/* <I18nextProvider i18n={i18n}> */}
           <IntlProviderWrapper>
             <App />
           </IntlProviderWrapper>
-          {/* </I18nextProvider> */}
           {/* <ReactQueryDevtools /> */}
         </React.StrictMode>
       </LoginProvider>

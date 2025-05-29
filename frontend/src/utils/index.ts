@@ -11,3 +11,4 @@ export * from "./isArabic";
 export * from "./remainingBalanceUtils";
 export * from "./sort";
 export * from "./errorTranslations";
+export * from "./getCachedEntities";

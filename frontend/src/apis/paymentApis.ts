@@ -1,49 +1,81 @@
+import {
+  PaymentReqDTO,
+  PaymentResDTO,
+  WorkdayPaymentsSummaryRes,
+} from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
-import {
-  CreatePaymentReq,
-  CreatePaymentRes,
-  WorkdayPaymentsReq,
-  WorkdayPaymentsRes,
-  WorkdayPaymentsSummaryReq,
-  WorkdayPaymentsSummaryRes,
-  Payment,
-  UpdatePaymentReq,
-  UpdatePaymentRes,
-  DeletePaymentReq,
-  DeletePaymentRes,
-} from "../types";
 
 // *payment
 
-export const CreatePaymentApi = (payment: CreatePaymentReq) =>
-  fetchFn<CreatePaymentReq, CreatePaymentRes>(
+export const CreatePaymentApi = (payment: PaymentReqDTO) =>
+  fetchFn<PaymentReqDTO, PaymentResDTO>(
     ENDPOINT.CREATE_PAYMENT,
     "POST",
     payment,
   );
 
 export const WorkdayPaymentsApi = (date) =>
-  fetchFn<WorkdayPaymentsReq, WorkdayPaymentsRes>(
+  fetchFn<void, PaymentResDTO[]>(
     `${ENDPOINT.GET_WORKDAY_PAYMENTS}?date=${date}`,
   );
 
 export const WorkdayPaymentsSummaryApi = () =>
-  fetchFn<WorkdayPaymentsSummaryReq, WorkdayPaymentsSummaryRes>(
+  fetchFn<void, WorkdayPaymentsSummaryRes>(
     ENDPOINT.GET_WORKDAY_PAYMENTS_SUMMARY,
   );
 
-export const UpdatePaymentApi = (payment: Payment) =>
-  fetchFn<UpdatePaymentReq, UpdatePaymentRes>(
+export const UpdatePaymentApi = (payment: PaymentReqDTO) =>
+  fetchFn<PaymentReqDTO, PaymentResDTO>(
     ENDPOINT.UPDATE_PAYMENT,
     "PUT",
     payment,
   );
 
-export const DeletePaymentApi = (payment: Payment) =>
-  fetchFn<DeletePaymentReq, DeletePaymentRes>(
-    ENDPOINT.DELETE_PAYMENT,
-    "DELETE",
-    undefined,
-    [payment.id + ""],
+export const DeletePaymentApi = (paymentId: number) =>
+  fetchFn<void, void>(ENDPOINT.DELETE_PAYMENT, "DELETE", undefined, [
+    paymentId + "",
+  ]);
+
+export const GetPaymentBatch = (ids: number[]) =>
+  fetchFn<void, PaymentResDTO[]>(
+    `${ENDPOINT.PAYMENT_BATCH}?ids=${ids.join(",")}`,
+    "GET",
   );
+
+export const PaymentApi = {
+  create: (payment: PaymentReqDTO) =>
+    fetchFn<PaymentReqDTO, PaymentResDTO>(
+      ENDPOINT.CREATE_PAYMENT,
+      "POST",
+      payment,
+    ),
+
+  getWorkday: (date: string) =>
+    fetchFn<void, PaymentResDTO[]>(
+      `${ENDPOINT.GET_WORKDAY_PAYMENTS}?date=${date}`,
+    ),
+
+  getWorkdaySummary: () =>
+    fetchFn<void, WorkdayPaymentsSummaryRes>(
+      ENDPOINT.GET_WORKDAY_PAYMENTS_SUMMARY,
+    ),
+
+  update: (payment: PaymentReqDTO) =>
+    fetchFn<PaymentReqDTO, PaymentResDTO>(
+      ENDPOINT.UPDATE_PAYMENT,
+      "PUT",
+      payment,
+    ),
+
+  delete: (paymentId: number) =>
+    fetchFn<void, void>(ENDPOINT.DELETE_PAYMENT, "DELETE", undefined, [
+      paymentId.toString(),
+    ]),
+
+  getBatch: (ids: number[]) =>
+    fetchFn<void, PaymentResDTO[]>(
+      `${ENDPOINT.PAYMENT_BATCH}?ids=${ids.join(",")}`,
+      "GET",
+    ),
+};

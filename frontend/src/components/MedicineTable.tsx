@@ -22,24 +22,24 @@ export const MedicineTable: FC<{ visit: Visit; enableEditing: boolean }> = ({
   const medicineColumns = [
     {
       header: f({ id: "medicineName" }),
-      accessor: (row) => row.medicine.medicineName,
+      accessor: (row) => row.medicineName,
     },
     {
       header: f({ id: "dosage" }),
-      accessor: (row) => row.medicine.dosage,
+      accessor: (row) => row.medicineDosage,
     },
     {
       header: f({ id: "frequency" }),
-      accessor: (row) => row.medicine.frequency || "N/A",
+      accessor: (row) => row.medicineFrequency || "N/A",
     },
     {
       header: f({ id: "duration" }),
-      accessor: (row) => row.medicine.duration || "N/A",
+      accessor: (row) => row.medicineDuration || "N/A",
       expandable: true,
     },
     {
       header: f({ id: "instructions" }),
-      accessor: (row) => row.medicine.instructions || "N/A",
+      accessor: (row) => row.medicineInstruction || "N/A",
       expandable: true,
     },
   ];

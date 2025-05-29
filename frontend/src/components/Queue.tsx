@@ -37,9 +37,9 @@ const QueuePage: React.FC = () => {
 
     // Speak the patient's name when status is updated to "IN_PROGRESS"
     if (status === "IN_PROGRESS") {
-      const patient = queue?.find((entry) => entry.id === queueId);
-      if (patient) {
-        callPatientForDoctor(patient.patient.fullName);
+      const queueEntry = queue?.find((entry) => entry.id === queueId);
+      if (queueEntry) {
+        callPatientForDoctor(queueEntry.patientName);
       }
     }
   };
@@ -98,7 +98,7 @@ const QueuePage: React.FC = () => {
                     </button>
                   </div>
                 </td>
-                <td>{entry.patient.fullName}</td>
+                <td>{entry.patientName}</td>
                 <td>{dailyTimeFormate(entry.createdAt)}</td>
                 <td>
                   {entry.position === 1 && entry.status === "WAITING" && (
@@ -134,7 +134,7 @@ const QueuePage: React.FC = () => {
                     className="action-button speak-button"
                     onClick={() =>
                       handleSpeakName(
-                        entry.patient.fullName,
+                        entry.patientName,
                         entry.position,
                         entry.status,
                       )

@@ -23,10 +23,6 @@ export const PatientsTable = () => {
 
   const allPatientColumns = [
     {
-      header: f({ id: "id" }),
-      accessor: (row) => row.id,
-    },
-    {
       header: f({ id: "full_name" }),
       accessor: (row) => row.fullName,
     },

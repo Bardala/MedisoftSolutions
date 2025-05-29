@@ -1,31 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  UpdateMedicineReq,
-  UpdateMedicineRes,
-  GetMedicineByIdRes,
-  Medicine,
-} from "../types";
 import { ApiError } from "../fetch/ApiError";
-import {
-  GetAllMedicinesApi,
-  GetMedicineByIdApi,
-  CreateMedicineApi,
-  UpdateMedicineApi,
-  DeleteMedicineApi,
-} from "../apis";
+import { MedicineApi } from "../apis";
+import { MedicineReqDTO, MedicineResDTO } from "../dto";
 
 export const useGetAllMedicines = () => {
-  const query = useQuery<Medicine[], ApiError>(["medicines"], () =>
-    GetAllMedicinesApi(),
+  const query = useQuery<MedicineResDTO[], ApiError>(["medicines"], () =>
+    MedicineApi.getAll(),
   );
 
   return { query };
 };
 
 export const useGetMedicineById = (id: number) => {
-  const query = useQuery<GetMedicineByIdRes, ApiError>(
+  const query = useQuery<MedicineResDTO, ApiError>(
     ["medicines", id],
-    () => GetMedicineByIdApi(id),
+    () => MedicineApi.getById(id),
     {
       enabled: !!id,
     },
@@ -37,8 +26,8 @@ export const useGetMedicineById = (id: number) => {
 export const useCreateMedicine = () => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation<Medicine, ApiError, Medicine>(
-    (medicine) => CreateMedicineApi(medicine),
+  const createMutation = useMutation<MedicineResDTO, ApiError, MedicineReqDTO>(
+    (medicine) => MedicineApi.create(medicine),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["medicines"]);
@@ -52,24 +41,28 @@ export const useCreateMedicine = () => {
 export const useUpdateMedicine = () => {
   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation<
-    UpdateMedicineRes,
-    ApiError,
-    UpdateMedicineReq
-  >((medicine) => UpdateMedicineApi(medicine), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["medicines"]);
+  const updateMutation = useMutation<MedicineResDTO, ApiError, MedicineReqDTO>(
+    (medicine) => MedicineApi.update(medicine),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["medicines"]);
+      },
     },
-  });
+  );
 
-  return { updateMutation };
+  return {
+    updateMedicine: updateMutation.mutateAsync,
+    isError: updateMutation.isError,
+    isLoading: updateMutation.isLoading,
+    error: updateMutation.error,
+  };
 };
 
 export const useDeleteMedicine = () => {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation<void, ApiError, number>(
-    (id) => DeleteMedicineApi(id),
+    (id) => MedicineApi.delete(id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["medicines"]);
@@ -78,4 +71,19 @@ export const useDeleteMedicine = () => {
   );
 
   return { deleteMutation };
+};
+
+export const useGetMedicineBatch = (ids: number[]) => {
+  const medicinesBatchQuery = useQuery<MedicineResDTO[], ApiError>(
+    ["medicines", "batch", ids],
+    () => MedicineApi.getBatch(ids),
+    { enabled: ids.length > 0 },
+  );
+
+  return {
+    data: medicinesBatchQuery.data,
+    isError: medicinesBatchQuery.isError,
+    isLoading: medicinesBatchQuery.isLoading,
+    error: medicinesBatchQuery.error,
+  };
 };

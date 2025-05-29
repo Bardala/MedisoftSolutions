@@ -11,3 +11,4 @@ export * from "./patientFilesApis";
 export * from "./patientApis";
 export * from "./medicineApis";
 export * from "./queueApis";
+export * from "./clinicApi";

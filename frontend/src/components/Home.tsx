@@ -52,7 +52,7 @@ const Home = ({
             id: uuidv4() as string,
             message: f(
               { id: "new_visit_recorded" },
-              { name: visit.patient.fullName },
+              { name: visit.patientName },
             ),
             createdAt: visit.createdAt,
             type: "Visit",
@@ -63,7 +63,7 @@ const Home = ({
             id: uuidv4() as string,
             message: f(
               { id: "payment_received" },
-              { amount: payment.amount, name: payment.patient.fullName },
+              { amount: payment.amount, name: payment.patientName },
             ),
             createdAt: payment.createdAt,
             type: "Payment",

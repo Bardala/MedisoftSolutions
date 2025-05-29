@@ -1,11 +1,12 @@
+import { MonthlyDayInfo, MonthlySummaryRes } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
-import { MonthlySummaryReq, MonthlySummaryRes, MonthlyDayInfo } from "../types";
+// import { MonthlySummaryReq, MonthlySummaryRes, MonthlyDayInfo } from "../types";
 
 // *Monthly Report
 
 export const GetMonthlySummaryApi = (year: number, month: number) =>
-  fetchFn<MonthlySummaryReq, MonthlySummaryRes>(
+  fetchFn<void, MonthlySummaryRes>(
     `${ENDPOINT.GET_MONTHLY_SUMMARY}?year=${year}&month=${month}`,
   );
 

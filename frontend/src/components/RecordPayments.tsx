@@ -26,8 +26,8 @@ const RecordPayments: React.FC = () => {
       try {
         const newPayment = await paymentMutation.mutateAsync({
           amount: Number(paymentDetails.amount),
-          patient: { id: selectedPatient.id },
-          recordedBy: { id: loggedInUser.id }, // Replace with actual user ID
+          patientId: selectedPatient.id,
+          recordedById: loggedInUser.id, // Replace with actual user ID
         });
         setPayments((prev) => [
           ...prev,

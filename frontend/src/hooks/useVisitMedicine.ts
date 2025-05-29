@@ -1,27 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { VisitMedicine } from "../types";
 import { ApiError } from "../fetch/ApiError";
-import {
-  GetAllVisitMedicinesApi,
-  GetVisitMedicineByIdApi,
-  CreateVisitMedicineApi,
-  DeleteVisitMedicineApi,
-  GetVisitMedicinesByVisitIdApi,
-  GetVisitMedicinesByMedicineIdApi,
-} from "../apis";
+import { VisitMedicineApi } from "../apis";
+import { VisitMedicineReqDTO, VisitMedicineResDTO } from "../dto";
 
 export const useGetAllVisitMedicines = () => {
-  const query = useQuery<VisitMedicine[], ApiError>(["visit-medicines"], () =>
-    GetAllVisitMedicinesApi(),
+  const query = useQuery<VisitMedicineResDTO[], ApiError>(
+    ["visit-medicines"],
+    () => VisitMedicineApi.getAll(),
   );
 
   return { query };
 };
 
 export const useGetVisitMedicineById = (id: number) => {
-  const query = useQuery<VisitMedicine, ApiError>(
+  const query = useQuery<VisitMedicineResDTO, ApiError>(
     ["visit-medicines", id],
-    () => GetVisitMedicineByIdApi(id),
+    () => VisitMedicineApi.getById(id),
     { enabled: !!id },
   );
 
@@ -31,32 +26,32 @@ export const useGetVisitMedicineById = (id: number) => {
 export const useCreateVisitMedicine = () => {
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation<VisitMedicine, ApiError, VisitMedicine>(
-    (visitMedicine) => CreateVisitMedicineApi(visitMedicine),
-    {
-      onSuccess: (_, visitMedicine) => {
-        queryClient.invalidateQueries([
-          "visit-medicines",
-          visitMedicine.visit.id,
-        ]);
-      },
+  const createMutation = useMutation<
+    VisitMedicineResDTO,
+    ApiError,
+    VisitMedicineReqDTO
+  >((visitMedicine) => VisitMedicineApi.create(visitMedicine), {
+    onSuccess: (_, visitMedicine) => {
+      queryClient.invalidateQueries(["visit-medicines", visitMedicine.visitId]);
     },
-  );
+  });
 
-  return { createMutation };
+  return {
+    createVM: createMutation.mutateAsync,
+    isErrorVM: createMutation.isError,
+    errorVM: createMutation.error,
+    isLoadingVM: createMutation.isLoading,
+  };
 };
 
 export const useDeleteVisitMedicine = () => {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation<void, ApiError, VisitMedicine>(
-    (visitMedicine) => DeleteVisitMedicineApi(visitMedicine),
+    (visitMedicine) => VisitMedicineApi.delete(visitMedicine.id),
     {
       onSuccess: (_, visitMedicine) => {
-        queryClient.invalidateQueries([
-          "visit-medicines",
-          visitMedicine.visit.id,
-        ]);
+        queryClient.invalidateQueries(["visit-medicines", visitMedicine.id]);
       },
     },
   );
@@ -65,9 +60,9 @@ export const useDeleteVisitMedicine = () => {
 };
 
 export const useGetVisitMedicinesByVisitId = (visitId: number) => {
-  const query = useQuery<VisitMedicine[], ApiError>(
+  const query = useQuery<VisitMedicineResDTO[], ApiError>(
     ["visit-medicines", visitId],
-    () => GetVisitMedicinesByVisitIdApi(visitId),
+    () => VisitMedicineApi.getByVisit(visitId),
     { enabled: !!visitId },
   );
 
@@ -76,9 +71,9 @@ export const useGetVisitMedicinesByVisitId = (visitId: number) => {
 
 // Hook to fetch VisitMedicines by Medicine ID
 export const useGetVisitMedicinesByMedicineId = (medicineId: number) => {
-  const query = useQuery<VisitMedicine[], ApiError>(
+  const query = useQuery<VisitMedicineResDTO[], ApiError>(
     ["visit-medicines", "medicine", medicineId],
-    () => GetVisitMedicinesByMedicineIdApi(medicineId),
+    () => VisitMedicineApi.getByMedicine(medicineId),
     { enabled: !!medicineId },
   );
 

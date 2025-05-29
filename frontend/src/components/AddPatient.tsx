@@ -221,7 +221,7 @@ const AddPatient: React.FC = () => {
           <p className="error">
             {f(
               { id: "errorMessage" },
-              { error: translateErrorMessage(error.errors.error, locale) },
+              { error: translateErrorMessage(error.message, locale) },
             )}
           </p>
         )}

@@ -5,11 +5,11 @@ import { usePatientRegistry } from "../hooks/useRegistry";
 import { Patient } from "../types";
 import { VisitCard } from "./VisitCard";
 import {
-  useFetchQueue,
   useUpdateQueueStatus,
   useRemovePatientFromQueue,
+  useGetQueueByPosition,
 } from "../hooks/useQueue";
-import { analyzeVisits, callNextPatient, callPatientForDoctor } from "../utils";
+import { callNextPatient, callPatientForDoctor, analyzeVisits } from "../utils";
 import {
   faArrowRight,
   faProcedures,
@@ -33,15 +33,23 @@ const CurrentPatientProfile = () => {
 
   const { selectedDoctorId } = useDoctorSelection();
 
-  const { queue, isLoading, isError } = useFetchQueue(selectedDoctorId);
+  const {
+    queueRes: firstEntry,
+    isLoading,
+    isError,
+  } = useGetQueueByPosition(selectedDoctorId, 1);
+  const { queueRes: secEntry } = useGetQueueByPosition(selectedDoctorId, 2);
+
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
   const { removePatientMutation } = useRemovePatientFromQueue(selectedDoctorId);
 
   const [currPatient, setCurrPatient] = useState<Patient | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>("info");
 
-  const patientRegistryData = usePatientRegistry(currPatient?.id)
-    .patientRegistryQuery.data;
+  const { patientRegistryQuery } = usePatientRegistry(firstEntry?.patientId);
+
+  const patientRegistryData = patientRegistryQuery.data;
+
   const visits = patientRegistryData?.visits;
   const analyzedVisits =
     patientRegistryData &&
@@ -53,8 +61,6 @@ const CurrentPatientProfile = () => {
     );
 
   const visit = visits ? visits[visits.length - 1] : null;
-  const lastVisit =
-    visits && visits.length > 1 ? visits[visits.length - 2] : null;
 
   const analyzedVisit = analyzedVisits
     ? analyzedVisits[analyzedVisits.length - 1]
@@ -72,37 +78,33 @@ const CurrentPatientProfile = () => {
   }, [selectedDoctorId, loggedInUser.role]);
 
   useEffect(() => {
-    if (queue && queue.length > 0) {
-      setCurrPatient(queue[0].patient);
+    if (patientRegistryData && patientRegistryData.patient) {
+      setCurrPatient(patientRegistryData.patient);
     } else {
       setCurrPatient(null);
     }
-  }, [queue]);
+  }, [patientRegistryData]);
 
   const handleNextPatient = async () => {
-    if (!queue || queue.length === 0) return;
-
-    const currentPatientEntry = queue[0];
+    const currentPatientEntry = firstEntry;
     await removePatientMutation.mutateAsync({
       queueId: currentPatientEntry.id,
     });
 
-    if (queue.length > 1) {
-      const nextPatientEntry = queue[1];
-      await updateStatusMutation.mutateAsync(
-        { queueId: nextPatientEntry.id, status: "IN_PROGRESS" },
-        {
-          onSuccess: async () => {
-            await Promise.resolve(
-              callPatientForDoctor(nextPatientEntry.patient.fullName),
-            );
-            await Promise.resolve(
-              queue.length > 2 && callNextPatient(queue[2].patient.fullName),
-            );
-          },
+    // if (firstEntry.length > 1) {
+    const nextPatientEntry = secEntry;
+    await updateStatusMutation.mutateAsync(
+      { queueId: nextPatientEntry.id, status: "IN_PROGRESS" },
+      {
+        onSuccess: async () => {
+          await Promise.resolve(
+            callPatientForDoctor(nextPatientEntry.patientName),
+          );
+          await Promise.resolve(callNextPatient(secEntry.patientName));
         },
-      );
-    }
+      },
+    );
+    // }
   };
 
   if (isLoading) return <p>{f({ id: "loading" })}</p>;
@@ -140,11 +142,11 @@ const CurrentPatientProfile = () => {
 
             {/* Visits section */}
             <div className="tables">
-              {expandedSection === "visits" && visit && (
+              {expandedSection === "visits" && analyzedVisit && (
                 <VisitCard analyzedVisit={analyzedVisit} currVisit={true} />
               )}
 
-              {expandedSection === "visits" && lastVisit && (
+              {expandedSection === "visits" && lastAnalyzedVisit && (
                 <>
                   <VisitCard
                     analyzedVisit={lastAnalyzedVisit}
@@ -174,12 +176,11 @@ const CurrentPatientProfile = () => {
       )}
 
       {loggedInUser.role === "Doctor" &&
-        queue?.length >= 1 &&
-        (queue.length > 1 ? (
+        (secEntry ? (
           <div className="next-patient-section">
             <p className="next-patient-name">
               <strong>{f({ id: "nextPatient" })}:</strong>{" "}
-              {queue[1].patient.fullName}
+              {secEntry.patientName}
             </p>
             <button onClick={handleNextPatient} className="next-patient-button">
               <FontAwesomeIcon icon={faArrowRight} />

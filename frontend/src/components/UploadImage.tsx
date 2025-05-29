@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { UploadFileReq, UploadFileRes } from "../types";
+import { UploadFileReq } from "../types";
 import "../styles/patientFiles.css";
 import { useMutation } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
@@ -22,16 +22,15 @@ const UploadImage: React.FC<UploadImageProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const uploadFileMutation = useMutation<
-    UploadFileRes,
-    ApiError,
-    UploadFileReq
-  >(async (req) => UploadFileApi(req), {
-    onSuccess: () => console.log("success uploading"), // todo: add a success message after every upload
-    onError: () => {
-      alert(f({ id: "error" }));
+  const uploadFileMutation = useMutation<void, ApiError, UploadFileReq>(
+    async (req) => UploadFileApi(req),
+    {
+      onSuccess: () => console.log("success uploading"), // todo: add a success message after every upload
+      onError: () => {
+        alert(f({ id: "error" }));
+      },
     },
-  });
+  );
 
   const sanitizeFileName = (fileName: string) => {
     return fileName

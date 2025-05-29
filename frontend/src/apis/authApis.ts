@@ -1,6 +1,6 @@
+import { LoginReq, LoginRes } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
-import { LoginReq, LoginRes } from "../types";
 
 // *auth & user
 

@@ -34,14 +34,15 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
 
   const { query: allMedicinesQuery } = useGetAllMedicines();
   const { createMutation: createMedicineMutation } = useCreateMedicine();
-  const { updateMutation: updateMedicineMutation } = useUpdateMedicine();
-  const { createMutation: createVisitMedicineMutation } =
+  const { updateMedicine, isLoading: isLoadingUpdatingMedicine } =
+    useUpdateMedicine();
+  const { createVM, isLoadingVM, errorVM, isErrorVM } =
     useCreateVisitMedicine();
 
   const isLoading =
     createMedicineMutation.isLoading ||
-    updateMedicineMutation.isLoading ||
-    createVisitMedicineMutation.isLoading;
+    isLoadingUpdatingMedicine ||
+    isLoadingVM;
 
   const storedMedicines = allMedicinesQuery.data?.sort((a, b) =>
     a.medicineName.localeCompare(b.medicineName),
@@ -86,23 +87,29 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
           duration,
           instructions,
         };
-        const createdMedicine = await createMedicineMutation.mutateAsync(
-          newMedicine,
-        );
-        medicine = createdMedicine;
+
+        try {
+          const createdMedicine = await createMedicineMutation.mutateAsync(
+            newMedicine,
+          );
+          medicine = createdMedicine;
+        } catch (error) {
+          console.error("Error: ", error);
+        }
       } else {
         // If medicineName hasn't changed, update the existing medicine
-        const updatedMedicine = {
-          ...selectedMedicine,
-          dosage,
-          frequency,
-          duration,
-          instructions,
-        };
-        const updated = await updateMedicineMutation.mutateAsync(
-          updatedMedicine,
-        );
-        medicine = updated;
+        try {
+          const updated = await updateMedicine({
+            medicineName: selectedMedicine.medicineName,
+            dosage,
+            frequency,
+            duration,
+            instructions,
+          });
+          medicine = updated;
+        } catch (error) {
+          console.error("Error: ", error);
+        }
       }
     } else {
       // If medicine doesn't exist, create a new one
@@ -113,17 +120,25 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
         duration,
         instructions,
       };
-      const createdMedicine = await createMedicineMutation.mutateAsync(
-        newMedicine,
-      );
-      medicine = createdMedicine;
+      try {
+        const createdMedicine = await createMedicineMutation.mutateAsync(
+          newMedicine,
+        );
+        medicine = createdMedicine;
+      } catch (error) {
+        console.error("Error: ", error);
+      }
     }
 
     // Create a VisitMedicine record for the current visit
-    await createVisitMedicineMutation.mutateAsync({
-      visit,
-      medicine,
-    });
+    try {
+      await createVM({
+        visitId: visit.id,
+        medicineId: medicine.id,
+      });
+    } catch (err) {
+      console.error("Error: ", err);
+    }
 
     // Notify the parent component
     onPrescriptionSubmit(medicine);
@@ -140,6 +155,10 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
   return (
     <div className="prescription-form">
       <h3>{f({ id: "createPrescription" })}</h3>
+      {createMedicineMutation.isError && (
+        <p className="error">{createMedicineMutation.error.message}</p>
+      )}
+      {isErrorVM && <p className="error">{errorVM.message}</p>}
       <form onSubmit={handleSubmit}>
         {/* Medicine Search and Selection */}
         <div className="medicine-search">

@@ -1,56 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { ApiError } from "../fetch/ApiError";
-import {
-  WorkdayPaymentsRes,
-  WorkdayVisitsRes,
-  DailyNewPatientsRes,
-  Patient,
-  Visit,
-  Payment,
-} from "../types";
 import { sortById } from "../utils/sort";
-import {
-  WorkdayPaymentsApi,
-  WorkDayVisitApi,
-  DailyNewPatientsApi,
-} from "../apis";
-
+import { useGetDailyPayments } from "./usePayment";
+import { useGetDailyVisits } from "./useVisit";
+import { useGetDailyPatients } from "./usePatient";
 export const useDailyReportData = (
   date = new Date().toISOString().split("T")[0],
 ) => {
-  const dailyPaymentQuery = useQuery<WorkdayPaymentsRes, ApiError>(
-    ["daily payments", date],
-    () => WorkdayPaymentsApi(date),
-    {
-      refetchOnWindowFocus: true,
-    },
-  );
+  const { dailyPaymentQuery } = useGetDailyPayments(date);
+  const { dailyVisitsQuery } = useGetDailyVisits(date);
+  const { dailyNewPatientsQuery } = useGetDailyPatients(date);
 
-  const dailyVisitsQuery = useQuery<WorkdayVisitsRes, ApiError>(
-    ["daily visits", date],
-    () => WorkDayVisitApi(date),
-  );
+  const patients = sortById(dailyNewPatientsQuery.data);
+  const visits = sortById(dailyVisitsQuery.data);
+  const payments = sortById(dailyPaymentQuery.data);
 
-  const dailyNewPatientsQuery = useQuery<DailyNewPatientsRes, ApiError>(
-    ["daily new patients", date],
-    () => DailyNewPatientsApi(date),
-  );
-
-  const payments = sortById(dailyPaymentQuery.data) as unknown as Payment[];
   const totalPayments = payments?.reduce((acc, p) => acc + p.amount, 0);
 
-  return {
-    patients: sortById(dailyNewPatientsQuery.data) as unknown as Patient[],
-    visits: sortById(dailyVisitsQuery.data) as unknown as Visit[],
-    payments,
-    // paymentsSummary: dailyPaymentSummaryQuery.data,
-    totalPayments,
+  // Combined loading states
+  const isLoadingBasic =
+    dailyNewPatientsQuery.isLoading ||
+    dailyPaymentQuery.isLoading ||
+    dailyVisitsQuery.isLoading;
 
-    isLoading:
-      dailyNewPatientsQuery.isLoading ||
-      dailyPaymentQuery.isLoading ||
-      dailyVisitsQuery.isLoading,
+  return {
+    patients,
+    visits,
+    payments,
+    totalPayments,
+    isLoading: isLoadingBasic,
     isError:
       dailyNewPatientsQuery.isError ||
       dailyPaymentQuery.isError ||

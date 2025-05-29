@@ -7,6 +7,7 @@ import {
   useUpdateProcedure,
   useDeleteProcedure,
 } from "../hooks/useProcedure";
+import { ProcedureReqDTO } from "../dto";
 
 export const ProceduresManagement: React.FC = () => {
   const { formatMessage: f } = useIntl();
@@ -18,7 +19,7 @@ export const ProceduresManagement: React.FC = () => {
   const [editingProcedure, setEditingProcedure] = useState<Procedure | null>(
     null,
   );
-  const [newProcedure, setNewProcedure] = useState<Omit<Procedure, "id">>({
+  const [newProcedure, setNewProcedure] = useState<ProcedureReqDTO>({
     serviceName: "",
     arabicName: "",
     cost: 0,

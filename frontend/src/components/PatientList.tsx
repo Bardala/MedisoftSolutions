@@ -23,8 +23,8 @@ const PatientList = () => {
           {visits?.length > 0 &&
             visits?.map((visit, index) => (
               <tr key={index}>
-                <td>{visit.patient.fullName}</td>
-                <td>{visit.patient.phone}</td>
+                <td>{visit.patientName}</td>
+                <td>{visit.patientPhone}</td>
                 <td>{dailyTimeFormate(visit.createdAt)}</td>
                 <td>
                   <button>View</button>

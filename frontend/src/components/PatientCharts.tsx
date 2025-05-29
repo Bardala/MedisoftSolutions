@@ -74,7 +74,7 @@ export const PatientCharts: React.FC<Props> = ({
 
   // --- Procedure Frequency ---
   const procedureCounts = visitDentalProcedures.reduce((acc, vdp) => {
-    const name = vdp.dentalProcedure.serviceName;
+    const name = vdp.procedureName;
     acc[name] = (acc[name] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);

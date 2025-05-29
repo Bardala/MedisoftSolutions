@@ -1,38 +1,33 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import {
-  CreateVisitRes,
-  CreateVisitReq,
-  Patient,
-  UpdateVisitRes,
-  Visit,
-  DeleteVisitRes,
-} from "../types";
+import { Patient, Visit } from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 import { useIntl } from "react-intl";
 import { LOCALS } from "../utils";
-import {
-  CreateVisitApi,
-  AddToQueueApi,
-  UpdateVisitApi,
-  DeleteVisitApi,
-} from "../apis";
+import { VisitApi, QueueApi } from "../apis";
+import { VisitReqDTO, VisitResDTO } from "../dto";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");
+  const queryClient = useQueryClient();
 
-  const createVisitMutation = useMutation<
-    CreateVisitRes,
-    ApiError,
-    CreateVisitReq
-  >((newVisit) => CreateVisitApi(newVisit), {
-    onSuccess: (data) =>
-      AddToQueueApi({ doctorId: data.doctor?.id, patientId: data.patient?.id }),
-  });
+  const createVisitMutation = useMutation<VisitResDTO, ApiError, VisitReqDTO>(
+    (newVisit) => VisitApi.create(newVisit),
+    {
+      onSuccess: (data) => {
+        QueueApi.AddPatient({
+          doctorId: data.doctorId,
+          patientId: data.patientId,
+          assistantId: data.assistantId,
+        });
+        queryClient.invalidateQueries(["visits"]);
+      },
+    },
+  );
 
   return {
     createVisitMutation,
@@ -86,16 +81,14 @@ export const useAddVisit = () => {
       return null;
     }
 
-    const newVisit: CreateVisitReq = {
-      patient: { id: selectedPatient?.id },
-      doctor: {
-        id:
-          loggedInUser?.role === "Doctor"
-            ? loggedInUser?.id
-            : Number(localStorage.getItem(LOCALS.SELECTED_DOCTOR_ID)),
-      },
+    const newVisit: VisitReqDTO = {
+      patientId: selectedPatient?.id,
+      doctorId:
+        loggedInUser?.role === "Doctor"
+          ? loggedInUser?.id
+          : Number(localStorage.getItem(LOCALS.SELECTED_DOCTOR_ID)),
       ...(loggedInUser.role === "Assistant" && {
-        assistant: { id: loggedInUser.id },
+        assistantId: loggedInUser.id,
       }),
       doctorNotes,
     };
@@ -110,20 +103,20 @@ export const useAddVisit = () => {
       if (paymentAmount > 0) {
         paymentResult = await paymentMutation.mutateAsync({
           amount: paymentAmount,
-          patient: { id: selectedPatient.id },
-          recordedBy: { id: loggedInUser.id },
+          patientId: selectedPatient.id,
+          recordedById: loggedInUser.id,
         });
 
         if (paymentResult.id) {
           await visitPaymentMutation.mutateAsync({
-            visit: { id: visitId },
-            payment: { id: paymentResult.id },
+            visitId: visitId,
+            paymentId: paymentResult.id,
           });
         }
       }
 
       // setSuccessMessage("Visit and payment recorded successfully!");
-      setSuccessMessage(f({ id: "visitAndPaymentSuccessMessage" }));
+      setSuccessMessage(f({ id: "success" }));
       setCreatedVisitDetails({
         visitId,
         patientName: selectedPatient.fullName,
@@ -180,8 +173,8 @@ export const useAddVisit = () => {
 };
 
 export const useUpdateVisit = () => {
-  const updateVisitMutation = useMutation<UpdateVisitRes, ApiError, Visit>(
-    (visit) => UpdateVisitApi(visit),
+  const updateVisitMutation = useMutation<VisitResDTO, ApiError, VisitReqDTO>(
+    (visit) => VisitApi.update(visit),
   );
 
   return { updateVisitMutation };
@@ -189,10 +182,36 @@ export const useUpdateVisit = () => {
 
 export const useDeleteVisit = () => {
   const queryClient = useQueryClient();
-  const deleteVisitMutation = useMutation<DeleteVisitRes, ApiError, Visit>(
-    (visit) => DeleteVisitApi(visit.id),
-    { onSuccess: () => queryClient.invalidateQueries(["daily visits"]) },
+  const deleteVisitMutation = useMutation<unknown, ApiError, Visit>(
+    (visit) => VisitApi.delete(visit.id),
+    {
+      onSuccess: (_, visit) => queryClient.invalidateQueries(["visits"]),
+    },
   );
 
   return { deleteVisitMutation };
+};
+
+export const useGetVisitBatch = (ids: number[]) => {
+  const visitBatchQuery = useQuery<VisitResDTO[], ApiError>(
+    ["visits", "batch", ids],
+    () => VisitApi.getBatch(ids),
+    { enabled: ids.length > 0 },
+  );
+
+  return {
+    data: visitBatchQuery.data,
+    error: visitBatchQuery.error,
+    isLoading: visitBatchQuery.isLoading,
+    isError: visitBatchQuery.isError,
+  };
+};
+
+export const useGetDailyVisits = (date: string) => {
+  const dailyVisitsQuery = useQuery<VisitResDTO[], ApiError>(
+    ["visits", "daily visits", date],
+    () => VisitApi.getWorkday(date),
+  );
+
+  return { dailyVisitsQuery };
 };

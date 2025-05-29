@@ -1,49 +1,49 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  GetClinicSettingsApi,
-  CreateClinicSettingsApi,
-  UpdateClinicSettingsApi,
-} from "../apis/clinicSettingsApis";
-import { IClinicSettings } from "../types";
-import { ApiError } from "../fetch/ApiError";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// import {
+//   GetClinicSettingsApi,
+//   CreateClinicSettingsApi,
+//   UpdateClinicSettingsApi,
+// } from "../apis/clinicSettingsApis";
+// import { IClinicSettings } from "../types";
+// import { ApiError } from "../fetch/ApiError";
 
-export const useGetClinicSettings = () => {
-  const query = useQuery<IClinicSettings, ApiError>(
-    ["clinic-settings"],
-    GetClinicSettingsApi,
-  );
+// export const useGetClinicSettings = () => {
+//   const query = useQuery<IClinicSettings, ApiError>(
+//     ["clinic-settings"],
+//     GetClinicSettingsApi,
+//   );
 
-  return { query };
-};
+//   return { query };
+// };
 
-export const useCreateClinicSettings = () => {
-  const queryClient = useQueryClient();
+// export const useCreateClinicSettings = () => {
+//   const queryClient = useQueryClient();
 
-  const createMutation = useMutation<
-    IClinicSettings,
-    ApiError,
-    IClinicSettings
-  >((settings) => CreateClinicSettingsApi(settings), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["clinic-settings"]);
-    },
-  });
+//   const createMutation = useMutation<
+//     IClinicSettings,
+//     ApiError,
+//     IClinicSettings
+//   >((settings) => CreateClinicSettingsApi(settings), {
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(["clinic-settings"]);
+//     },
+//   });
 
-  return { createMutation };
-};
+//   return { createMutation };
+// };
 
-export const useUpdateClinicSettings = () => {
-  const queryClient = useQueryClient();
+// export const useUpdateClinicSettings = () => {
+//   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation<
-    IClinicSettings,
-    ApiError,
-    IClinicSettings
-  >((settings) => UpdateClinicSettingsApi(settings), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["clinic-settings"]);
-    },
-  });
+//   const updateMutation = useMutation<
+//     IClinicSettings,
+//     ApiError,
+//     IClinicSettings
+//   >((settings) => UpdateClinicSettingsApi(settings), {
+//     onSuccess: () => {
+//       queryClient.invalidateQueries(["clinic-settings"]);
+//     },
+//   });
 
-  return { updateMutation };
-};
+//   return { updateMutation };
+// };

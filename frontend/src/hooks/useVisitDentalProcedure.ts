@@ -1,30 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  DeleteVisitProcedureRes,
-  Procedure,
-  GetVisitProceduresByVisitIdReq,
-  GetVisitProceduresByVisitIdRes,
-  recordVisitDentalProcedureReq,
-  recordVisitDentalProcedureRes,
-  UpdateVisitDentalProcedureRes,
-  VisitDentalProcedure,
-} from "../types";
+import { Procedure, VisitDentalProcedure } from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { useState } from "react";
-import {
-  UpdateVisitDentalProcedureApi,
-  RecordVisitDentalProcedureApi,
-  DeleteVisitProcedureApi,
-  GetVisitProceduresByVisitIdApi,
-} from "../apis";
+import { VisitProcedureApi } from "../apis";
+import { VisitProcedureReqDTO, VisitProcedureResDTO } from "../dto";
 
 export const useUpdateVisitDentalProcedure = () => {
   const updateVisitDentalProcedureMutation = useMutation<
-    UpdateVisitDentalProcedureRes,
+    VisitProcedureResDTO,
     ApiError,
     number
   >((visitDentalProcedureId) =>
-    UpdateVisitDentalProcedureApi(visitDentalProcedureId),
+    VisitProcedureApi.update(visitDentalProcedureId),
   );
 
   return { updateVisitDentalProcedureMutation };
@@ -32,12 +19,10 @@ export const useUpdateVisitDentalProcedure = () => {
 
 export const useRecordVisitDentalProcedure = () => {
   const recordVisitDentalProcedureMutation = useMutation<
-    recordVisitDentalProcedureRes,
+    VisitProcedureResDTO,
     ApiError,
-    recordVisitDentalProcedureReq
-  >((visitDentalProcedure) =>
-    RecordVisitDentalProcedureApi(visitDentalProcedure),
-  );
+    VisitProcedureReqDTO
+  >((visitDentalProcedure) => VisitProcedureApi.create(visitDentalProcedure));
 
   return { recordVisitDentalProcedureMutation };
 };
@@ -60,10 +45,8 @@ export const useRecordVisitsProcedures = () => {
       selectedDentalProcedures.map((dentalProcedure) =>
         recordVisitDentalProcedureMutation.mutateAsync(
           {
-            visit: { id: visitId },
-            dentalProcedure: {
-              id: dentalProcedure.id,
-            },
+            visitId,
+            procedureId: dentalProcedure.id,
           },
           {
             onSuccess: () =>
@@ -84,26 +67,24 @@ export const useRecordVisitsProcedures = () => {
 export const useDeleteVisitProcedure = () => {
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation<
-    DeleteVisitProcedureRes,
-    ApiError,
-    VisitDentalProcedure
-  >((vp) => DeleteVisitProcedureApi({ procedureId: vp.id }), {
-    onSuccess: (_, vpVariables) =>
-      queryClient.invalidateQueries(["visit-procedures", vpVariables.visit.id]),
-  });
+  const deleteMutation = useMutation<unknown, ApiError, number>(
+    (vpId) => VisitProcedureApi.delete(vpId),
+    // {
+    //   onSuccess: (_, vpVariables) =>
+    //     queryClient.invalidateQueries([
+    //       "visit-procedures",
+    //       vpVariables.visit.id,
+    //     ]),
+    // },
+  );
 
   return { deleteMutation };
 };
 
 export const useGetVisitProceduresByVisitId = (visitId: number) => {
-  const query = useQuery<
-    GetVisitProceduresByVisitIdRes,
-    ApiError,
-    GetVisitProceduresByVisitIdReq
-  >(
+  const query = useQuery<VisitProcedureResDTO[], ApiError>(
     ["visit-procedures", visitId],
-    () => GetVisitProceduresByVisitIdApi({ visitId }),
+    () => VisitProcedureApi.getByVisit(visitId),
     { enabled: !!visitId },
   );
 

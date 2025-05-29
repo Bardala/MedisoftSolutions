@@ -1,3 +1,11 @@
+import {
+  PaymentResDTO,
+  QueueResDTO,
+  VisitMedicineResDTO,
+  VisitPaymentResDTO,
+  VisitProcedureResDTO,
+  VisitResDTO,
+} from "../dto";
 import { ApiError } from "../fetch/ApiError";
 
 export interface LoginContextType {
@@ -8,19 +16,65 @@ export interface LoginContextType {
   error: ApiError;
 }
 
+export interface Clinic {
+  id?: number;
+  name: string;
+  address?: string;
+  phoneNumber?: string;
+  email?: string;
+  logoUrl?: string;
+  workingHours?: string;
+  phoneSupportsWhatsapp?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  doctors?: User[];
+  clinicLimits?: ClinicLimits;
+  clinicSettings?: ClinicSettings;
+}
+
+export interface ClinicLimits {
+  id?: number;
+  clinicId: number;
+  maxUsers?: number;
+  maxFileStorageMb?: number;
+  maxPatientRecords?: number;
+  allowFileUpload?: boolean;
+  allowMultipleBranches?: boolean;
+  allowBillingFeature?: boolean;
+}
+
+export interface ClinicSettings {
+  id?: number;
+  clinicId: number;
+  doctorName?: string;
+  doctorTitle?: string;
+  doctorQualification?: string;
+  backupDbPath?: string;
+  backupImagesPath?: string;
+  healingMessage?: string;
+  printFooterNotes?: string;
+  language?: string;
+  backupEnabled?: boolean;
+  backupFrequencyCron?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface User {
   id?: number;
+  clinicId: number;
   username: string;
-  role: "Doctor" | "Assistant";
-  name: string;
   password?: string;
+  name: string;
   phone: string;
-  createdAt?: Date;
+  role: "Admin" | "Doctor" | "Assistant";
   profilePicture?: string;
+  createdAt?: Date;
 }
 
 export interface Patient {
   id?: number;
+  clinicId: number;
   fullName: string;
   age?: number;
   notes?: string;
@@ -30,27 +84,28 @@ export interface Patient {
   createdAt?: Date;
 }
 
-export interface Visit {
+export interface PatientFile {
   id?: number;
+  clinicId: number;
   patient: Patient;
-  doctor: User;
-  assistant?: User;
-  wait?: number;
-  duration?: number;
-  doctorNotes?: string;
+  fileType: string;
+  description?: string;
+  filePath?: string;
   createdAt?: Date;
 }
 
 export interface Procedure {
   id?: number;
+  clinicId: number;
   serviceName: string;
   arabicName: string;
-  description: string;
+  description?: string;
   cost: number;
 }
 
 export interface Medicine {
-  id?: number;
+  id: number;
+  clinicId: number;
   medicineName: string;
   dosage: string;
   frequency: string;
@@ -59,42 +114,70 @@ export interface Medicine {
   createdAt?: Date;
 }
 
-export interface Payment {
-  id?: number;
-  amount: number;
-  createdAt?: Date;
-  patient: Patient;
-  recordedBy: User;
-}
-
-export interface VisitDentalProcedure {
-  id?: number;
-  visit: Visit;
-  dentalProcedure: Procedure;
-}
-
-export interface VisitMedicine {
-  id?: number;
-  visit: Visit;
-  medicine: Medicine;
-}
-
-export interface VisitPayment {
-  id?: number;
-  visit: Visit;
-  payment: Payment;
-}
-
-// export interface VisitAnalysis {
-//   visitId: number;
+// export interface Payment {
+//   id?: number;
+//   clinicId: number;
+//   amount: number;
+//   patient: Patient;
+//   recordedBy: User;
 //   createdAt?: Date;
-//   doctorName: string;
-//   doctorNotes?: string;
-//   procedures: { procedureId?: number; serviceName: string }[];
-//   totalPayment: number;
-//   paymentIds: number[]; // Array of payment IDs
-//   medicines: { medicineId?: number; medicineName: string }[];
 // }
+
+export type Payment = PaymentResDTO;
+
+// export interface QueueEntry {
+//   id?: number;
+//   clinicId: number;
+//   patient: Patient;
+//   doctor: User;
+//   assistant?: User;
+//   position: number;
+//   status: "WAITING" | "IN_PROGRESS" | "COMPLETED";
+//   estimatedWaitTime?: number;
+//   createdAt?: Date;
+//   updatedAt?: Date;
+// }
+
+export type QueueEntry = QueueResDTO;
+
+// export interface Visit {
+//   id?: number;
+//   patient: Patient;
+//   clinicId: number;
+//   doctor: User;
+//   assistant?: User;
+//   wait?: number;
+//   duration?: number;
+//   doctorNotes?: string;
+//   createdAt?: Date;
+// }
+
+export type Visit = VisitResDTO;
+
+// export interface VisitDentalProcedure {
+//   id?: number;
+//   visit: Visit;
+//   dentalProcedure: Procedure;
+//   clinicId: number;
+// }
+export type VisitDentalProcedure = VisitProcedureResDTO;
+
+// export interface VisitMedicine {
+//   id?: number;
+//   visit: Visit;
+//   medicine: Medicine;
+//   clinicId: number;
+// }
+export type VisitMedicine = VisitMedicineResDTO;
+
+// export interface VisitPayment {
+//   id?: number;
+//   visit: Visit;
+//   payment: Payment;
+//   clinicId: number;
+// }
+
+export type VisitPayment = VisitPaymentResDTO;
 
 export interface VisitAnalysis {
   visit: Visit;
@@ -111,18 +194,6 @@ export type RestMethod = "GET" | "POST" | "DELETE" | "PUT";
 
 export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED";
 
-export interface QueueEntry {
-  id?: number;
-  position: number;
-  patient: Patient;
-  doctor: User;
-  status: QueueStatus;
-  assistant?: User;
-  createdAt?: Date;
-  updatedAt?: Date;
-  estimatedWaitTime?: Date;
-}
-
 export interface Pageable {
   pageNumber: number;
   pageSize: number;
@@ -135,11 +206,6 @@ export interface Pageable {
   paged: boolean;
   unpaged: boolean;
 }
-// export const PatientSearchApi = (searchTerm: string, page = 0, size = 20) =>
-//   fetchFn<null, PageRes<Patient>>(
-//     `${ENDPOINT.SEARCH_PATIENTS}?term=${searchTerm}&page=${page}&size=${size}`,
-//     "GET",
-//   );
 
 export interface PatientSearchParams {
   patient?: string; // Searches both name and phone

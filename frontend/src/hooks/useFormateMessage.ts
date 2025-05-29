@@ -1,7 +1,9 @@
 import { useIntl } from "react-intl";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useFormate = (id: string, values?: Record<string, any>) => {
+// Custom hook to get formatter function
+export const useFormate = () => {
   const { formatMessage } = useIntl();
-  return formatMessage({ id }, values);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (id: string, values?: Record<string, any>) =>
+    formatMessage({ id }, values);
 };
