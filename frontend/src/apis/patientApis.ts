@@ -93,11 +93,12 @@ export const PatientApi = {
       `${ENDPOINT.DAILY_NEW_PATIENTS}?date=${date}`,
     ),
 
-  update: (patient: PatientReqDTO) =>
+  update: (patient: PatientReqDTO, patientId: number) =>
     fetchFn<PatientReqDTO, PatientResDTO>(
       ENDPOINT.UPDATE_PATIENT,
       "PUT",
       patient,
+      [patientId + ""],
     ),
 
   delete: (patientId: number) =>

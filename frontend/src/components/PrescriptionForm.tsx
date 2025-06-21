@@ -99,7 +99,7 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
       } else {
         // If medicineName hasn't changed, update the existing medicine
         try {
-          const updated = await updateMedicine({
+          const updated = await updateMedicine.mutateAsync({
             medicineName: selectedMedicine.medicineName,
             dosage,
             frequency,
@@ -156,13 +156,17 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
     <div className="prescription-form">
       <h3>{f({ id: "createPrescription" })}</h3>
       {createMedicineMutation.isError && (
-        <p className="error">{createMedicineMutation.error.message}</p>
+        <p className="error">{createMedicineMutation.error?.message}</p>
       )}
-      {isErrorVM && <p className="error">{errorVM.message}</p>}
+      {updateMedicine.isError && (
+        <p className="error">{updateMedicine.error?.message}</p>
+      )}
+      {isErrorVM && <p className="error">{errorVM?.message}</p>}
       <form onSubmit={handleSubmit}>
         {/* Medicine Search and Selection */}
         <div className="medicine-search">
           <input
+            required
             type="text"
             placeholder={f({ id: "searchMedicine" })}
             value={medicineName}
@@ -190,15 +194,9 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
 
         {/* Medicine Details */}
         <div className="medicine-details">
-          {/* <input
-            type="text"
-            placeholder="Dosage"
-            value={dosage}
-            onChange={(e) => setDosage(e.target.value)}
-            required
-          /> */}
           <div className="search-container">
             <input
+              required
               type="text"
               placeholder={f({ id: "dosage" })}
               value={dosage}
@@ -224,15 +222,10 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
               </ul>
             )}
           </div>
-          {/* <input
-            type="text"
-            placeholder="Frequency"
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            required
-          /> */}
+
           <div className="search-container">
             <input
+              required
               type="text"
               placeholder={f({ id: "frequency" })}
               value={frequency}
@@ -265,11 +258,7 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
             onChange={(e) => setDuration(Number(e.target.value))}
             required
           />
-          {/* <textarea
-            placeholder="Instructions"
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-          /> */}
+
           <div className="search-container">
             <textarea
               placeholder={f({ id: "instructions" })}
@@ -300,12 +289,12 @@ const PrescriptionForm: React.FC<PrescriptionFormProps> = ({
           </div>
         </div>
 
-        <button type="submit" disabled={isLoading || !selectedMedicine}>
-          {selectedMedicine
-            ? medicineName !== selectedMedicine.medicineName
-              ? f({ id: "addNewMedicine" })
+        <button type="submit" disabled={isLoading}>
+          {!!selectedMedicine
+            ? medicineName === selectedMedicine.medicineName
+              ? f({ id: "addToPrescription" })
               : f({ id: "updateMedicine" })
-            : f({ id: "addToPrescription" })}
+            : f({ id: "addNewMedicine" })}
         </button>
       </form>
     </div>

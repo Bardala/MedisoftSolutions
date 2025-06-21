@@ -2,14 +2,13 @@ package clinic.dev.backend.dto.clinic.req;
 
 import clinic.dev.backend.model.ClinicSettings;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record ClinicSettingsReqDTO(
     @NotBlank String doctorName,
     @NotBlank String doctorTitle,
     String doctorQualification,
-    @NotBlank String language,
-    @NotNull Boolean backupEnabled,
+    String language,
+    Boolean backupEnabled,
     String backupFrequencyCron,
     String healingMessage,
     String printFooterNotes) {

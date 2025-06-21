@@ -51,7 +51,7 @@ export const useUpdateMedicine = () => {
   );
 
   return {
-    updateMedicine: updateMutation.mutateAsync,
+    updateMedicine: updateMutation,
     isError: updateMutation.isError,
     isLoading: updateMutation.isLoading,
     error: updateMutation.error,

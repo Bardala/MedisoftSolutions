@@ -118,5 +118,7 @@
   "clinicSettings.phoneSupportsWhatsapp": "Phone Number Supports WhatsApp",
   "clinicSettings.backupEnabled": "Enable Automatic Backups",
 
-  "day_format": "{day} {month}"
+  "day_format": "{day} {month}",
+
+  "error500": "Internal Server Error"
 }

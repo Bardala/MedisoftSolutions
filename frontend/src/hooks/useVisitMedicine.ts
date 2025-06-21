@@ -31,8 +31,8 @@ export const useCreateVisitMedicine = () => {
     ApiError,
     VisitMedicineReqDTO
   >((visitMedicine) => VisitMedicineApi.create(visitMedicine), {
-    onSuccess: (_, visitMedicine) => {
-      queryClient.invalidateQueries(["visit-medicines", visitMedicine.visitId]);
+    onSuccess: (vm) => {
+      queryClient.invalidateQueries(["visit-medicines", vm.visitId]);
     },
   });
 
@@ -50,8 +50,8 @@ export const useDeleteVisitMedicine = () => {
   const deleteMutation = useMutation<void, ApiError, VisitMedicine>(
     (visitMedicine) => VisitMedicineApi.delete(visitMedicine.id),
     {
-      onSuccess: (_, visitMedicine) => {
-        queryClient.invalidateQueries(["visit-medicines", visitMedicine.id]);
+      onSuccess: (_, vm) => {
+        queryClient.invalidateQueries(["visit-medicines", vm.visitId]);
       },
     },
   );

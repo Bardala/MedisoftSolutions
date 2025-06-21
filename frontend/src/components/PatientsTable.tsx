@@ -1,6 +1,4 @@
 import { useIntl } from "react-intl";
-import { useLogin } from "../context/loginContext";
-import { useUpdatePatient } from "../hooks/usePatient";
 import { usePatientSearch } from "../hooks/usePatient";
 import { timeFormate } from "../utils";
 import { PatientsCharts } from "./PatientsCharts";
@@ -11,8 +9,7 @@ import { faTable } from "@fortawesome/free-solid-svg-icons";
 
 export const PatientsTable = () => {
   const { formatMessage: f } = useIntl();
-  const { loggedInUser } = useLogin();
-  const { updatePatientMutation } = useUpdatePatient();
+
   const { patients, error, setShowAllPatients, pagination, isLoading } =
     usePatientSearch();
   const [showStats, setShowStats] = useState(false);
@@ -81,11 +78,11 @@ export const PatientsTable = () => {
                   p1.fullName.localeCompare(p2.fullName),
                 )}
                 enableActions={true}
-                onUpdate={
-                  loggedInUser.role === "Doctor"
-                    ? updatePatientMutation.mutate
-                    : undefined
-                }
+                // onUpdate={
+                //   loggedInUser.role === "Doctor"
+                //     ? updatePatientMutation.mutateAsync
+                //     : undefined
+                // }
               />
 
               <div className="pagination-buttons">

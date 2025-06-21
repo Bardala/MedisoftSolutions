@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.dto.auth.CurrUserInfo;
-import clinic.dev.backend.exceptions.InvalidCredentialsException;
+import clinic.dev.backend.exceptions.UnauthorizedException;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.UserRepo;
@@ -42,15 +42,15 @@ public class AuthService implements AuthServiceBase {
       UserDetails user = userDetailsService.loadUserByUsername(username);
 
       User dbUser = userRepo.findByUsername(username)
-          .orElseThrow(() -> new UserNotFoundException(ErrorMsg.USER_NOT_FOUND_WITH_USERNAME));
+          .orElseThrow(() -> new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD));
 
       return jwtUtil.generateToken(user.getUsername(), dbUser.getId(), dbUser.getRole(), dbUser.getClinic().getId());
     } catch (UsernameNotFoundException ex) {
-      throw new UserNotFoundException(ErrorMsg.USER_DOES_NOT_EXIST);
+      throw new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
     } catch (BadCredentialsException ex) {
-      throw new InvalidCredentialsException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
+      throw new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
     } catch (AuthenticationException ex) {
-      throw new InvalidCredentialsException(ErrorMsg.AUTHENTICATION_FAILED);
+      throw new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
     }
   }
 

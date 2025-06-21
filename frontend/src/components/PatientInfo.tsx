@@ -40,7 +40,13 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
   const { patient, visits, payments, visitDentalProcedure } = patientRegistry;
   const { deletePatientMutation } = useDeletePatient();
   const [patientNotes, setPatientNotes] = useState("");
-  const { updatePatientMutation } = useUpdatePatient();
+  const {
+    mutateAsync: updatePatientMutation,
+    isLoading: updatePatientLoading,
+    isSuccess: updatePatientSuccession,
+    isError: isErrorUpdatePatient,
+    error: updatePatientError,
+  } = useUpdatePatient();
   const { isInQueue, isLoading: isLoadingDoctors } = useIsPatientInAnyQueue(
     patient.id,
   );
@@ -50,9 +56,7 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
   const balancePercentage = totalDeal ? (paidAmount / totalDeal) * 100 : 0;
 
   const isLoading =
-    updatePatientMutation.isLoading ||
-    deletePatientMutation.isLoading ||
-    isLoadingDoctors;
+    updatePatientLoading || deletePatientMutation.isLoading || isLoadingDoctors;
   const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
@@ -61,15 +65,21 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
 
   function handleSavePatientNotes(): void {
     patient.notes = patientNotes;
-    updatePatientMutation.mutate(patient);
+    updatePatientMutation({
+      newInfo: patient,
+      patientId: patient.id,
+    });
   }
 
-  const handleUpdatePatient = (updatedPatient: typeof patient) => {
-    updatePatientMutation.mutate(updatedPatient, {
-      onError: (err) => {
-        alert(f({ id: "error_updating_patient" }, { error: err.message }));
+  const handleUpdatePatient = (newInfo: typeof patient) => {
+    updatePatientMutation(
+      { newInfo, patientId: patient.id },
+      {
+        onError: (err) => {
+          alert(f({ id: "error_updating_patient" }, { error: err.message }));
+        },
       },
-    });
+    );
   };
 
   const handleDeletePatient = () => {
@@ -146,38 +156,6 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
 
             {/* Visualizations Row */}
             <div className="visualizations-row">
-              {/* <div className="visualization-card age-visualization">
-                <h3 className="visualization-title">
-                  {f(
-                    { id: "patient_age" },
-                    { age: patient.age || f({ id: "not_available" }) },
-                  )}
-                </h3>
-                <AgePhaseBadge />
-
-                <div className="age-progress-bar">
-                {agePhases.map((phase) => {
-                    const isCurrent = currentPhase.name === phase.name;
-                    return (
-                      <div
-                        key={phase.name}
-                        className={`age-segment ${isCurrent ? "current" : ""}`}
-                        style={{
-                          flex: phase.range[1] - phase.range[0] + 1,
-                          backgroundColor: phase.color,
-                        }}
-                        title={f({
-                          id: `age_phase_${phase.name.toLowerCase()}`,
-                        })}
-                      >
-                        <span className="emoji">{phase.emoji}</span>
-                        {isCurrent && <span className="indicator" />}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div> */}
-
               {/* Balance Visualization */}
               <div className="visualization-card balance-visualization">
                 {totalDeal ? (
@@ -307,17 +285,14 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
           </div>
 
           {/* Status Messages */}
-          {updatePatientMutation.isSuccess && (
+          {updatePatientSuccession && (
             <div className="status-message success">
               {f({ id: "patient_updated_success" })}
             </div>
           )}
-          {updatePatientMutation.isError && (
+          {isErrorUpdatePatient && (
             <div className="status-message error">
-              {f(
-                { id: "error_updating_patient" },
-                { error: updatePatientMutation.error.message },
-              )}
+              {f({ id: "error_updating_patient" })} {updatePatientError.message}
             </div>
           )}
 

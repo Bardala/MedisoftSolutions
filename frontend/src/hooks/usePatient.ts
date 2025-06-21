@@ -1,13 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
-import { Patient, PatientSearchParams } from "../types";
+import { Patient, PatientRegistryRes, PatientSearchParams } from "../types";
 
 import { useEffect, useState } from "react";
 
 import { useReducer } from "react";
 import {
   CreatePatientApi,
-  UpdatePatientApi,
   DeletePatientApi,
   GetAllPatientsApi,
   PatientSearchApi,
@@ -68,7 +67,7 @@ export const useCreatePatient = () => {
   >(CreatePatientApi(state), {
     onSuccess: (data) => {
       queryClient.setQueryData<PatientReqDTO[]>(
-        ["patients"],
+        ["patients", data.id],
         (currPatients = []) => [...currPatients, data],
       );
       setSuccess(true);
@@ -90,13 +89,21 @@ export const useCreatePatient = () => {
 };
 
 export const useUpdatePatient = () => {
-  const updatePatientMutation = useMutation<
+  const queryClient = useQueryClient();
+
+  return useMutation<
     PatientResDTO,
     ApiError,
-    PatientReqDTO
-  >((newInfo) => UpdatePatientApi(newInfo));
-
-  return { updatePatientMutation };
+    { newInfo: PatientReqDTO; patientId: number }
+  >((variables) => PatientApi.update(variables.newInfo, variables.patientId), {
+    onSuccess: (updatedPatient) => {
+      queryClient.setQueriesData<PatientRegistryRes>(
+        { queryKey: ["patient-registry", updatedPatient.id] },
+        (oldData) =>
+          oldData ? { ...oldData, patient: updatedPatient } : oldData,
+      );
+    },
+  });
 };
 
 export const useDeletePatient = () => {

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { CreateUserApi } from "../apis";
+import { UserApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { UserReqDTO, UserResDTO, UserRole } from "../dto";
 
@@ -16,7 +16,7 @@ export const useAddAssistant = () => {
   const [qrPassword, setQrPassword] = useState("");
 
   const createUserMutation = useMutation<UserResDTO, ApiError, UserReqDTO>(
-    CreateUserApi(newAssistant),
+    UserApi.create(newAssistant),
     {
       onSuccess: () => {
         setSuccess(true);

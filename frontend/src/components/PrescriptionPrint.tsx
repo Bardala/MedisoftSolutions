@@ -216,17 +216,17 @@ export const PrescriptionPrint: FC<PrescriptionPrintProps> = ({ visit }) => {
                   {/* Clinic Info */}
                   <div className="clinic-info">
                     <p>
-                      {clinic.phoneSupportsWhatsapp && (
+                      {clinic?.phoneSupportsWhatsapp && (
                         <img
                           src={whatsappImage}
                           alt="WhatsApp"
                           className="whatsapp-logo"
                         />
                       )}
-                      📞 هاتف: <span>{clinic.phoneNumber}</span>
+                      📞 هاتف: <span>{clinic?.phoneNumber}</span>
                     </p>
-                    <p>{clinic.address}</p>
-                    <p>{clinic.workingHours}</p>
+                    <p>{clinic?.address}</p>
+                    <p>{clinic?.workingHours}</p>
                   </div>
 
                   {/* Optional Print Footer Notes */}

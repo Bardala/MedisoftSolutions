@@ -1,12 +1,12 @@
 export enum ENDPOINT {
   // Authentication APIs
-  CREATE_USER = "/auth/signup",
+  SIGN_UP = "/auth/signup",
   LOGIN = "/auth/login",
   CURR_USER_INFO = "/auth/userInfo",
 
   // Patient APIs
   CREATE_PATIENT = "/patients",
-  UPDATE_PATIENT = "/patients",
+  UPDATE_PATIENT = "/patients/:id",
   DELETE_PATIENT = "/patients/:id",
   GET_PATIENT_BY_ID = "/patients/:id",
   GET_ALL_PATIENTS = "/patients",
@@ -29,6 +29,7 @@ export enum ENDPOINT {
   DELETE_ALL_USERS = "/users/all",
   RESET_PASSWORD = "/users/reset-password",
   USER_BATCH = "/patients/batch",
+  CREATE_USER = "/users",
 
   // Visit APIs
   CREATE_VISIT = "/visits",

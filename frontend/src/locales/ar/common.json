@@ -120,5 +120,7 @@
   "clinicSettings.phoneSupportsWhatsapp": "رقم الهاتف يدعم واتساب",
   "clinicSettings.backupEnabled": "تفعيل النسخ الاحتياطي التلقائي",
 
-  "day_format": "{day} {month}"
+  "day_format": "{day} {month}",
+
+  "error500": "خطأ من النظام"
 }

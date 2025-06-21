@@ -25,7 +25,7 @@ const AddAssistant: React.FC = () => {
 
   return (
     <div className="add-assistant-container">
-      <h2 className="title">{intl.formatMessage({ id: "title" })}</h2>
+      <h2 className="title">{intl.formatMessage({ id: "addAssistant" })}</h2>
       <form onSubmit={handleSubmit} className="add-assistant-form">
         <input
           type="text"
@@ -59,13 +59,13 @@ const AddAssistant: React.FC = () => {
           {intl.formatMessage({ id: "submitButton" })}
         </button>
         {error && (
-          <p className="error-message">
-            {intl.formatMessage({ id: "errorMessage" })}
+          <p className="error">
+            {intl.formatMessage({ id: "errorMessage" }) + ": " + error}
           </p>
         )}
         {success && (
           <p className="success-message">
-            {intl.formatMessage({ id: "successMessage" })}
+            {intl.formatMessage({ id: "success" })}
           </p>
         )}
       </form>

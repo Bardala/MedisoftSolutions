@@ -44,23 +44,30 @@ export const fetchFn = async <Request, Response>(
     if (res.status === 401) {
       localStorage.removeItem(LOCALS.AUTH_TOKEN);
       localStorage.removeItem(LOCALS.CURR_USER);
-      window.location.href = "/login";
-      throw new ApiError(
-        res.status,
-        "Unauthorized access. Redirecting to login.",
-      );
+      if (window.location.pathname !== "/login")
+        window.location.href = "/login";
     }
 
     if (!res.ok || (jsonResponse && jsonResponse.error)) {
-      const errorMessage = jsonResponse.error
-        ? JSON.stringify(jsonResponse.error)
+      const errorMap = jsonResponse.error;
+
+      const errorMessage = errorMap
+        ? Object.entries(errorMap)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ") // Combines multiple messages
         : "Network response was not ok";
       errorFn(res.status, errorMessage, jsonResponse.error);
       throw new ApiError(res.status, errorMessage, jsonResponse.error);
     }
 
-    return jsonResponse.data;
+    return jsonResponse.data as Response;
   }
 
-  return res as unknown as Response;
+  if (!res.ok) {
+    throw new ApiError(res.status, "Internal Server Error", {
+      "error 500": "error 500: Internal Server Error",
+    });
+  }
+
+  return res as Response;
 };

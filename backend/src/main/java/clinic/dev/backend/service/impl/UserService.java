@@ -64,7 +64,11 @@ public class UserService {
     if (userRepo.existsByUsername(req.username()))
       throw new IllegalArgumentException("Username already exists, please select another username.");
 
+    if (userRepo.existsByPhone(req.phone()))
+      throw new IllegalArgumentException(ErrorMsg.PHONE_ALREADY_EXISTS);
+
     User user = req.toEntity(getClinicId());
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     return UserResDTO.fromEntity(userRepo.save(user));
   }

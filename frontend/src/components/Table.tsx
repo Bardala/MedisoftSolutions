@@ -84,25 +84,7 @@ const Table = <T extends Record<string, unknown>>({
                         : (row[col.accessor] as React.ReactNode)}
                     </td>
                   ))}
-                {/* {columns
-                  .filter((col) => !col.expandable)
-                  .map((col, colIndex) => {
-                    const cellContent =
-                      typeof col.accessor === "function"
-                        ? col.accessor(row)
-                        : (row[col.accessor] as React.ReactNode);
 
-                    return (
-                      <td
-                        key={colIndex}
-                        className={
-                          isArabic(String(cellContent)) ? "arabic" : ""
-                        }
-                      >
-                        {cellContent}
-                      </td>
-                    );
-                  })} */}
                 {enableActions && !expandableColumns && (
                   <td className="action-cell">
                     <button

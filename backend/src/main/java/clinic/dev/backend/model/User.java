@@ -34,7 +34,7 @@ public class User implements UserDetails {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "clinic_id", nullable = false, unique = true)
+  @JoinColumn(name = "clinic_id")
   private Clinic clinic;
 
   @NotBlank

@@ -7,6 +7,7 @@ import clinic.dev.backend.model.VisitMedicine;
 import clinic.dev.backend.repository.VisitMedicineRepo;
 import clinic.dev.backend.service.VisitMedicineServiceBase;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.validation.EntityValidator;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class VisitMedicineService implements VisitMedicineServiceBase {
 
   @Autowired
   private AuthContext authContext;
+
+  @Autowired
+  private EntityValidator entityValidator;
 
   private Long getClinicId() {
     return authContext.getClinicId();
@@ -44,10 +48,13 @@ public class VisitMedicineService implements VisitMedicineServiceBase {
             .orElseThrow(() -> new ResourceNotFoundException("VisitMedicine not found")));
   }
 
-  @Override // todo: check existence of Visit and Medicine
+  @Override
   @Transactional
   public VisitMedicineResDTO create(VisitMedicineReqDTO req) {
     Long clinicId = getClinicId();
+
+    entityValidator.validateVisitMedicine(req.visitId(), req.medicineId());
+
     VisitMedicine vm = req.toEntity(clinicId);
     vm = visitMedicineRepository.save(vm);
 
@@ -58,6 +65,8 @@ public class VisitMedicineService implements VisitMedicineServiceBase {
   @Transactional
   public VisitMedicineResDTO update(Long id, VisitMedicineReqDTO req) {
     Long clinicId = getClinicId();
+
+    entityValidator.validateVisitMedicine(req.visitId(), req.medicineId());
 
     VisitMedicine vm = visitMedicineRepository.findByIdAndClinicId(id, clinicId)
         .orElseThrow(() -> new ResourceNotFoundException("VisitMedicine not found"));
@@ -70,6 +79,7 @@ public class VisitMedicineService implements VisitMedicineServiceBase {
   }
 
   @Override
+  @Transactional
   public void deleteById(Long id) {
     visitMedicineRepository.deleteByIdAndClinicId(id, getClinicId());
   }

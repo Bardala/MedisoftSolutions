@@ -22,8 +22,20 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
   }
 
+  @ExceptionHandler(BusinessValidationException.class)
+  public ResponseEntity<ApiRes<Object>> handleBusinessValidationException(BusinessValidationException ex) {
+    ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
+
   @ExceptionHandler(UnauthorizedAccessException.class)
   public ResponseEntity<ApiRes<Object>> handleUnauthorizedAccessException(RuntimeException ex) {
+    ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<ApiRes<Object>> handleUnauthorizedException(RuntimeException ex) {
     ApiRes<Object> response = new ApiRes<>(Map.of("error", ex.getMessage()));
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
   }

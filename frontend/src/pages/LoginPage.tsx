@@ -117,7 +117,9 @@ export const LoginPage: React.FC = () => {
           <button onClick={handleSubmit} className="submit-button">
             {f({ id: "login.submit" })}
           </button>
-          {error && <p className="error-message">{f({ id: "login.error" })}</p>}
+          {error && (
+            <p className="error">{f({ id: "login.error" }) + ":" + error}</p>
+          )}
         </div>
       )}
     </div>
