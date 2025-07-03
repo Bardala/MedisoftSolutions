@@ -121,7 +121,7 @@ public class PatientService {
 
   @Transactional
   public void deleteAllByClinicId(Long clinicId) {
-    authContext.validateAdminAccess(); // Will throw if not admin
+    authContext.validateClinicAdminAccess(); // Will throw if not admin
     if (!authContext.getClinicId().equals(clinicId)) {
       throw new UnauthorizedAccessException("Not authorized for this clinic");
     }

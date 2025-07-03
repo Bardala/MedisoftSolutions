@@ -44,7 +44,9 @@ public class AuthService implements AuthServiceBase {
       User dbUser = userRepo.findByUsername(username)
           .orElseThrow(() -> new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD));
 
-      return jwtUtil.generateToken(user.getUsername(), dbUser.getId(), dbUser.getRole(), dbUser.getClinic().getId());
+      Long clinicId = dbUser.getRole().equalsIgnoreCase("SuperAdmin") ? null : dbUser.getClinic().getId();
+
+      return jwtUtil.generateToken(user.getUsername(), dbUser.getId(), dbUser.getRole(), clinicId);
     } catch (UsernameNotFoundException ex) {
       throw new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD);
     } catch (BadCredentialsException ex) {
@@ -70,7 +72,7 @@ public class AuthService implements AuthServiceBase {
     currUserInfo.setRole(user.get().getRole());
     currUserInfo.setPhone(user.get().getPhone());
     currUserInfo.setName(user.get().getName());
-    currUserInfo.setClinicId(clinicId);
+    currUserInfo.setClinicId(user.get().getRole().equalsIgnoreCase("SuperAdmin") ? null : clinicId);
 
     return currUserInfo;
   }

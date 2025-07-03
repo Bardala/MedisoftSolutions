@@ -6,8 +6,10 @@ import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
+import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.service.impl.ClinicService;
 import clinic.dev.backend.util.ApiRes;
+import clinic.dev.backend.util.AuthContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import jakarta.validation.Valid;
 public class ClinicController {
 
   private final ClinicService clinicService;
+  private final AuthContext authContext;
 
   @GetMapping("/user-clinic")
   public ResponseEntity<ApiRes<ClinicResDTO>> getClinic() {
@@ -51,11 +54,13 @@ public class ClinicController {
     return ResponseEntity.ok(new ApiRes<>((clinicService.getLimits())));
   }
 
-  // todo: Add authorization for admin
   // APIs For system dashboard admin
   @GetMapping
   /** @apiNote For system dashboard admin */
   public ResponseEntity<ApiRes<List<ClinicResDTO>>> getAllClinics() {
+    if (!authContext.isSuperAdmin())
+      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
+
     return ResponseEntity.ok(new ApiRes<>(clinicService.getAllClinics()));
   }
 
@@ -63,6 +68,9 @@ public class ClinicController {
   /** @apiNote For system dashboard admin */
   public ResponseEntity<ApiRes<ClinicResDTO>> createClinic(
       @RequestBody @Valid ClinicReqDTO request) {
+    if (!authContext.isSuperAdmin())
+      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
+
     ClinicResDTO response = clinicService.createClinic(request);
     return ResponseEntity.ok(new ApiRes<>(response));
   }
@@ -70,12 +78,18 @@ public class ClinicController {
   @GetMapping("/{id}")
   /** @apiNote For system dashboard admin */
   public ResponseEntity<ApiRes<ClinicResDTO>> getClinic(@PathVariable("id") Long id) {
+    if (!authContext.isSuperAdmin())
+      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
+
     return ResponseEntity.ok(new ApiRes<>(clinicService.getClinicById(id)));
   }
 
   @DeleteMapping("/{id}")
   /** @apiNote For system dashboard admin */
-  public ResponseEntity<ApiRes<Void>> deleteClinic(@PathVariable Long id) {
+  public ResponseEntity<ApiRes<Void>> deleteClinic(@PathVariable("id") Long id) {
+    if (!authContext.isSuperAdmin())
+      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
+
     clinicService.deleteClinic(id);
     return ResponseEntity.noContent().build();
   }
@@ -93,6 +107,8 @@ public class ClinicController {
   public ResponseEntity<ApiRes<ClinicLimitsResDTO>> updateClinicLimits(
       @PathVariable("id") Long id,
       @RequestBody @Valid ClinicLimitsReqDTO request) {
+    if (!authContext.isSuperAdmin())
+      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
 
     return ResponseEntity.ok(new ApiRes<>(clinicService.updateLimits(request, id)));
   }

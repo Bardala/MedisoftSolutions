@@ -5,6 +5,7 @@ import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 
@@ -42,14 +43,33 @@ public class DataInitializationService {
   @Autowired
   private ClinicLimitsRepo clinicLimitsRepo;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   @PostConstruct
   public void populateData() {
+    addSuperAdmin();
     addClinic(); // Initialize clinic first since other entities depend on it
     addUsers();
     addPatients();
     addMedicines();
     addVisitsAndMedicines();
     addPayments();
+  }
+
+  private void addSuperAdmin() {
+    if (!userRepo.existsByUsername("superadmin")) {
+      User superAdmin = new User();
+      superAdmin.setUsername("superadmin");
+      superAdmin.setName("Islam");
+      superAdmin.setPhone("01120618782");
+
+      superAdmin.setPassword(passwordEncoder.encode("888888"));
+      superAdmin.setRole("SuperAdmin");
+      superAdmin.setClinic(null);
+      userRepo.save(superAdmin);
+    }
+
   }
 
   private void addClinic() {

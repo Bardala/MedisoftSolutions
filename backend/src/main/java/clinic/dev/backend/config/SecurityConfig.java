@@ -55,6 +55,13 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/v1/healthz").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+
+            // System Admin specific (require auth, restrict in service layer)
+            .requestMatchers(HttpMethod.GET, "/api/v1/clinics/**").authenticated()
+            .requestMatchers(HttpMethod.POST, "/api/v1/clinics").authenticated()
+            .requestMatchers(HttpMethod.PUT, "/api/v1/clinics/**").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/clinics/**").authenticated()
+
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

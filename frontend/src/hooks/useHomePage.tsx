@@ -8,12 +8,15 @@ import PatientProfile from "../components/CurrentPatient";
 import Home from "../components/Home";
 import Settings from "../components/Settings";
 import MonthlyDoctorReports from "../components/MonthlyDoctorReports";
-import AddAssistant from "../components/AddAssistant";
+import AddUserForm from "../components/AddUserForm";
 import { AddVisit } from "../components/AddVisit";
 import { GetRegistry } from "../components/GetRegistry";
 import QueuePage from "../components/Queue";
 import { ClinicSettings } from "../components/ClinicSettings";
 import { EditUserInfo } from "../components/EditUserInfo";
+import { ClinicsList } from "../components/ClinicsList";
+import { CreateClinic } from "../components/CreateClinic";
+import { CreateClinicWithOwner } from "../components/CreateClinicWithOwner";
 
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -33,15 +36,32 @@ export const useHomePage = (loggedInUser: User) => {
 
   const doctorRoutes = {
     "/monthly-reports": <MonthlyDoctorReports />,
-    "/add-assistant": <AddAssistant />,
+    "/add-assistant": <AddUserForm />,
     "/clinic-settings": <ClinicSettings />,
   };
 
-  const renderContent = () =>
-    commonRoutes[selectedOption] ??
-    (loggedInUser.role === "Doctor" ? doctorRoutes[selectedOption] : null) ?? (
-      <Home setSelectedOption={setSelectedOption} />
-    );
+  const superAdminRoutes = {
+    "/admin-clinics": <ClinicsList setSelectedOption={setSelectedOption} />,
+    "/create-clinic": <CreateClinicWithOwner />,
+    "/settings": <Settings setSelectedOption={setSelectedOption} />,
+  };
+
+  const renderContent = () => {
+    if (loggedInUser.role === "SuperAdmin") {
+      return (
+        superAdminRoutes[selectedOption] ?? (
+          <ClinicsList setSelectedOption={setSelectedOption} />
+        )
+      );
+    }
+
+    if (commonRoutes[selectedOption]) return commonRoutes[selectedOption];
+
+    if (loggedInUser.role === "Doctor" && doctorRoutes[selectedOption])
+      return doctorRoutes[selectedOption];
+
+    return <Home setSelectedOption={setSelectedOption} />;
+  };
 
   return { renderContent, selectedOption, setSelectedOption };
 };

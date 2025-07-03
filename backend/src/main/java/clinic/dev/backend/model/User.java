@@ -34,7 +34,7 @@ public class User implements UserDetails {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "clinic_id")
+  @JoinColumn(name = "clinic_id", nullable = true) // SuperAdmin can have null
   private Clinic clinic;
 
   @NotBlank
@@ -58,7 +58,7 @@ public class User implements UserDetails {
   @NotNull
   @RoleConstraint(message = "Invalid role. Allowed roles are 'Admin', 'Doctor' and 'Assistant'")
   // @Enumerated(EnumType.STRING)
-  private String role; // e.g., 'Doctor', 'Assistant', 'Admin'
+  private String role; // e.g., 'Doctor', 'Assistant', 'Admin', 'SuperAdmin'
 
   @Column(nullable = true)
   private String profilePicture;
@@ -93,6 +93,6 @@ public class User implements UserDetails {
   }
 
   public enum UserRole {
-    Admin, Doctor, Assistant
+    Admin, Doctor, Assistant, SuperAdmin
   }
 }

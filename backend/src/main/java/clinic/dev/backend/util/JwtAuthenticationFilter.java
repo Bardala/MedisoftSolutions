@@ -88,6 +88,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     Long userId = jwtUtil.extractUserId(token);
     String role = jwtUtil.extractRole(token);
 
+    if (role == null || username == null || userId == null) {
+      sendErrorResponse(response, "Unauthorized", "Missing token details.");
+      return;
+    }
+
+    // Optional strict check (fail early)
+    if (!"SuperAdmin".equalsIgnoreCase(role) && clinicId == null) {
+      sendErrorResponse(response, "Unauthorized", "Clinic ID is required for non-SuperAdmin users.");
+      return;
+    }
+
     if (token.length() == 0) {
       sendErrorResponse(response, "Unauthorized", "Authorization header is missing or invalid.");
       return;
@@ -113,7 +124,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Set the authentication in the context
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-        authContext.setClinicId(clinicId);
+        authContext.setClinicId(clinicId); // this is fine if null
         authContext.setUsername(username);
         authContext.setRole(role);
         authContext.setUserId(userId);

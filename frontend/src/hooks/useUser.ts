@@ -21,12 +21,16 @@ export const useGetUserBatch = (ids: number[]) => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
-  const updateUserMutation = useMutation<UserResDTO, ApiError, UserReqDTO>(
+  return useMutation<UserResDTO, ApiError, UserReqDTO>(
     (updatedUser) => UserApi.update(updatedUser),
     { onSuccess: () => queryClient.invalidateQueries(["patients"]) },
   );
+};
 
-  return {
-    updateUserMutation,
-  };
+export const useCreateOwner = () => {
+  return useMutation<
+    UserResDTO,
+    ApiError,
+    { owner: UserReqDTO; clinicId: number }
+  >(({ owner, clinicId }) => UserApi.createOwner(owner, clinicId));
 };

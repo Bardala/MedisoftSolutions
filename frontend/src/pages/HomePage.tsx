@@ -14,10 +14,14 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
           setSelectedOption={setSelectedOption}
         />
       )}
-      <Sidebar
-        loggedInUser={loggedInUser}
-        setSelectedOption={setSelectedOption}
-      />
+
+      {loggedInUser && (
+        <Sidebar
+          loggedInUser={loggedInUser}
+          setSelectedOption={setSelectedOption}
+        />
+      )}
+
       <div className="home-page-container">
         <div className="dashboard">
           <div className="home-content">{renderContent()}</div>

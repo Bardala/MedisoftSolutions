@@ -21,24 +21,32 @@ public class AuthContext {
     this.userRepository = userRepository;
   }
 
-  public boolean hasAdminAccessToClinic(Long clinicIdToCheck) {
-    // First verify the user belongs to the clinic they're trying to access
-    if (!clinicId.equals(clinicIdToCheck)) {
-      return false;
-    }
-
-    // Then check if they have admin role
-    return "Admin".equalsIgnoreCase(role);
+  public boolean isSuperAdmin() {
+    return "SuperAdmin".equalsIgnoreCase(role);
   }
 
-  public void validateAdminAccess() {
-    if (!"Admin".equalsIgnoreCase(role))
-      throw new UnauthorizedAccessException("Only Admin users can perform this action");
+  public boolean hasAdminAccessToClinic(Long clinicIdToCheck) {
+    if (isSuperAdmin())
+      return true; // Global access
+    return clinicId != null && clinicId.equals(clinicIdToCheck) && isAdmin();
+  }
+
+  public void validateClinicAdminAccess() {
+    if (!isAdmin()) {
+      throw new UnauthorizedAccessException("Only Admin can perform this action");
+    }
+  }
+
+  public void validateSuperAdminAccess() {
+    if (!isSuperAdmin()) {
+      throw new UnauthorizedAccessException("Only Super Admin can perform this action");
+    }
   }
 
   public void validateAdminOrDoctorAccess() {
-    if ("Assistant".equalsIgnoreCase(role))
-      throw new UnauthorizedAccessException("Assistant users can not perform this action");
+    if (!isAdmin() && !isDoctor()) {
+      throw new UnauthorizedAccessException("Access denied");
+    }
   }
 
   // Optional: More granular role checks

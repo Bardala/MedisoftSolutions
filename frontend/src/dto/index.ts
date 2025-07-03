@@ -1,6 +1,7 @@
 // Base types
 
 import { Pageable, QueueStatus } from "../types";
+import { UserRole } from "../types/types";
 
 // type Nullable<T> = T | null;
 // type Date = Date | string; // Depending on how you handle dates
@@ -13,19 +14,6 @@ export interface LoginRes {
 export interface LoginReq {
   identifier: string;
   password: string;
-}
-
-// Enums
-// export enum QueueStatus {
-//   WAITING = "WAITING",
-//   IN_PROGRESS = "IN_PROGRESS",
-//   COMPLETED = "COMPLETED",
-// }
-
-export enum UserRole {
-  ADMIN = "Admin",
-  DOCTOR = "Doctor",
-  ASSISTANT = "Assistant",
 }
 
 // DTO Types
@@ -330,6 +318,7 @@ export interface ClinicReqDTO {
   email: string;
   logoUrl?: string;
   workingHours?: string;
+  phoneSupportsWhatsapp?: boolean;
 }
 
 export interface ClinicResDTO {

@@ -5,6 +5,7 @@ import type {
   ClinicSettingsReqDTO,
   ClinicSettingsResDTO,
   ClinicLimitsResDTO,
+  ClinicLimitsReqDTO,
 } from "../dto";
 import { ClinicApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
@@ -102,4 +103,12 @@ export const useGetCurrentClinicLimits = () => {
       staleTime: 5 * 60 * 1000, // 5 minutes cache
     },
   );
+};
+
+export const useUpdateClinicLimits = () => {
+  return useMutation<
+    ClinicLimitsResDTO,
+    ApiError,
+    { clinicId: number; limits: ClinicLimitsReqDTO }
+  >(({ clinicId, limits }) => ClinicApi.updateLimits(clinicId, limits));
 };

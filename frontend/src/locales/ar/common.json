@@ -122,5 +122,65 @@
 
   "day_format": "{day} {month}",
 
-  "error500": "خطأ من النظام"
+  "error500": "خطأ من النظام",
+
+  "usernamePlaceholder": "أدخل اسم المستخدم",
+  "name": "الاسم الكامل",
+  "fullNamePlaceholder": "أدخل الاسم الكامل",
+  "passwordPlaceholder": "أدخل كلمة المرور",
+  "phone": "رقم الهاتف",
+  "phonePlaceholder": "أدخل رقم الهاتف",
+  "role": "الدور",
+  "role.assistant": "مساعد",
+  "role.doctor": "طبيب",
+  "role.owner": "مالك",
+  "create_user": "إنشاء مستخدم",
+  "errorMessage": "حدث خطأ",
+  "user_creation_failed": "فشل إنشاء المستخدم",
+
+  "create_new_clinic": "إنشاء عيادة جديدة",
+  "address": "العنوان",
+  "logo_url": "رابط الشعار",
+  "working_hours": "ساعات العمل",
+  "next_set_limits": "التالي: تحديد الحدود",
+
+  "set_clinic_limits": "تحديد حدود العيادة",
+  "max_users": "أقصى عدد للمستخدمين",
+  "max_file_storage_mb": "أقصى سعة تخزين (ميجابايت)",
+  "max_patient_records": "أقصى عدد لملفات المرضى",
+  "allow_file_upload": "السماح برفع الملفات",
+  "allow_multiple_branches": "السماح بفروع متعددة",
+  "allow_billing_feature": "السماح بميزة الفوترة",
+  "back": "رجوع",
+  "next_create_owner": "التالي: إنشاء المالك",
+
+  "create_clinic_owner": "إنشاء مالك العيادة",
+  "create_clinic_and_owner": "إنشاء العيادة والمالك",
+  "creation_failed": "فشل في الإنشاء",
+
+  "clinic_and_owner_created_successfully": "تم إنشاء العيادة والمالك بنجاح",
+  "clinic_information": "معلومات العيادة",
+  "clinic_limits": "حدود العيادة",
+  "yes": "نعم",
+  "no": "لا",
+
+  "owner_account_details": "تفاصيل حساب المالك",
+
+  "create_another_clinic": "إنشاء عيادة أخرى",
+  "view_all_clinics": "عرض جميع العيادات",
+
+  "clinic_name_required": "اسم العيادة مطلوب",
+  "email_required": "البريد الإلكتروني مطلوب",
+  "invalid_email": "صيغة البريد الإلكتروني غير صحيحة",
+  "invalid_max_users": "يجب أن يكون عدد المستخدمين أكبر من 0",
+  "invalid_storage": "يجب أن تكون مساحة التخزين أكبر من 0",
+  "invalid_patient_records": "يجب أن يكون عدد ملفات المرضى أكبر من 0",
+  "username_required": "اسم المستخدم مطلوب",
+  "name_required": "الاسم الكامل مطلوب",
+  "password_requirements": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  "phone_required": "رقم الهاتف مطلوب",
+  "form": "خطأ في النموذج",
+  "owner_account": "حساب المالك",
+  "full_name": "الاسم الكامل",
+  "create_clinic": "إنشاء العيادة"
 }

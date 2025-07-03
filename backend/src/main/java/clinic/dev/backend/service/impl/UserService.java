@@ -73,6 +73,20 @@ public class UserService {
     return UserResDTO.fromEntity(userRepo.save(user));
   }
 
+  @Transactional
+  public UserResDTO createOwner(UserReqDTO req, Long clinicId) {
+    if (userRepo.existsByUsername(req.username()))
+      throw new IllegalArgumentException("Username already exists, please select another username.");
+
+    if (userRepo.existsByPhone(req.phone()))
+      throw new IllegalArgumentException(ErrorMsg.PHONE_ALREADY_EXISTS);
+
+    User user = req.toEntity(clinicId);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+    return UserResDTO.fromEntity(userRepo.save(user));
+  }
+
   public UserResDTO getById(Long id) {
     User user = userRepo.findByIdAndClinicId(id, getClinicId())
         .orElseThrow(() -> new UserNotFoundException(ErrorMsg.USER_NOT_FOUND_WITH_ID));

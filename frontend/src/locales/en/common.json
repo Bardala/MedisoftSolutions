@@ -120,5 +120,65 @@
 
   "day_format": "{day} {month}",
 
-  "error500": "Internal Server Error"
+  "error500": "Internal Server Error",
+
+  "usernamePlaceholder": "Enter username",
+  "name": "Full Name",
+  "fullNamePlaceholder": "Enter full name",
+  "passwordPlaceholder": "Enter password",
+  "phone": "Phone Number",
+  "phonePlaceholder": "Enter phone number",
+  "role": "Role",
+  "role.assistant": "Assistant",
+  "role.doctor": "Doctor",
+  "role.owner": "Owner",
+  "create_user": "Create User",
+  "errorMessage": "An error occurred",
+  "user_creation_failed": "User creation failed",
+
+  "create_new_clinic": "Create New Clinic",
+  "address": "Address",
+  "logo_url": "Logo URL",
+  "working_hours": "Working Hours",
+  "next_set_limits": "Next: Set Limits",
+
+  "set_clinic_limits": "Set Clinic Limits",
+  "max_users": "Max Users",
+  "max_file_storage_mb": "Max File Storage (MB)",
+  "max_patient_records": "Max Patient Records",
+  "allow_file_upload": "Allow File Upload",
+  "allow_multiple_branches": "Allow Multiple Branches",
+  "allow_billing_feature": "Allow Billing Feature",
+  "back": "Back",
+  "next_create_owner": "Next: Create Owner",
+
+  "create_clinic_owner": "Create Clinic Owner",
+  "create_clinic_and_owner": "Create Clinic & Owner",
+  "creation_failed": "Creation failed",
+
+  "clinic_and_owner_created_successfully": "Clinic and Owner Created Successfully",
+  "clinic_information": "Clinic Information",
+  "clinic_limits": "Clinic Limits",
+  "yes": "Yes",
+  "no": "No",
+
+  "owner_account_details": "Owner Account Details",
+
+  "create_another_clinic": "Create Another Clinic",
+  "view_all_clinics": "View All Clinics",
+
+  "clinic_name_required": "Clinic name is required",
+  "email_required": "Email is required",
+  "invalid_email": "Invalid email format",
+  "invalid_max_users": "Max users must be greater than 0",
+  "invalid_storage": "File storage must be greater than 0",
+  "invalid_patient_records": "Patient records must be greater than 0",
+  "username_required": "Username is required",
+  "name_required": "Full name is required",
+  "password_requirements": "Password must be at least 8 characters",
+  "phone_required": "Phone number is required",
+  "form": "Form Error",
+  "owner_account": "Owner Account",
+  "full_name": "Full Name",
+  "create_clinic": "Create Clinic"
 }

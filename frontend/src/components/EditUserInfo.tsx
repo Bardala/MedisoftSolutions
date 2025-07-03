@@ -7,7 +7,7 @@ import { UserReqDTO } from "../dto";
 
 export const EditUserInfo = () => {
   const { logout, loggedInUser } = useLogin();
-  const { updateUserMutation } = useUpdateUser();
+  const { mutateAsync: updateUserMutation } = useUpdateUser();
   const { formatMessage: f } = useIntl();
   const [password, setPassword] = useState("");
   const [repeatedPass, setRepeatedPass] = useState("");
@@ -20,7 +20,7 @@ export const EditUserInfo = () => {
       if (password !== repeatedPass) alert(f({ id: "password.mismatch" }));
       else {
         updatedUser.password = password;
-        await updateUserMutation.mutateAsync(updatedUser as UserReqDTO);
+        await updateUserMutation(updatedUser as UserReqDTO);
         alert(f({ id: "user.update.success" }));
         logout();
       }

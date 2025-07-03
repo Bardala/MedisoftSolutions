@@ -67,7 +67,7 @@ export interface User {
   password?: string;
   name: string;
   phone: string;
-  role: "Admin" | "Doctor" | "Assistant";
+  role: UserRole;
   profilePicture?: string;
   createdAt?: Date;
 }
@@ -247,4 +247,16 @@ export interface IClinicSettings {
 
   backupEnabled: boolean;
   backupIntervalDays: number;
+} // Enums
+// export enum QueueStatus {
+//   WAITING = "WAITING",
+//   IN_PROGRESS = "IN_PROGRESS",
+//   COMPLETED = "COMPLETED",
+// }
+
+export enum UserRole {
+  SUPER_ADMIN = "SuperAdmin",
+  DOCTOR = "Doctor",
+  ASSISTANT = "Assistant",
+  OWNER = "Owner",
 }

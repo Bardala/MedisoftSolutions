@@ -28,8 +28,14 @@ export const UserApi = {
 
   getAll: () => fetchFn<void, UserResDTO[]>(ENDPOINT.GET_ALL_USERS),
 
-  create: (userInfo: UserReqDTO) => () =>
+  create: (userInfo: UserReqDTO) =>
+    // () =>
     fetchFn<UserReqDTO, UserResDTO>(ENDPOINT.CREATE_USER, "POST", userInfo),
+
+  createOwner: (userInfo: UserReqDTO, clinicId: number) =>
+    fetchFn<UserReqDTO, UserResDTO>(ENDPOINT.CREATE_OWNER, "POST", userInfo, [
+      clinicId.toString(),
+    ]),
 
   update: (updatedUser: UserReqDTO) =>
     fetchFn<UserReqDTO, UserResDTO>(ENDPOINT.UPDATE_USER, "PUT", updatedUser),

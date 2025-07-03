@@ -61,6 +61,13 @@ public class UserController {
     return ResponseEntity.ok(new ApiRes<>(user));
   }
 
+  @PostMapping("/{id}")
+  public ResponseEntity<ApiRes<UserResDTO>> createOwner(@Valid @RequestBody UserReqDTO req,
+      @PathVariable("id") Long id) {
+    UserResDTO user = userService.createOwner(req, id);
+    return ResponseEntity.ok(new ApiRes<>(user));
+  }
+
   @PutMapping("/update/{id}")
   public ResponseEntity<ApiRes<UserResDTO>> updateUser(
       @PathVariable("id") Long id,

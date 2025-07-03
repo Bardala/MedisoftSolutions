@@ -30,6 +30,7 @@ export enum ENDPOINT {
   RESET_PASSWORD = "/users/reset-password",
   USER_BATCH = "/patients/batch",
   CREATE_USER = "/users",
+  CREATE_OWNER = "/users/:id",
 
   // Visit APIs
   CREATE_VISIT = "/visits",
@@ -119,5 +120,5 @@ export enum ENDPOINT {
   // Limits
   GET_CURRENT_CLINIC_LIMITS = "/clinics/limits",
   GET_CLINIC_LIMITS = "/clinics",
-  UPDATE_CLINIC_LIMITS = "/clinics",
+  UPDATE_CLINIC_LIMITS = "/clinics/:id/limits",
 }
