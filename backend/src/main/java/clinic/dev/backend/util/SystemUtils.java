@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 public class SystemUtils {
   public static String getMacAddress() {
     try {
-      @SuppressWarnings("deprecation")
       Process process = Runtime.getRuntime().exec("getmac");
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       String line;
@@ -23,8 +22,9 @@ public class SystemUtils {
 
   public static String getMotherboardSerial() {
     try {
-      @SuppressWarnings("deprecation")
-      Process process = Runtime.getRuntime().exec("wmic baseboard get serialnumber");
+      Process process = Runtime.getRuntime().exec(
+          new String[] { "powershell", "-Command",
+              "Get-WmiObject Win32_BaseBoard | Select-Object -ExpandProperty SerialNumber" });
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       reader.readLine(); // Skip header
       return reader.readLine().trim(); // Read serial number
@@ -36,12 +36,13 @@ public class SystemUtils {
 
   public static String getCpuId() {
     try {
-      Process process = Runtime.getRuntime().exec(new String[] { "wmic", "cpu", "get", "processorid" });
+      Process process = Runtime.getRuntime().exec(
+          new String[] { "powershell", "-Command",
+              "Get-WmiObject Win32_Processor | Select-Object -ExpandProperty ProcessorId" });
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
       String line;
       while ((line = reader.readLine()) != null) {
-        if (line.trim().length() > 0 && !line.toLowerCase().contains("processorid")) {
+        if (!line.trim().isEmpty()) {
           return line.trim();
         }
       }
