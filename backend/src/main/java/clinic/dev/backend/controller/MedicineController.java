@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class MedicineController {
   private MedicineService medicineService;
 
   @PostMapping
+  @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
   public ResponseEntity<ApiRes<MedicineResDTO>> createMedicine(@RequestBody @Valid MedicineReqDTO medicine) {
     MedicineResDTO createdMedicine = medicineService.create(medicine);
     return ResponseEntity.ok(new ApiRes<>(createdMedicine));
   }
 
   @PutMapping
+  @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
   public ResponseEntity<ApiRes<MedicineResDTO>> updateMedicine(
       @Valid @RequestBody MedicineReqDTO medicine) {
     MedicineResDTO updatedMedicine = medicineService.update(medicine);
@@ -33,6 +36,7 @@ public class MedicineController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
   public ResponseEntity<ApiRes<Void>> deleteMedicine(@PathVariable("id") Long id) {
     medicineService.delete(id);
     return ResponseEntity.noContent().build();

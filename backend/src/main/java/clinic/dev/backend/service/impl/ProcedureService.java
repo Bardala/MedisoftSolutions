@@ -34,8 +34,6 @@ public class ProcedureService {
   }
 
   public ProcedureResDTO create(ProcedureReqDTO req) {
-    authContext.validateAdminOrDoctorAccess();
-
     Procedure procedure = req.toEntity(getClinicId());
 
     return ProcedureResDTO.fromEntity(procedureRepo.save(procedure));
@@ -43,8 +41,6 @@ public class ProcedureService {
 
   // todo: test this annotation
   public ProcedureResDTO update(Long id, ProcedureReqDTO req) {
-    authContext.validateAdminOrDoctorAccess();
-
     Procedure procedure = procedureRepo.findByIdAndClinicId(id, getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
 
@@ -55,8 +51,6 @@ public class ProcedureService {
 
   @Transactional
   public void delete(Long id) {
-    authContext.validateAdminOrDoctorAccess();
-
     visitProcedureRepo.deleteByDentalProcedureIdAndClinicId(id, getClinicId());
 
     procedureRepo.deleteByIdAndClinicId(id, getClinicId());

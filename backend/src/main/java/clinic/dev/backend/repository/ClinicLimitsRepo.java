@@ -13,4 +13,6 @@ public interface ClinicLimitsRepo extends JpaRepository<ClinicLimits, Long> {
   void deleteByClinicId(Long id);
 
   Optional<ClinicLimits> findByClinicId(Long clinicId);
+
+  void deleteAllByClinicId(Long id);
 }

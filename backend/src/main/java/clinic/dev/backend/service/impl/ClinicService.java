@@ -2,24 +2,31 @@ package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.dto.clinic.req.ClinicLimitsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicReqDTO;
+import clinic.dev.backend.dto.clinic.req.ClinicSearchReq;
 import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
+import clinic.dev.backend.dto.clinic.res.ClinicWithOwnerRes;
+import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
-import clinic.dev.backend.exceptions.UnauthorizedException;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.ClinicSettings;
+import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.ClinicRepo;
 import clinic.dev.backend.repository.ClinicSettingsRepo;
+import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.ClinicServiceBase;
 import clinic.dev.backend.util.AuthContext;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +45,13 @@ public class ClinicService implements ClinicServiceBase {
 
   @Autowired
   private ClinicLimitsRepo clinicLimitsRepo;
+
+  @Autowired
+  private UserRepo userRepo;
+  @Autowired
+  private ClinicLimitsRepo limitsRepo;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @Override
   public List<ClinicResDTO> getAllClinics() {
@@ -92,11 +106,9 @@ public class ClinicService implements ClinicServiceBase {
     Clinic clinic = clinicRepo.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Clinic not found"));
 
-    // Check if current user has permission to delete this clinic
-    if (!authContext.isAdmin() && !authContext.getClinicId().equals(id)) {
-      throw new UnauthorizedException("Not authorized to delete this clinic");
-    }
-
+    userRepo.deleteAllByClinicId(id);
+    clinicSettingsRepo.deleteAllByClinicId(id);
+    clinicLimitsRepo.deleteAllByClinicId(id);
     clinicRepo.delete(clinic);
   }
 
@@ -116,10 +128,6 @@ public class ClinicService implements ClinicServiceBase {
     return ClinicSettingsResDTO.fromEntity(clinicSettingsRepo.save(settings));
   }
 
-  /**
-   * @apiNote Limits should be recorded by system dashboard admin
-   * @apiNote Limits should not be recorded by anyone from clinic staff
-   */
   @Override
   @Transactional
   public ClinicLimitsResDTO updateLimits(ClinicLimitsReqDTO request, Long clinicId) {
@@ -141,7 +149,6 @@ public class ClinicService implements ClinicServiceBase {
             .orElseThrow(() -> new ResourceNotFoundException("Clinic limits not found")));
   }
 
-  /** @implNote for System dashboard admin */
   public ClinicLimitsResDTO getLimitsById(Long clinicId) {
     return ClinicLimitsResDTO
         .fromEntity(clinicLimitsRepo.findByClinicId(clinicId)
@@ -155,5 +162,50 @@ public class ClinicService implements ClinicServiceBase {
                 .getClinicId())
             .orElseThrow(
                 () -> new ResourceNotFoundException("Clinic settings not found")));
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ClinicResDTO> searchClinicsByName(String name, int page, int size) {
+    return clinicRepo.findByNameContainingIgnoreCase(name, PageRequest.of(page, size))
+        .map(ClinicResDTO::fromEntity);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ClinicResDTO> searchClinics(ClinicSearchReq req) {
+    if (req.name() == null && req.phone() == null && req.email() == null) {
+      return clinicRepo.findAll(req.getPageable())
+          .map(ClinicResDTO::fromEntity);
+    }
+
+    return clinicRepo.searchClinics(
+        req.name(),
+        req.phone(),
+        req.email(),
+        req.getPageable()).map(ClinicResDTO::fromEntity);
+  }
+
+  @Transactional
+  public ClinicWithOwnerRes createClinicWithOwner(
+      ClinicReqDTO clinicDto,
+      ClinicLimitsReqDTO limitsDto,
+      UserReqDTO ownerDto) {
+    // Create and save clinic
+    Clinic clinic = clinicDto.toEntity();
+    clinic = clinicRepo.save(clinic);
+
+    // Create and save limits
+    ClinicLimits limits = limitsDto.toEntity();
+    limits.setClinic(clinic);
+    limits = limitsRepo.save(limits);
+
+    // Create and save owner
+    User owner = ownerDto.toEntity(clinic.getId());
+    owner.setPassword(passwordEncoder.encode(owner.getPassword()));
+    owner = userRepo.save(owner);
+
+    return new ClinicWithOwnerRes(
+        clinic,
+        owner,
+        limits);
   }
 }

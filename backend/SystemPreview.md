@@ -270,50 +270,278 @@ Payments linked to visits.
 | visit_id        | BIGINT   | Foreign Key -> Visits(id), NOT NULL   |
 | payment_id      | BIGINT   | Foreign Key -> Payments(id), NOT NULL |
 
-# **Relationships**
+# Entity Relationship Details
 
-1. **User → Payment:**  
-   One-to-Many (User records payments)
-2. **Patient → Visit:**  
-   One-to-Many (Patient has multiple visits)
+## 1. **User → Payment**
 
-3. **Visit → Services/Medicines/Payments:**  
-   Many-to-Many through junction tables
+**Relationship:** One-to-Many  
+**Description:**
 
-4. **Patient → Files:**  
-   One-to-Many (Patient has multiple files)
+- A **User** (with role `Admin`, `Doctor`, or `Assistant`) can record **multiple Payments** (`recorded_by` foreign key in `Payments` table).
+- Each **Payment** is recorded by **exactly one User**.
 
-5. **Doctor → Queue:**  
-   One-to-Many (Doctor manages queue)
+## 2. **Patient → Visit**
+
+**Relationship:** One-to-Many  
+**Description:**
+
+- A **Patient** can have **multiple Visits** (`patient_id` foreign key in `Visits` table).
+- Each **Visit** belongs to **exactly one Patient**.
+
+## 3. **Visit ↔ Services/Medicines/Payments**
+
+**Relationship:** Many-to-Many (via junction tables)  
+**Description:**
+
+- **Visit ↔ Procedures**:
+  - A **Visit** can include **multiple Procedures** (via `VisitProcedure` junction table).
+  - A **Procedure** can be part of **multiple Visits**.
+- **Visit ↔ Medicines**:
+  - A **Visit** can prescribe **multiple Medicines** (via `VisitMedicine` junction table).
+  - A **Medicine** can be prescribed in **multiple Visits**.
+- **Visit ↔ Payments**: <!-- todo: One to One -->
+  - A **Visit** can be linked to **multiple Payments** (via `VisitPayment` junction table).
+  - A **Payment** can be linked to **multiple Visits** (e.g., partial payments for a single visit).
+
+## 4. **Patient → Files**
+
+**Relationship:** One-to-Many  
+**Description:**
+
+- A **Patient** can have **multiple Files** (`patient_id` foreign key in `PatientFiles` table).
+- Each **File** belongs to **exactly one Patient**.
+
+## 5. **Doctor (User) → Queue**
+
+**Relationship:** One-to-Many  
+**Description:**
+
+- A **Doctor** (a `User` with role `Doctor`) can manage **multiple Queue entries** (`doctor_id` foreign key in `Queue` table).
+- Each **Queue entry** is assigned to **exactly one Doctor**.
+
+---
+
+### Additional Key Relationships:
+
+- **Clinic → All Tables**:
+  - One-to-Many (e.g., a Clinic has multiple Users, Patients, Visits, etc.).
+- **Assistant (User) → Queue**:
+  - One-to-Many (an `Assistant` can assist in multiple Queue entries via `assistant_id`).
+- **Patient → Queue**:
+  - One-to-Many (a Patient can be in the Queue multiple times).
+
+## Entity Relationship Diagram
+
+```mermaid
+erDiagram
+CLINIC ||--o{ CLINIC_LIMITS : has
+CLINIC ||--o{ CLINIC_SETTINGS : has
+CLINIC ||--o{ USERS : has
+CLINIC ||--o{ PATIENTS : has
+CLINIC ||--o{ PROCEDURES : has
+CLINIC ||--o{ MEDICINES : has
+CLINIC ||--o{ VISITS : has
+CLINIC ||--o{ PAYMENTS : has
+CLINIC ||--o{ QUEUE : has
+
+PATIENTS ||--o{ PATIENT_FILES : has
+PATIENTS ||--o{ VISITS : has
+PATIENTS ||--o{ PAYMENTS : has
+PATIENTS ||--o{ QUEUE : has
+
+USERS ||--o{ VISITS : "doctor"
+USERS ||--o{ VISITS : "assistant"
+USERS ||--o{ PAYMENTS : "recorded_by"
+USERS ||--o{ QUEUE : "doctor"
+USERS ||--o{ QUEUE : "assistant"
+
+VISITS ||--o{ VISIT_PROCEDURE : has
+VISITS ||--o{ VISIT_MEDICINE : has
+VISITS ||--o{ VISIT_PAYMENT : has
+
+PROCEDURES }o--|| VISIT_PROCEDURE : included_in
+MEDICINES }o--|| VISIT_MEDICINE : prescribed_in
+PAYMENTS }o--|| VISIT_PAYMENT : linked_to
+
+CLINIC {
+   bigint id PK
+   varchar(100) name
+   text address
+   varchar(20) phone_number
+   varchar(100) email
+   varchar(255) logo_url
+   text working_hours
+   boolean phone_supports_whatsapp
+   timestamp created_at
+   timestamp updated_at
+}
+
+CLINIC_LIMITS {
+   bigint id PK
+   bigint clinic_id FK
+   int max_users
+   int max_file_storage_mb
+   int max_patient_records
+   boolean allow_file_upload
+   boolean allow_multiple_branches
+   boolean allow_billing_feature
+}
+
+CLINIC_SETTINGS {
+   bigint id PK
+   bigint clinic_id FK
+   varchar(100) doctor_name
+   varchar(100) doctor_title
+   varchar(100) doctor_qualification
+   text backup_db_path
+   text backup_images_path
+   text healing_message
+   text print_footer_notes
+   varchar(10) language
+   boolean backup_enabled
+   varchar(20) backup_frequency_cron
+   timestamp created_at
+   timestamp updated_at
+}
+
+USERS {
+   bigint id PK
+   bigint clinic_id FK
+   varchar(20) username
+   varchar(255) password
+   varchar(200) name
+   varchar(20) phone
+   varchar(10) role
+   varchar(255) profile_picture
+   timestamp created_at
+}
+
+PATIENTS {
+   bigint id PK
+   bigint clinic_id FK
+   varchar(200) full_name
+   int age
+   text notes
+   varchar(20) phone
+   text address
+   varchar(500) medical_history
+   timestamp created_at
+}
+
+PATIENT_FILES {
+   bigint id PK
+   bigint clinic_id FK
+   bigint patient_id FK
+   varchar(50) file_type
+   varchar(200) description
+   varchar(300) file_path
+   timestamp created_at
+}
+
+PROCEDURES {
+   bigint id PK
+   bigint clinic_id FK
+   varchar(150) service_name
+   varchar(150) arabic_name
+   varchar(1000) description
+   double cost
+}
+
+MEDICINES {
+   bigint id PK
+   bigint clinic_id FK
+   varchar(150) medicine_name
+   varchar(50) dosage
+   varchar(50) frequency
+   int duration
+   text instructions
+   timestamp created_at
+}
+
+VISITS {
+   bigint id PK
+   bigint clinic_id FK
+   bigint patient_id FK
+   bigint doctor_id FK
+   bigint assistant_id FK
+   int wait
+   int duration
+   text doctor_notes
+   timestamp created_at
+}
+
+PAYMENTS {
+   bigint id PK
+   bigint clinic_id FK
+   bigint patient_id FK
+   bigint recorded_by FK
+   double amount
+   timestamp created_at
+}
+
+QUEUE {
+   bigint id PK
+   bigint clinic_id FK
+   bigint patient_id FK
+   bigint doctor_id FK
+   bigint assistant_id FK
+   int position
+   varchar status
+   int estimated_wait_time
+   timestamp created_at
+   timestamp updated_at
+}
+
+VISIT_PROCEDURE {
+   bigint id PK
+   bigint clinic_id FK
+   bigint visit_id FK
+   bigint service_id FK
+}
+
+VISIT_MEDICINE {
+   bigint id PK
+   bigint clinic_id FK
+   bigint visit_id FK
+   bigint medicine_id FK
+}
+
+VISIT_PAYMENT {
+   bigint id PK
+   bigint clinic_id FK
+   bigint visit_id FK
+   bigint payment_id FK
+}
+```
 
 ---
 
 # **Doctor Controls**
 
-1. **User Management:**  
+1. **User Management:**
    Full control over assistant accounts
 
-2. **Service Management:**  
+2. **Service Management:**
    Add/update dental procedures with bilingual names
 
-3. **Queue Management:**  
+3. **Queue Management:**
    Monitor and update patient queue status
 
-4. **Patient Records:**  
+4. **Patient Records:**
    Access to complete medical history and files
 
 # **Assistants Controls**
 
-1. **Patient Registration:**  
+1. **Patient Registration:**
    Add new patients and update information
 
-2. **Queue Management:**  
+2. **Queue Management:**
    Add patients to queue and update basic status
 
-3. **Payment Recording:**  
+3. **Payment Recording:**
    Record payments with doctor oversight
 
-4. **Limited Access:**  
+4. **Limited Access:**
    Restricted access based on doctor's settings
 
 ---

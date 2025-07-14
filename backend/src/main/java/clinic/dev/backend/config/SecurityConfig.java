@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,6 +28,7 @@ import clinic.dev.backend.util.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -39,7 +41,8 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(request -> {
           var corsConfig = new org.springframework.web.cors.CorsConfiguration();
           corsConfig.setAllowedOrigins(
-              List.of("http://localhost:3000", "http://192.168.1.100:3000", "https://192.168.1.100:8443"));
+              List.of("http://localhost:3000", "http://192.168.1.100:3000", "https://192.168.1.100:8443",
+                  "https://localhost:8443"));
           corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
           corsConfig.setAllowedHeaders(List.of("*"));
           corsConfig.setAllowCredentials(true);

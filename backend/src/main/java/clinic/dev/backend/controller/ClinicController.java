@@ -2,19 +2,21 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.dto.clinic.req.ClinicLimitsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicReqDTO;
+import clinic.dev.backend.dto.clinic.req.ClinicSearchReq;
 import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
+import clinic.dev.backend.dto.clinic.req.CreateClinicWithOwnerReq;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
-import clinic.dev.backend.exceptions.UnauthorizedAccessException;
+import clinic.dev.backend.dto.clinic.res.ClinicWithOwnerRes;
 import clinic.dev.backend.service.impl.ClinicService;
 import clinic.dev.backend.util.ApiRes;
-import clinic.dev.backend.util.AuthContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -24,7 +26,6 @@ import jakarta.validation.Valid;
 public class ClinicController {
 
   private final ClinicService clinicService;
-  private final AuthContext authContext;
 
   @GetMapping("/user-clinic")
   public ResponseEntity<ApiRes<ClinicResDTO>> getClinic() {
@@ -32,70 +33,53 @@ public class ClinicController {
   }
 
   @PutMapping
+  @PreAuthorize("@auth.isOwner()")
   public ResponseEntity<ApiRes<ClinicResDTO>> updateClinic(@RequestBody @Valid ClinicReqDTO request) {
     return ResponseEntity.ok(new ApiRes<>(clinicService.updateClinic(request)));
   }
 
-  // Settings endpoints
   @GetMapping("/settings")
   public ResponseEntity<ApiRes<ClinicSettingsResDTO>> getCurrentClinicSettings() {
     return ResponseEntity.ok(new ApiRes<>((clinicService.getSettings())));
   }
 
   @PutMapping("/settings")
+  @PreAuthorize("@auth.isOwner()")
   public ResponseEntity<ApiRes<ClinicSettingsResDTO>> updateCurrentClinicSettings(
       @RequestBody @Valid ClinicSettingsReqDTO request) {
     return ResponseEntity.ok(new ApiRes<>(clinicService.updateSettings(request)));
   }
 
-  // Limits endpoints
   @GetMapping("/limits")
   public ResponseEntity<ApiRes<ClinicLimitsResDTO>> getCurrentClinicLimits() {
     return ResponseEntity.ok(new ApiRes<>((clinicService.getLimits())));
   }
 
-  // APIs For system dashboard admin
-  @GetMapping
-  /** @apiNote For system dashboard admin */
-  public ResponseEntity<ApiRes<List<ClinicResDTO>>> getAllClinics() {
-    if (!authContext.isSuperAdmin())
-      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
-
-    return ResponseEntity.ok(new ApiRes<>(clinicService.getAllClinics()));
-  }
-
   @PostMapping
-  /** @apiNote For system dashboard admin */
+  @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicResDTO>> createClinic(
       @RequestBody @Valid ClinicReqDTO request) {
-    if (!authContext.isSuperAdmin())
-      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
-
     ClinicResDTO response = clinicService.createClinic(request);
     return ResponseEntity.ok(new ApiRes<>(response));
   }
 
   @GetMapping("/{id}")
-  /** @apiNote For system dashboard admin */
+  @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicResDTO>> getClinic(@PathVariable("id") Long id) {
-    if (!authContext.isSuperAdmin())
-      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
 
     return ResponseEntity.ok(new ApiRes<>(clinicService.getClinicById(id)));
   }
 
   @DeleteMapping("/{id}")
-  /** @apiNote For system dashboard admin */
+  @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<Void>> deleteClinic(@PathVariable("id") Long id) {
-    if (!authContext.isSuperAdmin())
-      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
 
     clinicService.deleteClinic(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}/limits")
-  /** @apiNote For system dashboard admin */
+  @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicLimitsResDTO>> getClinicLimits(
       @PathVariable("id") Long id) {
 
@@ -103,13 +87,29 @@ public class ClinicController {
   }
 
   @PutMapping("/{id}/limits")
-  /** @apiNote For system dashboard admin */
+  @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicLimitsResDTO>> updateClinicLimits(
       @PathVariable("id") Long id,
       @RequestBody @Valid ClinicLimitsReqDTO request) {
-    if (!authContext.isSuperAdmin())
-      throw new UnauthorizedAccessException("Only SuperAdmin can create clinics");
 
     return ResponseEntity.ok(new ApiRes<>(clinicService.updateLimits(request, id)));
+  }
+
+  @GetMapping
+  @PreAuthorize("@auth.isSuperAdmin()")
+  public ResponseEntity<ApiRes<Page<ClinicResDTO>>> getClinics(@Valid @ModelAttribute ClinicSearchReq req) {
+    Page<ClinicResDTO> result = clinicService.searchClinics(req);
+    return ResponseEntity.ok(new ApiRes<>(result));
+  }
+
+  @PostMapping("/with-owner")
+  @PreAuthorize("@auth.isSuperAdmin()")
+  public ResponseEntity<ApiRes<ClinicWithOwnerRes>> createClinicWithOwner(
+      @Valid @RequestBody CreateClinicWithOwnerReq request) {
+    ClinicWithOwnerRes response = clinicService.createClinicWithOwner(
+        request.clinic(),
+        request.limits(),
+        request.owner());
+    return ResponseEntity.ok(new ApiRes<>(response));
   }
 }

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class ProcedureController {
     private ProcedureService procedureService;
 
     @PostMapping
+    @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
     public ResponseEntity<ApiRes<ProcedureResDTO>> createService(@RequestBody @Valid ProcedureReqDTO service) {
         ProcedureResDTO createdDentalProcedure = procedureService.create(service);
         return ResponseEntity.ok(new ApiRes<>(createdDentalProcedure));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
     public ResponseEntity<ApiRes<ProcedureResDTO>> updateDentalProcedure(@PathVariable("id") Long id,
             @RequestBody @Valid ProcedureReqDTO service) {
         ProcedureResDTO updatedDentalProcedure = procedureService.update(id, service);
@@ -33,6 +36,7 @@ public class ProcedureController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@auth.isDoctor() or @auth.isOwner()")
     public ResponseEntity<Void> deleteDentalProcedure(@PathVariable("id") Long id) {
         procedureService.delete(id);
         return ResponseEntity.noContent().build();

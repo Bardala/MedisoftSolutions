@@ -56,7 +56,7 @@ public class User implements UserDetails {
   private String phone;
 
   @NotNull
-  @RoleConstraint(message = "Invalid role. Allowed roles are 'Admin', 'Doctor' and 'Assistant'")
+  @RoleConstraint(message = "Invalid role. Allowed roles are 'SuperAdmin', 'Owner', 'Doctor' and 'Assistant'")
   // @Enumerated(EnumType.STRING)
   private String role; // e.g., 'Doctor', 'Assistant', 'Admin', 'SuperAdmin'
 
@@ -93,6 +93,31 @@ public class User implements UserDetails {
   }
 
   public enum UserRole {
-    Admin, Doctor, Assistant, SuperAdmin
+    OWNER("Owner"),
+    DOCTOR("Doctor"),
+    ASSISTANT("Assistant"),
+    SUPER_ADMIN("SuperAdmin");
+
+    private final String displayName;
+
+    UserRole(String displayName) {
+      this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+      return displayName;
+    }
+
+    public static UserRole fromString(String roleName) {
+      if (roleName == null)
+        return null;
+      for (UserRole role : values()) {
+        if (role.displayName.equalsIgnoreCase(roleName)) {
+          return role;
+        }
+      }
+      throw new IllegalArgumentException("No enum constant for role: " + roleName);
+    }
   }
+
 }

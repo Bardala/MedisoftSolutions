@@ -6,7 +6,7 @@ import jakarta.validation.constraints.*;
 public record ClinicReqDTO(
     @NotBlank String name,
     @NotBlank String address,
-    @NotBlank @Pattern(regexp = "^\\+?[0-9\\s-]+$") String phoneNumber,
+    @NotBlank @Pattern(regexp = "^\\+?[0-9\\s-]+$", message = "Phone must start with 0 and be 10-15 digits") String phoneNumber,
     @NotBlank @Email String email,
     String logoUrl,
     String workingHours,

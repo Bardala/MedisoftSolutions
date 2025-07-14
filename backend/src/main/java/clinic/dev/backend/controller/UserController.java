@@ -112,4 +112,11 @@ public class UserController {
     List<UserResDTO> users = userService.getUsersByIds(ids);
     return ResponseEntity.ok(new ApiRes<>(users));
   }
+
+  @GetMapping("/{clinicId}/staff")
+  public ResponseEntity<ApiRes<List<UserResDTO>>> getStaff(
+      @PathVariable("clinicId") Long clinicId) {
+    List<UserResDTO> staff = userService.getClinicStaff(clinicId);
+    return ResponseEntity.ok(new ApiRes<>(staff));
+  }
 }

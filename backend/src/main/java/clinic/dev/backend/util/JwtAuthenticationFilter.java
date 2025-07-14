@@ -84,21 +84,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     token = authorizationHeader.substring(7);
-    String username = jwtUtil.extractUsername(token);
-    Long clinicId = jwtUtil.extractClinicId(token);
-    Long userId = jwtUtil.extractUserId(token);
-    String role = jwtUtil.extractRole(token);
-
-    if (role == null || username == null || userId == null) {
-      sendErrorResponse(response, "Unauthorized", "Missing token details.");
-      return;
-    }
-
-    // Optional strict check (fail early)
-    if (!"SuperAdmin".equalsIgnoreCase(role) && clinicId == null) {
-      sendErrorResponse(response, "Unauthorized", "Clinic ID is required for non-SuperAdmin users.");
-      return;
-    }
 
     if (token.length() == 0) {
       sendErrorResponse(response, "Unauthorized", "Authorization header is missing or invalid.");
@@ -115,6 +100,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Validate the token
         jwtUtil.validateToken(token, userDetails.getUsername());
+
+        String username = jwtUtil.extractUsername(token);
+        Long clinicId = jwtUtil.extractClinicId(token);
+        Long userId = jwtUtil.extractUserId(token);
+        String role = jwtUtil.extractRole(token);
+
+        if (role == null || username == null || userId == null) {
+          sendErrorResponse(response, "Unauthorized", "Missing token details.");
+          return;
+        }
+
+        // Optional strict check (fail early)
+        if (!"SuperAdmin".equalsIgnoreCase(role) && clinicId == null) {
+          sendErrorResponse(response, "Unauthorized", "Clinic ID is required for non-SuperAdmin users.");
+          return;
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             userDetails,

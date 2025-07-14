@@ -35,8 +35,6 @@ public class MedicineService {
 
   @Transactional
   public MedicineResDTO create(MedicineReqDTO req) {
-    authContext.validateAdminOrDoctorAccess();
-
     Medicine medicine = req.toEntity(getClinicId());
 
     // Check if medicine with same name already exists in this clinic
@@ -49,8 +47,6 @@ public class MedicineService {
 
   @Transactional
   public MedicineResDTO update(MedicineReqDTO req) {
-    authContext.validateAdminOrDoctorAccess();
-
     Medicine medicine = medicineRepo
         .findByMedicineNameAndClinicId(req.medicineName(), getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Medicine with this name not found"));
@@ -64,8 +60,6 @@ public class MedicineService {
 
   @Transactional
   public void delete(Long id) {
-    authContext.validateAdminOrDoctorAccess();
-
     // Verify the medicine belongs to this clinic
     if (!medicineRepo.existsByIdAndClinicId(id, getClinicId())) {
       throw new UnauthorizedAccessException("Medicine not found in your clinic");

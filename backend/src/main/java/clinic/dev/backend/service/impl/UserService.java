@@ -8,7 +8,9 @@ import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Clinic;
+import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.util.AuthContext;
 
@@ -32,6 +34,9 @@ public class UserService {
 
   @Autowired
   private AuthContext authContext;
+
+  @Autowired
+  private ClinicLimitsRepo clinicLimitsRepo;
 
   // todo: You have to put authorities for admins to update and delete users
 
@@ -59,15 +64,32 @@ public class UserService {
     return UserResDTO.fromEntity(userRepo.save(user));
   }
 
+  public boolean validateUsersNumberLimits() {
+    ClinicLimits clinicLimits = clinicLimitsRepo.findByClinicId(authContext.getClinicId())
+        .orElseThrow(() -> new ResourceNotFoundException("Clinic Limits Not Found"));
+
+    Integer currentUsersNumber = userRepo.countUsersByClinicId(authContext.getClinicId());
+    Integer maxAllowedUsers = clinicLimits.getMaxUsers();
+
+    if (maxAllowedUsers == null) {
+      throw new IllegalStateException("Max users limit is not configured for this clinic.");
+    }
+
+    return currentUsersNumber < maxAllowedUsers;
+  }
+
   @Transactional
   public UserResDTO create(UserReqDTO req) {
+    if (!validateUsersNumberLimits())
+      throw new IllegalStateException("User creation limit reached for this clinic.");
+
     if (userRepo.existsByUsername(req.username()))
       throw new IllegalArgumentException("Username already exists, please select another username.");
 
     if (userRepo.existsByPhone(req.phone()))
       throw new IllegalArgumentException(ErrorMsg.PHONE_ALREADY_EXISTS);
 
-    User user = req.toEntity(getClinicId());
+    User user = req.toEntity(authContext.getClinicId());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     return UserResDTO.fromEntity(userRepo.save(user));
@@ -207,5 +229,9 @@ public class UserService {
         .map(UserResDTO::fromEntity)
         .collect(Collectors.toList());
 
+  }
+
+  public List<UserResDTO> getClinicStaff(Long clinicId) {
+    return userRepo.findAllByClinicId(clinicId).stream().map(UserResDTO::fromEntity).toList();
   }
 }

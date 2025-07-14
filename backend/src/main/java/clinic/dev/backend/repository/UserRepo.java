@@ -60,4 +60,5 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
   List<User> findByIdInAndClinicId(List<Long> ids, Long clinicId);
 
+  Integer countUsersByClinicId(Long clinicId);
 }

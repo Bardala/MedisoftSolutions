@@ -15,4 +15,6 @@ public interface ClinicSettingsRepo extends JpaRepository<ClinicSettings, Long> 
   void deleteByClinicId(Long id);
 
   Optional<ClinicSettings> findByClinicId(Long clinicId);
+
+  void deleteAllByClinicId(Long id);
 }
