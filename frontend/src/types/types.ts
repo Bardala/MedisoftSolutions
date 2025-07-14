@@ -194,18 +194,18 @@ export type RestMethod = "GET" | "POST" | "DELETE" | "PUT";
 
 export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED";
 
-export interface Pageable {
-  pageNumber: number;
-  pageSize: number;
-  sort: {
-    empty: boolean;
-    sorted: boolean;
-    unsorted: boolean;
-  };
-  offset: number;
-  paged: boolean;
-  unpaged: boolean;
-}
+// export interface Pageable {
+//   pageNumber: number;
+//   pageSize: number;
+//   sort: {
+//     empty: boolean;
+//     sorted: boolean;
+//     unsorted: boolean;
+//   };
+//   offset: number;
+//   paged: boolean;
+//   unpaged: boolean;
+// }
 
 export interface PatientSearchParams {
   patient?: string; // Searches both name and phone

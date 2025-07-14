@@ -6,9 +6,13 @@ import {
   ClinicSettingsReqDTO,
   ClinicLimitsResDTO,
   ClinicLimitsReqDTO,
+  ClinicSearchReq,
+  ClinicWithOwnerRes,
+  ClinicWithOwnerReq,
 } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
+import { Page } from "../types";
 
 export const ClinicApi = {
   /**For system dashboard admin */
@@ -22,7 +26,25 @@ export const ClinicApi = {
     ]),
 
   /**For system dashboard admin */
-  getAll: () => fetchFn<void, ClinicResDTO[]>(ENDPOINT.GET_ALL_CLINICS, "GET"),
+  getClinics: (params?: ClinicSearchReq) => {
+    const query = params
+      ? "?" +
+        Object.entries(params)
+          .filter(([_, value]) => value !== undefined && value !== null)
+          .map(
+            ([key, value]) =>
+              `${encodeURIComponent(key)}=${encodeURIComponent(
+                value as string,
+              )}`,
+          )
+          .join("&")
+      : "";
+
+    return fetchFn<ClinicSearchReq, Page<ClinicResDTO>>(
+      `${ENDPOINT.GET_ALL_CLINICS}${query}`,
+      "GET",
+    );
+  },
 
   /**For system dashboard admin */
   delete: (clinicId: number) =>
@@ -65,9 +87,24 @@ export const ClinicApi = {
     ),
 
   /** For Clients */
-  getLimits: () =>
+  getCurrLimits: () =>
     fetchFn<void, ClinicLimitsResDTO>(
       ENDPOINT.GET_CURRENT_CLINIC_LIMITS,
       "GET",
+    ),
+
+  getClinicLimits: (clinicId: number) =>
+    fetchFn<void, ClinicLimitsResDTO>(
+      ENDPOINT.GET_CLINIC_LIMITS_BY_ID,
+      "GET",
+      undefined,
+      [clinicId.toString()],
+    ),
+
+  createWithOwner: (req: ClinicWithOwnerReq) =>
+    fetchFn<ClinicWithOwnerReq, ClinicWithOwnerRes>(
+      ENDPOINT.CREATE_CLINIC_WITH_OWNER,
+      "POST",
+      req,
     ),
 };

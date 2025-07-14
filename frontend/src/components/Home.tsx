@@ -115,7 +115,7 @@ const Home = ({
       {/* Dashboard Summary */}
       <section className="dashboard-summary">
         <div className="summary-item">
-          <h3>🆕🤒{patients?.length || 0}</h3>
+          <h3>🆕🤧{patients?.length || 0}</h3>
           <p>{f({ id: "daily_patients" })}</p>
         </div>
         <div className="summary-item">

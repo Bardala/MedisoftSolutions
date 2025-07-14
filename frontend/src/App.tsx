@@ -19,7 +19,7 @@ const App = () => {
                   loggedInUser ? (
                     <HomePage loggedInUser={loggedInUser} />
                   ) : (
-                    <Navigate to="/login" />
+                    <Navigate to="/login" replace={true} />
                   )
                 }
               />

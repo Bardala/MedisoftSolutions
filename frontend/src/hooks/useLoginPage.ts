@@ -12,7 +12,7 @@ export const useLoginPage = () => {
 
   useEffect(() => {
     if (success) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [success, navigate]);
 

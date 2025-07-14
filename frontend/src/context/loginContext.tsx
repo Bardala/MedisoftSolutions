@@ -31,7 +31,6 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
     try {
       const response = await loginApi(username, password);
       const { token } = response;
-      console.log("res", response);
       localStorage.setItem(LOCALS.AUTH_TOKEN, token);
       await currUserInfo();
       setSuccess(true);

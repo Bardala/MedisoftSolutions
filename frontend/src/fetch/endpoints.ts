@@ -105,11 +105,12 @@ export enum ENDPOINT {
 
   // Clinic CRUD
   CREATE_CLINIC = "/clinics",
-  GET_CLINIC_BY_ID = "/clinics",
+  GET_CLINIC_BY_ID = "/clinics/:id",
   GET_USER_CLINIC = "/clinics/user-clinic",
   GET_ALL_CLINICS = "/clinics",
   UPDATE_CLINIC = "/clinics",
   DELETE_CLINIC = "/clinics",
+  GET_CLINIC_STAFF = "/users/:clinicId/staff",
 
   // Settings
   GET_CURRENT_CLINIC_SETTINGS = "/clinics/settings",
@@ -119,6 +120,8 @@ export enum ENDPOINT {
 
   // Limits
   GET_CURRENT_CLINIC_LIMITS = "/clinics/limits",
+  GET_CLINIC_LIMITS_BY_ID = "/clinics/:id/limits",
   GET_CLINIC_LIMITS = "/clinics",
   UPDATE_CLINIC_LIMITS = "/clinics/:id/limits",
+  CREATE_CLINIC_WITH_OWNER = "/clinics/with-owner",
 }

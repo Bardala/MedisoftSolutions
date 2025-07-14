@@ -15,7 +15,6 @@ import QueuePage from "../components/Queue";
 import { ClinicSettings } from "../components/ClinicSettings";
 import { EditUserInfo } from "../components/EditUserInfo";
 import { ClinicsList } from "../components/ClinicsList";
-import { CreateClinic } from "../components/CreateClinic";
 import { CreateClinicWithOwner } from "../components/CreateClinicWithOwner";
 
 export const useHomePage = (loggedInUser: User) => {

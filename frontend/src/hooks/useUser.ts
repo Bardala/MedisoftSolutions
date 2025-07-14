@@ -34,3 +34,14 @@ export const useCreateOwner = () => {
     { owner: UserReqDTO; clinicId: number }
   >(({ owner, clinicId }) => UserApi.createOwner(owner, clinicId));
 };
+
+export const useGetClinicStaff = (clinicId: number) => {
+  return useQuery<UserResDTO[], ApiError>(
+    ["clinicStaff", clinicId],
+    () => UserApi.getClinicStaff(clinicId),
+    {
+      staleTime: 5 * 60 * 1000, // 5 minutes cache
+      enabled: !!clinicId,
+    },
+  );
+};

@@ -6,15 +6,24 @@ import type {
   ClinicSettingsResDTO,
   ClinicLimitsResDTO,
   ClinicLimitsReqDTO,
+  ClinicSearchReq,
+  ClinicWithOwnerReq,
+  ClinicWithOwnerRes,
 } from "../dto";
 import { ClinicApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
+import { Page } from "../types";
 
 /**For system dashboard admin */
-export const useGetAllClinics = () =>
-  useQuery<ClinicResDTO[], ApiError>(["clinics"], () => ClinicApi.getAll(), {
-    staleTime: 5 * 60 * 1000, // 5 minutes cache
-  });
+export const useGetClinics = (params?: ClinicSearchReq) =>
+  useQuery<Page<ClinicResDTO>, ApiError>(
+    ["clinics", params], // Include params in query key
+    () => ClinicApi.getClinics(params),
+    {
+      staleTime: 5 * 60 * 1000, // 5 minutes cache
+      keepPreviousData: true, // Smooth pagination transitions
+    },
+  );
 
 /**For system dashboard admin */
 export const useGetClinic = (id: number) =>
@@ -98,17 +107,41 @@ export const useUpdateClinicSettings = () => {
 export const useGetCurrentClinicLimits = () => {
   return useQuery<ClinicLimitsResDTO, ApiError>(
     ["clinic-limits"],
-    () => ClinicApi.getLimits(),
+    () => ClinicApi.getCurrLimits(),
     {
       staleTime: 5 * 60 * 1000, // 5 minutes cache
     },
   );
 };
 
+// hooks/useClinic.ts
 export const useUpdateClinicLimits = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<
     ClinicLimitsResDTO,
     ApiError,
     { clinicId: number; limits: ClinicLimitsReqDTO }
-  >(({ clinicId, limits }) => ClinicApi.updateLimits(clinicId, limits));
+  >(({ clinicId, limits }) => ClinicApi.updateLimits(clinicId, limits), {
+    onSuccess: (data, variables) => {
+      // Update the cached clinic limits data
+      queryClient.setQueryData(["clinicLimits", variables.clinicId], data);
+      // Optionally invalidate other related queries
+      queryClient.invalidateQueries(["clinic", variables.clinicId]);
+    },
+  });
+};
+
+export const useGetClinicLimits = (clinicId: number) => {
+  return useQuery<ClinicLimitsResDTO, ApiError>(
+    ["clinicLimits", clinicId],
+    () => ClinicApi.getClinicLimits(clinicId),
+    { enabled: !!clinicId },
+  );
+};
+
+export const useCreateClinicWithOwner = () => {
+  return useMutation<ClinicWithOwnerRes, ApiError, ClinicWithOwnerReq>(
+    (data: ClinicWithOwnerReq) => ClinicApi.createWithOwner(data),
+  );
 };

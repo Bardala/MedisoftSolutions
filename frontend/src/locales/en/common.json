@@ -180,5 +180,12 @@
   "form": "Form Error",
   "owner_account": "Owner Account",
   "full_name": "Full Name",
-  "create_clinic": "Create Clinic"
+  "create_clinic": "Create Clinic",
+
+  "all_clinics": "All Clinics",
+  "max_users_required": "Max users is required",
+  "max_file_storage_required": "Max file storage is required",
+  "max_patient_records_required": "Max patient records is required",
+  "clinic_name": "Clinic Name",
+  "password_required": "Password is required"
 }

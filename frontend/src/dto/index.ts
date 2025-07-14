@@ -332,6 +332,14 @@ export interface ClinicResDTO {
   phoneSupportsWhatsapp?: boolean;
 }
 
+export interface ClinicSearchReq {
+  name?: string;
+  phone?: string;
+  email?: string;
+  page?: number;
+  size?: number;
+}
+
 export interface ClinicSettingsReqDTO {
   doctorName: string;
   doctorTitle: string;
@@ -372,4 +380,16 @@ export interface ClinicLimitsResDTO {
   allowFileUpload: boolean;
   allowMultipleBranches: boolean;
   allowBillingFeature: boolean;
+}
+
+export interface ClinicWithOwnerRes {
+  clinic: ClinicResDTO;
+  owner: UserReqDTO;
+  limits: ClinicLimitsResDTO;
+}
+
+export interface ClinicWithOwnerReq {
+  clinic: ClinicReqDTO;
+  owner: UserReqDTO;
+  limits: ClinicLimitsReqDTO;
 }

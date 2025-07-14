@@ -182,5 +182,12 @@
   "form": "خطأ في النموذج",
   "owner_account": "حساب المالك",
   "full_name": "الاسم الكامل",
-  "create_clinic": "إنشاء العيادة"
+  "create_clinic": "إنشاء العيادة",
+
+  "all_clinics": "جميع العيادات",
+  "max_users_required": "عدد المستخدمين الأقصى مطلوب",
+  "max_file_storage_required": "أقصى سعة تخزين مطلوبة",
+  "max_patient_records_required": "أقصى عدد لملفات المرضى مطلوب",
+  "clinic_name": "اسم العيادة",
+  "password_required": "كلمة المرور مطلوبة"
 }

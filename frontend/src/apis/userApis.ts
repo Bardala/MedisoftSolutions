@@ -48,4 +48,9 @@ export const UserApi = {
       `${ENDPOINT.USER_BATCH}?ids=${ids.join(",")}`,
       "GET",
     ),
+
+  getClinicStaff: (clinicId: number) =>
+    fetchFn<void, UserResDTO[]>(ENDPOINT.GET_CLINIC_STAFF, "GET", undefined, [
+      clinicId.toString(),
+    ]),
 };

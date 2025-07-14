@@ -44,8 +44,9 @@ export const fetchFn = async <Request, Response>(
     if (res.status === 401) {
       localStorage.removeItem(LOCALS.AUTH_TOKEN);
       localStorage.removeItem(LOCALS.CURR_USER);
-      if (window.location.pathname !== "/login")
-        window.location.href = "/login";
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
     }
 
     if (!res.ok || (jsonResponse && jsonResponse.error)) {
