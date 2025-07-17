@@ -80,20 +80,23 @@
 
 
 		<!-- Sqlite init -->
-		<dependency>
+		<!-- <dependency>
 				<groupId>org.xerial</groupId>
 				<artifactId>sqlite-jdbc</artifactId>
-				<version>3.45.1.0</version> <!-- Latest as of early 2025 -->
+				<version>3.45.1.0</version> 
 		</dependency>
 		<dependency>
 				<groupId>org.hibernate.orm</groupId>
 				<artifactId>hibernate-community-dialects</artifactId>
+		</dependency> -->
+
+		<!-- Postgres -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.3</version>
 		</dependency>
 
-		<!-- <dependency>
-				<groupId>org.hibernate.orm</groupId>
-				<artifactId>hibernate-core</artifactId>
-		</dependency> -->
 
 		<!-- Model Mapper: ModelMapper is a Java library that simplifies object mapping,
 		 particularly useful for converting between entities and Data Transfer Objects (DTOs).

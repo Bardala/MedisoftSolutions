@@ -2,9 +2,9 @@ package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.model.*;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@Profile("dev")
+// @Profile("dev")
 public class DataInitializationService {
 
   @Autowired
@@ -49,12 +49,6 @@ public class DataInitializationService {
   @PostConstruct
   public void populateData() {
     addSuperAdmin();
-    addClinic(); // Initialize clinic first since other entities depend on it
-    addUsers();
-    addPatients();
-    addMedicines();
-    addVisitsAndMedicines();
-    addPayments();
   }
 
   private void addSuperAdmin() {
@@ -65,7 +59,7 @@ public class DataInitializationService {
       superAdmin.setPhone("01120618782");
 
       superAdmin.setPassword(passwordEncoder.encode("888888"));
-      superAdmin.setRole("SuperAdmin");
+      superAdmin.setRole(UserRole.SUPER_ADMIN);
       superAdmin.setClinic(null);
       userRepo.save(superAdmin);
     }
@@ -95,7 +89,7 @@ public class DataInitializationService {
       clinicLimitsRepo.save(limits);
 
       // Update clinic with relationships
-      clinic.setClinicLimits(limits);
+      // clinic.setClinicLimits(limits);
       clinicRepo.save(clinic);
     }
   }
@@ -107,7 +101,7 @@ public class DataInitializationService {
       doctor.setPassword("888888");
       doctor.setName("Dr. Mohamad Sameer");
       doctor.setPhone("01234567890");
-      doctor.setRole("Doctor");
+      doctor.setRole(UserRole.DOCTOR);
       userService.signup(doctor);
 
       SignupRequest assistant = new SignupRequest();
@@ -115,7 +109,7 @@ public class DataInitializationService {
       assistant.setPassword("888888");
       assistant.setName("Asmaa");
       assistant.setPhone("01112345678");
-      assistant.setRole("Assistant");
+      assistant.setRole(UserRole.ASSISTANT);
       userService.signup(assistant);
     }
   }

@@ -5,6 +5,7 @@ import java.util.List;
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
+import clinic.dev.backend.model.User.UserRole;
 
 public interface UserServiceBase {
   UserResDTO signup(SignupRequest signupRequest);
@@ -19,7 +20,7 @@ public interface UserServiceBase {
 
   List<UserResDTO> getAll();
 
-  List<UserResDTO> getByRole(String role);
+  List<UserResDTO> getByRole(UserRole role);
 
   UserResDTO update(Long id, UserReqDTO req) throws IllegalAccessException;
 

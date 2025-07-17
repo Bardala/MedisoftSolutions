@@ -16,6 +16,7 @@ import clinic.dev.backend.dto.auth.CurrUserInfo;
 import clinic.dev.backend.exceptions.UnauthorizedException;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.AuthServiceBase;
 import clinic.dev.backend.util.JwtUtil;
@@ -44,7 +45,7 @@ public class AuthService implements AuthServiceBase {
       User dbUser = userRepo.findByUsername(username)
           .orElseThrow(() -> new UnauthorizedException(ErrorMsg.INVALID_USERNAME_OR_PASSWORD));
 
-      Long clinicId = dbUser.getRole().equalsIgnoreCase("SuperAdmin") ? null : dbUser.getClinic().getId();
+      Long clinicId = dbUser.getRole().equals(UserRole.SUPER_ADMIN) ? null : dbUser.getClinic().getId();
 
       return jwtUtil.generateToken(user.getUsername(), dbUser.getId(), dbUser.getRole(), clinicId);
     } catch (UsernameNotFoundException ex) {
@@ -72,7 +73,7 @@ public class AuthService implements AuthServiceBase {
     currUserInfo.setRole(user.get().getRole());
     currUserInfo.setPhone(user.get().getPhone());
     currUserInfo.setName(user.get().getName());
-    currUserInfo.setClinicId(user.get().getRole().equalsIgnoreCase("SuperAdmin") ? null : clinicId);
+    currUserInfo.setClinicId(user.get().getRole().equals(UserRole.SUPER_ADMIN) ? null : clinicId);
 
     return currUserInfo;
   }

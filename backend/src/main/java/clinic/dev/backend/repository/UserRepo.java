@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.User.UserRole;
 
 public interface UserRepo extends JpaRepository<User, Long> {
   Optional<User> findByUsername(String username);
@@ -26,7 +27,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
   @Transactional
   void deleteUserByPhone(String phone);
 
-  List<User> findByRole(String role);
+  List<User> findByRole(UserRole role);
 
   @Modifying
   @Query("DELETE FROM User u WHERE u.clinic.id = :clinicId")
@@ -34,7 +35,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
   List<User> findByClinicId(Long clinicId);
 
-  List<User> findByClinicIdAndRole(Long clinicId, String role);
+  List<User> findByClinicIdAndRole(Long clinicId, UserRole role);
 
   Optional<User> findByIdAndClinicId(Long id, Long clinicId);
 
@@ -44,7 +45,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
   List<User> findAllByClinicId(Long clinicId);
 
-  List<User> findByRoleAndClinicId(String role, Long clinicId);
+  List<User> findByRoleAndClinicId(UserRole role, Long clinicId);
 
   void deleteByIdAndClinicId(Long id, Long clinicId);
 

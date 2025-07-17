@@ -1,6 +1,7 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
@@ -20,9 +21,11 @@ public class ClinicLimits {
   private Clinic clinic;
 
   @Column(name = "max_users")
+  @Min(1)
   private Integer maxUsers;
 
   @Column(name = "max_file_storage_mb")
+  @Min(0)
   private Integer maxFileStorageMb;
 
   @Column(name = "max_patient_records")

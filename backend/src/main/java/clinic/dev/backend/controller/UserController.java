@@ -2,6 +2,7 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.service.impl.UserService;
 import clinic.dev.backend.util.ApiRes;
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ public class UserController {
   }
 
   @GetMapping("/role/{role}")
-  public ResponseEntity<ApiRes<List<UserResDTO>>> getUsersByRole(@PathVariable("role") String role) {
+  public ResponseEntity<ApiRes<List<UserResDTO>>> getUsersByRole(@PathVariable("role") UserRole role) {
     List<UserResDTO> users = userService.getByRole(role);
     return new ResponseEntity<>(new ApiRes<>(users), HttpStatus.OK);
   }

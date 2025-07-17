@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import clinic.dev.backend.exceptions.InvalidTokenException;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.service.impl.UserDetailsServiceImpl;
 
 import java.io.IOException;
@@ -104,7 +105,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = jwtUtil.extractUsername(token);
         Long clinicId = jwtUtil.extractClinicId(token);
         Long userId = jwtUtil.extractUserId(token);
-        String role = jwtUtil.extractRole(token);
+        UserRole role = jwtUtil.extractRole(token);
 
         if (role == null || username == null || userId == null) {
           sendErrorResponse(response, "Unauthorized", "Missing token details.");
@@ -112,7 +113,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // Optional strict check (fail early)
-        if (!"SuperAdmin".equalsIgnoreCase(role) && clinicId == null) {
+        if (!UserRole.SUPER_ADMIN.equals(role) && clinicId == null) {
           sendErrorResponse(response, "Unauthorized", "Clinic ID is required for non-SuperAdmin users.");
           return;
         }

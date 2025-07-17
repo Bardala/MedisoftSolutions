@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import clinic.dev.backend.exceptions.ExpiredTokenException;
 import clinic.dev.backend.exceptions.InvalidTokenException;
+import clinic.dev.backend.model.User.UserRole;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -21,6 +22,8 @@ import java.util.Objects;
 
 @Component
 public class JwtUtil {
+  private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
+
   private final Key signingKey;
   private final long expirationTimeMs;
 
@@ -39,18 +42,18 @@ public class JwtUtil {
     this.expirationTimeMs = expirationTimeMs;
   }
 
-  public String generateToken(String username, Long userId, String role, Long clinicId) {
+  public String generateToken(String username, Long userId, UserRole role, Long clinicId) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("clinicId", clinicId);
     claims.put("userId", userId);
-    claims.put("role", role);
+    claims.put("role", role.getDisplayName());
 
     return Jwts.builder()
         .setClaims(claims)
         .setSubject(username)
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
-        .signWith(signingKey, SignatureAlgorithm.HS256)
+        .signWith(signingKey, SIGNATURE_ALGORITHM)
         .compact();
   }
 
@@ -117,8 +120,9 @@ public class JwtUtil {
     return extractAllClaims(token).get("userId", Long.class);
   }
 
-  public String extractRole(String token) {
-    return extractAllClaims(token).get("role", String.class);
+  public UserRole extractRole(String token) {
+    String roleStr = extractAllClaims(token).get("role", String.class);
+    return UserRole.fromString(roleStr);
   }
 
   private Claims extractAllClaims(String token) {

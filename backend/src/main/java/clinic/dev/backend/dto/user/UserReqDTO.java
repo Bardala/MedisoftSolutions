@@ -3,6 +3,7 @@ package clinic.dev.backend.dto.user;
 import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.validation.RoleConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,15 +22,17 @@ public record UserReqDTO(
     String username,
 
     @NotBlank(message = ErrorMsg.PASSWORD_IS_REQUIRED) String password,
+
     @NotBlank(message = ErrorMsg.FULLNAME_IS_REQUIRED) String name,
 
     @NotBlank(message = ErrorMsg.PHONE_IS_REQUIRED)
 
-    @Pattern(regexp = "^0\\d{9,14}$", message = "Phone must start with 0 and be 10-15 digits")
+    @Pattern(regexp = "^0\\d{9,14}$", message = "Phone must start with 0 and be 10-15 digits") String phone,
 
-    String phone,
-    // e.g., 'Doctor', 'Assistant', 'Admin'
-    @NotNull @RoleConstraint(message = "Invalid role. Allowed roles are 'Doctor' and 'Assistant'") String role,
+    // @RoleConstraint(message = "Invalid role. Allowed roles are 'Doctor' and
+    // 'Assistant'")
+    @NotNull UserRole role,
+
     String profilePicture) {
 
   public User toEntity(Long clinicId) {

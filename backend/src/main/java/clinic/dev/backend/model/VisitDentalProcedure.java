@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "visit_services")
+@Table(name = "visit_services", uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "visit_id", "service_id" })
+})
 @NoArgsConstructor
 @AllArgsConstructor
 public class VisitDentalProcedure {

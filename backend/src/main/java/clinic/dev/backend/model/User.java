@@ -7,8 +7,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.validation.RoleConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +21,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "users", indexes = {
     @Index(name = "idx_username", columnList = "username"),
-    @Index(name = "idx_phone", columnList = "phone")
+    @Index(name = "idx_phone", columnList = "phone"),
+    @Index(name = "idx_clinic_role", columnList = "clinic_id, role") // For common queries
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,22 +48,25 @@ public class User implements UserDetails {
   private String username;
 
   @NotBlank(message = ErrorMsg.PASSWORD_IS_REQUIRED)
+  @Column(nullable = false, length = 100)
   private String password;
 
   @NotBlank(message = ErrorMsg.FULLNAME_IS_REQUIRED)
-  @Column(nullable = false)
+  @Column(nullable = false, length = 100)
   private String name;
 
   @NotBlank(message = ErrorMsg.PHONE_IS_REQUIRED)
-  @Column(unique = true, nullable = false)
+  @Column(unique = true, nullable = false, length = 20)
   private String phone;
 
   @NotNull
-  @RoleConstraint(message = "Invalid role. Allowed roles are 'SuperAdmin', 'Owner', 'Doctor' and 'Assistant'")
-  // @Enumerated(EnumType.STRING)
-  private String role; // e.g., 'Doctor', 'Assistant', 'Admin', 'SuperAdmin'
+  // @RoleConstraint(message = "Invalid role. Allowed roles are 'SuperAdmin',
+  // 'Owner', 'Doctor' and 'Assistant'")
+  @Column(nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)
+  private UserRole role; // e.g., 'Doctor', 'Assistant', 'Admin', 'SuperAdmin'
 
-  @Column(nullable = true)
+  @Column(nullable = true, length = 512) // URL/path storage
   private String profilePicture;
 
   @Column(nullable = false, updatable = false, name = "created_at")
@@ -104,10 +110,12 @@ public class User implements UserDetails {
       this.displayName = displayName;
     }
 
+    @JsonValue
     public String getDisplayName() {
       return displayName;
     }
 
+    @JsonCreator
     public static UserRole fromString(String roleName) {
       if (roleName == null)
         return null;

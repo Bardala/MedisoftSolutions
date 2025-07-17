@@ -1,6 +1,8 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +39,8 @@ public class Patient {
   private String fullName;
 
   @Column(nullable = true)
+  @Min(0)
+  @Max(120)
   private Integer age;
 
   @Column(nullable = true)

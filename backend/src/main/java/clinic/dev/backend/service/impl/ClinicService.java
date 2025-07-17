@@ -62,12 +62,12 @@ public class ClinicService implements ClinicServiceBase {
         .toList();
   }
 
-  @Override
-  public ClinicResDTO createClinic(ClinicReqDTO request) {
-    Clinic clinic = request.toEntity();
+  // @Override
+  // public ClinicResDTO createClinic(ClinicReqDTO request) {
+  // Clinic clinic = request.toEntity();
 
-    return ClinicResDTO.fromEntity(clinicRepo.save(clinic));
-  }
+  // return ClinicResDTO.fromEntity(clinicRepo.save(clinic));
+  // }
 
   @Override
   public ClinicResDTO getClinicById(Long id) {
@@ -189,23 +189,36 @@ public class ClinicService implements ClinicServiceBase {
       ClinicReqDTO clinicDto,
       ClinicLimitsReqDTO limitsDto,
       UserReqDTO ownerDto) {
-    // Create and save clinic
-    Clinic clinic = clinicDto.toEntity();
-    clinic = clinicRepo.save(clinic);
 
-    // Create and save limits
+    Clinic clinic = createClinic(clinicDto);
+    ClinicLimits limits = createClinicLimits(limitsDto, clinic);
+    User owner = createOwner(ownerDto, clinic);
+    createDefaultClinicSettings(clinic, owner);
+
+    return new ClinicWithOwnerRes(clinic, owner, limits);
+  }
+
+  private Clinic createClinic(ClinicReqDTO clinicDto) {
+    Clinic clinic = clinicDto.toEntity();
+    return clinicRepo.save(clinic);
+  }
+
+  private ClinicLimits createClinicLimits(ClinicLimitsReqDTO limitsDto, Clinic clinic) {
     ClinicLimits limits = limitsDto.toEntity();
     limits.setClinic(clinic);
-    limits = limitsRepo.save(limits);
+    return limitsRepo.save(limits);
+  }
 
-    // Create and save owner
+  private User createOwner(UserReqDTO ownerDto, Clinic clinic) {
     User owner = ownerDto.toEntity(clinic.getId());
     owner.setPassword(passwordEncoder.encode(owner.getPassword()));
-    owner = userRepo.save(owner);
+    return userRepo.save(owner);
+  }
 
-    return new ClinicWithOwnerRes(
-        clinic,
-        owner,
-        limits);
+  public void createDefaultClinicSettings(Clinic clinic, User owner) {
+    ClinicSettings settings = new ClinicSettings();
+    settings.setClinic(clinic);
+    settings.setDoctorName(owner.getName());
+    clinicSettingsRepo.save(settings);
   }
 }

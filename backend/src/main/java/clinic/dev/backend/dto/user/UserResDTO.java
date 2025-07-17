@@ -3,6 +3,7 @@ package clinic.dev.backend.dto.user;
 import java.time.LocalDateTime;
 
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.User.UserRole;
 
 public record UserResDTO(
     Long id,
@@ -10,7 +11,7 @@ public record UserResDTO(
     String username,
     String name,
     String phone,
-    String role,
+    UserRole role,
     String profilePicture,
     LocalDateTime createdAt) {
   public static UserResDTO fromEntity(User user) {

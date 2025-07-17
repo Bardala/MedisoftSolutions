@@ -10,6 +10,7 @@ import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.util.AuthContext;
@@ -42,7 +43,8 @@ public class UserService {
 
   @Transactional
   public UserResDTO signup(SignupRequest request) {
-    String username = request.getUsername(), password = request.getPassword(), role = request.getRole();
+    String username = request.getUsername(), password = request.getPassword();
+    UserRole role = request.getRole();
     Long clinicId = request.getClinicId();
 
     if (userRepo.existsByUsername(username)) {
@@ -132,7 +134,7 @@ public class UserService {
     return userRepo.findAllByClinicId(getClinicId()).stream().map(UserResDTO::fromEntity).toList();
   }
 
-  public List<UserResDTO> getByRole(String role) {
+  public List<UserResDTO> getByRole(UserRole role) {
     return userRepo.findByRoleAndClinicId(role, getClinicId()).stream().map(UserResDTO::fromEntity).toList();
   }
 

@@ -26,6 +26,7 @@ import clinic.dev.backend.repository.PaymentRepo;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.repository.VisitRepo;
 import clinic.dev.backend.service.ReportServiceBase;
+import clinic.dev.backend.util.AuthContext;
 
 @Service
 public class ReportService implements ReportServiceBase {
@@ -42,25 +43,33 @@ public class ReportService implements ReportServiceBase {
 	@Autowired
 	private VisitDentalProcedureRepo visitDentalProcedureRepo;
 
+	@Autowired
+	private AuthContext authContext;
+
+	private Long getClinicId() {
+		return authContext.getClinicId();
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public MonthlySummary monthlySummary(int year, int month) {
 		LocalDate targetDate = LocalDate.of(year, month, 1);
 
 		// Total New Patients (Created in the target month)
-		Integer totalNewPatients = (int) patientRepo.findAll().stream()
+		Integer totalNewPatients = (int) patientRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(patient -> patient.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& patient.getCreatedAt().getYear() == targetDate.getYear())
 				.count();
 
 		// Total Visits in Target Month
-		Integer totalVisits = (int) visitRepo.findAll().stream()
+		Integer totalVisits = (int) visitRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& visit.getCreatedAt().getYear() == targetDate.getYear())
 				.count();
 
 		// Most Common Procedure in Target Month
-		List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAll().stream()
+		List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
+				.stream()
 				.filter(vdp -> vdp.getVisit().getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& vdp.getVisit().getCreatedAt().getYear() == targetDate.getYear())
 				.collect(Collectors.toList());
@@ -74,14 +83,14 @@ public class ReportService implements ReportServiceBase {
 				.orElse("None");
 
 		// Total Revenue in Target Month
-		Double totalRevenue = paymentRepo.findAll().stream()
+		Double totalRevenue = paymentRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(payment -> payment.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& payment.getCreatedAt().getYear() == targetDate.getYear())
 				.mapToDouble(Payment::getAmount)
 				.sum();
 
 		// Most Crowded Day in Target Month
-		List<Visit> visitsInMonth = visitRepo.findAll().stream()
+		List<Visit> visitsInMonth = visitRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& visit.getCreatedAt().getYear() == targetDate.getYear())
 				.collect(Collectors.toList());
@@ -133,7 +142,8 @@ public class ReportService implements ReportServiceBase {
 			int totalVisits = visitsOnWorkday.size();
 
 			// Most common procedure for the workday
-			List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAll().stream()
+			List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
+					.stream()
 					.filter(vdp -> {
 						LocalDateTime createdAt = vdp.getVisit().getCreatedAt();
 						// Ensure procedures are grouped by the adjusted workday
@@ -173,7 +183,7 @@ public class ReportService implements ReportServiceBase {
 
 		// Example: If there are more than a certain number of visits, suggest improving
 		// scheduling.
-		Long totalVisits = visitRepo.findAll().stream()
+		Long totalVisits = visitRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(visit -> visit.getCreatedAt().getMonthValue() == month && visit.getCreatedAt().getYear() == year)
 				.count();
 
@@ -182,7 +192,8 @@ public class ReportService implements ReportServiceBase {
 		}
 
 		// Example: If a procedure is overly common, consider promoting less common ones
-		List<VisitDentalProcedure> allVisitDentalProcedures = visitDentalProcedureRepo.findAll().stream()
+		List<VisitDentalProcedure> allVisitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
+				.stream()
 				.filter(vdp -> vdp.getVisit().getCreatedAt().getMonthValue() == month
 						&& vdp.getVisit().getCreatedAt().getYear() == year)
 				.collect(Collectors.toList());
@@ -204,7 +215,7 @@ public class ReportService implements ReportServiceBase {
 
 	// Helper methods
 	public List<Payment> getPaymentsInMonth(LocalDate targetDate) {
-		return paymentRepo.findAll().stream()
+		return paymentRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(payment -> payment.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& payment.getCreatedAt().getYear() == targetDate.getYear())
 				.collect(Collectors.toList());
@@ -224,7 +235,7 @@ public class ReportService implements ReportServiceBase {
 	}
 
 	public List<Visit> getVisitsInMonth(LocalDate targetDate) {
-		return visitRepo.findAll().stream()
+		return visitRepo.findAllByClinicId(getClinicId()).stream()
 				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
 						&& visit.getCreatedAt().getYear() == targetDate.getYear())
 				.collect(Collectors.toList());

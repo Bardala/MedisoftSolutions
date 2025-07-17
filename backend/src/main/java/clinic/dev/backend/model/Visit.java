@@ -51,7 +51,7 @@ public class Visit {
   @Column(name = "duration", nullable = true)
   private Integer duration;
 
-  @Column(name = "doctor_notes", nullable = true)
+  @Column(name = "doctor_notes", nullable = true, length = 500)
   private String doctorNotes;
 
   @Column(name = "created_at", updatable = false)

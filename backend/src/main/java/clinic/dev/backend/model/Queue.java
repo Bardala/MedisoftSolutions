@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Table(name = "queue", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "doctor_id" })
+    @UniqueConstraint(columnNames = { "doctor_id", "patient_id" })
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,6 +54,7 @@ public class Queue {
   private User assistant;
 
   @Column(nullable = false)
+  @Min(1)
   private Integer position; // The position of the patient in the queue
 
   @Enumerated(EnumType.STRING)

@@ -12,8 +12,6 @@ import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
 public interface ClinicServiceBase {
   public List<ClinicResDTO> getAllClinics();
 
-  public ClinicResDTO createClinic(ClinicReqDTO request);
-
   public ClinicResDTO getClinicById(Long id);
 
   public ClinicResDTO getUserClinic();

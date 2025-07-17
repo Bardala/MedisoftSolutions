@@ -1,6 +1,7 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,8 @@ public class Payment {
   private Clinic clinic;
 
   @NotNull(message = ErrorMsg.MUST_NOT_BE_NULL)
+  @Column(nullable = false)
+  @Min(0)
   private Double amount;
 
   @ManyToOne

@@ -1,6 +1,7 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ import clinic.dev.backend.constants.ErrorMsg;
 @Entity
 @Data
 @Table(name = "medicines", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "medicine_name")
+    @UniqueConstraint(columnNames = { "clinic_id", "medicine_name" })
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,6 +48,7 @@ public class Medicine {
 
   /** Specifies the duration of taking the medicine (e.g., "7" days). */
   @Column(nullable = false)
+  @Min(1)
   private Integer duration; // e.g., "7" (days)
 
   /** Additional instructions, e.g., "Take after meals". */

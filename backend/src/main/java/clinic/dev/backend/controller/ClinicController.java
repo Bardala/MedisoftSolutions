@@ -9,6 +9,8 @@ import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicWithOwnerRes;
+import clinic.dev.backend.model.Clinic;
+import clinic.dev.backend.model.User;
 import clinic.dev.backend.service.impl.ClinicService;
 import clinic.dev.backend.util.ApiRes;
 import lombok.RequiredArgsConstructor;
@@ -55,13 +57,13 @@ public class ClinicController {
     return ResponseEntity.ok(new ApiRes<>((clinicService.getLimits())));
   }
 
-  @PostMapping
-  @PreAuthorize("@auth.isSuperAdmin()")
-  public ResponseEntity<ApiRes<ClinicResDTO>> createClinic(
-      @RequestBody @Valid ClinicReqDTO request) {
-    ClinicResDTO response = clinicService.createClinic(request);
-    return ResponseEntity.ok(new ApiRes<>(response));
-  }
+  // @PostMapping
+  // @PreAuthorize("@auth.isSuperAdmin()")
+  // public ResponseEntity<ApiRes<ClinicResDTO>> createClinic(
+  // @RequestBody @Valid ClinicReqDTO request) {
+  // ClinicResDTO response = clinicService.createClinic(request);
+  // return ResponseEntity.ok(new ApiRes<>(response));
+  // }
 
   @GetMapping("/{id}")
   @PreAuthorize("@auth.isSuperAdmin()")
@@ -111,5 +113,16 @@ public class ClinicController {
         request.limits(),
         request.owner());
     return ResponseEntity.ok(new ApiRes<>(response));
+  }
+
+  @PostMapping("/settings/{id}")
+  public ResponseEntity<ApiRes<Void>> createClinicSettings(
+      @PathVariable("id") Long id) {
+    Clinic clinic = new Clinic();
+    clinic.setId(id);
+
+    clinicService.createDefaultClinicSettings(clinic, new User());
+
+    return ResponseEntity.noContent().build();
   }
 }

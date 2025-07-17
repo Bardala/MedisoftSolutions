@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.model.Medicine;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.repository.MedicineRepo;
 import clinic.dev.backend.repository.UserRepo;
 import jakarta.annotation.PostConstruct;
@@ -28,27 +29,19 @@ public class UserInitializationService {
 
   @PostConstruct
   void populateData() {
-    addUsers();
-    addMedicines();
+    // addUsers();
+    // addMedicines();
   }
 
   private void addUsers() {
     if (userRepo.count() == 0) {
-      SignupRequest doctor = new SignupRequest();
-      doctor.setUsername("doctor");
-      doctor.setPassword("888888");
-      doctor.setName("Dr. Mohamad Sameer");
-      doctor.setPhone("01234567890");
-      doctor.setRole("Doctor");
-      userService.signup(doctor);
-
-      SignupRequest assistant = new SignupRequest();
-      assistant.setUsername("assistant");
-      assistant.setPassword("888888");
-      assistant.setName("Mr. Ali");
-      assistant.setPhone("01112345678");
-      assistant.setRole("Assistant");
-      userService.signup(assistant);
+      SignupRequest admin = new SignupRequest();
+      admin.setUsername("admin");
+      admin.setPassword("888888");
+      admin.setName("Bardala");
+      admin.setPhone("01120618782");
+      admin.setRole(UserRole.SUPER_ADMIN);
+      userService.signup(admin);
     }
   }
 

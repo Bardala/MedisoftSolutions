@@ -1,12 +1,13 @@
 package clinic.dev.backend.dto.auth;
 
+import clinic.dev.backend.model.User.UserRole;
 import lombok.Data;
 
 @Data
 public class CurrUserInfo {
   private Long id;
   private String username;
-  private String role;
+  private UserRole role;
   private String phone;
   private String name;
   private Long clinicId;

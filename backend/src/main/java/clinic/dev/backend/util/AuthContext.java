@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import clinic.dev.backend.model.User.UserRole;
+
 @Component
 @RequestScope
 @Data
@@ -11,7 +13,7 @@ public class AuthContext {
   private Long clinicId;
   private Long userId;
   private String username;
-  private String role;
+  private UserRole role;
 
   public boolean hasAdminAccessToClinic(Long clinicIdToCheck) {
     if (isSuperAdmin())
@@ -20,18 +22,18 @@ public class AuthContext {
   }
 
   public boolean isDoctor() {
-    return "Doctor".equalsIgnoreCase(role);
+    return UserRole.DOCTOR.equals(role);
   }
 
   public boolean isAssistant() {
-    return "Assistant".equalsIgnoreCase(role);
+    return UserRole.ASSISTANT.equals(role);
   }
 
   public boolean isOwner() {
-    return "Owner".equalsIgnoreCase(role);
+    return UserRole.OWNER.equals(role);
   }
 
   public boolean isSuperAdmin() {
-    return "SuperAdmin".equalsIgnoreCase(role);
+    return UserRole.SUPER_ADMIN.equals(role);
   }
 }

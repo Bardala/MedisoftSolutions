@@ -1,6 +1,7 @@
 package clinic.dev.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,7 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "clinic")
+@Table(name = "clinic", indexes = {
+    @Index(name = "idx_clinic_name", columnList = "name")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,6 +37,7 @@ public class Clinic {
   private String phoneNumber;
 
   @Column(name = "email")
+  @Email
   private String email;
 
   @Column(name = "logo_url")

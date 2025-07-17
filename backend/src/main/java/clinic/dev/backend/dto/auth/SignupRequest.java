@@ -1,7 +1,7 @@
 package clinic.dev.backend.dto.auth;
 
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.validation.RoleConstraint;
+import clinic.dev.backend.model.User.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,9 +23,10 @@ public class SignupRequest {
   @NotBlank(message = ErrorMsg.PASSWORD_IS_REQUIRED)
   private String password;
 
-  @RoleConstraint(message = "Invalid role. Allowed roles are 'Admin', 'Doctor' and 'Assistant'")
+  // @RoleConstraint(message = "Invalid role. Allowed roles are 'Admin', 'Doctor'
+  // and 'Assistant'")
   @NotBlank(message = ErrorMsg.FIELD_MUST_NOT_BE_BLANK)
-  private String role;
+  private UserRole role;
 
   @NotBlank(message = ErrorMsg.FIELD_MUST_NOT_BE_BLANK)
   private String name;
