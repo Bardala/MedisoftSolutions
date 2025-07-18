@@ -1,6 +1,0 @@
-{
-  "dentalProcedure.select": "🦷 Select Dental Procedure",
-  "dentalProcedure.searchPlaceholder": "Search by name or description",
-  "dentalProcedure.loading": "Loading dental procedures...",
-  "dentalProcedure.error": "Error loading dental procedures"
-}
