@@ -35,5 +35,5 @@ build/
 
 
 /src/main/resources/static/
-backend/src/main/resources/application-prod.properties
-backend/src/main/resources/application-sqlite.properties
+/src/main/resources/application-prod.properties
+/src/main/resources/application-sqlite.properties
