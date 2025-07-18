@@ -1,1 +1,1 @@
-export const HOST = `https://192.168.1.100:8443`;
+export const HOST = process.env.REACT_APP_API_HOST || `https://localhost:8443`;

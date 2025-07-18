@@ -65,6 +65,7 @@
     "@types/chart.js": "^2.9.41",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.15",
+    "@types/node": "^24.0.14",
     "@types/qrcode.react": "^3.0.0",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
