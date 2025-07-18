@@ -144,10 +144,12 @@ public class QueueService {
   public QueueResDTO getQueueByPosition(Long doctorId, Integer position) {
     Queue queue = queueRepository
         .findByDoctorIdAndPositionAndClinicId(doctorId, position, getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
+        .orElseThrow(() -> new ResourceNotFoundException(
+            String.format("No patient found at position %d for doctor ID %d", position, doctorId)));
 
     return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
-        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
+        .orElseThrow(() -> new ResourceNotFoundException(
+            String.format("Queue details not found for queue ID %d", queue.getId())));
   }
 
   public Boolean CheckPatientInQueue(Long patientId) {

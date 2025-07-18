@@ -11,11 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Profile("dev")
 public class WebConfigDev implements WebMvcConfigurer {
 
-  // ? Commented it to avoid conflicting with application.properties
   @Override
   public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/**").addResourceLocations("classpath:/static/").setCachePeriod(3600);
-    // ! create issues with fetching files from the frontend
   }
 
   @Override

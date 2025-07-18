@@ -12,7 +12,8 @@ import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.util.ApiRes;
 import jakarta.persistence.EntityNotFoundException;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,64 +21,100 @@ import java.util.regex.Pattern;
 @ControllerAdvice
 public class GlobalDatabaseExceptionHandler {
 
-  // Handle Data Integrity Violations (e.g., Unique constraints, Foreign key
-  // violations)
+  // Handle PostgreSQL unique constraint violations
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+  public ResponseEntity<ApiRes<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    String errorMessage = extractPostgresConstraintMessage(ex.getMostSpecificCause().getMessage());
+    Map<String, String> errorMap = createErrorMap("Database_error", errorMessage);
     return ResponseEntity.status(HttpStatus.CONFLICT)
-        .body(ErrorMsg.DATABASE_CONSTRAINS_VIOLATION + ex.getMostSpecificCause().getMessage());
+        .body(new ApiRes<>(errorMap));
   }
 
-  @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-  public ResponseEntity<String> handleSQLIntegrityConstraintViolation(SQLIntegrityConstraintViolationException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorMsg.SQL_CONSTRAINS_VIOLATION + ex.getMessage());
+  @ExceptionHandler(SQLException.class)
+  public ResponseEntity<ApiRes<?>> handleSQLException(SQLException ex) {
+    String errorMessage = extractPostgresConstraintMessage(ex.getMessage());
+    Map<String, String> errorMap = createErrorMap("Database_error", errorMessage);
+    return ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(new ApiRes<>(errorMap));
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMsg.ENTITY_NOT_FOUND + ex.getMessage());
+  public ResponseEntity<ApiRes<?>> handleEntityNotFoundException(EntityNotFoundException ex) {
+    Map<String, String> errorMap = createErrorMap("not_found", ErrorMsg.ENTITY_NOT_FOUND + ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(new ApiRes<>(errorMap));
   }
 
   @ExceptionHandler(JpaSystemException.class)
-  public ResponseEntity<ApiRes<String>> handleJpaSystemException(JpaSystemException ex) {
-    String rawMsg = ex.getMessage();
-    String formatFieldName = extractConstraintViolationMessage(rawMsg);
-    String userFriendlyMessage = formatFieldName;
-
-    Map<String, String> errorField = Map.of(formatFieldName, userFriendlyMessage);
-    ApiRes<String> res = new ApiRes<>(errorField);
-
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+  public ResponseEntity<ApiRes<?>> handleJpaSystemException(JpaSystemException ex) {
+    String errorMessage = extractPostgresConstraintMessage(
+        ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
+    Map<String, String> errorMap = createErrorMap("Database_error", errorMessage);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(new ApiRes<>(errorMap));
   }
 
-  private String extractConstraintViolationMessage(String rawMessage) {
-    Pattern uniqueConstraintPattern = Pattern.compile("UNIQUE\\sconstraint\\sfailed:\\s(\\w+\\.\\w+)");
+  private Map<String, String> createErrorMap(String errorKey, String errorMessage) {
+    Map<String, String> errorMap = new HashMap<>();
+    errorMap.put(errorKey, errorMessage);
+    return errorMap;
+  }
+
+  private String extractPostgresConstraintMessage(String rawMessage) {
+    if (rawMessage == null) {
+      return "Unknown database error";
+    }
+
+    // Pattern for PostgreSQL unique constraint violation
+    Pattern uniqueConstraintPattern = Pattern.compile(
+        "ERROR: duplicate key value violates unique constraint \"(\\w+)\"\\s+" +
+            "Detail: Key \\(([^\\)]+)\\)=\\(([^\\)]+)\\) already exists\\.");
+
     Matcher matcher = uniqueConstraintPattern.matcher(rawMessage);
-
     if (matcher.find()) {
-      String violatedField = matcher.group(1).split("\\.")[1];
+      String constraintName = matcher.group(1);
+      String columns = matcher.group(2);
+      String values = matcher.group(3);
 
-      // Remove underscores and format properly
-      String formattedField = formatFieldName(violatedField);
-      return formattedField + " is already registered. Please enter another value.";
+      // Format a user-friendly message based on the constraint
+      switch (constraintName) {
+        case "ukm8nrq511mujkh4ae1suwryhn8": // Queue unique constraint
+          return "This patient is already in the doctor's queue";
+        case "users_username_key":
+          return "Username already exists";
+        case "users_phone_key":
+          return "Phone number already registered";
+        default:
+          return String.format("The combination of %s (%s) already exists",
+              formatColumnNames(columns), values);
+      }
     }
 
-    return "A database error occurred. Please try again.";
-  }
-
-  private String formatFieldName(String field) {
-    // Replace underscores with spaces and capitalize first letter of each word
-    String[] words = field.split("_");
-    StringBuilder formattedName = new StringBuilder();
-
-    for (String word : words) {
-      formattedName.append(Character.toUpperCase(word.charAt(0)))
-          .append(word.substring(1))
-          .append(" ");
+    // Pattern for foreign key violations
+    Pattern fkPattern = Pattern.compile(
+        "ERROR: insert or update on table \"\\w+\" violates foreign key constraint \"(\\w+)\"");
+    matcher = fkPattern.matcher(rawMessage);
+    if (matcher.find()) {
+      return "The operation cannot be completed because it references non-existent data";
     }
 
-    return formattedName.toString().trim();
+    // Default message if no specific pattern matches
+    return ErrorMsg.DATABASE_CONSTRAINS_VIOLATION +
+        (rawMessage.length() > 200 ? rawMessage.substring(0, 200) + "..." : rawMessage);
   }
 
+  private String formatColumnNames(String columns) {
+    // Split by comma and format each column name
+    String[] columnArray = columns.split(",\\s*");
+    StringBuilder formatted = new StringBuilder();
+
+    for (String column : columnArray) {
+      formatted.append(column.replace("_", " "))
+          .append(", ");
+    }
+
+    // Remove trailing comma and space
+    return formatted.length() > 0 ? formatted.substring(0, formatted.length() - 2) : "these fields";
+  }
 }
