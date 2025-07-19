@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MediSoft",
+  "name": "MediSoft – Clinic Management System",
+  "description": "A modern clinic management system to manage patients, appointments, and finances efficiently.",
   "icons": [
     {
       "src": "favicon.ico",
