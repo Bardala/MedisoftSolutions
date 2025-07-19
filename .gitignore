@@ -20,3 +20,5 @@ ApiTesting.md
 node_modules
 package-lock.json
 backend/src/main/resources/application-prod.properties
+
+*-test.js

@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Pattern;
 public record PatientReqDTO(
     @NotBlank(message = "Full name is required") String fullName,
     @NotBlank(message = "Phone number is required") @Pattern(regexp = "^0\\d{9,14}$", message = "Phone must start with 0 and be 10-15 digits") String phone,
-    String dateOfBirth,
     String medicalHistory,
     Integer age,
     String address,

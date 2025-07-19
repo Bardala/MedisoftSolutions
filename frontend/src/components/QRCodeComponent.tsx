@@ -1,5 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
-import { HOST } from "../utils/HOST";
+import { FRONTEND_HOST } from "../utils/HOST";
 
 interface QRCodeProps {
   username: string;
@@ -7,7 +7,7 @@ interface QRCodeProps {
 }
 
 const QRCodeComponent: React.FC<QRCodeProps> = ({ username, password }) => {
-  const qrCodeValue = `${HOST}/login?username=${encodeURIComponent(
+  const qrCodeValue = `${FRONTEND_HOST}/login?username=${encodeURIComponent(
     username,
   )}&password=${encodeURIComponent(password)}`;
 
