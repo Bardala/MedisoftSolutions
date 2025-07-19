@@ -12,6 +12,7 @@ import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Queue;
 import clinic.dev.backend.model.Queue.Status;
+import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.QueueRepo;
 import clinic.dev.backend.repository.UserRepo;
@@ -44,7 +45,7 @@ public class QueueService {
         .findByIdAndClinicId(req.doctorId(), getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
-    if (doctor.getRole().equals("Assistant")) // doctor can be Admin or Doctor, but can't be Assistant
+    if (UserRole.ASSISTANT.equals(doctor.getRole())) // doctor can be Admin or Doctor, but can't be Assistant
       throw new BadRequestException("User with id: " + doctor.getId() + " is not a doctor");
 
     if (req.assistantId() != null) {
@@ -52,7 +53,7 @@ public class QueueService {
           .findByIdAndClinicId(req.assistantId(), getClinicId())
           .orElseThrow(() -> new ResourceNotFoundException("Assistant not found"));
 
-      if (!assistant.getRole().equals("Assistant"))
+      if (!UserRole.ASSISTANT.equals(assistant.getRole()))
         throw new BadRequestException("User with id: " + assistant.getId() + " is not an assistant");
     }
 
