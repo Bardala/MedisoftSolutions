@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import UserFiles from "./UserFiles";
 import "../styles/patientProfile.css";
 import { usePatientRegistry } from "../hooks/useRegistry";
-import { Patient } from "../types";
+import { isAssistantRole, isDoctorRole, Patient } from "../types";
 import { VisitCard } from "./VisitCard";
 import {
   useUpdateQueueStatus,
@@ -72,7 +72,7 @@ const CurrentPatientProfile = () => {
 
   // Save selected doctor ID to localStorage when it changes
   useEffect(() => {
-    if (loggedInUser.role === "Assistant" && selectedDoctorId) {
+    if (isAssistantRole(loggedInUser.role) && selectedDoctorId) {
       localStorage.setItem("selectedDoctorId", String(selectedDoctorId));
     }
   }, [selectedDoctorId, loggedInUser.role]);
@@ -175,7 +175,7 @@ const CurrentPatientProfile = () => {
         <p>{f({ id: "noCurrentPatient" })}</p>
       )}
 
-      {loggedInUser.role === "Doctor" &&
+      {isDoctorRole(loggedInUser.role) &&
         (secEntry ? (
           <div className="next-patient-section">
             <p className="next-patient-name">

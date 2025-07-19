@@ -5,7 +5,7 @@ import {
   useDeleteVisitProcedure,
   useGetVisitProceduresByVisitId,
 } from "../hooks/useVisitDentalProcedure";
-import { VisitAnalysis } from "../types";
+import { isDoctorRole, VisitAnalysis } from "../types";
 import { dailyTimeFormate, dateFormate, isArabic } from "../utils";
 import {
   faTrashAlt,
@@ -54,7 +54,7 @@ export const VisitCard: FC<{
     }
   };
 
-  const isDoctor = loggedInUser.role === "Doctor";
+  const isDoctor = isDoctorRole(loggedInUser.role);
   const isDoctorAndCurrVisit = currVisit && isDoctor;
 
   return (

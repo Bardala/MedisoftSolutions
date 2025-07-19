@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
-import {
-  assistantImage,
-  assistantUsername,
-  doctorImage,
-  doctorUsername,
-  programLogoImage,
-} from "../utils";
+import { assistantImage, doctorImage, programLogoImage } from "../utils";
 import { useIntl } from "react-intl";
+import { isAssistantRole, isDoctorRole, UserRole } from "../types";
 
 export const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
@@ -43,13 +38,13 @@ export const LoginPage: React.FC = () => {
     }
   }, [setIdentifier, setPassword, handleSubmit, loginAttempts]);
 
-  useEffect(() => {
-    if (selectedRole === "Doctor") {
-      setIdentifier(doctorUsername);
-    } else if (selectedRole === "Assistant") {
-      setIdentifier(assistantUsername);
-    }
-  }, [selectedRole, setIdentifier]);
+  // useEffect(() => {
+  //   if (isDoctorRole(selectedRole)) {
+  //     setIdentifier(doctorUsername);
+  //   } else if (selectedRole === "Assistant") {
+  //     setIdentifier(assistantUsername);
+  //   }
+  // }, [selectedRole, setIdentifier]);
 
   return (
     <div className="login-page">
@@ -62,8 +57,10 @@ export const LoginPage: React.FC = () => {
       <h1 className="title">{f({ id: "login.welcome" })}</h1>
       <div className="roles">
         <div
-          className={`role-card ${selectedRole === "Doctor" ? "selected" : ""}`}
-          onClick={() => handleRoleSelection("Doctor")}
+          className={`role-card ${
+            isDoctorRole(selectedRole) ? "selected" : ""
+          }`}
+          onClick={() => handleRoleSelection(UserRole.DOCTOR)}
         >
           <img src={doctorImage} alt="Doctor Icon" className="role-icon" />
           <h2>{f({ id: "login.doctor" })}</h2>
@@ -71,9 +68,9 @@ export const LoginPage: React.FC = () => {
 
         <div
           className={`role-card ${
-            selectedRole === "Assistant" ? "selected" : ""
+            isAssistantRole(selectedRole) ? "selected" : ""
           }`}
-          onClick={() => handleRoleSelection("Assistant")}
+          onClick={() => handleRoleSelection(UserRole.ASSISTANT)}
         >
           <img
             src={assistantImage}

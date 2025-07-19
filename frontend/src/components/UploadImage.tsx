@@ -190,7 +190,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
           >
             {f({ id: "cancel" })}
           </button>
-          <button type="submit" className="submit-button" disabled={isLoading}>
+          <button type="submit" className="submit-button" disabled>
             {isLoading ? f({ id: "uploading" }) : f({ id: "upload" })}
           </button>
         </div>

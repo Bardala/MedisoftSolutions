@@ -7,6 +7,8 @@ import { LoginProvider } from "./context/loginContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import IntlProviderWrapper from "./IntlProviderWrapper";
+import { ApiError } from "./fetch/ApiError";
+import { customRetry } from "./utils";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -29,6 +31,14 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       cacheTime: 15 * 60 * 1000, // 15 minutes
+      retry: customRetry,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
+      refetchOnWindowFocus: false,
+      onError: (error: ApiError) => {
+        console.warn(
+          `Query failed with status ${error.status}: ${error.message}`,
+        );
+      },
     },
   },
 });

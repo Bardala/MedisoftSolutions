@@ -2,7 +2,7 @@ import { FC } from "react";
 import "../styles/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
-import { SidebarProps } from "../types";
+import { isDoctorRole, SidebarProps } from "../types";
 import { useSidebar } from "../hooks/useSidebar";
 import { doctorImage, assistantImage } from "../utils";
 import { useIntl } from "react-intl";
@@ -13,7 +13,7 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
   return (
     <div className="sidebar">
       <div className="sidebar-user-photo-container">
-        {loggedInUser.role === "Doctor" ? (
+        {isDoctorRole(loggedInUser.role) ? (
           <img src={doctorImage} alt="Doctor" className="sidebar-user-photo" />
         ) : (
           <img

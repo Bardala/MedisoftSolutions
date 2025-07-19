@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 import { useLogin } from "../context/loginContext";
 import { FormModal } from "./FormModel";
+import { isDoctorRole } from "../types";
 
 interface UpdateModelProps<T> {
   objectToEdit: T;
@@ -27,7 +28,7 @@ export const UpdateModel = <T extends Record<string, any>>({
   return (
     <>
       {/* Action buttons */}
-      {loggedInUser.role === "Doctor" && (
+      {isDoctorRole(loggedInUser.role) && (
         <div className="edit-patient">
           <button onClick={() => setUpdateModalOpen(!isUpdateModalOpen)}>
             <FontAwesomeIcon icon={faEdit} />

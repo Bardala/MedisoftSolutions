@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User } from "../types";
+import { isDoctorRole, isSuperAdminRole, User } from "../types";
 import AddPatient from "../components/AddPatient";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
@@ -46,7 +46,7 @@ export const useHomePage = (loggedInUser: User) => {
   };
 
   const renderContent = () => {
-    if (loggedInUser.role === "SuperAdmin") {
+    if (isSuperAdminRole(loggedInUser.role)) {
       return (
         superAdminRoutes[selectedOption] ?? (
           <ClinicsList setSelectedOption={setSelectedOption} />
@@ -56,7 +56,7 @@ export const useHomePage = (loggedInUser: User) => {
 
     if (commonRoutes[selectedOption]) return commonRoutes[selectedOption];
 
-    if (loggedInUser.role === "Doctor" && doctorRoutes[selectedOption])
+    if (isDoctorRole(loggedInUser.role) && doctorRoutes[selectedOption])
       return doctorRoutes[selectedOption];
 
     return <Home setSelectedOption={setSelectedOption} />;

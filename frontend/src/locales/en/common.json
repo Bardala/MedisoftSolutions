@@ -187,5 +187,10 @@
   "max_file_storage_required": "Max file storage is required",
   "max_patient_records_required": "Max patient records is required",
   "clinic_name": "Clinic Name",
-  "password_required": "Password is required"
+  "password_required": "Password is required",
+
+  "addUser": "Add User",
+  "fullName": "Full Name",
+  "submitButton": "Create User",
+  "userCreatedSuccessfully": "User created successfully!"
 }

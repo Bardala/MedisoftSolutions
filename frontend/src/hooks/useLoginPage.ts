@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../context/loginContext";
+import { UserRole } from "../types";
 
 export const useLoginPage = () => {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -16,7 +17,7 @@ export const useLoginPage = () => {
     }
   }, [success, navigate]);
 
-  const handleRoleSelection = (role: string) => {
+  const handleRoleSelection = (role: UserRole) => {
     setSelectedRole(role);
     setPassword("");
     setIdentifier("");

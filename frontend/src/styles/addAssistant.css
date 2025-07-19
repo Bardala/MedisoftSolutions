@@ -1,4 +1,4 @@
-.add-assistant-container {
+.add-user-container {
   padding: var(--padding-medium);
   box-shadow: var(--shadow-light);
   border-radius: var(--border-radius);
@@ -14,17 +14,36 @@
   margin-bottom: var(--padding-medium);
 }
 
-.add-assistant-form {
+.add-user-form {
   display: flex;
   flex-direction: column;
+  gap: var(--padding-small);
 }
 
-.add-assistant-form input {
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+.form-group label {
+  color: var(--label-color);
+  font-size: var(--font-size-body);
+}
+
+.add-user-form input,
+.role-select {
   padding: var(--padding-small);
-  margin-bottom: var(--padding-small);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: var(--font-size-body);
+}
+
+.add-user-form input:focus,
+.role-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 .submit-button {
@@ -36,20 +55,61 @@
   font-size: var(--font-size-body);
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: var(--padding-small);
 }
 
 .submit-button:hover {
   background-color: var(--primary-hover);
 }
 
+.submit-button:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+}
+
 .error-message {
-  color: red;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
   text-align: center;
   margin-top: var(--padding-small);
 }
 
 .success-message {
-  color: green;
+  color: var(--success-text);
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
   text-align: center;
   margin-top: var(--padding-small);
+}
+
+.qr-code-container {
+  margin-top: var(--padding-medium);
+  padding: var(--padding-medium);
+  background-color: var(--third-bg);
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--padding-medium);
+}
+
+.credentials {
+  background-color: var(--white);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  width: 100%;
+}
+
+.credentials p {
+  margin: var(--padding-small) 0;
+  color: var(--secondary-color);
+}
+
+.credentials strong {
+  color: var(--label-color);
 }

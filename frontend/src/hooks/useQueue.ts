@@ -2,7 +2,7 @@ import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { QueueApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { QueueStatus } from "../types";
-import { QueueResDTO } from "../dto";
+import { QueueReqDTO, QueueResDTO } from "../dto";
 
 export const useFetchQueue = (doctorId: number) => {
   const fetchQueueQuery = useQuery<QueueResDTO[], ApiError>(
@@ -16,6 +16,7 @@ export const useFetchQueue = (doctorId: number) => {
 
   return {
     queue: fetchQueueQuery.data,
+    patientsInQueue: fetchQueueQuery.data?.length,
     isError: fetchQueueQuery.isError,
     isLoading: fetchQueueQuery.isLoading,
     refetch: fetchQueueQuery.refetch,
@@ -94,7 +95,7 @@ export const useGetQueueByPosition = (doctorId: number, position: number) => {
   const query = useQuery<QueueResDTO, ApiError>(
     ["queue", doctorId, "position", position],
     () => QueueApi.GetByPosition(doctorId, position),
-    { enabled: !!doctorId && !!position },
+    { enabled: !!doctorId && !!position, retry: 0 },
   );
 
   return {
@@ -103,4 +104,38 @@ export const useGetQueueByPosition = (doctorId: number, position: number) => {
     isError: query.isError,
     isLoading: query.isLoading,
   };
+};
+
+export const useAddPatientToQueue = (doctorId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<QueueResDTO, ApiError, QueueReqDTO>(
+    (req) =>
+      QueueApi.AddPatient({
+        doctorId: req.doctorId,
+        patientId: req.patientId,
+        assistantId: req.assistantId,
+      }),
+    {
+      onSuccess: (data) => {
+        // Optimistically update the queue
+        queryClient.setQueryData<QueueResDTO[]>(
+          ["queue", doctorId],
+          (oldData = []) => [...oldData, data],
+        );
+
+        // Alternatively, invalidate to refetch fresh data
+        // queryClient.invalidateQueries(["queue", doctorId]);
+
+        // Also invalidate patient-in-queue check
+        queryClient.invalidateQueries(["queue-patients", data.patientId]);
+      },
+      onError: (error) => {
+        // Handle specific queue constraint violation
+        if (error.status === 409 && error.errors?.database_error) {
+          console.warn("Queue constraint:", error.errors.database_error);
+        }
+      },
+    },
+  );
 };

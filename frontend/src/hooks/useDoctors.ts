@@ -3,15 +3,15 @@ import { GetAllUsersApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
 import { useState } from "react";
 import { useLogin } from "../context/loginContext";
-import { doctorId } from "../utils";
 import { UserResDTO } from "../dto";
+import { isAssistantRole, isDoctorRole } from "../types";
 
 export const useFetchDoctors = () => {
   const fetchDoctorsQuery = useQuery<UserResDTO[], ApiError>(
     ["allDoctors"],
     async () => {
       const users = await GetAllUsersApi();
-      return users.filter((user) => user.role === "Doctor");
+      return users.filter((user) => isDoctorRole(user.role));
     },
     {
       // Cache for 5 minutes
@@ -34,17 +34,17 @@ export const useSelectDoctor = () => {
   const queryClient = useQueryClient();
 
   const getSelectedDoctorId = () => {
-    if (loggedInUser.role === "Doctor") {
+    if (isDoctorRole(loggedInUser.role)) {
       return Number(loggedInUser.id);
     }
-    return Number(localStorage.getItem("selectedDoctorId")) || doctorId;
+    return Number(localStorage.getItem("selectedDoctorId"));
   };
 
   const [selectedDoctorId, _setSelectedDoctorId] =
     useState(getSelectedDoctorId);
 
   const setSelectedDoctorId = (id: number) => {
-    if (loggedInUser.role === "Assistant") {
+    if (isAssistantRole(loggedInUser.role)) {
       localStorage.setItem("selectedDoctorId", String(id));
     }
     _setSelectedDoctorId(id);
@@ -60,15 +60,15 @@ export const useDoctorSelection = () => {
 
   // Get the selected doctor ID
   const { data: selectedDoctorId } = useQuery(["selectedDoctorId"], () => {
-    if (loggedInUser.role === "Doctor") {
+    if (isDoctorRole(loggedInUser.role)) {
       return Number(loggedInUser.id);
     }
-    return Number(localStorage.getItem("selectedDoctorId")) || doctorId;
+    return Number(localStorage.getItem("selectedDoctorId"));
   });
 
   // Update function that syncs with localStorage and React Query cache
   const setSelectedDoctorId = (id: number) => {
-    if (loggedInUser.role === "Assistant") {
+    if (isAssistantRole(loggedInUser.role)) {
       localStorage.setItem("selectedDoctorId", String(id));
     }
     queryClient.setQueryData(["selectedDoctorId"], id);

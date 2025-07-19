@@ -51,6 +51,7 @@ const DentalProcedureSearch: React.FC<DentalProcedureSearchProps> = ({
         value={searchTerm}
         onChange={handleSearch}
         aria-label={f({ id: "dentalProcedure.searchPlaceholder" })}
+        disabled
       />
       {isLoading && <p>{f({ id: "dentalProcedure.loading" })}</p>}
       {error && <p>{f({ id: "dentalProcedure.error" })}</p>}

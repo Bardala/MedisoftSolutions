@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { useLogin } from "../context/loginContext";
 import { useDeletePatient, useUpdatePatient } from "../hooks/usePatient";
 import { useIsPatientInAnyQueue } from "../hooks/useQueue";
-import { PatientRegistryRes } from "../types";
+import { isDoctorRole, PatientRegistryRes } from "../types";
 import { timeFormate, calculateRemainingBalance, isArabic } from "../utils";
 import { UpdateModel } from "./UpdateModel";
 import { ToggleStatsData } from "./ToggleStatsData";
@@ -262,7 +262,7 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                 placeholder={f({ id: "notes" })}
                 disabled={loggedInUser.role === "Assistant"}
               />
-              {loggedInUser.role === "Doctor" &&
+              {isDoctorRole(loggedInUser.role) &&
                 patientNotes !== patient.notes && (
                   <div className="notes-buttons">
                     <button

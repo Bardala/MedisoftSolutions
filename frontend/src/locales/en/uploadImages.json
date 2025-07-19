@@ -8,7 +8,5 @@
   "medicalTest": "Medical Test",
   "cancel": "Cancel",
   "upload": "Upload Files",
-  "uploading": "Uploading...",
-  "selectAtLeastOne": "Please select at least one file.",
-  "error": "Failed to upload file. Please try again."
+  "uploading": "Uploading..."
 }

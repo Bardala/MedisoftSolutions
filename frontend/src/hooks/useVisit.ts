@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Patient, Visit } from "../types";
+import { isAssistantRole, isDoctorRole, Patient, Visit } from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
@@ -83,11 +83,10 @@ export const useAddVisit = () => {
 
     const newVisit: VisitReqDTO = {
       patientId: selectedPatient?.id,
-      doctorId:
-        loggedInUser?.role === "Doctor"
-          ? loggedInUser?.id
-          : Number(localStorage.getItem(LOCALS.SELECTED_DOCTOR_ID)),
-      ...(loggedInUser.role === "Assistant" && {
+      doctorId: isDoctorRole(loggedInUser?.role)
+        ? loggedInUser?.id
+        : Number(localStorage.getItem(LOCALS.SELECTED_DOCTOR_ID)),
+      ...(isAssistantRole(loggedInUser.role) && {
         assistantId: loggedInUser.id,
       }),
       doctorNotes,

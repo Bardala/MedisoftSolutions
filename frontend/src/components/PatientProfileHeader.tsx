@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
+import { isDoctorRole } from "../types";
 
 interface PatientProfileHeaderProps {
   expandedSection: string | null;
@@ -50,7 +51,7 @@ const PatientProfileHeader = ({
         <FontAwesomeIcon icon={faFileAlt} /> <span>{f({ id: "files" })}</span>
       </div>
 
-      {loggedInUser.role === "Doctor" && (
+      {isDoctorRole(loggedInUser.role) && (
         <>
           <div
             className="icon"

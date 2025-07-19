@@ -260,3 +260,17 @@ export enum UserRole {
   ASSISTANT = "Assistant",
   OWNER = "Owner",
 }
+
+const doctorLikeRoles = [UserRole.DOCTOR, UserRole.OWNER];
+
+export function isDoctorRole(role: UserRole): boolean {
+  return doctorLikeRoles.includes(role);
+}
+
+export const isAssistantRole = (role: UserRole): boolean =>
+  role === UserRole.ASSISTANT;
+
+export const isOwnerRole = (role: UserRole): boolean => role === UserRole.OWNER;
+
+export const isSuperAdminRole = (role: UserRole): boolean =>
+  role === UserRole.SUPER_ADMIN;

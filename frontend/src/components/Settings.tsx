@@ -14,6 +14,7 @@ import {
   faSignOutAlt,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { isOwnerRole } from "../types";
 
 const Settings = ({
   setSelectedOption,
@@ -38,7 +39,7 @@ const Settings = ({
         </h1>
 
         <div className="settings-grid">
-          {loggedInUser?.role === "Doctor" && (
+          {isOwnerRole(loggedInUser?.role) && (
             <>
               <button
                 className="action-button"
@@ -46,7 +47,7 @@ const Settings = ({
               >
                 <FontAwesomeIcon icon={faUserPlus} className="button-icon" />
                 <FormattedMessage
-                  id="addAssistant"
+                  id="addUser"
                   defaultMessage="Add New Assistant"
                 />
               </button>

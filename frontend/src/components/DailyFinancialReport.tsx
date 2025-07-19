@@ -16,6 +16,7 @@ import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
 import { DailyReportCharts } from "./DailyReportChart";
 import { ToggleStatsData } from "./ToggleStatsData";
+import { isOwnerRole } from "../types";
 
 const DailyFinancialReport = () => {
   const { formatMessage: f } = useIntl();
@@ -131,7 +132,7 @@ const DailyFinancialReport = () => {
       />
 
       {/* Date Picker */}
-      {loggedInUser.role === "Doctor" && (
+      {isOwnerRole(loggedInUser.role) && (
         <div className="date-picker-container">
           <label htmlFor="report-date">
             <FontAwesomeIcon icon={faCalendarAlt} /> {f({ id: "selectDate" })}:

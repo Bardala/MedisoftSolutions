@@ -8,7 +8,7 @@ import {
   IconDefinition,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { User } from "../types";
+import { isDoctorRole, isSuperAdminRole, User } from "../types";
 import { useIntl } from "react-intl";
 
 export interface MenuItem {
@@ -19,8 +19,8 @@ export interface MenuItem {
 
 export const useSidebar = (loggedInUser: User) => {
   const { formatMessage: f } = useIntl();
-  const isDoctor = loggedInUser.role === "Doctor";
-  const isSuperAdmin = loggedInUser.role === "SuperAdmin";
+  const isDoctor = isDoctorRole(loggedInUser.role);
+  const isSuperAdmin = isSuperAdminRole(loggedInUser.role);
 
   const menuItems: MenuItem[] = [];
 

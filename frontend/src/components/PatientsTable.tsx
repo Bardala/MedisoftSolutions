@@ -79,7 +79,7 @@ export const PatientsTable = () => {
                 )}
                 enableActions={true}
                 // onUpdate={
-                //   loggedInUser.role === "Doctor"
+                //   isDoctorRole(loggedInUser.role)
                 //     ? updatePatientMutation.mutateAsync
                 //     : undefined
                 // }

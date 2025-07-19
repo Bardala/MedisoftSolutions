@@ -1,4 +1,3 @@
-import { errorFn } from "./ERROR";
 import { extractParams } from "../utils/extractParams";
 import { HOST } from "../utils/HOST";
 import { LOCALS } from "../utils/localStorage";
@@ -28,6 +27,7 @@ export const fetchFn = async <Request, Response>(
   };
 
   if (req) {
+    console.log("Request body:", req);
     if (req instanceof FormData) {
       options.body = req;
     } else {
@@ -57,7 +57,6 @@ export const fetchFn = async <Request, Response>(
             .map(([key, value]) => `${key}: ${value}`)
             .join(", ") // Combines multiple messages
         : "Network response was not ok";
-      errorFn(res.status, errorMessage, jsonResponse.error);
       throw new ApiError(res.status, errorMessage, jsonResponse.error);
     }
 

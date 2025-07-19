@@ -5,6 +5,7 @@ import PatientSearch from "./PatientSearch";
 import "../styles/addVisit.css";
 import { DoctorSelect } from "./DoctorSelect";
 import { useLogin } from "../context/loginContext";
+import { isAssistantRole } from "../types";
 
 export const AddVisit: React.FC = () => {
   const { formatMessage: f } = useIntl();
@@ -26,7 +27,7 @@ export const AddVisit: React.FC = () => {
       <h2>
         {f({ id: "addVisit.recordVisitTitle" })}
 
-        {loggedInUser.role === "Assistant" && <DoctorSelect />}
+        {isAssistantRole(loggedInUser.role) && <DoctorSelect />}
       </h2>
 
       {successMessage && (
