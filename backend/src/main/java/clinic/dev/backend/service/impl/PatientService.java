@@ -29,13 +29,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class PatientService {
@@ -172,30 +177,42 @@ public class PatientService {
   @Transactional(readOnly = true)
   public List<PatientResDTO> dailyNewPatients() {
     Long clinicId = authContext.getClinicId();
-    LocalDateTime referenceDate = LocalDateTime.now();
-    LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0));
-    LocalDateTime workdayEnd = workdayStart.plusHours(24);
+    Instant now = Instant.now();
+    ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
 
-    if (referenceDate.isBefore(workdayStart)) {
-      LocalDateTime at12Am = referenceDate.with(LocalTime.MIN);
-      LocalDateTime at6Am = at12Am.plusHours(6);
+    // Get workday start (6 AM today in local time)
+    ZonedDateTime workdayStartZoned = zonedNow.with(LocalTime.of(6, 0));
+    Instant workdayStart = workdayStartZoned.toInstant();
+    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
 
-      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am, clinicId);
-      List<PatientResDTO> result = patientsFrom0to6Am.stream()
+    if (now.isBefore(workdayStart)) {
+      // Current time is between midnight and 6 AM
+      ZonedDateTime midnightZoned = zonedNow.with(LocalTime.MIN);
+      Instant midnight = midnightZoned.toInstant();
+      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
+
+      // Get patients from midnight to 6 AM today
+      List<Patient> patientsMorning = patientRepo.findPatientsBetween(
+          midnight, sixAm, clinicId);
+
+      // Get patients from 6 AM yesterday to midnight today
+      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
+      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
+
+      List<Patient> patientsYesterday = patientRepo.findPatientsBetween(
+          yesterdaySixAm, midnight, clinicId);
+
+      // Combine and convert to DTOs
+      return Stream.concat(
+          patientsMorning.stream(),
+          patientsYesterday.stream())
           .map(PatientResDTO::fromEntity)
           .collect(Collectors.toList());
-
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am, clinicId);
-
-      result.addAll(patientsAfter6AmYesterday.stream()
-          .map(PatientResDTO::fromEntity)
-          .collect(Collectors.toList()));
-
-      return result;
     }
 
-    return getPatientsAtThisPeriod(workdayStart, workdayEnd, clinicId).stream()
+    // Normal case - current time is after 6 AM
+    return patientRepo.findPatientsBetween(workdayStart, workdayEnd, clinicId)
+        .stream()
         .map(PatientResDTO::fromEntity)
         .collect(Collectors.toList());
   }
@@ -203,29 +220,42 @@ public class PatientService {
   @Transactional(readOnly = true)
   public List<PatientResDTO> getDailyNewPatientsForDate(LocalDate date) {
     Long clinicId = authContext.getClinicId();
-    LocalDateTime workdayStart = date.atTime(6, 0);
-    LocalDateTime workdayEnd = workdayStart.plusHours(24);
+    Instant now = Instant.now();
 
-    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
-      LocalDateTime at12Am = date.atTime(LocalTime.MIN);
-      LocalDateTime at6Am = at12Am.plusHours(6);
+    // Convert date to workday start (6 AM in local time)
+    ZonedDateTime workdayStartZoned = date.atTime(6, 0).atZone(ZoneId.systemDefault());
+    Instant workdayStart = workdayStartZoned.toInstant();
+    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
 
-      List<Patient> patientsFrom0to6Am = getPatientsAtThisPeriod(at12Am, at6Am, clinicId);
-      List<PatientResDTO> result = patientsFrom0to6Am.stream()
+    ZonedDateTime nowZoned = now.atZone(ZoneId.systemDefault());
+    if (date.equals(nowZoned.toLocalDate()) && now.isBefore(workdayStart)) {
+      // For today before 6 AM
+      ZonedDateTime midnightZoned = date.atStartOfDay(ZoneId.systemDefault());
+      Instant midnight = midnightZoned.toInstant();
+      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
+
+      // Get patients from midnight to 6 AM today
+      List<Patient> patientsMorning = patientRepo.findPatientsBetween(
+          midnight, sixAm, clinicId);
+
+      // Get patients from 6 AM yesterday to midnight today
+      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
+      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
+
+      List<Patient> patientsYesterday = patientRepo.findPatientsBetween(
+          yesterdaySixAm, midnight, clinicId);
+
+      // Combine and convert to DTOs
+      return Stream.concat(
+          patientsMorning.stream(),
+          patientsYesterday.stream())
           .map(PatientResDTO::fromEntity)
           .collect(Collectors.toList());
-
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-      List<Patient> patientsAfter6AmYesterday = getPatientsAtThisPeriod(after6AmYesterday, at12Am, clinicId);
-
-      result.addAll(patientsAfter6AmYesterday.stream()
-          .map(PatientResDTO::fromEntity)
-          .collect(Collectors.toList()));
-
-      return result;
     }
 
-    return getPatientsAtThisPeriod(workdayStart, workdayEnd, clinicId).stream()
+    // Normal case
+    return patientRepo.findPatientsBetween(workdayStart, workdayEnd, clinicId)
+        .stream()
         .map(PatientResDTO::fromEntity)
         .collect(Collectors.toList());
   }
@@ -282,8 +312,8 @@ public class PatientService {
   }
 
   @Transactional(readOnly = true)
-  public List<Patient> getPatientsAtThisPeriod(LocalDateTime start, LocalDateTime end, Long clinicId) {
-    return patientRepo.findByCreatedAtBetweenAndClinicId(start, end, clinicId);
+  public List<Patient> getPatientsAtThisPeriod(Instant start, Instant end, Long clinicId) {
+    return patientRepo.findPatientsBetween(start, end, clinicId);
   }
 
   public List<PatientResDTO> getPatientsByIds(List<Long> ids) {
@@ -382,5 +412,12 @@ public class PatientService {
       case "senior" -> "#EF476F";
       default -> "";
     };
+  }
+
+  private Clock clock = Clock.systemDefaultZone();
+
+  // For testing
+  public void setClock(Clock clock) {
+    this.clock = clock;
   }
 }

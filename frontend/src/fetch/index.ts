@@ -27,7 +27,6 @@ export const fetchFn = async <Request, Response>(
   };
 
   if (req) {
-    console.log("Request body:", req);
     if (req instanceof FormData) {
       options.body = req;
     } else {

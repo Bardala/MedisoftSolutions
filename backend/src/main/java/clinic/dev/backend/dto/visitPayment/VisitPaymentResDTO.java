@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.visitPayment;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import clinic.dev.backend.model.VisitPayment;
 
@@ -14,7 +14,7 @@ public record VisitPaymentResDTO(
     String patientPhone,
     Long recordedById,
     String recordedBy,
-    LocalDateTime createdAt,
+    Instant createdAt,
 
     Long clinicId) {
 

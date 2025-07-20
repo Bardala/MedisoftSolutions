@@ -1,6 +1,6 @@
 package clinic.dev.backend.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "queue", uniqueConstraints = {
+@Table(name = "queues", uniqueConstraints = {
     @UniqueConstraint(columnNames = { "doctor_id", "patient_id" })
 })
 @NoArgsConstructor
@@ -66,11 +66,11 @@ public class Queue {
 
   @Column(nullable = false, updatable = false, name = "created_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @Column(nullable = true, name = "updated_at")
   @UpdateTimestamp
-  private LocalDateTime updatedAt;
+  private Instant updatedAt;
 
   public enum Status {
     WAITING,

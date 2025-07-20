@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.payment;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import clinic.dev.backend.model.Payment;
 
@@ -16,7 +16,7 @@ public record PaymentResDTO(
     Long recordedById,
     String recordedByName,
 
-    LocalDateTime createdAt) {
+    Instant createdAt) {
 
   public static PaymentResDTO fromEntity(Payment payment) {
     return new PaymentResDTO(

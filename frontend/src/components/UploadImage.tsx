@@ -1,10 +1,7 @@
 import React, { useState, useRef } from "react";
-import { UploadFileReq } from "../types";
 import "../styles/patientFiles.css";
-import { useMutation } from "@tanstack/react-query";
-import { ApiError } from "../fetch/ApiError";
-import { UploadFileApi } from "../apis/patientFilesApis";
 import { useIntl } from "react-intl";
+import { useFileOperations } from "../hooks/useFileOperations";
 
 interface UploadImageProps {
   patientId: string;
@@ -22,15 +19,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const uploadFileMutation = useMutation<void, ApiError, UploadFileReq>(
-    async (req) => UploadFileApi(req),
-    {
-      onSuccess: () => console.log("success uploading"), // todo: add a success message after every upload
-      onError: () => {
-        alert(f({ id: "error" }));
-      },
-    },
-  );
+  const { uploadFileMutation } = useFileOperations(parseInt(patientId));
 
   const sanitizeFileName = (fileName: string) => {
     return fileName
@@ -186,7 +175,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
             type="button"
             className="cancel-button"
             onClick={cancelFiles}
-            disabled={isLoading}
+            disabled
           >
             {f({ id: "cancel" })}
           </button>

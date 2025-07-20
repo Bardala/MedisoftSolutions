@@ -1,15 +1,8 @@
 package clinic.dev.backend.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +14,7 @@ import clinic.dev.backend.dto.monthlyReport.MonthlySummary;
 import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.model.VisitDentalProcedure;
-import clinic.dev.backend.repository.PatientRepo;
-import clinic.dev.backend.repository.PaymentRepo;
-import clinic.dev.backend.repository.VisitDentalProcedureRepo;
-import clinic.dev.backend.repository.VisitRepo;
+import clinic.dev.backend.repository.*;
 import clinic.dev.backend.service.ReportServiceBase;
 import clinic.dev.backend.util.AuthContext;
 
@@ -53,57 +43,46 @@ public class ReportService implements ReportServiceBase {
 	@Override
 	@Transactional(readOnly = true)
 	public MonthlySummary monthlySummary(int year, int month) {
-		LocalDate targetDate = LocalDate.of(year, month, 1);
+		YearMonth targetYearMonth = YearMonth.of(year, month);
+		Instant monthStart = targetYearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+		Instant monthEnd = targetYearMonth.atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant();
 
-		// Total New Patients (Created in the target month)
-		Integer totalNewPatients = (int) patientRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(patient -> patient.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& patient.getCreatedAt().getYear() == targetDate.getYear())
-				.count();
+		// Total New Patients
+		Integer totalNewPatients = patientRepo.countByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		// Total Visits in Target Month
-		Integer totalVisits = (int) visitRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& visit.getCreatedAt().getYear() == targetDate.getYear())
-				.count();
+		// Total Visits
+		Integer totalVisits = visitRepo.countByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		// Most Common Procedure in Target Month
-		List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
-				.stream()
-				.filter(vdp -> vdp.getVisit().getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& vdp.getVisit().getCreatedAt().getYear() == targetDate.getYear())
-				.collect(Collectors.toList());
+		// Most Common Procedure
+		List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo
+				.findByVisitClinicIdAndVisitCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		Map<String, Long> procedureCountMap = visitDentalProcedures.stream()
-				.collect(Collectors.groupingBy(vdp -> vdp.getDentalProcedure().getServiceName(), Collectors.counting()));
-
-		String mostCommonProcedure = procedureCountMap.entrySet().stream()
-				.max(Comparator.comparingLong(Map.Entry::getValue))
+		String mostCommonProcedure = visitDentalProcedures.stream()
+				.collect(Collectors.groupingBy(
+						vdp -> vdp.getDentalProcedure().getServiceName(),
+						Collectors.counting()))
+				.entrySet().stream()
+				.max(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)
 				.orElse("None");
 
-		// Total Revenue in Target Month
-		Double totalRevenue = paymentRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(payment -> payment.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& payment.getCreatedAt().getYear() == targetDate.getYear())
-				.mapToDouble(Payment::getAmount)
-				.sum();
+		// Total Revenue
+		Double totalRevenue = paymentRepo.sumAmountByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		// Most Crowded Day in Target Month
-		List<Visit> visitsInMonth = visitRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& visit.getCreatedAt().getYear() == targetDate.getYear())
-				.collect(Collectors.toList());
-
-		Map<LocalDate, Long> visitCountPerDay = visitsInMonth.stream()
-				.collect(Collectors.groupingBy(visit -> visit.getCreatedAt().toLocalDate(), Collectors.counting()));
+		// Most Crowded Day
+		Map<LocalDate, Long> visitCountPerDay = visitRepo
+				.findByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd)
+				.stream()
+				.collect(Collectors.groupingBy(
+						visit -> toWorkdayDate(visit.getCreatedAt()),
+						Collectors.counting()));
 
 		LocalDate mostCrowdedDay = visitCountPerDay.entrySet().stream()
-				.max(Comparator.comparingLong(Map.Entry::getValue))
+				.max(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)
-				.orElse(targetDate); // Default to the first day of the target month if no visits found
+				.orElse(targetYearMonth.atDay(1));
 
-		// Setting values to the MonthlySummary object
+		// Create summary
 		MonthlySummary summary = new MonthlySummary();
 		summary.setTotalNewPatients(totalNewPatients);
 		summary.setTotalVisits(totalVisits);
@@ -117,208 +96,100 @@ public class ReportService implements ReportServiceBase {
 	@Override
 	@Transactional(readOnly = true)
 	public List<MonthlyDayInfo> monthlyDaysInfo(int year, int month) {
-		LocalDate targetDate = LocalDate.of(year, month, 1);
+		YearMonth targetYearMonth = YearMonth.of(year, month);
+		Instant monthStart = targetYearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+		Instant monthEnd = targetYearMonth.atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant();
 
-		Map<LocalDate, List<Payment>> paymentsByWorkday = groupPaymentByWorkday(targetDate);
-		Map<LocalDate, List<Visit>> visitsByWorkday = groupVisitByWorkday(targetDate);
+		// Get all payments and visits for the month
+		List<Payment> payments = paymentRepo.findByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
+		List<Visit> visits = visitRepo.findByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		// Prepare the result list
-		List<MonthlyDayInfo> monthlyDayInfoList = new ArrayList<>();
+		// Group by workday (6 AM to 6 AM)
+		Map<LocalDate, List<Payment>> paymentsByWorkday = payments.stream()
+				.collect(Collectors.groupingBy(
+						payment -> toWorkdayDate(payment.getCreatedAt())));
 
-		// Combine the keys from both maps
+		Map<LocalDate, List<Visit>> visitsByWorkday = visits.stream()
+				.collect(Collectors.groupingBy(
+						visit -> toWorkdayDate(visit.getCreatedAt())));
+
+		// Get all unique workdays
 		Set<LocalDate> allWorkdays = new HashSet<>();
 		allWorkdays.addAll(paymentsByWorkday.keySet());
 		allWorkdays.addAll(visitsByWorkday.keySet());
 
-		for (LocalDate workday : allWorkdays) {
-			// Get payments and visits for the workday
-			List<Payment> paymentsOnWorkday = paymentsByWorkday.getOrDefault(workday, Collections.emptyList());
-			List<Visit> visitsOnWorkday = visitsByWorkday.getOrDefault(workday, Collections.emptyList());
+		return allWorkdays.stream()
+				.map(workday -> {
+					List<Payment> dayPayments = paymentsByWorkday.getOrDefault(workday, Collections.emptyList());
+					List<Visit> dayVisits = visitsByWorkday.getOrDefault(workday, Collections.emptyList());
 
-			// Total revenue for the workday
-			double totalRevenue = paymentsOnWorkday.stream().mapToDouble(Payment::getAmount).sum();
+					// Get procedures for this workday
+					Instant workdayStart = workday.atTime(6, 0).atZone(ZoneId.systemDefault()).toInstant();
+					Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
 
-			// Total visits for the workday
-			int totalVisits = visitsOnWorkday.size();
+					List<VisitDentalProcedure> procedures = visitDentalProcedureRepo
+							.findByVisitClinicIdAndVisitCreatedAtBetween(getClinicId(), workdayStart, workdayEnd);
 
-			// Most common procedure for the workday
-			List<VisitDentalProcedure> visitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
-					.stream()
-					.filter(vdp -> {
-						LocalDateTime createdAt = vdp.getVisit().getCreatedAt();
-						// Ensure procedures are grouped by the adjusted workday
-						if (createdAt.toLocalTime().isBefore(LocalTime.of(6, 0))) {
-							return createdAt.toLocalDate().minusDays(1).equals(workday);
-						}
-						return createdAt.toLocalDate().equals(workday);
-					})
-					.collect(Collectors.toList());
+					String mostCommonProcedure = procedures.stream()
+							.collect(Collectors.groupingBy(
+									vdp -> vdp.getDentalProcedure().getServiceName(),
+									Collectors.counting()))
+							.entrySet().stream()
+							.max(Map.Entry.comparingByValue())
+							.map(Map.Entry::getKey)
+							.orElse("None");
 
-			Map<String, Long> procedureCountMap = visitDentalProcedures.stream()
-					.collect(Collectors.groupingBy(vdp -> vdp.getDentalProcedure().getServiceName(), Collectors.counting()));
+					MonthlyDayInfo dayInfo = new MonthlyDayInfo();
+					dayInfo.setDate(workday);
+					dayInfo.setTotalRevenue(dayPayments.stream().mapToDouble(Payment::getAmount).sum());
+					dayInfo.setTotalVisits(dayVisits.size());
+					dayInfo.setMostProcedure(mostCommonProcedure);
 
-			String mostCommonProcedure = procedureCountMap.entrySet().stream()
-					.max(Comparator.comparingLong(Map.Entry::getValue))
-					.map(Map.Entry::getKey)
-					.orElse("None");
-
-			// Create and populate the MonthlyDayInfo object
-			MonthlyDayInfo dayInfo = new MonthlyDayInfo();
-			dayInfo.setDate(workday); // Use adjusted workday start
-			dayInfo.setTotalRevenue(totalRevenue);
-			dayInfo.setTotalVisits(totalVisits);
-			dayInfo.setMostProcedure(mostCommonProcedure);
-
-			// Add to the result list
-			monthlyDayInfoList.add(dayInfo);
-		}
-
-		return monthlyDayInfoList;
+					return dayInfo;
+				})
+				.sorted(Comparator.comparing(MonthlyDayInfo::getDate))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<String> advices(int year, int month) {
 		List<String> advices = new ArrayList<>();
+		YearMonth targetYearMonth = YearMonth.of(year, month);
+		Instant monthStart = targetYearMonth.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+		Instant monthEnd = targetYearMonth.atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant();
 
-		// Example: If there are more than a certain number of visits, suggest improving
-		// scheduling.
-		Long totalVisits = visitRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(visit -> visit.getCreatedAt().getMonthValue() == month && visit.getCreatedAt().getYear() == year)
-				.count();
-
+		// Visit volume advice
+		Integer totalVisits = visitRepo.countByClinicIdAndCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 		if (totalVisits > 100) {
 			advices.add("Consider optimizing your scheduling to handle high visit volume.");
 		}
 
-		// Example: If a procedure is overly common, consider promoting less common ones
-		List<VisitDentalProcedure> allVisitDentalProcedures = visitDentalProcedureRepo.findAllByClinicId(getClinicId())
-				.stream()
-				.filter(vdp -> vdp.getVisit().getCreatedAt().getMonthValue() == month
-						&& vdp.getVisit().getCreatedAt().getYear() == year)
-				.collect(Collectors.toList());
+		// Procedure balance advice
+		List<VisitDentalProcedure> procedures = visitDentalProcedureRepo
+				.findByVisitClinicIdAndVisitCreatedAtBetween(getClinicId(), monthStart, monthEnd);
 
-		Map<String, Long> procedureCountMap = allVisitDentalProcedures.stream()
-				.collect(Collectors.groupingBy(vdp -> vdp.getDentalProcedure().getServiceName(), Collectors.counting()));
+		if (!procedures.isEmpty()) {
+			Map<String, Long> procedureCounts = procedures.stream()
+					.collect(Collectors.groupingBy(
+							vdp -> vdp.getDentalProcedure().getServiceName(),
+							Collectors.counting()));
 
-		String mostCommonProcedure = procedureCountMap.entrySet().stream()
-				.max(Comparator.comparingLong(Map.Entry::getValue))
-				.map(Map.Entry::getKey)
-				.orElse("None");
-
-		if (!mostCommonProcedure.equals("None")) {
-			advices.add("Try promoting other dental procedures, such as X-rays, to balance your services.");
+			String mostCommon = Collections.max(procedureCounts.entrySet(), Map.Entry.comparingByValue()).getKey();
+			advices.add("Try promoting other dental procedures to balance your services (most common: " + mostCommon + ")");
 		}
 
 		return advices;
 	}
 
-	// Helper methods
-	public List<Payment> getPaymentsInMonth(LocalDate targetDate) {
-		return paymentRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(payment -> payment.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& payment.getCreatedAt().getYear() == targetDate.getYear())
-				.collect(Collectors.toList());
+	/**
+	 * Converts an Instant to the workday date (6 AM to 6 AM)
+	 */
+	private LocalDate toWorkdayDate(Instant instant) {
+		ZonedDateTime zoned = instant.atZone(ZoneId.systemDefault());
+		if (zoned.toLocalTime().isBefore(LocalTime.of(6, 0))) {
+			return zoned.toLocalDate().minusDays(1);
+		}
+		return zoned.toLocalDate();
 	}
-
-	public Map<LocalDate, List<Payment>> groupPaymentByWorkday(LocalDate targetDate) {
-		List<Payment> paymentsInMonth = getPaymentsInMonth(targetDate);
-
-		return paymentsInMonth.stream()
-				.collect(Collectors.groupingBy(payment -> {
-					LocalDateTime createdAt = payment.getCreatedAt();
-					if (createdAt.toLocalTime().isBefore(LocalTime.of(6, 0))) {
-						return createdAt.toLocalDate().minusDays(1);
-					}
-					return createdAt.toLocalDate();
-				}));
-	}
-
-	public List<Visit> getVisitsInMonth(LocalDate targetDate) {
-		return visitRepo.findAllByClinicId(getClinicId()).stream()
-				.filter(visit -> visit.getCreatedAt().getMonthValue() == targetDate.getMonthValue()
-						&& visit.getCreatedAt().getYear() == targetDate.getYear())
-				.collect(Collectors.toList());
-	}
-
-	public Map<LocalDate, List<Visit>> groupVisitByWorkday(LocalDate targetDate) {
-		List<Visit> visitsInMonth = getVisitsInMonth(targetDate);
-
-		return visitsInMonth.stream()
-				.collect(Collectors.groupingBy(visit -> {
-					LocalDateTime createdAt = visit.getCreatedAt();
-					if (createdAt.toLocalTime().isBefore(LocalTime.of(6, 0))) {
-						return createdAt.toLocalDate().minusDays(1);
-					}
-					return createdAt.toLocalDate();
-				}));
-	}
-
-	// public List<Visit> getTodayVisits() {
-	// LocalDateTime referenceDate = LocalDateTime.now();
-	// LocalDateTime workdayStart = referenceDate.with(LocalTime.of(6, 0)); // 6 AM
-	// today
-	// LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
-
-	// // if the current time is after 12 AM and before 6 AM
-	// if (referenceDate.isBefore(workdayStart)) {
-	// LocalDateTime at12Am = referenceDate.with(LocalTime.MIN); // 12 AM today
-	// LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM today
-
-	// List<Visit> visitsFrom0to6Am = getVisitsAtThisPeriod(at12Am, at6Am);
-
-	// // Now we have to get the visits from the previous day from 6 AM to 12 AM
-	// LocalDateTime after6AmYesterday =
-	// workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-
-	// List<Visit> visitsAfter6AmYesterday =
-	// getVisitsAtThisPeriod(after6AmYesterday, at12Am);
-
-	// visitsFrom0to6Am.addAll(visitsAfter6AmYesterday);
-
-	// return visitsFrom0to6Am;
-	// }
-
-	// return getVisitsAtThisPeriod(workdayStart, workdayEnd);
-	// }
-
-	// public List<Visit> getDayVisits(LocalDateTime date) {
-	// LocalDateTime referenceDate = date;
-	// LocalDateTime workdayStart =
-	// referenceDate.toLocalDate().atTime(LocalTime.of(6, 0)); // 6 AM today
-	// LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
-
-	// // if the current time is after 12am and before 6am
-	// if (referenceDate.isBefore(workdayStart)) {
-	// LocalDateTime at12Am = referenceDate.toLocalDate().atTime(LocalTime.of(0,
-	// 0)); // let the day starts at 12am
-	// LocalDateTime at6Am = at12Am.plusHours(6); // let the day ends at 6am
-
-	// List<Visit> visitsFrom0to6Am = getVisitsAtThisPeriod(at12Am, at6Am);
-
-	// // Now we have to get the patient of the day before from 6am to 12am
-	// LocalDateTime after6AmYesterday = at12Am.minusHours(18);
-
-	// List<Visit> visitsAfter6AmYesterday =
-	// getVisitsAtThisPeriod(after6AmYesterday, at12Am);
-
-	// for (int i = 0; i < visitsAfter6AmYesterday.size() - 1; i++) {
-	// visitsFrom0to6Am.add(visitsAfter6AmYesterday.get(i));
-	// }
-
-	// return visitsFrom0to6Am;
-	// }
-
-	// return getVisitsAtThisPeriod(workdayStart, workdayEnd);
-	// }
-
-	// public List<Visit> getVisitsAtThisPeriod(LocalDateTime start, LocalDateTime
-	// end) {
-	// return visitRepo.findAll().stream()
-	// .filter(
-	// visit -> !visit.getCreatedAt().isBefore(start) &&
-	// visit.getCreatedAt().isBefore(end))
-	// .collect(Collectors.toList());
-	// }
-
 }

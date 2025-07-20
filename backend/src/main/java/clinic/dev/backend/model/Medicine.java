@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -57,5 +57,5 @@ public class Medicine {
 
   @Column(nullable = false, updatable = false, name = "created_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 }

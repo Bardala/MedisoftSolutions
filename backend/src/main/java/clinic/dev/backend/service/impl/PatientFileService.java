@@ -15,6 +15,7 @@ import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.PatientFile;
 import clinic.dev.backend.repository.PatientFileRepo;
 import clinic.dev.backend.repository.PatientRepo;
+import clinic.dev.backend.util.AuthContext;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -28,9 +29,12 @@ public class PatientFileService {
   private PatientRepo patientRepo;
   @Autowired
   private StorageService storageService;
+  @Autowired
+  private AuthContext authContext;
 
   public void uploadPatientFile(PatientFileReq patientFileReq, MultipartFile file) {
     PatientFile patientFile = new PatientFile();
+    Long clinicId = authContext.getClinicId();
 
     patientFile.setFileType(patientFileReq.getFileType());
     patientFile.setDescription(patientFileReq.getDescription());
@@ -39,11 +43,12 @@ public class PatientFileService {
       throw new ResourceNotFoundException("Patient Not Found By id " + patientFileReq.getPatientId());
 
     patientFile.setPatient(patient.get());
+    patientFile.setClinic(patient.get().getClinic()); // Assuming Patient has a clinic reference
 
     String subFolder = patientFileReq.getFileType();
-    String finalDir = patientFileReq.getPatientId() + "";
+    String finalDir = patientFileReq.getPatientId().toString();
 
-    String filePath = storageService.storeFile(file, subFolder, finalDir);
+    String filePath = storageService.storeFile(file, subFolder, finalDir, clinicId);
     patientFile.setFilePath(filePath);
 
     patientFileRepo.save(patientFile);
@@ -76,5 +81,4 @@ public class PatientFileService {
     file.setDescription(patientFileReq.getDescription());
     patientFileRepo.save(file);
   }
-
 }

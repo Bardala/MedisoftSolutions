@@ -16,11 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VisitService {
@@ -85,34 +89,51 @@ public class VisitService {
     return visits.stream().map(VisitResDTO::fromEntity).toList();
   }
 
+  @Transactional(readOnly = true)
   public List<VisitResDTO> getVisitsForDate(LocalDate date) {
-    LocalDateTime workdayStart = date.atTime(6, 0); // 6 AM on the given date
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM the next day
+    Long clinicId = authContext.getClinicId();
 
-    // If the date is today and the current time is before 6 AM, adjust the period
-    if (date.isEqual(LocalDate.now()) && LocalDateTime.now().isBefore(workdayStart)) {
-      LocalDateTime at12Am = date.atTime(LocalTime.MIN); // 12 AM on the given date
-      LocalDateTime at6Am = at12Am.plusHours(6); // 6 AM on the given date
+    // Convert LocalDate to Instant at 6:00 AM in system default timezone
+    ZonedDateTime workdayStartZoned = date.atTime(6, 0).atZone(ZoneId.systemDefault());
+    Instant workdayStart = workdayStartZoned.toInstant();
+    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
 
-      List<Visit> visitsFrom0to6Am = getVisitsAtThisPeriod(at12Am, at6Am);
+    ZonedDateTime nowZoned = Instant.now().atZone(ZoneId.systemDefault());
+    if (date.equals(nowZoned.toLocalDate()) && Instant.now().isBefore(workdayStart)) {
+      // For today before 6 AM
+      ZonedDateTime midnightZoned = date.atStartOfDay(ZoneId.systemDefault());
+      Instant midnight = midnightZoned.toInstant();
+      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
 
-      // Get visits from the previous day (6 AM to 12 AM)
-      LocalDateTime after6AmYesterday = workdayStart.minusDays(1).with(LocalTime.of(6, 0));
-      List<Visit> visitsAfter6AmYesterday = getVisitsAtThisPeriod(after6AmYesterday, at12Am);
+      // Get visits from midnight to 6 AM today
+      List<Visit> visitsMorning = visitRepo.findByClinicIdAndCreatedAtBetween(
+          clinicId, midnight, sixAm);
 
-      visitsFrom0to6Am.addAll(visitsAfter6AmYesterday);
+      // Get visits from 6 AM yesterday to midnight today
+      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
+      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
 
-      return visitsFrom0to6Am.stream().map(VisitResDTO::fromEntity).toList();
+      List<Visit> visitsYesterday = visitRepo.findByClinicIdAndCreatedAtBetween(
+          clinicId, yesterdaySixAm, midnight);
+
+      // Combine and convert to DTOs
+      return Stream.concat(
+          visitsMorning.stream(),
+          visitsYesterday.stream())
+          .map(VisitResDTO::fromEntity)
+          .collect(Collectors.toList());
     }
 
-    return getVisitsAtThisPeriod(workdayStart, workdayEnd).stream().map(VisitResDTO::fromEntity).toList();
+    // Normal case
+    return visitRepo.findByClinicIdAndCreatedAtBetween(clinicId, workdayStart, workdayEnd)
+        .stream()
+        .map(VisitResDTO::fromEntity)
+        .collect(Collectors.toList());
   }
 
-  private List<Visit> getVisitsAtThisPeriod(LocalDateTime start, LocalDateTime end) {
-    return visitRepo.findAll().stream()
-        .filter(
-            visit -> !visit.getCreatedAt().isBefore(start) && visit.getCreatedAt().isBefore(end))
-        .collect(Collectors.toList());
+  @Transactional(readOnly = true)
+  private List<Visit> getVisitsAtThisPeriod(Instant start, Instant end) {
+    return visitRepo.findByClinicIdAndCreatedAtBetween(authContext.getClinicId(), start, end);
   }
 
   public List<VisitResDTO> getVisitsByIds(List<Long> ids) {
@@ -149,7 +170,7 @@ class TodayVisits {
   String phone;
   Double amountPaid;
   String recordedBy;
-  LocalDateTime createdAt;
+  Instant createdAt;
   String doctorNotes;
   String dentalProcedureArabicName;
 }

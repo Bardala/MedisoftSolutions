@@ -1,6 +1,6 @@
 package clinic.dev.backend.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -71,7 +71,7 @@ public class User implements UserDetails {
 
   @Column(nullable = false, updatable = false, name = "created_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

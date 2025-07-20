@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.visit;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import clinic.dev.backend.model.Visit;
 
@@ -22,7 +22,7 @@ public record VisitResDTO(
     Integer waitTime,
     Integer duration,
     String doctorNotes,
-    LocalDateTime createdAt) {
+    Instant createdAt) {
 
   public static VisitResDTO fromEntity(Visit visit) {
     return new VisitResDTO(

@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.patientFile;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.springframework.core.io.Resource;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class FileRes {
   private Long patientId;
-  private LocalDateTime createdAt;
+  private Instant createdAt;
   private String fileType;
   private Resource file;
 }

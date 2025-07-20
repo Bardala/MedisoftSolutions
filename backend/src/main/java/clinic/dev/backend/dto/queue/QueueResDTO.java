@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.queue;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import clinic.dev.backend.model.Queue;
 import clinic.dev.backend.model.Queue.Status;
@@ -21,8 +21,8 @@ public record QueueResDTO(
     Integer position,
     Status status,
     Integer estimatedWaitTime,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt) {
+    Instant createdAt,
+    Instant updatedAt) {
 
   public static QueueResDTO fromEntity(Queue queue) {
     return new QueueResDTO(

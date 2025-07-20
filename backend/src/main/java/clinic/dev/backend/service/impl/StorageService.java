@@ -19,9 +19,10 @@ public class StorageService {
   @Value("${file.upload-dir}")
   private String uploadDir;
 
-  public String storeFile(MultipartFile file, String subFolder, String finalDir) {
+  public String storeFile(MultipartFile file, String subFolder, String finalDir, Long clinicId) {
     try {
-      Path uploadPath = Paths.get(uploadDir, subFolder, finalDir);
+      // Create path structure: uploadDir/clinicId/subFolder/patientId/
+      Path uploadPath = Paths.get(uploadDir, clinicId.toString(), subFolder, finalDir);
       Files.createDirectories(uploadPath);
 
       String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();

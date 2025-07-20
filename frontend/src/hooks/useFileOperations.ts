@@ -1,24 +1,110 @@
-import { GetFilesRes } from "../types";
+import { GetFilesRes, UploadFileReq } from "../types";
 import { ApiError } from "../fetch/ApiError";
-import { DeleteFileApi, DeleteFilesApi, GetFilesApi } from "../apis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  DeleteFileApi,
+  DeleteFilesApi,
+  GetFilesApi,
+  UploadFileApi,
+} from "../apis";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useFileOperations = (patientId: number) => {
+  const queryClient = useQueryClient();
+
   const patientFiles = useQuery<GetFilesRes[], ApiError>(
     ["files", patientId],
     () => GetFilesApi(patientId),
     {
       enabled: !!patientId,
+      // Disable caching for immediate updates
+      staleTime: 0,
+      cacheTime: 0,
     },
   );
 
-  const deleteFileMutation = useMutation<unknown, ApiError, number>((fileId) =>
-    DeleteFileApi(fileId),
+  const uploadFileMutation = useMutation<void, ApiError, UploadFileReq>(
+    async (req) => UploadFileApi(req),
+    {
+      onMutate: async (newFile) => {
+        await queryClient.cancelQueries(["files", patientId]);
+        const previousFiles = queryClient.getQueryData<GetFilesRes[]>([
+          "files",
+          patientId,
+        ]);
+
+        if (previousFiles) {
+          queryClient.setQueryData<GetFilesRes[]>(
+            ["files", patientId],
+            [
+              ...previousFiles,
+              {
+                id: Date.now(), // temporary ID
+                fileType: newFile.fileType,
+                description: newFile.description,
+                filePath: "", // will be updated after real upload
+              },
+            ],
+          );
+        }
+
+        return { previousFiles };
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["files", patientId]);
+      },
+    },
   );
 
-  const deleteFilesMutation = useMutation<unknown, ApiError, number>(
+  const deleteFileMutation = useMutation<void, ApiError, number>(
+    (fileId) => DeleteFileApi(fileId),
+    {
+      onMutate: async (fileId) => {
+        await queryClient.cancelQueries(["files", patientId]);
+        const previousFiles = queryClient.getQueryData<GetFilesRes[]>([
+          "files",
+          patientId,
+        ]);
+
+        if (previousFiles) {
+          queryClient.setQueryData<GetFilesRes[]>(
+            ["files", patientId],
+            previousFiles.filter((file) => file.id !== fileId),
+          );
+        }
+
+        return { previousFiles };
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["files", patientId]);
+      },
+    },
+  );
+
+  const deleteFilesMutation = useMutation<void, ApiError, number>(
     (patientId) => DeleteFilesApi(patientId),
+    {
+      onMutate: async () => {
+        await queryClient.cancelQueries(["files", patientId]);
+        const previousFiles = queryClient.getQueryData<GetFilesRes[]>([
+          "files",
+          patientId,
+        ]);
+
+        queryClient.setQueryData(["files", patientId], []);
+
+        return { previousFiles };
+      },
+
+      onSettled: () => {
+        queryClient.invalidateQueries(["files", patientId]);
+      },
+    },
   );
 
-  return { patientFiles, deleteFileMutation, deleteFilesMutation };
+  return {
+    patientFiles,
+    uploadFileMutation,
+    deleteFileMutation,
+    deleteFilesMutation,
+  };
 };

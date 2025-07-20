@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.patient;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import clinic.dev.backend.model.Patient;
 
@@ -13,7 +13,7 @@ public record PatientResDTO(
     String phone,
     String address,
     String medicalHistory,
-    LocalDateTime createdAt) {
+    Instant createdAt) {
   public static PatientResDTO fromEntity(Patient patient) {
     return new PatientResDTO(
         patient.getId(),

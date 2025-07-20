@@ -1,5 +1,6 @@
 package clinic.dev.backend.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,4 +57,36 @@ public interface VisitDentalProcedureRepo extends JpaRepository<VisitDentalProce
       """)
   Optional<VisitProcedureResDTO> findVisitProcedureDtoByIdAndClinicId(@Param("id") Long id,
       @Param("clinicId") Long clinicId);
+
+  @Query("SELECT vdp FROM VisitDentalProcedure vdp " +
+      "WHERE vdp.clinic.id = :clinicId " +
+      "AND vdp.visit.createdAt >= :start " +
+      "AND vdp.visit.createdAt < :end")
+  List<VisitDentalProcedure> findByVisitClinicIdAndVisitCreatedAtBetween(
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  // Optional: Add count version if needed
+  @Query("SELECT COUNT(vdp) FROM VisitDentalProcedure vdp " +
+      "WHERE vdp.clinic.id = :clinicId " +
+      "AND vdp.visit.createdAt >= :start " +
+      "AND vdp.visit.createdAt < :end")
+  Long countByVisitClinicIdAndVisitCreatedAtBetween(
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  @Query("SELECT vdp FROM VisitDentalProcedure vdp " +
+      "WHERE vdp.clinic.id = :clinicId " +
+      "AND vdp.visit.createdAt >= :start " +
+      "AND vdp.visit.createdAt < :end")
+  List<VisitDentalProcedure> findByClinicIdAndVisitCreatedAtBetween(
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  // In VisitDentalProcedureRepository
+  // List<VisitDentalProcedure> findByVisitClinicIdAndVisitCreatedAtBetween(Long
+  // clinicId, Instant start, Instant end);
 }

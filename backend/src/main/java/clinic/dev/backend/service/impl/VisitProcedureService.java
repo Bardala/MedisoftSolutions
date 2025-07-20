@@ -12,10 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class VisitProcedureService {
@@ -74,20 +71,6 @@ public class VisitProcedureService {
         .findAllByClinicId(authContext.getClinicId()).stream()
         .map(VisitProcedureResDTO::fromEntity)
         .toList();
-  }
-
-  public List<VisitProcedureResDTO> todayDentalProcedure() {
-    LocalDateTime referenceDate = LocalDateTime.now();
-    LocalDateTime workdayStart = referenceDate.toLocalDate().atTime(LocalTime.of(6, 0)); // 6 AM today
-    LocalDateTime workdayEnd = workdayStart.plusHours(24); // 6 AM next day
-
-    // Filter the payments based on the createdAt timestamp being within the workday
-    return visitDentalProcedureRepo.findAllByClinicId(authContext.getClinicId()).stream()
-        .filter(
-            vdp -> !vdp.getVisit().getCreatedAt().isBefore(workdayStart)
-                && vdp.getVisit().getCreatedAt().isBefore(workdayEnd))
-        .map(VisitProcedureResDTO::fromEntity)
-        .collect(Collectors.toList());
   }
 
   public List<VisitProcedureResDTO> getByVisitId(Long visitId) {

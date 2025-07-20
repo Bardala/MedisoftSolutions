@@ -4,7 +4,6 @@ import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.model.User.UserRole;
-import clinic.dev.backend.validation.RoleConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

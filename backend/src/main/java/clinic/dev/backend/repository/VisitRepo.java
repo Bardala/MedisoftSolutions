@@ -1,5 +1,6 @@
 package clinic.dev.backend.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,4 +74,22 @@ public interface VisitRepo extends JpaRepository<Visit, Long> {
       "LEFT JOIN FETCH v.assistant " +
       "WHERE v.id = :id")
   Optional<Visit> findByIdWithRelations(@Param("id") Long id);
+
+  @Query("SELECT COUNT(v) FROM Visit v WHERE v.clinic.id = :clinicId AND v.createdAt BETWEEN :start AND :end")
+  Integer countByClinicIdAndCreatedAtBetween(@Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  // List<Visit> findByClinicIdAndCreatedAtBetween(Long clinicId, Instant start,
+  // Instant end);
+
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.clinic.id = :clinicId " +
+      "AND v.createdAt >= :start " +
+      "AND v.createdAt < :end " +
+      "ORDER BY v.createdAt DESC")
+  List<Visit> findByClinicIdAndCreatedAtBetween(
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
 }

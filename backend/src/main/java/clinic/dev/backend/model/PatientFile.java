@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -41,5 +41,5 @@ public class PatientFile {
   /** Timestamp of when the file was uploaded. */
   @Column(nullable = false, updatable = false, name = "uploaded_at")
   @CreationTimestamp
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 }

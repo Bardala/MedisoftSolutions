@@ -6,12 +6,12 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "clinic", indexes = {
-    @Index(name = "idx_clinic_name", columnList = "name")
+@Table(name = "clinics", indexes = {
+    @Index(name = "idx_clinics_name", columnList = "name")
 })
 @Data
 @NoArgsConstructor
@@ -51,11 +51,11 @@ public class Clinic {
 
   @CreationTimestamp
   @Column(name = "created_at", updatable = false)
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @UpdateTimestamp
   @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+  private Instant updatedAt;
 
   @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   private List<User> doctors;
