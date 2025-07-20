@@ -192,5 +192,34 @@
   "addUser": "Add User",
   "fullName": "Full Name",
   "submitButton": "Create User",
-  "userCreatedSuccessfully": "User created successfully!"
+  "userCreatedSuccessfully": "User created successfully!",
+
+  "disable_notifications": "Disable notifications",
+  "enable_notifications": "Enable notifications",
+  "mute_sound": "Mute sound",
+  "unmute_sound": "Unmute sound",
+  "volume_control": "Adjust notification volume",
+
+  "doctorName": "Doctor Name",
+
+  "clinicData.title": "Clinic Core",
+
+  "clinic_limits.title": "Clinic Limits",
+  "clinic_limits.edit_button": "Edit Limits",
+  "clinic_limits.cancel_button": "Cancel",
+  "clinic_limits.save_button": "Save Changes",
+  "clinic_limits.max_users": "Max Users",
+  "clinic_limits.max_storage": "Max Storage (MB)",
+  "clinic_limits.max_patients": "Max Patients",
+  "clinic_limits.allow_file_upload": "Allow File Upload",
+  "clinic_limits.allow_multiple_branches": "Allow Multiple Branches",
+  "clinic_limits.allow_billing_feature": "Allow Billing Feature",
+  "clinic_limits.allowed": "Allowed",
+  "clinic_limits.not_allowed": "Not Allowed",
+  "clinic_limits.enabled": "Enabled",
+  "clinic_limits.disabled": "Disabled",
+  "clinic_limits.loading": "Loading clinic limits...",
+  "clinic_limits.not_found": "No limits found for this clinic",
+  "clinic_limits.update_success": "Clinic limits were successfully updated",
+  "clinic_limits.update_error": "Update failed: {errorMessage}"
 }

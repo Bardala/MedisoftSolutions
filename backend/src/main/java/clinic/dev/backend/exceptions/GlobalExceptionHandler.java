@@ -95,4 +95,10 @@ public class GlobalExceptionHandler {
     ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
+
+  @ExceptionHandler(ClinicLimitExceededException.class)
+  public ResponseEntity<ApiRes<String>> handleClinicLimitExceededException(ClinicLimitExceededException ex) {
+    ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+  }
 }

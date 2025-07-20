@@ -27,7 +27,7 @@ export const AddVisit: React.FC = () => {
       <h2>
         {f({ id: "addVisit.recordVisitTitle" })}
 
-        {isAssistantRole(loggedInUser.role) && <DoctorSelect />}
+        <DoctorSelect />
       </h2>
 
       {successMessage && (

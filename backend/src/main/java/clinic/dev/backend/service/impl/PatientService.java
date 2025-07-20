@@ -3,6 +3,10 @@ package clinic.dev.backend.service.impl;
 import clinic.dev.backend.dto.patient.PatientRegistryRes;
 import clinic.dev.backend.dto.patient.PatientReqDTO;
 import clinic.dev.backend.dto.patient.PatientResDTO;
+import clinic.dev.backend.dto.patient.statistics.AddressDistributionDTO;
+import clinic.dev.backend.dto.patient.statistics.AgeDistributionDTO;
+import clinic.dev.backend.dto.patient.statistics.PatientStatisticsDTO;
+import clinic.dev.backend.dto.patient.statistics.RegistrationTrendDTO;
 import clinic.dev.backend.dto.payment.PaymentResDTO;
 import clinic.dev.backend.dto.visit.VisitResDTO;
 import clinic.dev.backend.dto.visitMedicine.VisitMedicineResDTO;
@@ -10,6 +14,7 @@ import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
 import clinic.dev.backend.dto.visitProcedure.VisitProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
+import clinic.dev.backend.exceptions.ClinicLimitExceededException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
@@ -62,9 +67,17 @@ public class PatientService {
   @Autowired
   private AuthContext authContext;
 
+  @Autowired
+  private ClinicLimitsRepo clinicLimitsRepo;
+
   @Transactional
   public PatientResDTO create(PatientReqDTO request) {
     Long clinicId = authContext.getClinicId();
+
+    if (clinicLimitsRepo.isPatientLimitReached(clinicId)) {
+      throw new ClinicLimitExceededException(
+          ("Cannot create patient. Clinic has reached maximum patient capacity"));
+    }
 
     if (patientRepo.existsByFullNameAndClinicId(request.fullName(), clinicId))
       throw new IllegalArgumentException("Patient name already exists in this clinic");
@@ -300,5 +313,74 @@ public class PatientService {
         .map(PatientResDTO::fromEntity)
         .collect(Collectors.toList());
 
+  }
+
+  public PatientStatisticsDTO getPatientStatistics() {
+    Long clinicId = authContext.getClinicId();
+
+    List<AgeDistributionDTO> ageDistribution = getAgeDistribution(clinicId);
+    List<AddressDistributionDTO> addressDistribution = getAddressDistribution(clinicId);
+    List<RegistrationTrendDTO> registrationTrend = getRegistrationTrend(clinicId);
+
+    return new PatientStatisticsDTO(
+        ageDistribution,
+        addressDistribution,
+        registrationTrend);
+  }
+
+  private List<AgeDistributionDTO> getAgeDistribution(Long clinicId) {
+    List<Object[]> results = patientRepo.countPatientsByAgeGroups(clinicId);
+
+    return results.stream()
+        .map(result -> new AgeDistributionDTO(
+            (String) result[0], // phase name
+            getEmojiForPhase((String) result[0]), // emoji
+            getColorForPhase((String) result[0]), // color
+            ((Number) result[1]).longValue() // count
+        ))
+        .toList();
+  }
+
+  private List<AddressDistributionDTO> getAddressDistribution(Long clinicId) {
+    List<Object[]> results = patientRepo.countPatientsByAddress(clinicId);
+
+    return results.stream()
+        .map(result -> new AddressDistributionDTO(
+            result[0] != null ? result[0].toString() : "Unknown",
+            ((Number) result[1]).longValue()))
+        .toList();
+  }
+
+  private List<RegistrationTrendDTO> getRegistrationTrend(Long clinicId) {
+    int currentYear = LocalDate.now().getYear();
+    List<Object[]> results = patientRepo.countPatientsByMonth(clinicId, currentYear);
+
+    return results.stream()
+        .map(result -> new RegistrationTrendDTO(
+            String.format("%d-%02d", result[0], result[1]),
+            ((Number) result[2]).longValue()))
+        .toList();
+  }
+
+  private String getEmojiForPhase(String phase) {
+    return switch (phase.toLowerCase()) {
+      case "child" -> "👶";
+      case "teen" -> "🧒";
+      case "adult" -> "🧑";
+      case "middle" -> "🧔";
+      case "senior" -> "🧓";
+      default -> "";
+    };
+  }
+
+  private String getColorForPhase(String phase) {
+    return switch (phase.toLowerCase()) {
+      case "child" -> "#FFD166";
+      case "teen" -> "#06D6A0";
+      case "adult" -> "#118AB2";
+      case "middle" -> "#073B4C";
+      case "senior" -> "#EF476F";
+      default -> "";
+    };
   }
 }

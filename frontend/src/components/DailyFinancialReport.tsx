@@ -54,6 +54,11 @@ const DailyFinancialReport = () => {
       expandable: true,
     },
     {
+      header: f({ id: "doctorName" }),
+      accessor: (row) => row?.doctorName || f({ id: "not_available" }),
+      expandable: true,
+    },
+    {
       header: f({ id: "visitNotes" }),
       accessor: (row) => row?.doctorNotes || f({ id: "not_available" }),
       expandable: true,

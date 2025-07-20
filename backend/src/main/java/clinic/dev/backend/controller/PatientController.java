@@ -3,6 +3,7 @@ package clinic.dev.backend.controller;
 import clinic.dev.backend.dto.patient.PatientRegistryRes;
 import clinic.dev.backend.dto.patient.PatientReqDTO;
 import clinic.dev.backend.dto.patient.PatientResDTO;
+import clinic.dev.backend.dto.patient.statistics.PatientStatisticsDTO;
 import clinic.dev.backend.service.impl.PatientService;
 import clinic.dev.backend.util.ApiRes;
 import jakarta.validation.Valid;
@@ -101,5 +102,11 @@ public class PatientController {
       @RequestParam List<Long> ids) {
     List<PatientResDTO> patients = patientService.getPatientsByIds(ids);
     return ResponseEntity.ok(new ApiRes<>(patients));
+  }
+
+  @GetMapping("/statistics")
+  public ResponseEntity<ApiRes<PatientStatisticsDTO>> getPatientStatistics() {
+    PatientStatisticsDTO statistics = patientService.getPatientStatistics();
+    return ResponseEntity.ok(new ApiRes<>(statistics));
   }
 }

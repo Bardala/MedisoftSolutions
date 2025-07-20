@@ -143,11 +143,8 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
               </div>
 
               <div className="doctor-info2">
-                <h1> الدكتور</h1>
+                <h1>{settings.doctorTitle}</h1>
                 <h1>{settings.doctorName}</h1>
-                <h2>
-                  <strong>{settings.doctorTitle}</strong>
-                </h2>
                 <h2>
                   <strong>{settings.doctorQualification}</strong>
                 </h2>

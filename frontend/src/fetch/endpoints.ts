@@ -124,4 +124,5 @@ export enum ENDPOINT {
   GET_CLINIC_LIMITS = "/clinics",
   UPDATE_CLINIC_LIMITS = "/clinics/:id/limits",
   CREATE_CLINIC_WITH_OWNER = "/clinics/with-owner",
+  PATIENT_STATISTICS = "/patients/statistics",
 }

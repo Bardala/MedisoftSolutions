@@ -6,6 +6,7 @@ import {
 } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
+import { PatientStatistics } from "../types";
 import { PatientSearchParams } from "../types/types";
 
 export const CreatePatientApi = (patient: PatientReqDTO) => () =>
@@ -58,14 +59,12 @@ export const PatientSearchApi = (
 
   return fetchFn<null, PageRes<PatientResDTO>>(
     `${ENDPOINT.SEARCH_PATIENTS}?${queryParams.toString()}`,
-    "GET",
   );
 };
 
 export const PatientBatch = (ids: number[]) =>
   fetchFn<void, PatientResDTO[]>(
     `${ENDPOINT.PATIENT_BATCH}?ids=${ids.join(",")}`,
-    "GET",
   );
 
 export const PatientApi = {
@@ -117,13 +116,14 @@ export const PatientApi = {
     queryParams.append("size", size.toString());
     return fetchFn<null, PageRes<PatientResDTO>>(
       `${ENDPOINT.SEARCH_PATIENTS}?${queryParams.toString()}`,
-      "GET",
     );
   },
 
   getBatch: (ids: number[]) =>
     fetchFn<void, PatientResDTO[]>(
       `${ENDPOINT.PATIENT_BATCH}?ids=${ids.join(",")}`,
-      "GET",
     ),
+
+  getStatistics: () =>
+    fetchFn<void, PatientStatistics>(ENDPOINT.PATIENT_STATISTICS),
 };

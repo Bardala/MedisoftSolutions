@@ -141,10 +141,9 @@ export const PrescriptionPrint3: FC<PrescriptionPrint3Props> = ({ visit }) => {
             </div>
 
             <div className="doctor-info3">
-              <h1>الدكتور {settings.doctorName}</h1>
-              <h2>
-                <strong>{settings.doctorTitle}</strong>
-              </h2>
+              <h1>
+                {settings.doctorTitle} {settings.doctorName}
+              </h1>
               <h2>
                 <strong>{settings.doctorQualification}</strong>
               </h2>

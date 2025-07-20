@@ -64,6 +64,35 @@
   outline: 2px solid var(--primary-color);
 }
 
+/* Sound controls */
+.sound-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin: 0 5px;
+  padding: 5px;
+}
+
+.sound-on {
+  color: var(--success-color);
+}
+
+.sound-off {
+  color: var(--error-color);
+}
+
+.volume-slider {
+  width: 80px;
+  margin: 0 10px;
+  vertical-align: middle;
+}
+
+.notification-controls {
+  display: flex;
+  align-items: center;
+}
+
 @media screen and (max-width: 768px) {
   .notification-header {
     flex-direction: column;

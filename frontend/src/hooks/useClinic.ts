@@ -12,7 +12,8 @@ import type {
 } from "../dto";
 import { ClinicApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
-import { Page } from "../types";
+import { isSuperAdminRole, Page } from "../types";
+import { useLogin } from "../context/loginContext";
 
 /**For system dashboard admin */
 export const useGetClinics = (params?: ClinicSearchReq) =>
@@ -132,11 +133,18 @@ export const useUpdateClinicLimits = () => {
   });
 };
 
-export const useGetClinicLimits = (clinicId: number) => {
+export const useGetClinicLimits = (clinicId?: number) => {
+  const { loggedInUser } = useLogin();
   return useQuery<ClinicLimitsResDTO, ApiError>(
-    ["clinicLimits", clinicId],
-    () => ClinicApi.getClinicLimits(clinicId),
-    { enabled: !!clinicId },
+    clinicId ? ["clinicLimits", clinicId] : ["clinic-limits"],
+    () =>
+      isSuperAdminRole(loggedInUser.role)
+        ? ClinicApi.getClinicLimits(clinicId)
+        : ClinicApi.getCurrLimits(),
+    {
+      staleTime: 5 * 60 * 1000,
+      enabled: isSuperAdminRole(loggedInUser.role) ? !!clinicId : true,
+    },
   );
 };
 

@@ -69,7 +69,7 @@ export const PatientsTable = () => {
             dataIcon={faTable}
           />
           {showStats ? (
-            <PatientsCharts patients={patients} />
+            <PatientsCharts />
           ) : (
             <>
               <Table

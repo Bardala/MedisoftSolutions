@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLogin } from "../context/loginContext";
 import { UserResDTO } from "../dto";
 import { isAssistantRole, isDoctorRole } from "../types";
+import { LOCALS } from "../utils";
 
 export const useFetchDoctors = () => {
   const fetchDoctorsQuery = useQuery<UserResDTO[], ApiError>(
@@ -14,6 +15,12 @@ export const useFetchDoctors = () => {
       return users.filter((user) => isDoctorRole(user.role));
     },
     {
+      onSuccess: (data) => {
+        localStorage.setItem(
+          LOCALS.SELECTED_DOCTOR_ID,
+          String(data[0]?.id || ""),
+        );
+      },
       // Cache for 5 minutes
       staleTime: 300000,
       // Retry once if failed

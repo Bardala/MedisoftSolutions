@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../fetch/ApiError";
-import { Patient, PatientRegistryRes, PatientSearchParams } from "../types";
+import {
+  Patient,
+  PatientRegistryRes,
+  PatientSearchParams,
+  PatientStatistics,
+} from "../types";
 
 import { useEffect, useState } from "react";
 
@@ -247,4 +252,19 @@ export const useGetDailyPatients = (date: string) => {
   );
 
   return { dailyNewPatientsQuery };
+};
+
+export const useGetPatientStatistics = () => {
+  const query = useQuery<PatientStatistics, ApiError>(
+    ["patients", "statistics"],
+    () => PatientApi.getStatistics(),
+  );
+
+  return {
+    statistics: query.data,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  };
 };

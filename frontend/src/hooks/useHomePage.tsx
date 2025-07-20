@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isDoctorRole, isSuperAdminRole, User } from "../types";
+import { isDoctorRole, isOwnerRole, isSuperAdminRole, User } from "../types";
 import AddPatient from "../components/AddPatient";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
@@ -16,6 +16,7 @@ import { ClinicSettings } from "../components/ClinicSettings";
 import { EditUserInfo } from "../components/EditUserInfo";
 import { ClinicsList } from "../components/ClinicsList";
 import { CreateClinicWithOwner } from "../components/CreateClinicWithOwner";
+import { ClinicData } from "../components/ClinicData";
 
 export const useHomePage = (loggedInUser: User) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -33,10 +34,16 @@ export const useHomePage = (loggedInUser: User) => {
     "/update-user-info": <EditUserInfo />,
   };
 
-  const doctorRoutes = {
+  const ownerRoutes = {
     "/monthly-reports": <MonthlyDoctorReports />,
     "/add-assistant": <AddUserForm />,
     "/clinic-settings": <ClinicSettings />,
+    "/clinic-data": (
+      <ClinicData
+        clinicId={loggedInUser.clinicId}
+        onBack={() => setSelectedOption("/clinic-settings")}
+      />
+    ),
   };
 
   const superAdminRoutes = {
@@ -56,8 +63,8 @@ export const useHomePage = (loggedInUser: User) => {
 
     if (commonRoutes[selectedOption]) return commonRoutes[selectedOption];
 
-    if (isDoctorRole(loggedInUser.role) && doctorRoutes[selectedOption])
-      return doctorRoutes[selectedOption];
+    if (isOwnerRole(loggedInUser.role) && ownerRoutes[selectedOption])
+      return ownerRoutes[selectedOption];
 
     return <Home setSelectedOption={setSelectedOption} />;
   };

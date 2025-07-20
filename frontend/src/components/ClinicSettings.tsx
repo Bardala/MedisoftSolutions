@@ -8,6 +8,8 @@ import {
   useUpdateClinicSettings,
 } from "../hooks/useClinic";
 import { ClinicResDTO, ClinicSettingsResDTO } from "../dto";
+import { ClinicStaff } from "./ClinicStaff";
+import { ClinicLimits } from "./ClinicLimits";
 
 export const ClinicSettings = () => {
   const {
@@ -23,7 +25,6 @@ export const ClinicSettings = () => {
     data: settingsData,
     isLoading: isLoadingSettings,
     isError: isClinicError,
-    error: settingsError,
   } = useGetClinicSettings();
 
   const { mutate: updateSettings, isSuccess: isSuccessSettings } =
@@ -281,6 +282,9 @@ export const ClinicSettings = () => {
             </button>
           </>
         )}
+
+        <ClinicLimits clinicId={clinic?.id} />
+        <ClinicStaff clinicId={clinic?.id} />
       </div>
     </div>
   );

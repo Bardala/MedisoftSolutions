@@ -20,23 +20,23 @@ public class ClinicLimits {
   @JoinColumn(name = "clinic_id", nullable = false, unique = true)
   private Clinic clinic;
 
-  @Column(name = "max_users")
+  @Column(name = "max_users", nullable = false)
   @Min(1)
   private Integer maxUsers;
 
-  @Column(name = "max_file_storage_mb")
+  @Column(name = "max_file_storage_mb", nullable = false)
   @Min(0)
   private Integer maxFileStorageMb;
 
-  @Column(name = "max_patient_records")
+  @Column(name = "max_patient_records", nullable = false)
   private Integer maxPatientRecords;
 
-  @Column(name = "allow_file_upload")
+  @Column(name = "allow_file_upload", nullable = false, columnDefinition = "boolean default false")
   private Boolean allowFileUpload;
 
-  @Column(name = "allow_multiple_branches")
+  @Column(name = "allow_multiple_branches", nullable = false, columnDefinition = "boolean default false")
   private Boolean allowMultipleBranches;
 
-  @Column(name = "allow_billing_feature")
+  @Column(name = "allow_billing_feature", nullable = false, columnDefinition = "boolean default false")
   private Boolean allowBillingFeature;
 }

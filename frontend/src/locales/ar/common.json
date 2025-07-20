@@ -194,5 +194,34 @@
   "addUser": "إضافة مستخدم",
   "fullName": "الاسم الكامل",
   "submitButton": "إنشاء مستخدم",
-  "userCreatedSuccessfully": "تم إنشاء المستخدم بنجاح!"
+  "userCreatedSuccessfully": "تم إنشاء المستخدم بنجاح!",
+
+  "disable_notifications": "تعطيل الإشعارات",
+  "enable_notifications": "تفعيل الإشعارات",
+  "mute_sound": "كتم الصوت",
+  "unmute_sound": "إلغاء كتم الصوت",
+  "volume_control": "ضبط مستوى الصوت للإشعارات",
+
+  "doctorName": "اسم الطبيب",
+
+  "clinicData.title": "معلومات العيادة",
+
+  "clinic_limits.title": "حدود العيادة",
+  "clinic_limits.edit_button": "تعديل الحدود",
+  "clinic_limits.cancel_button": "إلغاء",
+  "clinic_limits.save_button": "حفظ التغييرات",
+  "clinic_limits.max_users": "الحد الأقصى للمستخدمين",
+  "clinic_limits.max_storage": "الحد الأقصى للتخزين (ميجابايت)",
+  "clinic_limits.max_patients": "الحد الأقصى للمرضى",
+  "clinic_limits.allow_file_upload": "السماح برفع الملفات",
+  "clinic_limits.allow_multiple_branches": "السماح بفروع متعددة",
+  "clinic_limits.allow_billing_feature": "السماح بميزة الفواتير",
+  "clinic_limits.allowed": "مسموح",
+  "clinic_limits.not_allowed": "غير مسموح",
+  "clinic_limits.enabled": "مفعل",
+  "clinic_limits.disabled": "معطل",
+  "clinic_limits.loading": "جارٍ تحميل حدود العيادة...",
+  "clinic_limits.not_found": "لا توجد حدود لهذه العيادة",
+  "clinic_limits.update_success": "تم تحديث حدود العيادة بنجاح",
+  "clinic_limits.update_error": "فشل التحديث: {errorMessage}"
 }
