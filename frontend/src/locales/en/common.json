@@ -221,5 +221,8 @@
   "clinic_limits.loading": "Loading clinic limits...",
   "clinic_limits.not_found": "No limits found for this clinic",
   "clinic_limits.update_success": "Clinic limits were successfully updated",
-  "clinic_limits.update_error": "Update failed: {errorMessage}"
+  "clinic_limits.update_error": "Update failed: {errorMessage}",
+
+  "assistantName": "Assistant Name",
+  "doctor": "Doctor"
 }

@@ -223,5 +223,7 @@
   "clinic_limits.loading": "جارٍ تحميل حدود العيادة...",
   "clinic_limits.not_found": "لا توجد حدود لهذه العيادة",
   "clinic_limits.update_success": "تم تحديث حدود العيادة بنجاح",
-  "clinic_limits.update_error": "فشل التحديث: {errorMessage}"
+  "clinic_limits.update_error": "فشل التحديث: {errorMessage}",
+
+  "assistantName": "اسم المساعد"
 }

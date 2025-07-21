@@ -106,6 +106,91 @@ button:disabled {
   justify-content: space-between;
 }
 
+.print-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--padding-medium);
+}
+
+.company-logo-container-patient-page {
+  display: none;
+}
+
+.print-button-container button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--padding-small) var(--padding-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .container {
+    padding: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  button {
+    display: none;
+  }
+
+  input {
+    display: none;
+  }
+
+  .upload-image-container {
+    display: none;
+  }
+
+  .actions-column {
+    display: none;
+  }
+
+  .action-cell {
+    display: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--primary-color);
+    text-align: center;
+  }
+
+  input[type="text"],
+  textarea {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .company-logo-container-patient-page {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+
+  .company-logo-container-patient-page img {
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
+  }
+}
+
 /* Responsive Design Enhancements */
 @media (max-width: 768px) {
   .container {

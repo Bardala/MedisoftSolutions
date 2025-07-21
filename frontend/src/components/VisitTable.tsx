@@ -28,6 +28,18 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
           : f({ id: "not_available" }),
     },
     {
+      header: f({ id: "doctorName" }),
+      accessor: (row: { visit: Visit }) =>
+        row.visit.doctorName || f({ id: "not_available" }),
+      expandable: true,
+    },
+    {
+      header: f({ id: "assistantName" }),
+      accessor: (row: { visit: Visit }) =>
+        row.visit.assistantName || f({ id: "not_available" }),
+      expandable: true,
+    },
+    {
       header: f({ id: "date" }),
       accessor: (row: { visit: Visit }) =>
         monthlyTimeFormate(row.visit.createdAt),

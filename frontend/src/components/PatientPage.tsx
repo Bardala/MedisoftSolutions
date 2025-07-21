@@ -1,6 +1,6 @@
-import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExchangeAlt, faPrint } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import { usePatientRegistry } from "../hooks/useRegistry";
 import {
@@ -9,11 +9,16 @@ import {
   translateErrorMessage,
   sortById,
   findUnlinkedPayments,
+  programLogoImage,
 } from "../utils";
 import { PatientInfo } from "./PatientInfo";
 import Table from "./Table";
 import UserFiles from "./UserFiles";
 import { VisitTable } from "./VisitTable";
+import { useReactToPrint } from "react-to-print";
+import { Button } from "antd";
+import { useLogin } from "../context/loginContext";
+import { isDoctorRole, isOwnerRole } from "../types";
 
 interface PatientPageProps {
   patientId: number;
@@ -21,17 +26,26 @@ interface PatientPageProps {
 
 export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
   const { formatMessage: f, locale } = useIntl();
+  const { loggedInUser } = useLogin();
 
   const { patientRegistryQuery } = usePatientRegistry(patientId);
   const { data, isLoading, error } = patientRegistryQuery;
 
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
+  const componentRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    pageStyle: `
+        @page { size: A4; margin: 10mm; }
+        @media print {
+          body { -webkit-print-color-adjust: exact; }
+          .no-print { display: none !important; }
+        }
+      `,
+    documentTitle: `Patient_Details_${patientId}`,
+  });
 
   const paymentColumns = [
-    {
-      header: f({ id: "payment_id" }),
-      accessor: (row) => row?.id,
-    },
     {
       header: f({ id: "amount" }),
       accessor: (row) => `${row?.amount} ${f({ id: "L.E" })}`,
@@ -42,13 +56,12 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
     },
     {
       header: f({ id: "recorded_by" }),
-      accessor: (row) => row.recordedBy.name,
-      expandable: true,
+      accessor: (row) => row.recordedByName,
     },
     {
       header: f({ id: "year" }),
       accessor: (row) => yearlyTimeFormate(row.createdAt),
-      expandable: true,
+      // expandable: true,
     },
   ];
 
@@ -56,7 +69,7 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
     <>
       {/* Patient profile page */}
       {data && (
-        <div>
+        <div ref={componentRef}>
           {!!patientId && isLoading && (
             <p>{f({ id: "loading_patient_registry" })}</p>
           )}
@@ -69,13 +82,9 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
             </p>
           )}
 
-          <PatientInfo patientRegistry={data} />
+          {/* <PatientProfilePage patientId={patientId} /> */}
 
-          {/* <PatientCharts
-            payments={data?.payments}
-            visits={data?.visits}
-            visitDentalProcedures={data?.visitDentalProcedure}
-          /> */}
+          <PatientInfo patientRegistry={data} />
 
           <VisitTable patientId={patientId} showVisits="All" />
 
@@ -113,6 +122,22 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
           </div>
 
           <UserFiles patientId={patientId} />
+
+          <div className="company-logo-container-patient-page">
+            <img
+              src={programLogoImage}
+              alt="MediSoft Logo"
+              className="company-logo2"
+            />
+          </div>
+        </div>
+      )}
+
+      {isDoctorRole(loggedInUser.role) && (
+        <div className="print-button-container no-print">
+          <button onClick={handlePrint}>
+            <FontAwesomeIcon icon={faPrint} />
+          </button>
         </div>
       )}
     </>
