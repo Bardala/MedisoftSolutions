@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import "../styles/patientFiles.css";
 import { useIntl } from "react-intl";
 import { useFileOperations } from "../hooks/useFileOperations";
@@ -6,70 +6,124 @@ import { useFileOperations } from "../hooks/useFileOperations";
 interface UploadImageProps {
   patientId: string;
   existingImageUrls?: string[];
+  maxFiles?: number;
+  maxTotalSizeMB?: number;
+  maxFileSizeMB?: number;
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({
   patientId,
   existingImageUrls = [],
+  maxFiles = 5,
+  maxTotalSizeMB = 10,
+  maxFileSizeMB = 5,
 }) => {
   const { formatMessage: f } = useIntl();
   const [files, setFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>(existingImageUrls);
   const [fileType, setFileType] = useState<string>("old_log");
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { uploadFileMutation } = useFileOperations(parseInt(patientId));
 
+  // Calculate total size and files count
+  const { totalSizeMB, filesCount } = useMemo(
+    () => ({
+      totalSizeMB: files.reduce(
+        (sum, file) => sum + file.size / (1024 * 1024),
+        0,
+      ),
+      filesCount: files.length,
+    }),
+    [files],
+  );
+
   const sanitizeFileName = (fileName: string) => {
-    return fileName
-      .replace(/\s+/g, "_") // Replace spaces with underscores
-      .replace(/[^\w.-]/g, ""); // Remove special characters except letters, numbers, dots, underscores, and hyphens
+    return fileName.replace(/\s+/g, "_").replace(/[^\w.-]/g, "");
+  };
+
+  const validateFiles = (newFiles: File[]) => {
+    // Check individual file sizes first
+    const oversizedFiles = newFiles.filter(
+      (file) => file.size > maxFileSizeMB * 1024 * 1024,
+    );
+
+    if (oversizedFiles.length > 0) {
+      throw new Error(
+        f(
+          { id: "fileTooLarge" },
+          {
+            max: maxFileSizeMB,
+            file: oversizedFiles[0].name,
+          },
+        ),
+      );
+    }
+
+    // Then check total quantity and size
+    const newTotalSize =
+      totalSizeMB +
+      newFiles.reduce((sum, file) => sum + file.size / (1024 * 1024), 0);
+    const newFilesCount = filesCount + newFiles.length;
+
+    if (newFilesCount > maxFiles) {
+      throw new Error(f({ id: "maxFilesExceeded" }, { max: maxFiles }));
+    }
+
+    if (newTotalSize > maxTotalSizeMB) {
+      throw new Error(f({ id: "maxSizeExceeded" }, { max: maxTotalSizeMB }));
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const selectedFiles = Array.from(event.target.files || []);
+      validateFiles(selectedFiles);
+
+      const newPreviews = selectedFiles.map((file) =>
+        URL.createObjectURL(file),
+      );
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   const handleUploadFiles = async () => {
     setIsLoading(true);
+    setError(null);
 
-    for (const file of files) {
-      // Extract file extension
-      const fileExtension = file.name.split(".").pop();
-      const fileBaseName = file.name.substring(0, file.name.lastIndexOf("."));
+    try {
+      for (const file of files) {
+        const fileExtension = file.name.split(".").pop();
+        const sanitizedFileName =
+          sanitizeFileName(file.name.substring(0, file.name.lastIndexOf("."))) +
+          `.${fileExtension}`;
 
-      // Sanitize file name
-      const sanitizedFileName = sanitizeFileName(fileBaseName);
-      const newFileName = `${sanitizedFileName}.${fileExtension}`;
+        const sanitizedFile = new File([file], sanitizedFileName, {
+          type: file.type,
+        });
 
-      // Rename file using File API
-      const sanitizedFile = new File([file], newFileName, { type: file.type });
+        await uploadFileMutation.mutateAsync({
+          patientId,
+          fileType,
+          description: "N/A",
+          file: sanitizedFile,
+        });
+      }
 
-      // Upload sanitized file
-      await uploadFileMutation.mutateAsync({
-        patientId,
-        fileType,
-        description: "N/A",
-        file: sanitizedFile,
-      });
-
-      // Remove uploaded file from UI
-      setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
-      setFilePreviews((prevPreviews) =>
-        prevPreviews.filter((preview) => preview !== URL.createObjectURL(file)),
-      );
+      alert(f({ id: "success" }));
+      cancelFiles();
+    } catch (err) {
+      setError(f({ id: "uploadError" }));
+    } finally {
+      setIsLoading(false);
     }
-
-    alert(f({ id: "success" }));
-    setIsLoading(false);
-    setFiles([]);
-    setFilePreviews([]);
-  };
-
-  // Handle file change
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
-
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-    setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
   };
 
   // Handle file type change
@@ -100,6 +154,21 @@ const UploadImage: React.FC<UploadImageProps> = ({
   return (
     <div className="upload-image-container">
       <h2>{f({ id: "uploadFiles" })}</h2>
+
+      <div className="upload-limits">
+        {f(
+          { id: "filesLimit" },
+          {
+            count: filesCount,
+            max: maxFiles,
+            size: totalSizeMB.toFixed(2),
+            maxSize: maxTotalSizeMB,
+          },
+        )}
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div
           className="upload-dropzone"
@@ -131,6 +200,16 @@ const UploadImage: React.FC<UploadImageProps> = ({
             {f({ id: "selectOrDrag" })}
           </label>
         </div>
+
+        {/* Progress bar */}
+        {files.length > 0 && (
+          <div className="upload-progress">
+            <progress value={totalSizeMB} max={maxTotalSizeMB} />
+            <span>
+              {totalSizeMB.toFixed(2)}MB / {maxTotalSizeMB}MB
+            </span>
+          </div>
+        )}
 
         {filePreviews.length > 0 && (
           <div className="file-previews">
@@ -175,11 +254,15 @@ const UploadImage: React.FC<UploadImageProps> = ({
             type="button"
             className="cancel-button"
             onClick={cancelFiles}
-            disabled
+            disabled={isLoading}
           >
             {f({ id: "cancel" })}
           </button>
-          <button type="submit" className="submit-button" disabled>
+          <button
+            type="submit"
+            className="submit-button"
+            disabled={isLoading || files.length === 0}
+          >
             {isLoading ? f({ id: "uploading" }) : f({ id: "upload" })}
           </button>
         </div>

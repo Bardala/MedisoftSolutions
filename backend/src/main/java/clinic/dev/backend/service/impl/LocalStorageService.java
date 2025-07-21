@@ -1,11 +1,11 @@
 package clinic.dev.backend.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import clinic.dev.backend.service.FileStorageService;
 import clinic.dev.backend.exceptions.FileStorageException;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,15 +14,16 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-public class StorageService {
+@Profile("dev")
+public class LocalStorageService implements FileStorageService {
 
   @Value("${file.upload-dir}")
   private String uploadDir;
 
-  public String storeFile(MultipartFile file, String subFolder, String finalDir, Long clinicId) {
+  @Override
+  public String storeFile(MultipartFile file, String folderPath) {
     try {
-      // Create path structure: uploadDir/clinicId/subFolder/patientId/
-      Path uploadPath = Paths.get(uploadDir, clinicId.toString(), subFolder, finalDir);
+      Path uploadPath = Paths.get(uploadDir, folderPath);
       Files.createDirectories(uploadPath);
 
       String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -35,6 +36,7 @@ public class StorageService {
     }
   }
 
+  @Override
   public void deleteFile(String filePath) {
     try {
       Path path = Paths.get(filePath).toAbsolutePath().normalize();

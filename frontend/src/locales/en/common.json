@@ -224,5 +224,13 @@
   "clinic_limits.update_error": "Update failed: {errorMessage}",
 
   "assistantName": "Assistant Name",
-  "doctor": "Doctor"
+  "doctor": "Doctor",
+
+  "maxFilesExceeded": "Maximum {max} files allowed",
+  "maxSizeExceeded": "Total size exceeds {max}MB limit",
+  "filesLimit": "Files: {count}/{max} | Size: {size}MB/{maxSize}MB",
+  "uploadError": "Upload failed. Please try again.",
+  "fileTooLarge": "{file} exceeds {max}MB maximum size",
+
+  "createdAt": "Created At"
 }

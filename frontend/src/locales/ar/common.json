@@ -225,5 +225,13 @@
   "clinic_limits.update_success": "تم تحديث حدود العيادة بنجاح",
   "clinic_limits.update_error": "فشل التحديث: {errorMessage}",
 
-  "assistantName": "اسم المساعد"
+  "assistantName": "اسم المساعد",
+
+  "maxFilesExceeded": "الحد الأقصى المسموح به هو {max} ملفات",
+  "maxSizeExceeded": "الحجم الإجمالي يتجاوز الحد المسموح به {max} ميجابايت",
+  "filesLimit": "الملفات: {count}/{max} | الحجم: {size} ميجابايت/{maxSize} ميجابايت",
+  "uploadError": "فشل في الرفع. يرجى المحاولة مرة أخرى.",
+  "fileTooLarge": "{file} يتجاوز الحد الأقصى {max} ميجابايت",
+
+  "createdAt": "تم الإنشاء في"
 }

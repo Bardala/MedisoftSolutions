@@ -25,7 +25,7 @@ public class GlobalDatabaseExceptionHandler {
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ApiRes<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
     String errorMessage = extractPostgresConstraintMessage(ex.getMostSpecificCause().getMessage());
-    Map<String, String> errorMap = createErrorMap("Database_error", errorMessage);
+    Map<String, String> errorMap = createErrorMap("Error", errorMessage);
     return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(new ApiRes<>(errorMap));
   }
@@ -85,6 +85,8 @@ public class GlobalDatabaseExceptionHandler {
           return "Username already exists";
         case "users_phone_key":
           return "Phone number already registered";
+        case "uk8nhpmusrwn8i3aqp695pcc9fm":
+          return "This medicine is already in the list";
         default:
           return String.format("The combination of %s (%s) already exists",
               formatColumnNames(columns), values);

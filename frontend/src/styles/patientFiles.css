@@ -110,6 +110,32 @@
   background-color: var(--primary-hover);
 }
 
+.upload-limits {
+  margin: 10px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin: 10px 0;
+}
+
+.upload-progress {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.upload-progress progress {
+  width: 100%;
+}
+
+.upload-progress span {
+  display: block;
+  text-align: right;
+  font-size: 0.8em;
+}
+
 /* Small screen adjustments */
 @media (max-width: 600px) {
   .upload-image-container {

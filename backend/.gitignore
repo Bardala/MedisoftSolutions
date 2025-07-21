@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-
+.env
 
 /src/main/resources/static/
 /src/main/resources/application-prod.properties

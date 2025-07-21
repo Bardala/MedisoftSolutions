@@ -7,6 +7,7 @@ import UploadImage from "./UploadImage";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useIntl } from "react-intl";
+import { useGetClinicLimits } from "../hooks/useClinic";
 
 interface FileListProps {
   patientId: number;
@@ -18,6 +19,7 @@ const UserFiles: FC<FileListProps> = ({ patientId }) => {
     null,
   );
   const [fileToDelete, setFileToDelete] = useState<GetFilesRes | null>(null);
+  const { data: limits } = useGetClinicLimits(patientId);
 
   const { patientFiles, deleteFileMutation, deleteFilesMutation } =
     useFileOperations(patientId);
@@ -134,7 +136,8 @@ const UserFiles: FC<FileListProps> = ({ patientId }) => {
             </div>
           </div>
         )}
-        <UploadImage patientId={patientId + ""} />
+
+        {limits?.allowFileUpload && <UploadImage patientId={patientId + ""} />}
       </div>
     </div>
   );

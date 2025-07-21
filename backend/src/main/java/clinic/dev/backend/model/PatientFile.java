@@ -11,7 +11,7 @@ import java.time.Instant;
 @Data
 @Table(name = "patient_files")
 @NoArgsConstructor
-public class PatientFile {
+public class PatientFile { // todo: add file size
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

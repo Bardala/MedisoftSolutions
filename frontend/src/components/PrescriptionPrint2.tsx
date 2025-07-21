@@ -203,7 +203,7 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
                 <div className="lower-footer2">
                   {/* Centered message at bottom */}
                   <div className="healing-message2">
-                    <p>{settings.healingMessage}</p>
+                    <p>{settings?.healingMessage}</p>
                   </div>
 
                   <hr className="clinic-separator2" />
@@ -211,7 +211,7 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
                   {/* Clinic Info */}
                   <div className="clinic-info2">
                     <p>
-                      {clinic.phoneSupportsWhatsapp && (
+                      {clinic?.phoneSupportsWhatsapp && (
                         <img
                           src={whatsappImage}
                           alt="WhatsApp"
@@ -225,8 +225,8 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
                   </div>
 
                   {/* Optional Print Footer Notes */}
-                  {settings.printFooterNotes && (
-                    <p className="footer-notes">{settings.printFooterNotes}</p>
+                  {settings?.printFooterNotes && (
+                    <p className="footer-notes">{settings?.printFooterNotes}</p>
                   )}
                 </div>
               </div>

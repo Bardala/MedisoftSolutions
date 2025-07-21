@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isDoctorRole, isOwnerRole, isSuperAdminRole, User } from "../types";
+import { isOwnerRole, isSuperAdminRole, User } from "../types";
 import AddPatient from "../components/AddPatient";
 import RecordPayments from "../components/RecordPayments";
 import DailyFinancialReport from "../components/DailyFinancialReport";
