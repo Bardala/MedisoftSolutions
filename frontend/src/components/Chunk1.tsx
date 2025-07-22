@@ -1,6 +1,6 @@
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 import { Visit } from "../types";
-import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
+import { toothLogo, programLogoImage, whatsappImage } from "../utils";
 import Table from "./Table";
 import "../styles/chunk1.css";
 import { useGetPatient } from "../hooks/usePatient";
@@ -119,11 +119,7 @@ export const Chunk1 = ({ visit }: { visit: Visit }) => {
           {/* Clinic Header */}
           <div className="clinic-header">
             <div className="clinic-logo-container">
-              <img
-                src={prescriptionLogo}
-                alt="Clinic Logo"
-                className="clinic-logo"
-              />
+              <img src={toothLogo} alt="Clinic Logo" className="clinic-logo" />
             </div>
 
             <div className="doctor-info">

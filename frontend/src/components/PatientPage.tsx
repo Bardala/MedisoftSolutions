@@ -16,9 +16,8 @@ import Table from "./Table";
 import UserFiles from "./UserFiles";
 import { VisitTable } from "./VisitTable";
 import { useReactToPrint } from "react-to-print";
-import { Button } from "antd";
 import { useLogin } from "../context/loginContext";
-import { isDoctorRole, isOwnerRole } from "../types";
+import { isDoctorRole } from "../types";
 
 interface PatientPageProps {
   patientId: number;

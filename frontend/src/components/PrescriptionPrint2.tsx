@@ -1,17 +1,17 @@
 import { FC } from "react";
-import { Visit, VisitMedicine } from "../types";
+import { VisitMedicine } from "../types";
 import "../styles/prescriptionPrint2.css";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
-import { prescriptionLogo, programLogoImage, whatsappImage } from "../utils";
+import { programLogoImage, whatsappImage } from "../utils";
 import Table from "./Table";
 import { useGetPatient } from "../hooks/usePatient";
 import { useGetClinicSettings, useGetCurrentClinic } from "../hooks/useClinic";
+import { PrescriptionPrintProps } from "./PrescriptionPrint";
 
-interface PrescriptionPrint2Props {
-  visit: Visit;
-}
-
-export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
+export const PrescriptionPrintA5: FC<PrescriptionPrintProps> = ({
+  visit,
+  logo,
+}) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
   const visitMedicines: VisitMedicine[] = query.data || [];
   const { data: settings } = useGetClinicSettings();
@@ -135,11 +135,7 @@ export const PrescriptionPrint2: FC<PrescriptionPrint2Props> = ({ visit }) => {
             {/* Clinic Header */}
             <div className="clinic-header2">
               <div className="clinic-logo-container2">
-                <img
-                  src={prescriptionLogo}
-                  alt="Clinic Logo"
-                  className="clinic-logo2"
-                />
+                <img src={logo} alt="Clinic Logo" className="clinic-logo2" />
               </div>
 
               <div className="doctor-info2">

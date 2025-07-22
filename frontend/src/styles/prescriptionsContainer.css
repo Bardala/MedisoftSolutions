@@ -31,11 +31,6 @@
   transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-/* .design-selector select:hover {
-  border-color: var(--primary-color);
-  background-color: var(--third-bg);
-} */
-
 .design-selector select:focus {
   outline: none;
   border-color: var(--primary-hover);
@@ -49,4 +44,15 @@
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-light);
   padding: var(--padding-medium);
+}
+
+#logo-select {
+  padding: var(--padding-small);
+  font-size: var(--font-size-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  /* background-color: var(--white); */
+  /* color: var(--text-color); */
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }

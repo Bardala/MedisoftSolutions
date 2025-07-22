@@ -1,21 +1,17 @@
-import React, { FC } from "react";
-import { Visit, VisitMedicine } from "../types";
+import { FC } from "react";
+import { VisitMedicine } from "../types";
 import Table from "./Table";
 import "../styles/prescriptionPrint3.css"; // New CSS file for this design
-import {
-  prescriptionLogo,
-  programLogoImage,
-  whatsappImage,
-} from "../utils/images";
+import { programLogoImage, whatsappImage } from "../utils/images";
 import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 import { useGetPatient } from "../hooks/usePatient";
 import { useGetClinicSettings, useGetCurrentClinic } from "../hooks/useClinic";
+import { PrescriptionPrintProps } from "./PrescriptionPrint";
 
-interface PrescriptionPrint3Props {
-  visit: Visit;
-}
-
-export const PrescriptionPrint3: FC<PrescriptionPrint3Props> = ({ visit }) => {
+export const PrescriptionPrint3: FC<PrescriptionPrintProps> = ({
+  visit,
+  logo,
+}) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
   const visitMedicines: VisitMedicine[] = query.data || [];
   const { data: settings } = useGetClinicSettings();
@@ -133,11 +129,7 @@ export const PrescriptionPrint3: FC<PrescriptionPrint3Props> = ({ visit }) => {
           {/* Clinic Header */}
           <div className="clinic-header3">
             <div className="clinic-logo-container3">
-              <img
-                src={prescriptionLogo}
-                alt="Clinic Logo"
-                className="clinic-logo3"
-              />
+              <img src={logo} alt="Clinic Logo" className="clinic-logo3" />
             </div>
 
             <div className="doctor-info3">

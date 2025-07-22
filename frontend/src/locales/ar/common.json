@@ -233,5 +233,8 @@
   "uploadError": "فشل في الرفع. يرجى المحاولة مرة أخرى.",
   "fileTooLarge": "{file} يتجاوز الحد الأقصى {max} ميجابايت",
 
-  "createdAt": "تم الإنشاء في"
+  "createdAt": "تم الإنشاء في",
+
+  "chooseLogoDesign": "اختر تصميم الشعار",
+  "logo.label": "شعار العيادة"
 }

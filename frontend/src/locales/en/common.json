@@ -232,5 +232,7 @@
   "uploadError": "Upload failed. Please try again.",
   "fileTooLarge": "{file} exceeds {max}MB maximum size",
 
-  "createdAt": "Created At"
+  "createdAt": "Created At",
+
+  "chooseLogoDesign": "Choose Logo Design"
 }

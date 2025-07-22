@@ -114,6 +114,13 @@ export const ClinicSettings = () => {
             )}
             <fieldset>
               <legend>🏥 {msg("clinicSettings.clinicSection")}</legend>
+              <label>{msg("clinicSettings.clinicName")}</label>
+              <input
+                name="name"
+                value={clinic.name || ""}
+                onChange={handleClinicChange}
+              />
+
               <label>{msg("clinicSettings.clinicAddress")}</label>
               <textarea
                 name="address"
