@@ -1,22 +1,25 @@
-# Use official Maven image to build the project
+# Stage 1: Build the app using Maven
 FROM maven:3.9.3-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 COPY . .
 
-# Build the app (skip tests if you want faster build)
+# Build the application and skip tests
 RUN mvn clean package -DskipTests
 
-# Use a lightweight Java runtime to run the app
+# Stage 2: Create a lightweight runtime image
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy the built jar from the builder stage
+# Copy the built jar
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expose the default Spring Boot port
+# Expose the default port
 EXPOSE 8080
 
-# Run the jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Limit JVM memory to avoid OOM on Railway (1 GB max RAM)
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+# Start the application with memory constraints
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
