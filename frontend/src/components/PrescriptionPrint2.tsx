@@ -223,7 +223,7 @@ export const PrescriptionPrintA5: FC<PrescriptionPrintProps> = ({
                           className="whatsapp-logo"
                         />
                       )}
-                      📞 هاتف: <span>{clinic.phoneNumber}</span>
+                      📞 هاتف: <span>{clinic?.phoneNumber}</span>
                     </p>
                     <p>{clinic.address}</p>
                     <p>{clinic.workingHours}</p>
