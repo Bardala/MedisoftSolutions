@@ -35,7 +35,7 @@ public class Medicine {
   private Clinic clinic;
 
   @NotBlank(message = ErrorMsg.FIELD_MUST_NOT_BE_BLANK)
-  @Column(name = "medicine_name", length = 150, nullable = false, unique = true)
+  @Column(name = "medicine_name", length = 150, nullable = false)
   private String medicineName;
 
   /** Specifies the amount of medicine to be taken each time (e.g., "500 mg"). */

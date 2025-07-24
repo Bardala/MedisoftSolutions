@@ -2,9 +2,11 @@ package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.constants.ErrorMsg;
 import clinic.dev.backend.dto.auth.SignupRequest;
+import clinic.dev.backend.dto.user.UpdateUserReqDTO;
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
+import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Clinic;
@@ -138,29 +140,93 @@ public class UserService {
     return userRepo.findByRoleAndClinicId(role, getClinicId()).stream().map(UserResDTO::fromEntity).toList();
   }
 
-  /**
-   * * This method just permit user to update his data
-   */
+  // @Transactional
+  // public UserResDTO update(UpdateUserReqDTO req) {
+  // Long userId = authContext.getUserId();
+  // User existing = getSecureUser(userId);
+  // if (req.password() != null && !req.password().isEmpty()) {
+  // if (req.lastPassword() == null || req.lastPassword().isEmpty()) {
+  // throw new IllegalArgumentException("Last password is required to change
+  // password");
+  // }
+  // if (!passwordEncoder.matches(req.lastPassword(), existing.getPassword())) {
+  // throw new IllegalArgumentException("Last password is incorrect");
+  // }
+  // String encodedPassword = passwordEncoder.encode(req.password());
+  // req = new UpdateUserReqDTO(
+  // req.username(),
+  // encodedPassword,
+  // req.lastPassword(),
+  // req.name(),
+  // req.phone(),
+  // req.role(),
+  // req.profilePicture());
+  // }
+  // req.updateEntity(existing, getClinicId());
+  // return UserResDTO.fromEntity(userRepo.save(existing));
+  // }
 
   @Transactional
-  public UserResDTO update(Long id, UserReqDTO req) throws IllegalAccessException {
-    User existing = userRepo.findByIdAndClinicId(id, getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+  public UserResDTO updateUser(Long targetUserId, UpdateUserReqDTO req) {
+    User currentUser = getCurrentUser();
+    User targetUser = getSecureUser(targetUserId);
 
-    if (!authContext.getUserId().equals(id))
-      throw new IllegalAccessException("You don't have authority to update this user");
+    if (!canUpdateUser(currentUser, targetUser)) {
+      throw new UnauthorizedAccessException("Unauthorized update attempt");
+    }
+
+    if (req.password() != null && !req.password().isEmpty()) {
+      handlePasswordUpdate(req, currentUser, targetUser);
+    }
+
+    req.updateEntity(targetUser, targetUser.getClinic().getId());
+    return UserResDTO.fromEntity(userRepo.save(targetUser));
+  }
+
+  private void handlePasswordUpdate(UpdateUserReqDTO req, User currentUser, User targetUser) {
+    // Skip verification for admin password resets
+    if (!isAdminOperation(currentUser, targetUser)) {
+      if (req.lastPassword() == null || !passwordEncoder.matches(req.lastPassword(), targetUser.getPassword())) {
+        throw new IllegalArgumentException("Password change verification failed");
+      }
+    }
 
     String encodedPassword = passwordEncoder.encode(req.password());
-    UserReqDTO updatedReq = new UserReqDTO(
-        req.username(), // updateEntity will ignore it.
-        encodedPassword,
-        req.name(),
-        req.phone(),
-        req.role(),
-        req.profilePicture());
+    req = req.withPassword(encodedPassword);
+  }
 
-    updatedReq.updateEntity(existing, getClinicId());
-    return UserResDTO.fromEntity(userRepo.save(existing));
+  /** current user can update himself or his clinic owner or super admin */
+  private boolean canUpdateUser(User currentUser, User targetUser) {
+    return currentUser.getId().equals(targetUser.getId()) ||
+        isSuperAdmin(currentUser) ||
+        (isOwner(currentUser) &&
+            currentUser.getClinic().getId().equals(targetUser.getClinic().getId()));
+  }
+
+  private boolean isAdminOperation(User currentUser, User targetUser) {
+    return !currentUser.getId().equals(targetUser.getId()) &&
+        (isSuperAdmin(currentUser) ||
+            isOwner(currentUser));
+  }
+
+  private User getCurrentUser() {
+    return userRepo.findById(authContext.getUserId())
+        .orElseThrow(() -> new UserNotFoundException("Current user not found"));
+  }
+
+  private User getSecureUser(Long userId) {
+    return userRepo.findByIdWithSecurityContext(
+        userId,
+        authContext.getClinicId(), // Will be ignored if isSuperAdmin=true
+        authContext.isSuperAdmin()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+  }
+
+  private boolean isSuperAdmin(User u) {
+    return UserRole.SUPER_ADMIN.equals(u.getRole());
+  }
+
+  private boolean isOwner(User u) {
+    return UserRole.OWNER.equals(u.getRole());
   }
 
   @Transactional

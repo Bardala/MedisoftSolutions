@@ -100,6 +100,7 @@
   "clinicSettings.clinicPhoneNumber": "رقم هاتف العيادة",
   "clinicSettings.clinicEmail": "البريد الإلكتروني للعيادة",
   "clinicSettings.workingHours": "ساعات العمل",
+  "clinicSettings.clinicName": "اسم العيادة",
 
   "clinicSettings.backupDbPath": "مسار نسخة قاعدة البيانات",
   "clinicSettings.backupImagesPath": "مسار نسخة الصور",

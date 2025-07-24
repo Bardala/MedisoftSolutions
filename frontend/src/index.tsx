@@ -29,11 +29,11 @@ if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 15 * 60 * 1000, // 15 minutes
+      // staleTime: 5 * 60 * 1000, // 5 minutes
+      // cacheTime: 15 * 60 * 1000, // 15 minutes
       retry: customRetry,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
-      refetchOnWindowFocus: false,
+      // retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
+      refetchOnWindowFocus: true,
       onError: (error: ApiError) => {
         console.warn(
           `Query failed with status ${error.status}: ${error.message}`,

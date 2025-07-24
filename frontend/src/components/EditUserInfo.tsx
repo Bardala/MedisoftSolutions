@@ -3,26 +3,47 @@ import { useIntl, FormattedMessage } from "react-intl";
 import { useLogin } from "../context/loginContext";
 import { User } from "../types";
 import { useUpdateUser } from "../hooks/useUser";
-import { UserReqDTO } from "../dto";
+import { UpdateUserReqDTO } from "../dto";
 
 export const EditUserInfo = () => {
   const { logout, loggedInUser } = useLogin();
-  const { mutateAsync: updateUserMutation } = useUpdateUser();
+  const { mutateAsync: updateUserMutation, isError, error } = useUpdateUser();
   const { formatMessage: f } = useIntl();
   const [password, setPassword] = useState("");
   const [repeatedPass, setRepeatedPass] = useState("");
+  const [lastPassword, setLastPassword] = useState(""); // New state
   const [updatedUser, setUpdatedUser] = useState<User | null>(loggedInUser);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!updatedUser) return;
 
     try {
-      if (password !== repeatedPass) alert(f({ id: "password.mismatch" }));
-      else {
-        updatedUser.password = password;
-        await updateUserMutation(updatedUser as UserReqDTO);
-        alert(f({ id: "user.update.success" }));
-        logout();
+      // Only validate passwords if new password is provided
+      if (password) {
+        if (password !== repeatedPass) {
+          alert(f({ id: "password.mismatch" }));
+          return;
+        }
+        if (!lastPassword) {
+          alert(f({ id: "lastPassword.required" }));
+          return;
+        }
+      }
+
+      const userUpdate: UpdateUserReqDTO = {
+        username: updatedUser.username,
+        name: updatedUser.name,
+        phone: updatedUser.phone,
+        role: updatedUser.role,
+        profilePicture: updatedUser.profilePicture,
+        ...(password ? { password, lastPassword } : {}), // Only include password fields if changing
+      };
+
+      await updateUserMutation({ updatedUser: userUpdate });
+      alert(f({ id: "user.update.success" }));
+      if (password) {
+        logout(); // Only logout if password was changed
       }
     } catch (error) {
       console.error(error);
@@ -74,40 +95,59 @@ export const EditUserInfo = () => {
           </label>
 
           <label>
-            <FormattedMessage id="newPassword" defaultMessage="New Password" />
-            :
+            <FormattedMessage id="newPassword" defaultMessage="New Password" />:
             <input
               type="password"
               placeholder={f({
                 id: "enterNewPassword",
-                defaultMessage: "Enter new password",
+                defaultMessage:
+                  "Enter new password (leave blank to keep current)",
               })}
               onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            <FormattedMessage
-              id="repeatNewPassword"
-              defaultMessage="Repeat New Password"
-            />
-            :
-            <input
-              type="password"
-              placeholder={f({
-                id: "repeatNewPassword",
-                defaultMessage: "Repeat new password",
-              })}
-              onChange={(e) => setRepeatedPass(e.target.value)}
-              required
             />
           </label>
 
+          {password && (
+            <>
+              <label>
+                <FormattedMessage
+                  id="lastPassword"
+                  defaultMessage="Current Password"
+                />
+                :
+                <input
+                  type="password"
+                  placeholder={f({
+                    id: "enterLastPassword",
+                    defaultMessage: "Enter your current password",
+                  })}
+                  onChange={(e) => setLastPassword(e.target.value)}
+                  required={!!password}
+                />
+              </label>
+              <label>
+                <FormattedMessage
+                  id="repeatNewPassword"
+                  defaultMessage="Repeat New Password"
+                />
+                :
+                <input
+                  type="password"
+                  placeholder={f({
+                    id: "repeatNewPassword",
+                    defaultMessage: "Repeat new password",
+                  })}
+                  onChange={(e) => setRepeatedPass(e.target.value)}
+                  required={!!password}
+                />
+              </label>
+            </>
+          )}
+
+          {isError && <div className="error-message">{error.message}</div>}
+
           <button className="action-button" type="submit">
-            <FormattedMessage
-              id="saveChanges"
-              defaultMessage="Save Changes and logout"
-            />
+            <FormattedMessage id="saveChanges" defaultMessage="Save Changes" />
           </button>
         </form>
       </div>

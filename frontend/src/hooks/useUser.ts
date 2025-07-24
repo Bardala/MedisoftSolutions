@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserReqDTO, UserResDTO } from "../dto";
+import { UpdateUserReqDTO, UserReqDTO, UserResDTO } from "../dto";
 import { ApiError } from "../fetch/ApiError";
 import { UserApi } from "../apis";
 
@@ -21,10 +21,16 @@ export const useGetUserBatch = (ids: number[]) => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<UserResDTO, ApiError, UserReqDTO>(
-    (updatedUser) => UserApi.update(updatedUser),
-    { onSuccess: () => queryClient.invalidateQueries(["patients"]) },
-  );
+  return useMutation<
+    UserResDTO,
+    ApiError,
+    { updatedUser: UpdateUserReqDTO; id?: number }
+  >((req) => UserApi.update(req), {
+    onSuccess: (user) => {
+      queryClient.invalidateQueries(["users"]);
+      window.location.reload();
+    },
+  });
 };
 
 export const useCreateOwner = () => {

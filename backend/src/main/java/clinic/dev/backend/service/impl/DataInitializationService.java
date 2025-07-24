@@ -66,6 +66,7 @@ public class DataInitializationService {
 
   }
 
+  @SuppressWarnings("unused")
   private void addClinic() {
     if (clinicRepo.count() == 0) {
       // Create and save default clinic
@@ -94,6 +95,7 @@ public class DataInitializationService {
     }
   }
 
+  @SuppressWarnings("unused")
   private void addUsers() {
     if (userRepo.count() == 0) {
       SignupRequest doctor = new SignupRequest();
@@ -114,6 +116,7 @@ public class DataInitializationService {
     }
   }
 
+  @SuppressWarnings("unused")
   private void addPatients() {
     if (patientRepo.count() == 0) {
       Patient patient1 = new Patient();
@@ -167,6 +170,7 @@ public class DataInitializationService {
     }
   }
 
+  @SuppressWarnings("unused")
   private void addMedicines() {
     if (medicineRepo.count() == 0) {
       List<Medicine> medicines = Arrays.asList(
@@ -233,6 +237,7 @@ public class DataInitializationService {
     return medicine;
   }
 
+  @SuppressWarnings("unused")
   private void addVisitsAndMedicines() {
     if (visitRepo.count() == 0) {
       Patient patient = patientRepo.findByFullName("محمد علي").orElse(null);
@@ -296,6 +301,7 @@ public class DataInitializationService {
     }
   }
 
+  @SuppressWarnings("unused")
   private void addPayments() {
     if (paymentRepo.count() == 0) {
       Patient patient = patientRepo.findByFullName("محمد علي").orElse(null);

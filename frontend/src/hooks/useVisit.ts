@@ -25,6 +25,7 @@ export const useRecordVisit = () => {
           assistantId: data.assistantId,
         });
         queryClient.invalidateQueries(["visits"]);
+        queryClient.invalidateQueries(["queue", data.doctorId]);
       },
     },
   );

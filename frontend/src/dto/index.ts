@@ -163,6 +163,16 @@ export interface UserReqDTO {
   profilePicture?: string;
 }
 
+export interface UpdateUserReqDTO {
+  username: string;
+  password?: string;
+  lastPassword?: string;
+  name: string;
+  phone: string;
+  role: UserRole;
+  profilePicture?: string;
+}
+
 export interface UserResDTO {
   id: number;
   clinicId: number;

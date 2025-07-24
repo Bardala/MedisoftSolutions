@@ -44,6 +44,7 @@ export const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
     setLoggedInUser(null);
     localStorage.removeItem(LOCALS.CURR_USER);
     localStorage.removeItem(LOCALS.AUTH_TOKEN);
+    localStorage.removeItem(LOCALS.SELECTED_DOCTOR_ID);
     setSuccess(false);
   };
 

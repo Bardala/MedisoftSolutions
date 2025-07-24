@@ -1,4 +1,4 @@
-import { UserReqDTO, UserResDTO } from "../dto";
+import { UpdateUserReqDTO, UserReqDTO, UserResDTO } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
 
@@ -37,8 +37,19 @@ export const UserApi = {
       clinicId.toString(),
     ]),
 
-  update: (updatedUser: UserReqDTO) =>
-    fetchFn<UserReqDTO, UserResDTO>(ENDPOINT.UPDATE_USER, "PUT", updatedUser),
+  update: (req: { updatedUser: UpdateUserReqDTO; id?: number }) =>
+    req.id
+      ? fetchFn<UpdateUserReqDTO, UserResDTO>(
+          ENDPOINT.UPDATE_USER_BY_ID,
+          "PUT",
+          req.updatedUser,
+          [req.id + ""],
+        )
+      : fetchFn<UpdateUserReqDTO, UserResDTO>(
+          ENDPOINT.UPDATE_USER,
+          "PUT",
+          req.updatedUser,
+        ),
 
   resetPassword: (newPassword: string) =>
     fetchFn<string, void>(ENDPOINT.RESET_PASSWORD, "PUT", newPassword),

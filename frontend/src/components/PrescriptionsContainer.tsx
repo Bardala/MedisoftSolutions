@@ -9,7 +9,7 @@ import { PrescriptionPrintModern } from "./PrescriptionPrintModern";
 
 // Available logo options
 export const logoOptions = [
-  { value: "toothLogo", path: "/dentalLogo4.png", label: "dentalLogo" },
+  { value: "toothLogo", path: "/dentalLogo4.png", label: "Clinic Logo" },
   // {
   //   value: "logoRedCrossStethoscope",
   //   path: "/logoRedCrossStethoscope.png",
@@ -89,7 +89,7 @@ export const PrescriptionsContainer: FC<PrescriptionsContainerProps> = ({
           <option value="design1">{f({ id: "newDesign" })}</option>
           <option value="design2">{f({ id: "newDesignA5" })}</option>
           <option value="design3">{f({ id: "oldDesign" })}</option>
-          {/* <option value="modern">{f({ id: "modern" })}</option> */}
+          <option value="modern">{f({ id: "modern" })}</option>
         </select>
       </div>
 

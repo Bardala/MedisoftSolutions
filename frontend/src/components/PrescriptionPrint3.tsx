@@ -7,6 +7,7 @@ import { useGetVisitMedicinesByVisitId } from "../hooks/useVisitMedicine";
 import { useGetPatient } from "../hooks/usePatient";
 import { useGetClinicSettings, useGetCurrentClinic } from "../hooks/useClinic";
 import { PrescriptionPrintProps } from "./PrescriptionPrint";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export const PrescriptionPrint3: FC<PrescriptionPrintProps> = ({
   visit,
@@ -14,9 +15,12 @@ export const PrescriptionPrint3: FC<PrescriptionPrintProps> = ({
 }) => {
   const { query } = useGetVisitMedicinesByVisitId(visit.id);
   const visitMedicines: VisitMedicine[] = query.data || [];
-  const { data: settings } = useGetClinicSettings();
-  const { data: clinic } = useGetCurrentClinic();
-  const { patientRes: patient } = useGetPatient(visit.patientId);
+  const { data: settings, isLoading: settingsLoading } = useGetClinicSettings();
+  const { data: clinic, isLoading: clinicLoading } = useGetCurrentClinic();
+  const { patientRes: patient, isLoading: patientLoading } = useGetPatient(
+    visit.patientId,
+  );
+
   // Split medicines into chunks of 5
   const chunkArray = (
     array: VisitMedicine[],
@@ -122,6 +126,10 @@ export const PrescriptionPrint3: FC<PrescriptionPrintProps> = ({
     },
   ];
 
+  if (query.isLoading || settingsLoading || clinicLoading || patientLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div id="print-section-3" className="prescription-print-container3">
       {medicineChunks.map((chunk, index) => (
@@ -151,9 +159,11 @@ export const PrescriptionPrint3: FC<PrescriptionPrintProps> = ({
                   <p>
                     <strong>اسم المريض:</strong> {patient.fullName}
                   </p>
-                  <p>
-                    <strong>العمر: </strong> {patient.age + " سنة"}
-                  </p>
+                  {patient.age && (
+                    <p>
+                      <strong>العمر: </strong> {patient.age + " سنة"}
+                    </p>
+                  )}
                 </>
               )}
               <p>

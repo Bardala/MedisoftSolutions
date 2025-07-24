@@ -99,6 +99,7 @@
   "clinicSettings.clinicPhoneNumber": "Clinic Phone Number",
   "clinicSettings.clinicEmail": "Clinic Email",
   "clinicSettings.workingHours": "Working Hours",
+  "clinicSettings.clinicName": "Clinic Name",
 
   "clinicSettings.backupDbPath": "Backup DB Path",
   "clinicSettings.backupImagesPath": "Backup Images Path",

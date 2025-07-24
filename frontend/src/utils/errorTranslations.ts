@@ -15,6 +15,10 @@ const errorTranslations: Record<string, { en: string; ar: string }> = {
     en: "Patient name already exists in this clinic",
     ar: "هذا الاسم موجود بالفعل، الرجاء تغييره.",
   },
+  " Invalid username or password": {
+    en: " Invalid username or password",
+    ar: "خطأ فى كلمة المرور أو اسم المستخدم",
+  },
   // You can add more error mappings here
 };
 

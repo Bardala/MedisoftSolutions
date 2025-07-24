@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "../styles/login.css";
 import { useLoginPage } from "../hooks/useLoginPage";
-import { assistantImage, doctorImage, programLogoImage } from "../utils";
+import {
+  assistantImage,
+  doctorImage,
+  programLogoImage,
+  translateErrorMessage,
+} from "../utils";
 import { useIntl } from "react-intl";
 import { isAssistantRole, isDoctorRole, UserRole } from "../types";
 
 export const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const maxAttempts = 3;
-  const { formatMessage: f } = useIntl();
+  const { formatMessage: f, locale } = useIntl();
 
   const {
     selectedRole,
@@ -115,7 +120,12 @@ export const LoginPage: React.FC = () => {
             {f({ id: "login.submit" })}
           </button>
           {error && (
-            <p className="error">{f({ id: "login.error" }) + ":" + error}</p>
+            <p className="error">
+              {f(
+                { id: "errorMessage" },
+                { error: translateErrorMessage(error.message, locale) },
+              )}
+            </p>
           )}
         </div>
       )}

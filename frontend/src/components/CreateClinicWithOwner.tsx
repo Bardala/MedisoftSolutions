@@ -26,17 +26,17 @@ export const CreateClinicWithOwner = () => {
     defaultValues: {
       clinic: {
         name: "",
-        address: "",
+        address: "📍",
         phoneNumber: "",
         email: "",
         logoUrl: "",
-        workingHours: "",
+        workingHours: "يوميا عدا الجمعة من 12 ظهرا حتى 12 من منتصف الليل",
         phoneSupportsWhatsapp: false,
       },
       limits: {
-        maxUsers: 10,
-        maxFileStorageMb: 1024,
-        maxPatientRecords: 1000,
+        maxUsers: 5,
+        maxFileStorageMb: 512,
+        maxPatientRecords: 100,
         allowFileUpload: true,
         allowMultipleBranches: false,
         allowBillingFeature: false,
@@ -220,7 +220,82 @@ export const CreateClinicWithOwner = () => {
             )}
           </div>
 
-          {/* Similar pattern for other limit fields */}
+          <div
+            className={`form-group ${
+              errors.limits?.maxFileStorageMb ? "has-error" : ""
+            }`}
+          >
+            <label>{f({ id: "max_file_storage_mb" })}*</label>
+            <input
+              type="number"
+              min="1"
+              {...register("limits.maxFileStorageMb", {
+                required: f({ id: "max_storage_required" }),
+                valueAsNumber: true,
+                min: {
+                  value: 1,
+                  message: f({ id: "invalid_storage_amount" }),
+                },
+              })}
+            />
+            {errors.limits?.maxFileStorageMb && (
+              <span className="error-text">
+                {errors.limits.maxFileStorageMb.message}
+              </span>
+            )}
+          </div>
+
+          <div
+            className={`form-group ${
+              errors.limits?.maxPatientRecords ? "has-error" : ""
+            }`}
+          >
+            <label>{f({ id: "max_patient_records" })}*</label>
+            <input
+              type="number"
+              min="1"
+              {...register("limits.maxPatientRecords", {
+                required: f({ id: "max_patients_required" }),
+                valueAsNumber: true,
+                min: {
+                  value: 1,
+                  message: f({ id: "invalid_patient_records" }),
+                },
+              })}
+            />
+            {errors.limits?.maxPatientRecords && (
+              <span className="error-text">
+                {errors.limits.maxPatientRecords.message}
+              </span>
+            )}
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label>
+              <input type="checkbox" {...register("limits.allowFileUpload")} />
+              {f({ id: "allow_file_uploads" })}
+            </label>
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                {...register("limits.allowMultipleBranches")}
+              />
+              {f({ id: "allow_multiple_branches" })}
+            </label>
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                {...register("limits.allowBillingFeature")}
+              />
+              {f({ id: "enable_billing_features" })}
+            </label>
+          </div>
         </div>
 
         <div className="form-section">

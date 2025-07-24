@@ -4,6 +4,7 @@ import clinic.dev.backend.util.ApiRes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -100,5 +101,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiRes<String>> handleClinicLimitExceededException(ClinicLimitExceededException ex) {
     ApiRes<String> response = new ApiRes<>(Map.of("error", ex.getMessage()));
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<ApiRes<String>> handleHttpRequestMethodNotSupportedException(
+      HttpRequestMethodNotSupportedException ex) {
+    ApiRes<String> response = new ApiRes<>(Map.of("error", "Method not allowed"));
+    return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
   }
 }

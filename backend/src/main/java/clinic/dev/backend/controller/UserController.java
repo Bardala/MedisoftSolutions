@@ -1,10 +1,12 @@
 package clinic.dev.backend.controller;
 
+import clinic.dev.backend.dto.user.UpdateUserReqDTO;
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
 import clinic.dev.backend.model.User.UserRole;
 import clinic.dev.backend.service.impl.UserService;
 import clinic.dev.backend.util.ApiRes;
+import clinic.dev.backend.util.AuthContext;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class UserController {
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private AuthContext authContext;
 
   @GetMapping("/health")
   public ResponseEntity<String> health() {
@@ -69,11 +74,28 @@ public class UserController {
     return ResponseEntity.ok(new ApiRes<>(user));
   }
 
-  @PutMapping("/update/{id}")
-  public ResponseEntity<ApiRes<UserResDTO>> updateUser(
-      @PathVariable("id") Long id,
-      @Valid @RequestBody UserReqDTO updatedUser) throws IllegalAccessException {
-    UserResDTO user = userService.update(id, updatedUser);
+  // @PutMapping("/update")
+  // public ResponseEntity<ApiRes<UserResDTO>> updateUser(
+  // @Valid @RequestBody UpdateUserReqDTO updatedUser) throws
+  // IllegalAccessException {
+  // UserResDTO user = userService.update(updatedUser);
+  // return ResponseEntity.ok(new ApiRes<>(user));
+  // }
+
+  // Update current user (no ID in path)
+  @PutMapping
+  public ResponseEntity<ApiRes<UserResDTO>> updateCurrentUser(
+      @Valid @RequestBody UpdateUserReqDTO updatedUser) {
+    UserResDTO user = userService.updateUser(authContext.getUserId(), updatedUser);
+    return ResponseEntity.ok(new ApiRes<>(user));
+  }
+
+  // Update specific user (requires ID)
+  @PutMapping("/{id}")
+  public ResponseEntity<ApiRes<UserResDTO>> updateUserById(
+      @PathVariable Long id,
+      @Valid @RequestBody UpdateUserReqDTO updatedUser) {
+    UserResDTO user = userService.updateUser(id, updatedUser);
     return ResponseEntity.ok(new ApiRes<>(user));
   }
 

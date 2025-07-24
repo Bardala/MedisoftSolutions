@@ -62,4 +62,11 @@ public interface UserRepo extends JpaRepository<User, Long> {
   List<User> findByIdInAndClinicId(List<Long> ids, Long clinicId);
 
   Integer countUsersByClinicId(Long clinicId);
+
+  @Query("SELECT u FROM User u WHERE u.id = :id AND " +
+      "(u.clinic.id = :clinicId OR :isSuperAdmin = true)")
+  Optional<User> findByIdWithSecurityContext(
+      @Param("id") Long id,
+      @Param("clinicId") Long clinicId,
+      @Param("isSuperAdmin") boolean isSuperAdmin);
 }

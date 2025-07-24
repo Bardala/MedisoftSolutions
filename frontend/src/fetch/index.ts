@@ -3,6 +3,7 @@ import { HOST } from "../utils/HOST";
 import { LOCALS } from "../utils/localStorage";
 import { ApiRes, RestMethod } from "../types";
 import { ApiError } from "./ApiError";
+import { ERROR_MESSAGES } from "../utils/errorMessages";
 
 const apiVersion = "/api/v1";
 
@@ -63,8 +64,11 @@ export const fetchFn = async <Request, Response>(
   }
 
   if (!res.ok) {
-    throw new ApiError(res.status, "Internal Server Error", {
-      "error 500": "error 500: Internal Server Error",
+    const message =
+      ERROR_MESSAGES[res.status] ||
+      "Something unexpected happened. Hang tight while we fix it.";
+    throw new ApiError(res.status, message, {
+      [`error ${res.status}`]: message,
     });
   }
 

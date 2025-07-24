@@ -87,9 +87,11 @@ export const PrescriptionPrintModern: FC<PrescriptionPrintProps> = ({
               <p>
                 <strong>Name:</strong> {patient?.fullName}
               </p>
-              <p>
-                <strong>Age:</strong> {patient?.age} years
-              </p>
+              {patient?.age && (
+                <p>
+                  <strong>Age:</strong> {patient?.age} years
+                </p>
+              )}
               <p>
                 <FontAwesomeIcon icon={faCalendarAlt} />{" "}
                 {new Date(visit.createdAt).toLocaleDateString("en-GB")}
