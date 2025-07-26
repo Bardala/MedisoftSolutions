@@ -13,6 +13,7 @@ import clinic.dev.backend.repository.PatientFileRepo;
 import clinic.dev.backend.repository.PatientRepo;
 import clinic.dev.backend.service.FileStorageService;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.validation.PlanValidation;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public class PatientFileService {
 
   @Autowired
   private AuthContext authContext;
+  @Autowired
+  private PlanValidation planValidation;
 
   @Value("${spring.servlet.multipart.max-file-size:5MB}")
   private String maxFileSize;
@@ -58,11 +61,13 @@ public class PatientFileService {
     patientFile.setPatient(patient.get());
     patientFile.setClinic(patient.get().getClinic());
     patientFile.setFilePath(fileUrl);
+    patientFile.setFileSize(file.getSize());
 
     patientFileRepo.save(patientFile);
   }
 
   private void validateFileSize(MultipartFile file) {
+    planValidation.canUploadFile(file.getSize());
     long maxSizeBytes = parseSize(maxFileSize);
     if (file.getSize() > maxSizeBytes) {
       throw new FileStorageException("File size exceeds maximum allowed size of " + maxFileSize);
@@ -117,5 +122,15 @@ public class PatientFileService {
     file.setFileType(patientFileReq.getFileType());
     file.setDescription(patientFileReq.getDescription());
     patientFileRepo.save(file);
+  }
+
+  public long getTotalPatientFilesStorageForClinic(Long clinicId) {
+    if (clinicId.equals(authContext.getClinicId()) || authContext.isSuperAdmin()) {
+      Long id = clinicId == null ? authContext.getClinicId() : clinicId;
+      Long totalBytes = patientFileRepo.sumFileSizeBytesByClinicId(id);
+      return (totalBytes != null) ? totalBytes / (1024 * 1024) : 0L;
+    } else {
+      throw new IllegalArgumentException();
+    }
   }
 }

@@ -9,6 +9,7 @@ import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
 import clinic.dev.backend.repository.VisitRepo;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.validation.PlanValidation;
 import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Instant;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -36,13 +36,16 @@ public class VisitService {
   private VisitDentalProcedureRepo visitDentalProcedureRepo;
   @Autowired
   private VisitPaymentRepo visitPaymentRepo;
-
   @Autowired
   private AuthContext authContext;
+  @Autowired
+  private PlanValidation planValidation;
 
   @Transactional
   public VisitResDTO create(VisitReqDTO req) {
     Long clinicId = authContext.getClinicId();
+
+    planValidation.trackVisitIfNeeded();
 
     Visit visit = req.toEntity(clinicId);
     visit = visitRepo.save(visit);

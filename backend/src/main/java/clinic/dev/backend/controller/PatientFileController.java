@@ -93,4 +93,10 @@ public class PatientFileController {
     patientFileService.updatePatientFile(fileId, patientFileReq);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @GetMapping
+  public ResponseEntity<ApiRes<Long>> getTotalPatientsFilesStorageForClinic(@RequestParam("clinicId") Long clinicId) {
+    Long totalUsedStorage = patientFileService.getTotalPatientFilesStorageForClinic(clinicId);
+    return ResponseEntity.ok(new ApiRes<>(totalUsedStorage));
+  }
 }

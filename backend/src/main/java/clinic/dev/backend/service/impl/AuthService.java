@@ -16,7 +16,7 @@ import clinic.dev.backend.dto.auth.CurrUserInfo;
 import clinic.dev.backend.exceptions.UnauthorizedException;
 import clinic.dev.backend.exceptions.UserNotFoundException;
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.AuthServiceBase;
 import clinic.dev.backend.util.JwtUtil;

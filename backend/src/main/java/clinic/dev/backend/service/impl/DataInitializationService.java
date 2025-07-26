@@ -1,8 +1,15 @@
 package clinic.dev.backend.service.impl;
 
 import clinic.dev.backend.dto.auth.SignupRequest;
-import clinic.dev.backend.model.*;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.Clinic;
+import clinic.dev.backend.model.ClinicLimits;
+import clinic.dev.backend.model.Medicine;
+import clinic.dev.backend.model.Patient;
+import clinic.dev.backend.model.Payment;
+import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.Visit;
+import clinic.dev.backend.model.VisitMedicine;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

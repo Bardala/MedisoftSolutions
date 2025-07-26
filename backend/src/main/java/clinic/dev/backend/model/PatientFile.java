@@ -38,6 +38,9 @@ public class PatientFile { // todo: add file size
   @Column(nullable = true, length = 300)
   private String filePath;
 
+  @Column(name = "file_size", nullable = false)
+  private Long fileSize;
+
   /** Timestamp of when the file was uploaded. */
   @Column(nullable = false, updatable = false, name = "uploaded_at")
   @CreationTimestamp

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import clinic.dev.backend.exceptions.ExpiredTokenException;
 import clinic.dev.backend.exceptions.InvalidTokenException;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;

@@ -7,10 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import clinic.dev.backend.constants.ErrorMsg;
+import clinic.dev.backend.model.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -97,35 +95,4 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     return true; // Implement logic if needed
   }
-
-  public enum UserRole {
-    OWNER("Owner"),
-    DOCTOR("Doctor"),
-    ASSISTANT("Assistant"),
-    SUPER_ADMIN("SuperAdmin");
-
-    private final String displayName;
-
-    UserRole(String displayName) {
-      this.displayName = displayName;
-    }
-
-    @JsonValue
-    public String getDisplayName() {
-      return displayName;
-    }
-
-    @JsonCreator
-    public static UserRole fromString(String roleName) {
-      if (roleName == null)
-        return null;
-      for (UserRole role : values()) {
-        if (role.displayName.equalsIgnoreCase(roleName)) {
-          return role;
-        }
-      }
-      throw new IllegalArgumentException("No enum constant for role: " + roleName);
-    }
-  }
-
 }

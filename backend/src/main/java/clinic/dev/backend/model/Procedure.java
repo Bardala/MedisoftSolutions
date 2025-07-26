@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
-@Table(name = "services", uniqueConstraints = {
+@Table(name = "services", uniqueConstraints = { // todo: add uniqueness (servicename, clinicId)
     @UniqueConstraint(columnNames = "service_name")
 })
 @NoArgsConstructor

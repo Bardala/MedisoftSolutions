@@ -7,6 +7,7 @@ public record ClinicLimitsResDTO(
     Integer maxUsers,
     Integer maxFileStorageMb,
     Integer maxPatientRecords,
+    Integer maxVisitCount,
     Boolean allowFileUpload,
     Boolean allowMultipleBranches,
     Boolean allowBillingFeature) {
@@ -17,6 +18,7 @@ public record ClinicLimitsResDTO(
         limits.getMaxUsers(),
         limits.getMaxFileStorageMb(),
         limits.getMaxPatientRecords(),
+        limits.getMaxVisitCount(),
         limits.getAllowFileUpload(),
         limits.getAllowMultipleBranches(),
         limits.getAllowBillingFeature());

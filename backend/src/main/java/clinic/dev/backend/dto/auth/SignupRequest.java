@@ -1,7 +1,7 @@
 package clinic.dev.backend.dto.auth;
 
 import clinic.dev.backend.constants.ErrorMsg;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

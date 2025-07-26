@@ -5,7 +5,7 @@ import java.util.List;
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 
 public interface UserServiceBase {
   UserResDTO signup(SignupRequest signupRequest);

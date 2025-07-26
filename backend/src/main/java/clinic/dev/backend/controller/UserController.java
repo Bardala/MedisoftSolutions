@@ -3,7 +3,7 @@ package clinic.dev.backend.controller;
 import clinic.dev.backend.dto.user.UpdateUserReqDTO;
 import clinic.dev.backend.dto.user.UserReqDTO;
 import clinic.dev.backend.dto.user.UserResDTO;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.service.impl.UserService;
 import clinic.dev.backend.util.ApiRes;
 import clinic.dev.backend.util.AuthContext;

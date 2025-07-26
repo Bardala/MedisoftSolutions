@@ -12,7 +12,7 @@ import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.util.AuthContext;

@@ -8,6 +8,7 @@ public record ClinicLimitsReqDTO(
     @NotNull @Min(1) Integer maxUsers,
     @NotNull @Min(1) Integer maxFileStorageMb,
     @NotNull @Min(0) Integer maxPatientRecords,
+    @NotNull @Min(0) Integer maxVisitCount,
     @NotNull Boolean allowFileUpload,
     @NotNull Boolean allowMultipleBranches,
     @NotNull Boolean allowBillingFeature) {
@@ -17,6 +18,7 @@ public record ClinicLimitsReqDTO(
         .maxUsers(maxUsers)
         .maxFileStorageMb(maxFileStorageMb)
         .maxPatientRecords(maxPatientRecords)
+        .maxVisitCount(maxVisitCount)
         .allowFileUpload(allowFileUpload)
         .allowMultipleBranches(allowMultipleBranches)
         .allowBillingFeature(allowBillingFeature)
@@ -27,6 +29,7 @@ public record ClinicLimitsReqDTO(
     limits.setMaxUsers(maxUsers);
     limits.setMaxFileStorageMb(maxFileStorageMb);
     limits.setMaxPatientRecords(maxPatientRecords);
+    limits.setMaxVisitCount(maxVisitCount);
     limits.setAllowFileUpload(allowFileUpload);
     limits.setAllowMultipleBranches(allowMultipleBranches);
     limits.setAllowBillingFeature(allowBillingFeature);

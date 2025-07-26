@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import clinic.dev.backend.exceptions.InvalidTokenException;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.service.impl.UserDetailsServiceImpl;
 
 import java.io.IOException;

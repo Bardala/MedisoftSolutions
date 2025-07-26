@@ -8,6 +8,7 @@ import clinic.dev.backend.util.ApiRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class VisitController {
   private VisitService visitService;
 
   @PostMapping
+  @PreAuthorize("@planValidation.canCreateVisit()")
   public ResponseEntity<ApiRes<VisitResDTO>> createVisit(@RequestBody VisitReqDTO visit) {
     VisitResDTO createdVisit = visitService.create(visit);
     return ResponseEntity.ok(new ApiRes<>(createdVisit));
@@ -33,6 +35,7 @@ public class VisitController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("@planValidation.canCreateVisit()")
   public ResponseEntity<Void> deleteVisit(@PathVariable("id") Long id) {
     visitService.delete(id);
     return ResponseEntity.noContent().build();

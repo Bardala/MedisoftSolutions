@@ -12,7 +12,7 @@ import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.model.Queue;
 import clinic.dev.backend.model.Queue.Status;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.QueueRepo;
 import clinic.dev.backend.repository.UserRepo;

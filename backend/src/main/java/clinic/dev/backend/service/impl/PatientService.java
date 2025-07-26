@@ -14,11 +14,11 @@ import clinic.dev.backend.dto.visitPayment.VisitPaymentResDTO;
 import clinic.dev.backend.dto.visitProcedure.VisitProcedureResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.exceptions.BadRequestException;
-import clinic.dev.backend.exceptions.ClinicLimitExceededException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.validation.PlanValidation;
 import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,16 +73,12 @@ public class PatientService {
   private AuthContext authContext;
 
   @Autowired
-  private ClinicLimitsRepo clinicLimitsRepo;
+  private PlanValidation planValidation;
 
   @Transactional
   public PatientResDTO create(PatientReqDTO request) {
     Long clinicId = authContext.getClinicId();
-
-    if (clinicLimitsRepo.isPatientLimitReached(clinicId)) {
-      throw new ClinicLimitExceededException(
-          ("Cannot create patient. Clinic has reached maximum patient capacity"));
-    }
+    planValidation.trackPatientIfNeeded();
 
     if (patientRepo.existsByFullNameAndClinicId(request.fullName(), clinicId))
       throw new IllegalArgumentException("Patient name already exists in this clinic");

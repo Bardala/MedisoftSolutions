@@ -24,6 +24,10 @@ public class ClinicLimits {
   @Min(1)
   private Integer maxUsers;
 
+  @Column(name = "max_visit_count", nullable = false)
+  @Min(0)
+  private Integer maxVisitCount;
+
   @Column(name = "max_file_storage_mb", nullable = false)
   @Min(0)
   private Integer maxFileStorageMb;

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class PatientController {
   private PatientService patientService;
 
   @PostMapping
+  @PreAuthorize("@planValidation.canCreatePatient()")
   public ResponseEntity<ApiRes<PatientResDTO>> createPatient(@Valid @RequestBody PatientReqDTO req) {
     PatientResDTO createdPatient = patientService.create(req);
     return ResponseEntity.ok(new ApiRes<>(createdPatient));
@@ -42,6 +44,7 @@ public class PatientController {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("@planValidation.canCreatePatient()")
   public ResponseEntity<ApiRes<String>> deletePatient(@PathVariable("id") Long id) {
     patientService.delete(id);
     return ResponseEntity.ok(new ApiRes<>("Patient Deleted Successfully"));

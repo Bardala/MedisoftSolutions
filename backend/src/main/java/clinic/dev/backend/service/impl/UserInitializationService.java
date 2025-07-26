@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.model.Medicine;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.repository.MedicineRepo;
 import clinic.dev.backend.repository.UserRepo;
 import jakarta.annotation.PostConstruct;

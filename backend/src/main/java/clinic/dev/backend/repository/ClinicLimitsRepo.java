@@ -23,4 +23,10 @@ public interface ClinicLimitsRepo extends JpaRepository<ClinicLimits, Long> {
       "WHERE cl.clinic.id = :clinicId " +
       "GROUP BY cl.maxPatientRecords")
   boolean isPatientLimitReached(@Param("clinicId") Long clinicId);
+
+  @Query("SELECT cu.visitCount >= cl.maxVisitCount " +
+      "FROM ClinicUsage cu " +
+      "JOIN ClinicLimits cl ON cu.clinic.id = cl.clinic.id " +
+      "WHERE cu.clinic.id = :clinicId")
+  boolean isVisitLimitReached(@Param("clinicId") Long clinicId);
 }

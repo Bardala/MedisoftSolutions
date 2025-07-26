@@ -4,6 +4,7 @@ import clinic.dev.backend.dto.clinic.req.ClinicLimitsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicSearchReq;
 import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
+import clinic.dev.backend.dto.clinic.req.ClinicUsageReqDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
@@ -13,11 +14,13 @@ import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.ClinicSettings;
+import clinic.dev.backend.model.ClinicUsage;
 import clinic.dev.backend.model.Medicine;
 import clinic.dev.backend.model.User;
 import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.ClinicRepo;
 import clinic.dev.backend.repository.ClinicSettingsRepo;
+import clinic.dev.backend.repository.ClinicUsageRepo;
 import clinic.dev.backend.repository.MedicineRepo;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.ClinicServiceBase;
@@ -57,6 +60,8 @@ public class ClinicService implements ClinicServiceBase {
   private PasswordEncoder passwordEncoder;
   @Autowired
   private MedicineRepo medicineRepo;
+  @Autowired
+  private ClinicUsageRepo clinicUsageRepo;
 
   @Override
   public List<ClinicResDTO> getAllClinics() {
@@ -198,11 +203,21 @@ public class ClinicService implements ClinicServiceBase {
 
     Clinic clinic = createClinic(clinicDto);
     ClinicLimits limits = createClinicLimits(limitsDto, clinic);
+    // todo: return it in ClinicWithOwnerRes
+    @SuppressWarnings("unused")
+    ClinicUsage clinicUsage = createClinicUsage(new ClinicUsageReqDTO(clinic.getId(), 0, 0));
+
     User owner = createOwner(ownerDto, clinic);
     createDefaultClinicSettings(clinic, owner);
     initializeMedicinesForDentals(clinic.getId());
 
     return new ClinicWithOwnerRes(clinic, owner, limits);
+  }
+
+  @Transactional
+  public ClinicUsage createClinicUsage(ClinicUsageReqDTO req) {
+    ClinicUsage clinicUsage = req.toEntity();
+    return clinicUsageRepo.save(clinicUsage);
   }
 
   @Transactional

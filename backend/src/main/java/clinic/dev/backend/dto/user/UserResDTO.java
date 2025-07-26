@@ -3,7 +3,7 @@ package clinic.dev.backend.dto.user;
 import java.time.Instant;
 
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 
 public record UserResDTO(
     Long id,

@@ -1,6 +1,6 @@
 package clinic.dev.backend.dto.auth;
 
-import clinic.dev.backend.model.User.UserRole;
+import clinic.dev.backend.model.enums.UserRole;
 import lombok.Data;
 
 @Data
