@@ -2,10 +2,10 @@
 ALTER TABLE
   clinic_limits
 ADD
-  COLUMN max_visit_count INTEGER NOT NULL DEFAULT 0;
+  COLUMN IF NOT EXISTS max_visit_count INTEGER NOT NULL DEFAULT 0;
 
 -- Create clinic_billing_plan table
-CREATE TABLE clinic_billing_plan (
+CREATE TABLE IF NOT EXISTS clinic_billing_plan (
   id BIGSERIAL PRIMARY KEY,
   clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinic(id),
   plan_type VARCHAR(20) NOT NULL CHECK (
@@ -21,7 +21,7 @@ CREATE TABLE clinic_billing_plan (
 );
 
 -- Create clinic_usage table
-CREATE TABLE clinic_usage (
+CREATE TABLE IF NOT EXISTS clinic_usage (
   id BIGSERIAL PRIMARY KEY,
   clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinic(id),
   visit_count INTEGER NOT NULL DEFAULT 0,
