@@ -1,0 +1,4 @@
+ALTER TABLE
+  patient_files
+ADD
+  COLUMN IF NOT EXISTS file_size BIGINT NOT NULL DEFAULT 0;
