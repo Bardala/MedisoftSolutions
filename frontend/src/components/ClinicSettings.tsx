@@ -227,29 +227,6 @@ export const ClinicSettings = () => {
                   {msg("clinicSettings.backupEnabled")}
                 </label>
               </div>
-
-              {/* <label>{msg("clinicSettings.backupDbPath")}</label>
-              <input
-                name="backupDbPath"
-                value={settings.backupDbPath || ""}
-                onChange={handleChange}
-              /> */}
-
-              {/* <label>{msg("clinicSettings.backupImagesPath")}</label>
-              <input
-                name="backupImagesPath"
-                value={settings.backupImagesPath || ""}
-                onChange={handleChange}
-              /> */}
-
-              {/* <label>{msg("clinicSettings.backupIntervalDays")}</label>
-              <input
-                type="number"
-                name="backupIntervalDays"
-                value={settings.backupIntervalDays || ""}
-                onChange={handleChange}
-                disabled
-              /> */}
             </fieldset>
 
             <fieldset>

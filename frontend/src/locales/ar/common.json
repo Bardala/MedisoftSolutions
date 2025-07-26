@@ -207,13 +207,13 @@
 
   "clinicData.title": "معلومات العيادة",
 
-  "clinic_limits.title": "حدود العيادة",
+  "clinic_limits.title": "الخطة الحالية",
   "clinic_limits.edit_button": "تعديل الحدود",
   "clinic_limits.cancel_button": "إلغاء",
   "clinic_limits.save_button": "حفظ التغييرات",
   "clinic_limits.max_users": "الحد الأقصى للمستخدمين",
   "clinic_limits.max_storage": "الحد الأقصى للتخزين (ميجابايت)",
-  "clinic_limits.max_patients": "الحد الأقصى للمرضى",
+  "clinic_limits.max_patients": "الحد الأقصى للزيارات",
   "clinic_limits.allow_file_upload": "السماح برفع الملفات",
   "clinic_limits.allow_multiple_branches": "السماح بفروع متعددة",
   "clinic_limits.allow_billing_feature": "السماح بميزة الفواتير",
@@ -237,5 +237,21 @@
   "createdAt": "تم الإنشاء في",
 
   "chooseLogoDesign": "اختر تصميم الشعار",
-  "logo.label": "شعار العيادة"
+  "logo.label": "شعار العيادة",
+
+  "clinic_limits.storage_usage": "استخدام التخزين",
+  "clinic_limits.storage_details": "{used} ميجابايت من أصل {total} ميجابايت مستخدمة",
+  "clinic_limits.storage_warning": "تحذير: المساحة التخزينية أوشكت على الامتلاء!",
+
+  "clinic_usage.visits": "إجمالي الزيارات",
+  "clinic_usage.users": "إجمالي المستخدمين",
+  "clinic_usage.storage": "إجمالي السعة التخزينية",
+  "clinic_usage.patients": "إجمالي المرضى",
+  "clinic_usage.last_updated": "آخر تحديث: {date}",
+
+  "combined_chart_description": "اتجاهات الإيرادات والزيارات اليومية",
+
+  "clinicStaffTitle": "فريق العيادة",
+  "notSpecified": "غير محدد",
+  "noStaff": "لم يتم العثور على أعضاء في الفريق"
 }

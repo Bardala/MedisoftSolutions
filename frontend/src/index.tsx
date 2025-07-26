@@ -13,18 +13,18 @@ import { customRetry } from "./utils";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 // Register service worker
-if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("SW registered:", registration);
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed:", registrationError);
-      });
-  });
-}
+// if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+//   window.addEventListener("load", () => {
+//     navigator.serviceWorker
+//       .register("/service-worker.js")
+//       .then((registration) => {
+//         console.log("SW registered:", registration);
+//       })
+//       .catch((registrationError) => {
+//         console.log("SW registration failed:", registrationError);
+//       });
+//   });
+// }
 
 const queryClient = new QueryClient({
   defaultOptions: {

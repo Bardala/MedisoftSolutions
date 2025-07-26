@@ -9,6 +9,7 @@ import type {
   ClinicSearchReq,
   ClinicWithOwnerReq,
   ClinicWithOwnerRes,
+  ClinicUsageRes,
 } from "../dto";
 import { ClinicApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
@@ -151,5 +152,16 @@ export const useGetClinicLimits = (clinicId?: number) => {
 export const useCreateClinicWithOwner = () => {
   return useMutation<ClinicWithOwnerRes, ApiError, ClinicWithOwnerReq>(
     (data: ClinicWithOwnerReq) => ClinicApi.createWithOwner(data),
+  );
+};
+
+export const useGetClinicUsage = (clinicId: number) => {
+  return useQuery<ClinicUsageRes, ApiError>(
+    ["clinicUsage", clinicId],
+    () => ClinicApi.getClinicUsage(clinicId),
+    {
+      staleTime: 5 * 60 * 1000,
+      enabled: !!clinicId,
+    },
   );
 };

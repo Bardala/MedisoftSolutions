@@ -1,0 +1,71 @@
+.clinic-staff-container {
+  background-color: var(--section-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  color: var(--text-color);
+  max-width: 1000px;
+  margin: auto;
+}
+
+.clinic-staff-title {
+  font-size: var(--font-size-title);
+  color: var(--fourth-color);
+  margin-bottom: var(--padding-medium);
+  text-align: center;
+}
+
+.staff-list {
+  display: grid;
+  gap: var(--padding-medium);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.staff-card {
+  /* background-color: var(--white); */
+  border: 1px solid var(--list-border-color);
+  border-radius: var(--border-radius);
+  padding: var(--padding-small);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--padding-small);
+  box-shadow: var(--shadow-light);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.staff-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.staff-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.staff-details {
+  flex: 1;
+  font-size: var(--font-size-body);
+  color: var(--text-color);
+}
+
+.staff-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.staff-loading,
+.staff-error,
+.staff-empty {
+  text-align: center;
+  color: var(--text-color);
+  padding: var(--padding-medium);
+}

@@ -84,6 +84,7 @@ export enum ENDPOINT {
   GET_MONTHLY_DAYS_INFO = "/reports/month/daysInfo",
 
   // PatientFile APIs
+  PATIENT_FILE = "/patient-file",
   UPLOAD_PATIENT_FILE = "/patient-file",
   UPLOAD_FILES = "/patient-file/upload-multiple",
   GET_FILES = "/patient-file/:patientId",
@@ -126,4 +127,6 @@ export enum ENDPOINT {
   UPDATE_CLINIC_LIMITS = "/clinics/:id/limits",
   CREATE_CLINIC_WITH_OWNER = "/clinics/with-owner",
   PATIENT_STATISTICS = "/patients/statistics",
+
+  GET_CLINIC_USAGE = "/clinic-usage/:id",
 }

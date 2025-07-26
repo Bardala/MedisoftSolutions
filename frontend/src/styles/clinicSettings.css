@@ -1,90 +1,164 @@
-.clinic-settings-container {
+/* ClinicUsageAndLimits.mobile.css */
+
+.clinic-usage-limits-container {
   background-color: var(--third-bg);
-  padding: var(--padding-large);
+  padding: var(--padding-medium);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   color: var(--text-color);
-  /* max-width: 600px; */
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
 }
 
-.clinic-settings-title {
-  font-size: var(--font-size-title);
+.clinic-usage-limits-title {
+  font-size: var(--font-size-welcome);
   color: var(--label-color);
   margin-bottom: var(--padding-medium);
   text-align: center;
 }
 
-.clinic-settings-form {
-  display: flex;
-  flex-direction: column;
+/* Usage Bars Grid - Mobile */
+.usage-bars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--padding-small);
-}
-
-.clinic-settings-form label {
-  font-weight: bold;
-  color: var(--label-color);
-}
-
-.clinic-settings-form form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--padding-small);
-}
-
-.clinic-settings-form input,
-.clinic-settings-form textarea,
-.clinic-settings-form button {
-  font-size: var(--font-size-body);
-  padding: var(--padding-small);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  /* width: 100%; */
-  /* Full width for inputs and buttons */
-}
-
-.clinic-settings-form input:focus,
-.clinic-settings-form input[type="text"]:focus,
-.clinic-settings-form textarea:focus,
-.clinic-settings-form button:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0px 0px 8px var(--primary-hover);
-}
-
-.clinic-settings-form textarea {
-  resize: none;
-  height: 80px;
-  /* Smaller height for small screens */
-}
-
-.clinic-settings-form button {
-  background-color: var(--primary-color);
-  color: var(--white);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.clinic-settings-form button:hover {
-  background-color: var(--primary-hover);
-}
-
-.clinic-settings-form button:disabled {
-  background-color: var(--secondary-bg);
-  color: var(--secondary-color);
-  cursor: not-allowed;
-}
-
-.settings-section {
   margin-bottom: var(--padding-medium);
-  padding: var(--padding-small);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background-color: var(--section-bg);
 }
 
-.settings-section legend {
-  font-weight: bold;
+.usage-bar-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  padding: var(--padding-small);
+  transition: transform 0.2s;
+}
+
+.usage-bar-card:hover {
+  transform: translateY(-2px);
+}
+
+.usage-bar-title {
   color: var(--label-color);
-  padding: 0 var(--padding-small);
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  margin-bottom: var(--padding-small);
+}
+
+.usage-bar-value {
+  color: var(--secondary-color);
+  font-size: 1.2rem;
+  margin-bottom: var(--padding-small);
+}
+
+.usage-bar-limit {
+  color: var(--fourth-color);
+  font-size: 0.9rem;
+}
+
+.usage-bar-progress {
+  margin-top: var(--padding-small);
+}
+
+/* Feature Toggles - Mobile */
+.feature-toggles-section {
+  background: var(--section-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--padding-medium);
+}
+
+.feature-toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-small) 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.feature-toggle-item:last-child {
+  border-bottom: none;
+}
+
+.feature-toggle-label {
+  color: var(--label-color);
+  font-weight: 500;
+}
+
+/* Edit Form - Mobile */
+.clinic-limits-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+.clinic-limits-edit-form .ant-form-item {
+  margin-bottom: var(--padding-small);
+}
+
+.clinic-limits-edit-form .ant-form-item-label>label {
+  color: var(--label-color);
+  font-weight: 500;
+}
+
+.clinic-limits-edit-form .ant-input,
+.clinic-limits-edit-form .ant-input-number {
+  width: 100%;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--padding-small);
+  margin-top: var(--padding-medium);
+}
+
+.clinic-settings-save {
+  width: 100%;
+  margin-top: var(--padding-small);
+  margin-bottom: var(--padding-small);
+}
+
+/* Alert Styles */
+.storage-alert {
+  margin-top: var(--padding-medium);
+  border-radius: var(--border-radius);
+}
+
+/* Dark Mode Adjustments */
+/* :root.dark-mode .clinic-usage-limits-container {
+  background-color: var(--fourth-bg);
+}
+
+:root.dark-mode .usage-bar-card {
+  background: var(--fourth-bg);
+  border-color: var(--list-border-color);
+}
+
+:root.dark-mode .usage-bar-value {
+  color: var(--white);
+}
+
+:root.dark-mode .feature-toggles-section {
+  background: var(--section-bg);
+  border-color: var(--list-border-color);
+} */
+
+/* Tablet and Desktop Adjustments */
+@media (min-width: 768px) {
+  .usage-bars-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .clinic-usage-limits-title {
+    font-size: var(--font-size-title);
+  }
+}
+
+@media (min-width: 992px) {
+  .usage-bars-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

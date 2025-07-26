@@ -16,6 +16,7 @@ import {
   GetAllPatientsApi,
   PatientSearchApi,
   PatientApi,
+  GetTotalStorageUsageApi,
 } from "../apis";
 import { PageRes, PatientReqDTO, PatientResDTO } from "../dto";
 
@@ -267,4 +268,15 @@ export const useGetPatientStatistics = () => {
     error: query.error,
     refetch: query.refetch,
   };
+};
+
+export const usePatientFileStorageUsage = (clinicId: number) => {
+  return useQuery(
+    ["storageUsage", clinicId],
+    () => GetTotalStorageUsageApi(clinicId),
+    {
+      select: (response) => response, // Extract the data from ApiRes
+      enabled: !!clinicId, // Only run query when clinicId is available
+    },
+  );
 };

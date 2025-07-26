@@ -189,3 +189,16 @@
   font-weight: bold;
   min-width: 200px;
 }
+
+.storage-usage-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.storage-details {
+  margin-top: 8px;
+  text-align: center;
+  color: #666;
+}

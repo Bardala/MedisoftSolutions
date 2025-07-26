@@ -28,3 +28,6 @@ export const DeleteFilesApi = (fileId: number) =>
   fetchFn<void, void>(ENDPOINT.DELETE_FILES, "DELETE", undefined, [
     fileId + "",
   ]);
+
+export const GetTotalStorageUsageApi = (clinicId: number) =>
+  fetchFn<void, number>(`${ENDPOINT.PATIENT_FILE}?clinicId=${clinicId}`, "GET");

@@ -205,13 +205,14 @@
 
   "clinicData.title": "Clinic Core",
 
-  "clinic_limits.title": "Clinic Limits",
+  "clinic_limits.title": "Plan Information",
   "clinic_limits.edit_button": "Edit Limits",
   "clinic_limits.cancel_button": "Cancel",
   "clinic_limits.save_button": "Save Changes",
   "clinic_limits.max_users": "Max Users",
   "clinic_limits.max_storage": "Max Storage (MB)",
   "clinic_limits.max_patients": "Max Patients",
+  "clinic_limits.max_visits": "Max Visits",
   "clinic_limits.allow_file_upload": "Allow File Upload",
   "clinic_limits.allow_multiple_branches": "Allow Multiple Branches",
   "clinic_limits.allow_billing_feature": "Allow Billing Feature",
@@ -235,5 +236,19 @@
 
   "createdAt": "Created At",
 
-  "chooseLogoDesign": "Choose Logo Design"
+  "chooseLogoDesign": "Choose Logo Design",
+
+  "clinic_limits.storage_usage": "Storage Usage",
+  "clinic_limits.storage_details": "{used} MB of {total} MB used",
+  "clinic_limits.storage_warning": "Warning: Storage space is almost full!",
+
+  "clinic_usage.visits": "Total Visits",
+  "clinic_usage.users": "Total Users",
+  "clinic_usage.storage": "Total Storage",
+  "clinic_usage.patients": "Total Patients",
+  "clinic_usage.last_updated": "Last updated: {date}",
+
+  "clinicStaffTitle": "Clinic Staff",
+  "notSpecified": "Not specified",
+  "noStaff": "No staff members found"
 }

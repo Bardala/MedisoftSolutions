@@ -1,0 +1,148 @@
+/* Main Card Container */
+.clinic-usage-limits-card {
+  background: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  margin-top: var(--padding-medium);
+  margin-bottom: var(--padding-medium);
+}
+
+.clinic-usage-limits-card:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+.clinic-usage-limits-card .ant-card-head {
+  background: var(--fourth-bg);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.clinic-usage-limits-card .ant-card-head-title {
+  color: var(--fourth-color);
+  font-size: var(--font-size-welcome);
+  font-weight: 600;
+}
+
+/* Usage Bars Section */
+.usage-bars {
+  margin-bottom: var(--padding-medium);
+}
+
+.usage-bars .ant-card {
+  background: var(--primary-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s;
+  height: 100%;
+}
+
+.usage-bars .ant-card:hover {
+  transform: translateY(-3px);
+}
+
+.usage-bars .ant-statistic-title {
+  color: var(--label-color);
+  font-size: var(--font-size-body);
+  font-weight: 500;
+}
+
+.usage-bars .ant-statistic-content {
+  color: var(--secondary-color);
+  font-size: 1.5rem;
+}
+
+.usage-bars .ant-statistic-content-suffix {
+  color: var(--fourth-color);
+  font-size: 1rem;
+}
+
+.usage-bars .ant-progress-line {
+  margin-top: var(--padding-small);
+}
+
+.usage-bars .ant-progress-bg {
+  background-color: var(--primary-color);
+}
+
+.usage-bars .ant-progress-status-exception .ant-progress-bg {
+  background-color: var(--error-text);
+}
+
+/* Feature Toggles Section */
+.feature-toggles {
+  background: var(--third-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  margin-top: var(--padding-medium);
+}
+
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-small) 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.toggle-item:last-child {
+  border-bottom: none;
+}
+
+.toggle-item .ant-typography {
+  color: var(--label-color);
+  font-weight: 500;
+}
+
+/* Edit Form Styles */
+.clinic-usage-limits-form .ant-form-item-label>label {
+  color: var(--label-color);
+  font-weight: 500;
+}
+
+.clinic-usage-limits-form .ant-input-number,
+.clinic-usage-limits-form .ant-input {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  /* background: var(--white); */
+}
+
+.clinic-usage-limits-form .ant-switch-checked {
+  background-color: var(--primary-color);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--padding-small);
+  margin-top: var(--padding-medium);
+}
+
+/* Alert Styles */
+.storage-alert {
+  margin-top: var(--padding-medium);
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .usage-bars .ant-col {
+    margin-bottom: var(--padding-small);
+  }
+
+  .clinic-usage-limits-card {
+    margin: 0 var(--padding-small) var(--padding-medium);
+  }
+
+  .clinic-usage-limits-card .ant-card-head-title {
+    font-size: calc(var(--font-size-welcome) * 0.9);
+  }
+
+  .usage-bars .ant-statistic-title {
+    font-size: calc(var(--font-size-body) * 0.9);
+  }
+
+  .usage-bars .ant-statistic-content {
+    font-size: 1.2rem;
+  }
+}

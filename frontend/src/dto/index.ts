@@ -377,6 +377,7 @@ export interface ClinicLimitsReqDTO {
   maxUsers: number;
   maxFileStorageMb: number;
   maxPatientRecords: number;
+  maxVisitCount: number;
   allowFileUpload: boolean;
   allowMultipleBranches: boolean;
   allowBillingFeature: boolean;
@@ -387,6 +388,7 @@ export interface ClinicLimitsResDTO {
   maxUsers: number;
   maxFileStorageMb: number;
   maxPatientRecords: number;
+  maxVisitCount: number;
   allowFileUpload: boolean;
   allowMultipleBranches: boolean;
   allowBillingFeature: boolean;
@@ -402,4 +404,12 @@ export interface ClinicWithOwnerReq {
   clinic: ClinicReqDTO;
   owner: UserReqDTO;
   limits: ClinicLimitsReqDTO;
+}
+
+export interface ClinicUsageRes {
+  id: number;
+  clinicId: number;
+  visitCount: number;
+  patientCount: number;
+  lastVisitAdded: Date;
 }

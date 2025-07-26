@@ -9,6 +9,7 @@ import {
   ClinicSearchReq,
   ClinicWithOwnerRes,
   ClinicWithOwnerReq,
+  ClinicUsageRes,
 } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
@@ -107,4 +108,9 @@ export const ClinicApi = {
       "POST",
       req,
     ),
+
+  getClinicUsage: (clinicId: number) =>
+    fetchFn<void, ClinicUsageRes>(ENDPOINT.GET_CLINIC_USAGE, "GET", undefined, [
+      clinicId.toString(),
+    ]),
 };
