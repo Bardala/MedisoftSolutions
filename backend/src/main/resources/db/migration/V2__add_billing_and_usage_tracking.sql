@@ -7,7 +7,7 @@ ADD
 -- Create clinic_billing_plan table
 CREATE TABLE IF NOT EXISTS clinic_billing_plan (
   id BIGSERIAL PRIMARY KEY,
-  clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinic(id),
+  clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinics(id),
   plan_type VARCHAR(20) NOT NULL CHECK (
     plan_type IN ('VISIT_BASED', 'MONTHLY', 'YEARLY', 'FREE')
   ),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS clinic_billing_plan (
 -- Create clinic_usage table
 CREATE TABLE IF NOT EXISTS clinic_usage (
   id BIGSERIAL PRIMARY KEY,
-  clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinic(id),
+  clinic_id BIGINT NOT NULL UNIQUE REFERENCES clinics(id),
   visit_count INTEGER NOT NULL DEFAULT 0,
   patient_count INTEGER NOT NULL DEFAULT 0,
   last_visit_added TIMESTAMPTZ
