@@ -8,7 +8,7 @@ import {
   IconDefinition,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { isDoctorRole, isSuperAdminRole, User } from "../types";
+import { isOwnerRole, isSuperAdminRole, User } from "../types";
 import { useIntl } from "react-intl";
 
 export interface MenuItem {
@@ -19,7 +19,7 @@ export interface MenuItem {
 
 export const useSidebar = (loggedInUser: User) => {
   const { formatMessage: f } = useIntl();
-  const isDoctor = isDoctorRole(loggedInUser.role);
+  const isOwner = isOwnerRole(loggedInUser.role);
   const isSuperAdmin = isSuperAdminRole(loggedInUser.role);
 
   const menuItems: MenuItem[] = [];
@@ -59,7 +59,7 @@ export const useSidebar = (loggedInUser: User) => {
         link: "/reports",
         icon: faFileArchive,
       },
-      ...(isDoctor
+      ...(isOwner
         ? [
             {
               label: f({ id: "monthlyReports" }),
