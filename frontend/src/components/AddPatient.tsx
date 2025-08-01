@@ -26,7 +26,7 @@ const AddPatient: React.FC = () => {
     const { name, value } = e.target;
     switch (name) {
       case "fullName":
-        dispatch({ type: "SET_FULL_NAME", payload: value.trimEnd() });
+        dispatch({ type: "SET_FULL_NAME", payload: value });
         break;
       case "age":
         dispatch({ type: "SET_AGE", payload: Number(value) });
