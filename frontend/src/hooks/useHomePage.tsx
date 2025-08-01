@@ -50,6 +50,7 @@ export const useHomePage = (loggedInUser: User) => {
     "/admin-clinics": <ClinicsList setSelectedOption={setSelectedOption} />,
     "/create-clinic": <CreateClinicWithOwner />,
     "/settings": <Settings setSelectedOption={setSelectedOption} />,
+    "/update-user-info": <EditUserInfo />,
   };
 
   const renderContent = () => {

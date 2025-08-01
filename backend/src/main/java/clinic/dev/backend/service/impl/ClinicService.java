@@ -1,22 +1,31 @@
 package clinic.dev.backend.service.impl;
 
+import clinic.dev.backend.dto.clinic.req.ClinicBillingPlanReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicLimitsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicSearchReq;
 import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicUsageReqDTO;
+import clinic.dev.backend.dto.clinic.req.CreateClinicWithOwnerReq;
+import clinic.dev.backend.dto.clinic.res.ClinicBillingPlanResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicWithOwnerRes;
 import clinic.dev.backend.dto.user.UserReqDTO;
+import clinic.dev.backend.dto.user.UserResDTO;
 import clinic.dev.backend.exceptions.ResourceNotFoundException;
 import clinic.dev.backend.model.Clinic;
+import clinic.dev.backend.model.ClinicBillingPlan;
 import clinic.dev.backend.model.ClinicLimits;
 import clinic.dev.backend.model.ClinicSettings;
 import clinic.dev.backend.model.ClinicUsage;
 import clinic.dev.backend.model.Medicine;
 import clinic.dev.backend.model.User;
+import clinic.dev.backend.model.enums.PlanType;
+import clinic.dev.backend.model.enums.SubscriptionStatus;
+import clinic.dev.backend.model.enums.UserRole;
+import clinic.dev.backend.repository.ClinicBillingPlanRepo;
 import clinic.dev.backend.repository.ClinicLimitsRepo;
 import clinic.dev.backend.repository.ClinicRepo;
 import clinic.dev.backend.repository.ClinicSettingsRepo;
@@ -26,6 +35,7 @@ import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.service.ClinicServiceBase;
 import clinic.dev.backend.util.AuthContext;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,6 +72,8 @@ public class ClinicService implements ClinicServiceBase {
   private MedicineRepo medicineRepo;
   @Autowired
   private ClinicUsageRepo clinicUsageRepo;
+  @Autowired
+  private ClinicBillingPlanRepo clinicBillingPlanRepo;
 
   @Override
   public List<ClinicResDTO> getAllClinics() {
@@ -197,21 +209,56 @@ public class ClinicService implements ClinicServiceBase {
 
   @Transactional
   public ClinicWithOwnerRes createClinicWithOwner(
-      ClinicReqDTO clinicDto,
-      ClinicLimitsReqDTO limitsDto,
-      UserReqDTO ownerDto) {
+      CreateClinicWithOwnerReq req) {
+    Clinic clinic = createClinic(req.clinic());
+    ClinicLimits limits = createClinicLimits(req.limits(), clinic);
+    createClinicUsage(new ClinicUsageReqDTO(clinic.getId(), 0, 0));
+    ClinicBillingPlan plan;
 
-    Clinic clinic = createClinic(clinicDto);
-    ClinicLimits limits = createClinicLimits(limitsDto, clinic);
-    // todo: return it in ClinicWithOwnerRes
-    @SuppressWarnings("unused")
-    ClinicUsage clinicUsage = createClinicUsage(new ClinicUsageReqDTO(clinic.getId(), 0, 0));
+    if (req.plan() == null)
+      plan = createClinicBillingPlan(clinic.getId());
+    else
+      plan = clinicBillingPlanRepo.save(req.plan().toEntity(clinic.getId()));
 
-    User owner = createOwner(ownerDto, clinic);
+    User owner = createOwner(req.owner(), clinic);
     createDefaultClinicSettings(clinic, owner);
     initializeMedicinesForDentals(clinic.getId());
 
-    return new ClinicWithOwnerRes(clinic, owner, limits);
+    return new ClinicWithOwnerRes(ClinicResDTO.fromEntity(clinic), UserResDTO.fromEntity(owner),
+        ClinicLimitsResDTO.fromEntity(limits), ClinicBillingPlanResDTO.fromEntity(plan));
+  }
+
+  @Transactional(readOnly = true)
+  public ClinicWithOwnerRes getClinicWithOwner(Long id) {
+    Clinic clinic = clinicRepo.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Clinic not found"));
+
+    User owner = userRepo.findByClinicIdAndRole(clinic.getId(), UserRole.OWNER);
+
+    ClinicLimits limits = clinicLimitsRepo.findByClinicId(clinic.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Clinic limits not found"));
+
+    ClinicBillingPlan plan = clinicBillingPlanRepo.findByClinicId(clinic.getId());
+
+    return new ClinicWithOwnerRes(ClinicResDTO.fromEntity(clinic), UserResDTO.fromEntity(owner),
+        ClinicLimitsResDTO.fromEntity(limits), ClinicBillingPlanResDTO.fromEntity(plan));
+  }
+
+  @Transactional
+  public void updateClinicBillingPlan(ClinicBillingPlanReqDTO req, Long clinicId) {
+    clinicBillingPlanRepo.save(req.toEntity(clinicId));
+  }
+
+  public ClinicBillingPlanResDTO getBillingPlan(Long clinicId) {
+    return ClinicBillingPlanResDTO.fromEntity(clinicBillingPlanRepo.findByClinicId(clinicId));
+  }
+
+  private ClinicBillingPlan createClinicBillingPlan(Long clinicId) {
+    ClinicBillingPlanReqDTO planReq = new ClinicBillingPlanReqDTO(PlanType.MONTHLY,
+        Instant.now(), null, 0.0, 0.0, 0.0, SubscriptionStatus.ACTIVE, true);
+
+    ClinicBillingPlan billingPlan = planReq.toEntity(clinicId);
+    return clinicBillingPlanRepo.save(billingPlan);
   }
 
   @Transactional
@@ -304,7 +351,111 @@ public class ClinicService implements ClinicServiceBase {
         createMedicine(clinicId, "Linezolid", "600 مجم", "مرتين في اليوم", 10, "تناول مع أو بدون طعام"),
         createMedicine(clinicId, "Gentamicin", "80 مجم", "ثلاث مرات في اليوم", 7, "يُعطى عن طريق الحقن"),
         createMedicine(clinicId, "Amphotericin B Oral Suspension", "100 مجم/مل", "أربع مرات في اليوم", 14,
-            "احتفظ بالسائل في الفم لأطول فترة ممكنة قبل البلع"));
+            "احتفظ بالسائل في الفم لأطول فترة ممكنة قبل البلع"),
+
+        // Surgical Medicines
+        createMedicine(clinicId, "Cefuroxime", "750 مجم", "ثلاث مرات في اليوم", 7, "حقن وريدي"),
+        createMedicine(clinicId, "Cefotaxime", "1 جم", "ثلاث مرات في اليوم", 7, "حقن وريدي"),
+        createMedicine(clinicId, "Meropenem", "1 جم", "ثلاث مرات في اليوم", 7, "حقن وريدي"),
+        createMedicine(clinicId, "Piperacillin-Tazobactam", "4.5 جم", "ثلاث مرات في اليوم", 7, "حقن وريدي"),
+        createMedicine(clinicId, "Teicoplanin", "400 مجم", "مرة واحدة في اليوم", 10, "حقن وريدي"),
+        createMedicine(clinicId, "Colistin", "2 مليون وحدة", "ثلاث مرات في اليوم", 14, "حقن وريدي"),
+        createMedicine(clinicId, "Tigecycline", "50 مجم", "مرتين في اليوم", 7, "حقن وريدي"),
+        createMedicine(clinicId, "Daptomycin", "500 مجم", "مرة واحدة في اليوم", 10, "حقن وريدي"),
+        createMedicine(clinicId, "Rifampicin", "600 مجم", "مرة واحدة في اليوم", 14, "تناول على معدة فارغة"),
+        createMedicine(clinicId, "Isoniazid", "300 مجم", "مرة واحدة في اليوم", 30, "تناول مع أو بدون طعام"),
+        createMedicine(clinicId, "Pyrazinamide", "1.5 جم", "مرة واحدة في اليوم", 30, "تناول مع الطعام"),
+        createMedicine(clinicId, "Ethambutol", "1.2 جم", "مرة واحدة في اليوم", 30, "تناول مع الطعام"),
+        createMedicine(clinicId, "Streptomycin", "1 جم", "مرة واحدة في اليوم", 30, "حقن عضلي"),
+        createMedicine(clinicId, "Capreomycin", "1 جم", "مرة واحدة في اليوم", 30, "حقن عضلي"),
+        createMedicine(clinicId, "Amikacin", "500 مجم", "مرة واحدة في اليوم", 10, "حقن وريدي"),
+        createMedicine(clinicId, "Tobramycin", "80 مجم", "ثلاث مرات في اليوم", 10, "حقن وريدي"),
+        createMedicine(clinicId, "Netilmicin", "150 مجم", "مرتين في اليوم", 10, "حقن وريدي"),
+        createMedicine(clinicId, "Clarithromycin", "500 مجم", "مرتين في اليوم", 7, "تناول مع الطعام"),
+        createMedicine(clinicId, "Roxithromycin", "150 مجم", "مرتين في اليوم", 7, "تناول قبل الأكل"),
+        createMedicine(clinicId, "Telithromycin", "800 مجم", "مرة واحدة في اليوم", 5, "تناول مع الطعام"),
+        createMedicine(clinicId, "Fosfomycin", "3 جم", "جرعة واحدة", 1, "تذاب في الماء وتشرب"),
+        createMedicine(clinicId, "Nitrofurantoin", "100 مجم", "أربع مرات في اليوم", 7, "تناول مع الطعام"),
+        createMedicine(clinicId, "Trimethoprim-Sulfamethoxazole", "160/800 مجم", "مرتين في اليوم", 7,
+            "تناول مع كوب ماء"),
+        createMedicine(clinicId, "Methenamine Hippurate", "1 جم", "مرتين في اليوم", 7, "تناول مع الطعام"),
+        createMedicine(clinicId, "Norfloxacin", "400 مجم", "مرتين في اليوم", 7, "تناول قبل الأكل بساعة"),
+        createMedicine(clinicId, "Ofloxacin", "200 مجم", "مرتين في اليوم", 7, "تناول مع أو بدون طعام"),
+        createMedicine(clinicId, "Gatifloxacin", "400 مجم", "مرة واحدة في اليوم", 7, "تناول مع أو بدون طعام"),
+        createMedicine(clinicId, "Sparfloxacin", "200 مجم", "مرة واحدة في اليوم", 7, "تناول بعد الأكل"),
+        createMedicine(clinicId, "Gemifloxacin", "320 مجم", "مرة واحدة في اليوم", 7, "تناول مع الطعام"),
+        createMedicine(clinicId, "Mupirocin Ointment", "2%", "ثلاث مرات في اليوم", 10, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Fusidic Acid Cream", "2%", "ثلاث مرات في اليوم", 10, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Silver Sulfadiazine Cream", "1%", "مرتين في اليوم", 14, "يوضع على الحروق"),
+        createMedicine(clinicId, "Povidone-Iodine Solution", "10%", "حسب الحاجة", 7, "يستخدم للتعقيم الموضعي"),
+        createMedicine(clinicId, "Chlorhexidine Gluconate Solution", "4%", "حسب الحاجة", 7, "يستخدم للتعقيم الموضعي"),
+        createMedicine(clinicId, "Hydrocortisone Cream", "1%", "مرتين في اليوم", 7, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Betamethasone Cream", "0.1%", "مرتين في اليوم", 7, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Clotrimazole Cream", "1%", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Terbinafine Cream", "1%", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Ketoconazole Cream", "2%", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Econazole Cream", "1%", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Nystatin Cream", "100,000 وحدة/جم", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Miconazole Powder", "2%", "مرتين في اليوم", 14, "ينثر على المنطقة المصابة"),
+        createMedicine(clinicId, "Tolnaftate Powder", "1%", "مرتين في اليوم", 14, "ينثر على المنطقة المصابة"),
+        createMedicine(clinicId, "Ciclopirox Olamine Cream", "1%", "مرتين في اليوم", 14, "يوضع على المنطقة المصابة"),
+        createMedicine(clinicId, "Amorolfine Nail Lacquer", "5%", "مرة واحدة في الأسبوع", 24, "يطلى الظفر المصاب"),
+        createMedicine(clinicId, "Caspofungin", "50 مجم", "مرة واحدة في اليوم", 14, "حقن وريدي"),
+        createMedicine(clinicId, "Micafungin", "100 مجم", "مرة واحدة في اليوم", 14, "حقن وريدي"),
+        createMedicine(clinicId, "Anidulafungin", "100 مجم", "مرة واحدة في اليوم", 14, "حقن وريدي"),
+        createMedicine(clinicId, "Flucytosine", "2.5 جم", "أربع مرات في اليوم", 14, "تناول مع الطعام"),
+        createMedicine(clinicId, "Voriconazole", "200 مجم", "مرتين في اليوم", 14, "تناول قبل الأكل بساعة"),
+        createMedicine(clinicId, "Posaconazole", "300 مجم", "مرة واحدة في اليوم", 14, "تناول مع الطعام"),
+        createMedicine(clinicId, "Itraconazole", "200 مجم", "مرتين في اليوم", 14, "تناول مع الطعام"),
+        createMedicine(clinicId, "Ketoconazole Tablet", "200 مجم", "مرة واحدة في اليوم", 14, "تناول مع الطعام"),
+        createMedicine(clinicId, "Griseofulvin", "500 مجم", "مرة واحدة في اليوم", 28, "تناول مع وجبة دهنية"),
+
+        createMedicine(clinicId, "Cefazolin", "1 جم IV", "مرة واحدة قبل الجراحة", 1, "اذن حقن خلال 60 دقائق قبل الشق"),
+        createMedicine(clinicId, "Ampicillin‑Sulbactam", "1.5 جم IV", "مرة واحدة قبل الجراحة", 1, "ابدأ خلال 60 دقائق"),
+        createMedicine(clinicId, "Ceftazidime", "2 جم IV", "مرة واحدة", 1, "قبل الجراحة ب60 دقائق"),
+        createMedicine(clinicId, "Metoclopramide", "10 ملغ IV/IM", "مرة واحدة", 1, "لمنع الغثيان أثناء الجراحة"),
+        createMedicine(clinicId, "Ondansetron", "4 ملغ IV", "مرة واحدة", 1, "لمنع الغثيان والقيء"),
+        createMedicine(clinicId, "Ranitidine IV", "50 ملغ IV", "مرة واحدة", 1, "قبل العملية بساعتين"),
+        createMedicine(clinicId, "Midazolam", "1–2 ملغ IV", "حسب الحاجة", 1, "تهدئة قبل التخدير"),
+        createMedicine(clinicId, "Diazepam", "5 ملغ IV/PO", "مرة واحدة", 1, "تهدئة قبل العملية"),
+        createMedicine(clinicId, "Propofol", "200–300 ملغ IV", "مرة واحدة", 1, "للتخدير العام"),
+        createMedicine(clinicId, "Ketamine", "1‑2 ملغ/كغ IV", "حسب الحاجة", 1, "للتحريض السريع"),
+        createMedicine(clinicId, "Fentanyl IV", "50–100 ميكروغرام", "حسب الحاجة", 1, "مخفف للألم أثناء العملية"),
+        createMedicine(clinicId, "Morphine IV", "2–4 ملغ", "حسب الحاجة بعد العملية", 1, "لألم ما بعد الجراحة"),
+        createMedicine(clinicId, "Hydromorphone", "1–2 ملغ IV", "حسب الحاجة", 1, "بديل للمورفين"),
+        createMedicine(clinicId, "Paracetamol IV", "1 جم IV", "كل 6 ساعات", 1, "لتسكين الألم وخفض الحرارة"),
+        createMedicine(clinicId, "Ketorolac", "30 ملغ IV/IM", "مرة واحدة", 1, "مسكن التهاب غير أفيوني"),
+        createMedicine(clinicId, "Enoxaparin", "40 ملغ SC", "مرة واحدة يومياً", 7, "منع جلطات الدم بعد الجراحة"),
+        createMedicine(clinicId, "Heparin", "5000 UI SC", "مرتين في اليوم", 7, "لمنع التخثر"),
+        createMedicine(clinicId, "Warfarin", "5 ملغ PO", "مرة واحدة يومياً", 5, "مراقبة INR خلال المتابعة"),
+        createMedicine(clinicId, "Dexmedetomidine", "0.5 ميكروغرام/كغ IV", "حسب الحاجة", 1,
+            "مهدئ ومضاد ألم أثناء التخدير"),
+        createMedicine(clinicId, "Dexamethasone IV", "8 ملغ IV", "مرة واحدة", 1, "لتقليل الوذمة والغثيان بعد العملية"),
+        createMedicine(clinicId, "Mannitol", "0.5‑1 جم/كغ IV", "مرة واحدة", 1,
+            "لخفض الضغط داخل الجمجمة أثناء جراحة دماغية"),
+        createMedicine(clinicId, "Atropine IV", "0.5 ملغ IV", "حسب الحاجة", 1, "لمنع بطء القلب أثناء التخدير"),
+        createMedicine(clinicId, "Neostigmine", "2.5 ملغ IV", "حسب الحاجة", 1,
+            "لعكس تأثير مرخّيات العضلات بعد Vecuronium"),
+        createMedicine(clinicId, "Glycopyrrolate", "0.4 ملغ IV", "مرة واحدة", 1, "مع Neostigmine لعكس الشلل العضلي"),
+        createMedicine(clinicId, "Atracurium", "50 ملغ IV", "حسب الحاجة", 1, "مرخي عضلي أثناء التخدير"),
+        createMedicine(clinicId, "Vecuronium", "10 ملغ IV", "حسب الحاجة", 1, "مرخي عضلي أثناء التخدير العام"),
+        createMedicine(clinicId, "Rocuronium", "50 ملغ IV", "حسب الحاجة", 1, "مرخي عضلي سريع الفعل"),
+        createMedicine(clinicId, "Sugammadex", "2 جم IV", "مرة واحدة", 1, "لعكس الشلل العضلي بسرعة"),
+        createMedicine(clinicId, "Tranexamic Acid", "1 جم IV", "مرة واحدة", 1, "لمنع النزف أثناء وبعد العملية"),
+        createMedicine(clinicId, "Omeprazole", "40 ملغ IV/PO", "مرة واحدة", 1, "لحماية المعدة أثناء الصيام الجراحي"),
+        createMedicine(clinicId, "Pantoprazole IV", "40 ملغ IV", "مرة واحدة", 1, "لحماية المعدة أثناء العملية"),
+        createMedicine(clinicId, "Esomeprazole IV", "40 ملغ IV", "مرة واحدة", 1, "حماية المعدة قبل/بعد الجراحة"),
+        createMedicine(clinicId, "Clonidine", "75 ميكروغرام PO", "مرة واحدة قبل العملية", 1, "لخفض ضغط الدم والتوتر"),
+        createMedicine(clinicId, "Clopidogrel", "75 ملغ PO", "مرة واحدة يومياً", 5,
+            "يوقف قبل الجراحة بعدة أيام حسب نوع العملية"),
+        createMedicine(clinicId, "Aspirin", "100 ملغ PO", "مرة واحدة يومياً", 5, "يوقف قبل العملية 5‑7 أيام"),
+        createMedicine(clinicId, "Bupivacaine", "0.25 % 20 مل", "حسب الحاجة", 1, "حقن موضعي قبل الشق الجراحي"),
+        createMedicine(clinicId, "Lidocaine IV", "1 ملغ/كغ IV", "مرة واحدة", 1, "مسكن سريع أثناء العملية"),
+        createMedicine(clinicId, "Ephedrine IV", "5 ملغ IV", "حسب الحاجة", 1, "للحفاظ على الضغط أثناء التخدير"),
+        createMedicine(clinicId, "Phenylephrine IV", "50 ميكروغرام IV", "حسب الحاجة", 1, "لضبط ضغط الدم عند انخفاضه"),
+        createMedicine(clinicId, "Oxytocin", "10 IU IV", "مرة واحدة ثم مضخة", 1, "لتحفيز تقلص الرحم بعد القيصرية"),
+        createMedicine(clinicId, "Magnesium Sulfate", "4 جم IV", "مرة واحدة", 1, "لمنع الصرع أثناء الولادة القيصرية"),
+        createMedicine(clinicId, "Morphine PCA", "حسب المضخة", "حسب الحاجة", 1, "للألم الحاد بعد العمليات الكبرى"));
 
     medicineRepo.saveAll(medicines);
   }

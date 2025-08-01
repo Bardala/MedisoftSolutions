@@ -6,5 +6,6 @@ import jakarta.validation.Valid;
 public record CreateClinicWithOwnerReq(
     @Valid ClinicReqDTO clinic,
     @Valid ClinicLimitsReqDTO limits,
-    @Valid UserReqDTO owner) {
+    @Valid UserReqDTO owner,
+    @Valid ClinicBillingPlanReqDTO plan) {
 }

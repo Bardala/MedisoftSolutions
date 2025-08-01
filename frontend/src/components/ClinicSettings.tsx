@@ -9,7 +9,6 @@ import {
 } from "../hooks/useClinic";
 import { ClinicResDTO, ClinicSettingsResDTO } from "../dto";
 import { ClinicStaff } from "./ClinicStaff";
-import { ClinicLimits } from "./ClinicLimits";
 
 export const ClinicSettings = () => {
   const {
@@ -267,7 +266,7 @@ export const ClinicSettings = () => {
           </>
         )}
 
-        <ClinicLimits clinicId={clinic?.id} />
+        {/* <ClinicLimits clinicId={clinic?.id} /> */}
         <ClinicStaff clinicId={clinic?.id} />
       </div>
     </div>

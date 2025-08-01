@@ -10,6 +10,8 @@ import {
   ClinicWithOwnerRes,
   ClinicWithOwnerReq,
   ClinicUsageRes,
+  ClinicBillingPlanReq,
+  ClinicBillingPlanRes,
 } from "../dto";
 import { fetchFn } from "../fetch";
 import { ENDPOINT } from "../fetch/endpoints";
@@ -113,4 +115,20 @@ export const ClinicApi = {
     fetchFn<void, ClinicUsageRes>(ENDPOINT.GET_CLINIC_USAGE, "GET", undefined, [
       clinicId.toString(),
     ]),
+
+  updateBillingPlan: (clinicId: number, req: ClinicBillingPlanReq) =>
+    fetchFn<ClinicBillingPlanReq, void>(
+      ENDPOINT.UPDATE_BILLING_PLAN,
+      "PUT",
+      req,
+      [clinicId.toString()],
+    ),
+
+  getBillingPlan: (clinicId: number) =>
+    fetchFn<void, ClinicBillingPlanRes>(
+      ENDPOINT.GET_BILLING_PLAN,
+      "GET",
+      undefined,
+      [clinicId.toString()],
+    ),
 };

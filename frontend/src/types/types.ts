@@ -274,3 +274,16 @@ export const isOwnerRole = (role: UserRole): boolean => role === UserRole.OWNER;
 
 export const isSuperAdminRole = (role: UserRole): boolean =>
   role === UserRole.SUPER_ADMIN;
+
+export enum PlanType {
+  FREE = "FREE",
+  VISIT_BASED = "VISIT_BASED",
+  MONTHLY = "MONTHLY",
+  YEARLY = "YEARLY",
+}
+
+export enum SubscriptionStatus {
+  ACTIVE = "ACTIVE",
+  EXPIRED = "EXPIRED",
+  CANCELLED = "CANCELLED",
+}

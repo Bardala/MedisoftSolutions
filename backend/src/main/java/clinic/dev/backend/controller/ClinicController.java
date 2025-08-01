@@ -1,10 +1,12 @@
 package clinic.dev.backend.controller;
 
+import clinic.dev.backend.dto.clinic.req.ClinicBillingPlanReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicLimitsReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicReqDTO;
 import clinic.dev.backend.dto.clinic.req.ClinicSearchReq;
 import clinic.dev.backend.dto.clinic.req.ClinicSettingsReqDTO;
 import clinic.dev.backend.dto.clinic.req.CreateClinicWithOwnerReq;
+import clinic.dev.backend.dto.clinic.res.ClinicBillingPlanResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicLimitsResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicResDTO;
 import clinic.dev.backend.dto.clinic.res.ClinicSettingsResDTO;
@@ -107,12 +109,32 @@ public class ClinicController {
   @PostMapping("/with-owner")
   @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicWithOwnerRes>> createClinicWithOwner(
-      @Valid @RequestBody CreateClinicWithOwnerReq request) {
-    ClinicWithOwnerRes response = clinicService.createClinicWithOwner(
-        request.clinic(),
-        request.limits(),
-        request.owner());
+      @Valid @RequestBody CreateClinicWithOwnerReq req) {
+    ClinicWithOwnerRes response = clinicService.createClinicWithOwner(req);
     return ResponseEntity.ok(new ApiRes<>(response));
+  }
+
+  @GetMapping("/with-owner/{id}")
+  @PreAuthorize("@auth.isSuperAdmin()")
+  public ResponseEntity<ApiRes<ClinicWithOwnerRes>> getClinicWithOwner(@PathVariable("id") Long id) {
+    ClinicWithOwnerRes response = clinicService.getClinicWithOwner(id);
+    return ResponseEntity.ok(new ApiRes<>(response));
+  }
+
+  @PutMapping("/billing-plan/{clinicId}")
+  @PreAuthorize("@auth.isSuperAdmin()")
+  public ResponseEntity<Void> updateBillingPlan(
+      @PathVariable("clinicId") Long clinicId,
+      @Valid ClinicBillingPlanReqDTO req) {
+    clinicService.updateClinicBillingPlan(req, clinicId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/billing-plan/{clinicId}")
+  public ResponseEntity<ApiRes<ClinicBillingPlanResDTO>> getBillingPlan(
+      @PathVariable("clinicId") Long clinicId) {
+    ClinicBillingPlanResDTO plan = clinicService.getBillingPlan(clinicId);
+    return ResponseEntity.ok(new ApiRes<>(plan));
   }
 
   @PostMapping("/settings/{id}")

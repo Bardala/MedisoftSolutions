@@ -1,9 +1,10 @@
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 import QRCodeComponent from "./QRCodeComponent";
-import { UserRole } from "../types/types";
+import { PlanType, SubscriptionStatus, UserRole } from "../types/types";
 import { ClinicWithOwnerReq } from "../dto";
 import { useCreateClinicWithOwner } from "../hooks/useClinic";
+import { dateFormate } from "../utils";
 
 export const CreateClinicWithOwner = () => {
   const { formatMessage: f } = useIntl();
@@ -16,14 +17,95 @@ export const CreateClinicWithOwner = () => {
     data,
   } = useCreateClinicWithOwner();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<ClinicWithOwnerReq>({
-    defaultValues: {
+  const [formData, setFormData] = useState<ClinicWithOwnerReq>({
+    clinic: {
+      name: "clinic",
+      address: "📍القاهرة - مصر",
+      phoneNumber: "0100000000",
+      email: "",
+      logoUrl: "",
+      workingHours: "يوميا عدا الجمعة من 12 ظهرا حتى 12 من منتصف الليل",
+      phoneSupportsWhatsapp: false,
+    },
+    limits: {
+      maxUsers: 5,
+      maxFileStorageMb: 512,
+      maxVisitCount: 50,
+      maxPatientRecords: 100,
+      allowFileUpload: true,
+      allowMultipleBranches: false,
+      allowBillingFeature: false,
+    },
+    owner: {
+      username: "",
+      name: "",
+      password: "",
+      phone: "0100000000",
+      role: UserRole.OWNER,
+      profilePicture: "",
+    },
+    plan: {
+      planType: PlanType.MONTHLY,
+      startDate: new Date(),
+      pricePerVisit: 0,
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      status: SubscriptionStatus.ACTIVE,
+      autoRenew: true,
+    },
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value, type } = e.target;
+    const isCheckbox = type === "checkbox";
+    const checked = isCheckbox
+      ? (e.target as HTMLInputElement).checked
+      : undefined;
+    const path = name.split(".");
+
+    setFormData((prev) => {
+      const newData = { ...prev };
+      let current = newData;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        current = current[path[i]];
+      }
+
+      current[path[path.length - 1]] = isCheckbox ? checked : value;
+      return newData;
+    });
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const path = name.split(".");
+
+    setFormData((prev) => {
+      const newData = { ...prev };
+      let current = newData;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        current = current[path[i]];
+      }
+
+      current[path[path.length - 1]] = new Date(value);
+      return newData;
+    });
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createClinicWithOwner(formData);
+    } catch (error) {
+      console.error("Creation failed:", error);
+    }
+  };
+
+  const handleCreateAnother = () => {
+    setFormData({
       clinic: {
         name: "",
         address: "📍",
@@ -36,6 +118,7 @@ export const CreateClinicWithOwner = () => {
       limits: {
         maxUsers: 5,
         maxFileStorageMb: 512,
+        maxVisitCount: 50,
         maxPatientRecords: 100,
         allowFileUpload: true,
         allowMultipleBranches: false,
@@ -49,25 +132,17 @@ export const CreateClinicWithOwner = () => {
         role: UserRole.OWNER,
         profilePicture: "",
       },
-    },
-  });
-
-  const onSubmit = async (data: ClinicWithOwnerReq) => {
-    try {
-      await createClinicWithOwner(data);
-    } catch (error) {
-      console.error("Creation failed:", error);
-    }
+      plan: {
+        planType: PlanType.MONTHLY,
+        startDate: new Date(),
+        pricePerVisit: 0,
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        status: SubscriptionStatus.ACTIVE,
+        autoRenew: true,
+      },
+    });
   };
-
-  const handleCreateAnother = () => {
-    reset();
-  };
-
-  // Auto-fill logic using watch
-  const watchedClinicEmail = watch("clinic.email");
-  const watchedClinicName = watch("clinic.name");
-  const watchedClinicPhone = watch("clinic.phoneNumber");
 
   if (isSuccess && data) {
     return (
@@ -104,13 +179,34 @@ export const CreateClinicWithOwner = () => {
               {data.limits.maxPatientRecords}
             </p>
           </div>
+
+          <h5>{f({ id: "billing_plan" })}</h5>
+          <div className="plan-display">
+            <p>
+              <strong>{f({ id: "plan_type" })}:</strong> {data.plan?.planType}
+            </p>
+            <p>
+              <strong>{f({ id: "start_date" })}:</strong>{" "}
+              {dateFormate(data.plan.startDate)}
+            </p>
+            {data.plan.endDate && (
+              <p>
+                <strong>{f({ id: "end_date" })}:</strong>{" "}
+                {dateFormate(data.plan.endDate)}
+              </p>
+            )}
+            <p>
+              <strong>{f({ id: "monthly_price" })}:</strong>{" "}
+              {data.plan?.monthlyPrice}
+            </p>
+          </div>
         </div>
 
         <div className="owner-credentials">
           <h4>{f({ id: "owner_account_details" })}</h4>
           <QRCodeComponent
             username={data.owner.username}
-            password={watch("owner.password")} // Using the original password
+            password={formData.owner.password}
           />
           <div className="credentials">
             <p>
@@ -118,7 +214,7 @@ export const CreateClinicWithOwner = () => {
             </p>
             <p>
               <strong>{f({ id: "password" })}:</strong>{" "}
-              {watch("owner.password")}
+              {formData.owner.password}
             </p>
           </div>
         </div>
@@ -134,58 +230,54 @@ export const CreateClinicWithOwner = () => {
     <div className="create-clinic-container">
       <h2>{f({ id: "create_new_clinic" })}</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div className="form-section">
           <h3>{f({ id: "clinic_information" })}</h3>
 
-          <div
-            className={`form-group ${errors.clinic?.name ? "has-error" : ""}`}
-          >
-            <label>{f({ id: "name" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "name" })}</label>
             <input
-              {...register("clinic.name", {
-                required: f({ id: "clinic_name_required" }),
-              })}
+              name="clinic.name"
+              value={formData.clinic.name}
+              onChange={handleChange}
             />
-            {errors.clinic?.name && (
-              <span className="error-text">{errors.clinic.name.message}</span>
-            )}
           </div>
 
           <div className="form-group">
             <label>{f({ id: "address" })}</label>
-            <input {...register("clinic.address")} />
+            <input
+              name="clinic.address"
+              value={formData.clinic.address}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>{f({ id: "phone" })}</label>
-            <input {...register("clinic.phoneNumber")} />
+            <input
+              name="clinic.phoneNumber"
+              value={formData.clinic.phoneNumber}
+              onChange={handleChange}
+            />
           </div>
 
-          <div
-            className={`form-group ${errors.clinic?.email ? "has-error" : ""}`}
-          >
-            <label>{f({ id: "email" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "email" })}</label>
             <input
               type="email"
-              {...register("clinic.email", {
-                required: f({ id: "email_required" }),
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: f({ id: "invalid_email" }),
-                },
-              })}
+              name="clinic.email"
+              value={formData.clinic.email}
+              onChange={handleChange}
             />
-            {errors.clinic?.email && (
-              <span className="error-text">{errors.clinic.email.message}</span>
-            )}
           </div>
 
           <div className="form-group checkbox-group">
             <label>
               <input
                 type="checkbox"
-                {...register("clinic.phoneSupportsWhatsapp")}
+                name="clinic.phoneSupportsWhatsapp"
+                checked={formData.clinic.phoneSupportsWhatsapp}
+                onChange={handleChange}
               />
               {f({ id: "clinicSettings.phoneSupportsWhatsapp" })}
             </label>
@@ -195,85 +287,59 @@ export const CreateClinicWithOwner = () => {
         <div className="form-section">
           <h3>{f({ id: "clinic_limits" })}</h3>
 
-          <div
-            className={`form-group ${
-              errors.limits?.maxUsers ? "has-error" : ""
-            }`}
-          >
-            <label>{f({ id: "max_users" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "max_users" })}</label>
             <input
               type="number"
               min="1"
-              {...register("limits.maxUsers", {
-                required: f({ id: "max_users_required" }),
-                valueAsNumber: true,
-                min: {
-                  value: 1,
-                  message: f({ id: "invalid_max_users" }),
-                },
-              })}
+              name="limits.maxUsers"
+              value={formData.limits.maxUsers}
+              onChange={handleChange}
             />
-            {errors.limits?.maxUsers && (
-              <span className="error-text">
-                {errors.limits.maxUsers.message}
-              </span>
-            )}
           </div>
 
-          <div
-            className={`form-group ${
-              errors.limits?.maxFileStorageMb ? "has-error" : ""
-            }`}
-          >
-            <label>{f({ id: "max_file_storage_mb" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "max_file_storage_mb" })}</label>
             <input
               type="number"
               min="1"
-              {...register("limits.maxFileStorageMb", {
-                required: f({ id: "max_storage_required" }),
-                valueAsNumber: true,
-                min: {
-                  value: 1,
-                  message: f({ id: "invalid_storage_amount" }),
-                },
-              })}
+              name="limits.maxFileStorageMb"
+              value={formData.limits.maxFileStorageMb}
+              onChange={handleChange}
             />
-            {errors.limits?.maxFileStorageMb && (
-              <span className="error-text">
-                {errors.limits.maxFileStorageMb.message}
-              </span>
-            )}
           </div>
 
-          <div
-            className={`form-group ${
-              errors.limits?.maxPatientRecords ? "has-error" : ""
-            }`}
-          >
-            <label>{f({ id: "max_patient_records" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "max_patient_records" })}</label>
             <input
               type="number"
               min="1"
-              {...register("limits.maxPatientRecords", {
-                required: f({ id: "max_patients_required" }),
-                valueAsNumber: true,
-                min: {
-                  value: 1,
-                  message: f({ id: "invalid_patient_records" }),
-                },
-              })}
+              name="limits.maxPatientRecords"
+              value={formData.limits.maxPatientRecords}
+              onChange={handleChange}
             />
-            {errors.limits?.maxPatientRecords && (
-              <span className="error-text">
-                {errors.limits.maxPatientRecords.message}
-              </span>
-            )}
+          </div>
+
+          <div className="form-group">
+            <label>{f({ id: "max_visit_count" })}</label>
+            <input
+              type="number"
+              min="1"
+              name="limits.maxVisitCount"
+              value={formData.limits.maxVisitCount}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group checkbox-group">
             <label>
-              <input type="checkbox" {...register("limits.allowFileUpload")} />
-              {f({ id: "allow_file_uploads" })}
+              <input
+                type="checkbox"
+                name="limits.allowFileUpload"
+                checked={formData.limits.allowFileUpload}
+                onChange={handleChange}
+              />
+              {f({ id: "allow_file_upload" })}
             </label>
           </div>
 
@@ -281,7 +347,9 @@ export const CreateClinicWithOwner = () => {
             <label>
               <input
                 type="checkbox"
-                {...register("limits.allowMultipleBranches")}
+                name="limits.allowMultipleBranches"
+                checked={formData.limits.allowMultipleBranches}
+                onChange={handleChange}
               />
               {f({ id: "allow_multiple_branches" })}
             </label>
@@ -291,7 +359,9 @@ export const CreateClinicWithOwner = () => {
             <label>
               <input
                 type="checkbox"
-                {...register("limits.allowBillingFeature")}
+                name="limits.allowBillingFeature"
+                checked={formData.limits.allowBillingFeature}
+                onChange={handleChange}
               />
               {f({ id: "enable_billing_features" })}
             </label>
@@ -301,84 +371,145 @@ export const CreateClinicWithOwner = () => {
         <div className="form-section">
           <h3>{f({ id: "owner_account" })}</h3>
 
-          <div
-            className={`form-group ${
-              errors.owner?.username ? "has-error" : ""
-            }`}
-          >
-            <label>{f({ id: "username" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "username" })}</label>
             <input
-              {...register("owner.username", {
-                required: f({ id: "username_required" }),
-                onBlur: (e) => {
-                  if (!e.target.value && watchedClinicEmail) {
-                    e.target.value = watchedClinicEmail.split("@")[0];
-                  }
-                },
-              })}
+              name="owner.username"
+              value={formData.owner.username}
+              onChange={handleChange}
             />
-            {errors.owner?.username && (
-              <span className="error-text">
-                {errors.owner.username.message}
-              </span>
-            )}
           </div>
 
-          <div
-            className={`form-group ${errors.owner?.name ? "has-error" : ""}`}
-          >
-            <label>{f({ id: "full_name" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "full_name" })}</label>
             <input
-              {...register("owner.name", {
-                required: f({ id: "name_required" }),
-                onBlur: (e) => {
-                  if (!e.target.value && watchedClinicName) {
-                    e.target.value = `${watchedClinicName} Owner`;
-                  }
-                },
-              })}
+              name="owner.name"
+              value={formData.owner.name}
+              onChange={handleChange}
             />
-            {errors.owner?.name && (
-              <span className="error-text">{errors.owner.name.message}</span>
-            )}
           </div>
 
-          <div
-            className={`form-group ${
-              errors.owner?.password ? "has-error" : ""
-            }`}
-          >
-            <label>{f({ id: "password" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "password" })}</label>
             <input
               type="password"
-              {...register("owner.password", {
-                required: f({ id: "password_required" }),
-              })}
+              name="owner.password"
+              value={formData.owner.password}
+              onChange={handleChange}
             />
-            {errors.owner?.password && (
-              <span className="error-text">
-                {errors.owner.password.message}
-              </span>
-            )}
           </div>
 
-          <div
-            className={`form-group ${errors.owner?.phone ? "has-error" : ""}`}
-          >
-            <label>{f({ id: "phone" })}*</label>
+          <div className="form-group">
+            <label>{f({ id: "phone" })}</label>
             <input
-              {...register("owner.phone", {
-                required: f({ id: "phone_required" }),
-                onBlur: (e) => {
-                  if (!e.target.value && watchedClinicPhone) {
-                    e.target.value = watchedClinicPhone;
-                  }
-                },
-              })}
+              name="owner.phone"
+              value={formData.owner.phone}
+              onChange={handleChange}
             />
-            {errors.owner?.phone && (
-              <span className="error-text">{errors.owner.phone.message}</span>
-            )}
+          </div>
+        </div>
+
+        <div className="form-section">
+          <h3>{f({ id: "billing_plan" })}</h3>
+          <div className="form-group">
+            <label>{f({ id: "plan_type" })}</label>
+            <select
+              name="plan.planType"
+              value={formData.plan.planType}
+              onChange={handleChange}
+            >
+              {Object.values(PlanType).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>{f({ id: "start_date" })}</label>
+            <input
+              type="date"
+              name="plan.startDate"
+              value={formData.plan.startDate.toISOString().split("T")[0]}
+              onChange={handleDateChange}
+            />
+          </div>
+
+          {formData.plan.planType !== PlanType.VISIT_BASED && (
+            <div className="form-group">
+              <label>{f({ id: "end_date" })} (optional)</label>
+              <input
+                type="date"
+                name="plan.endDate"
+                value={formData.plan.endDate?.toISOString().split("T")[0] || ""}
+                onChange={handleDateChange}
+              />
+            </div>
+          )}
+
+          {formData.plan.planType === PlanType.VISIT_BASED && (
+            <div className="form-group">
+              <label>{f({ id: "price_per_visit" })}</label>
+              <input
+                type="number"
+                step="0.01"
+                name="plan.pricePerVisit"
+                value={formData.plan.pricePerVisit}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+          {formData.plan.planType === PlanType.MONTHLY && (
+            <div className="form-group">
+              <label>{f({ id: "monthly_price" })}</label>
+              <input
+                type="number"
+                step="0.01"
+                name="plan.monthlyPrice"
+                value={formData.plan.monthlyPrice}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          {formData.plan.planType === PlanType.YEARLY && (
+            <div className="form-group">
+              <label>{f({ id: "yearly_price" })}</label>
+              <input
+                type="number"
+                step="0.01"
+                name="plan.yearlyPrice"
+                value={formData.plan.yearlyPrice}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          <div className="form-group">
+            <label>{f({ id: "subscription_status" })}</label>
+            <select
+              name="plan.subscriptionStatus"
+              value={formData.plan.status}
+              onChange={handleChange}
+            >
+              {Object.values(SubscriptionStatus).map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                name="plan.autoRenew"
+                checked={formData.plan.autoRenew}
+                onChange={handleChange}
+              />
+              {f({ id: "auto_renew" })}
+            </label>
           </div>
         </div>
 

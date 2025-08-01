@@ -10,4 +10,6 @@ import clinic.dev.backend.model.enums.PlanType;
 public interface ClinicBillingPlanRepo extends JpaRepository<ClinicBillingPlan, Long> {
   @Query("SELECT c.planType FROM ClinicBillingPlan c WHERE c.clinic.id = :clinicId")
   PlanType findPlanTypeByClinicId(@Param("clinicId") Long clinicId);
+
+  ClinicBillingPlan findByClinicId(Long clinicId);
 }

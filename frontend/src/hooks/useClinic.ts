@@ -10,6 +10,8 @@ import type {
   ClinicWithOwnerReq,
   ClinicWithOwnerRes,
   ClinicUsageRes,
+  ClinicBillingPlanRes,
+  ClinicBillingPlanReq,
 } from "../dto";
 import { ClinicApi } from "../apis";
 import { ApiError } from "../fetch/ApiError";
@@ -162,6 +164,28 @@ export const useGetClinicUsage = (clinicId: number) => {
     {
       staleTime: 5 * 60 * 1000,
       enabled: !!clinicId,
+    },
+  );
+};
+
+// src/hooks/useClinic.ts
+export const useGetBillingPlan = (clinicId?: number) => {
+  return useQuery<ClinicBillingPlanRes, ApiError>(
+    ["billingPlan", clinicId],
+    () => ClinicApi.getBillingPlan(clinicId),
+    { enabled: !!clinicId },
+  );
+};
+
+export const useUpdateBillingPlan = (clinicId?: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (data: ClinicBillingPlanReq) => ClinicApi.updateBillingPlan(clinicId, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["billingPlan", clinicId]);
+      },
     },
   );
 };

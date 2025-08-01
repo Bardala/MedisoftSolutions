@@ -1,7 +1,7 @@
 // Base types
 
 import { Pageable, QueueStatus } from "../types";
-import { UserRole } from "../types/types";
+import { PlanType, SubscriptionStatus, UserRole } from "../types/types";
 
 // type Nullable<T> = T | null;
 // type Date = Date | string; // Depending on how you handle dates
@@ -398,12 +398,14 @@ export interface ClinicWithOwnerRes {
   clinic: ClinicResDTO;
   owner: UserReqDTO;
   limits: ClinicLimitsResDTO;
+  plan: ClinicBillingPlanRes;
 }
 
 export interface ClinicWithOwnerReq {
   clinic: ClinicReqDTO;
   owner: UserReqDTO;
   limits: ClinicLimitsReqDTO;
+  plan: ClinicBillingPlanReq;
 }
 
 export interface ClinicUsageRes {
@@ -412,4 +414,20 @@ export interface ClinicUsageRes {
   visitCount: number;
   patientCount: number;
   lastVisitAdded: Date;
+}
+
+export interface ClinicBillingPlanReq {
+  planType: PlanType;
+  startDate: Date;
+  endDate?: Date;
+  pricePerVisit: number;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  status: SubscriptionStatus;
+  autoRenew: boolean;
+}
+
+export interface ClinicBillingPlanRes extends ClinicBillingPlanReq {
+  id: number;
+  clinicId: number;
 }

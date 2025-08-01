@@ -32,6 +32,7 @@ export enum ENDPOINT {
   USER_BATCH = "/patients/batch",
   CREATE_USER = "/users",
   CREATE_OWNER = "/users/:id",
+  GET_CLINIC_STAFF = "/users/:clinicId/staff",
 
   // Visit APIs
   CREATE_VISIT = "/visits",
@@ -112,7 +113,8 @@ export enum ENDPOINT {
   GET_ALL_CLINICS = "/clinics",
   UPDATE_CLINIC = "/clinics",
   DELETE_CLINIC = "/clinics",
-  GET_CLINIC_STAFF = "/users/:clinicId/staff",
+  GET_BILLING_PLAN = "/clinics/billing-plan/:id",
+  UPDATE_BILLING_PLAN = "/clinics/billing-plan/:id",
 
   // Settings
   GET_CURRENT_CLINIC_SETTINGS = "/clinics/settings",
