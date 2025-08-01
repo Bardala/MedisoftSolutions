@@ -5,10 +5,10 @@ import { ClinicStaff } from "./ClinicStaff";
 
 interface ClinicDataProps {
   clinicId: number;
-  onBack: () => void;
+  // onBack: () => void;
 }
 
-export const ClinicData = ({ clinicId, onBack }: ClinicDataProps) => {
+export const ClinicData = ({ clinicId }: ClinicDataProps) => {
   const { data: clinic, isLoading } = useGetClinic(clinicId);
 
   if (isLoading) return <div>Loading clinic data...</div>;
@@ -16,7 +16,7 @@ export const ClinicData = ({ clinicId, onBack }: ClinicDataProps) => {
   return (
     <div className="clinic-page">
       <div className="clinic-header">
-        <button onClick={onBack}>Back to Clinics</button>
+        {/* <button onClick={onBack}>Back to Clinics</button> */}
         <h1>{clinic?.name}</h1>
         {clinic?.logoUrl && (
           <img src={clinic.logoUrl} alt="Clinic Logo" className="clinic-logo" />

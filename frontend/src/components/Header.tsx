@@ -6,10 +6,12 @@ import { HeaderProps, isDoctorRole } from "../types";
 import { FC } from "react";
 import { useSidebar } from "../hooks/useSidebar";
 import { assistantImage, doctorImage } from "../utils";
+import { useNavigate } from "react-router-dom";
 
-const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
+const Header: FC<HeaderProps> = ({ loggedInUser }) => {
   const { isDarkMode, toggleTheme } = useTheme();
   const { menuItems } = useSidebar(loggedInUser);
+  const navigate = useNavigate();
 
   return (
     <div className="header">
@@ -26,14 +28,14 @@ const Header: FC<HeaderProps> = ({ loggedInUser, setSelectedOption }) => {
           <FontAwesomeIcon
             icon={faHome}
             className="header-icon"
-            onClick={() => setSelectedOption("/")}
+            onClick={() => navigate("/")}
           />
           {menuItems.map((item, index) => (
             <FontAwesomeIcon
               key={index}
               icon={item.icon}
               className="header-icon"
-              onClick={() => setSelectedOption(item.link)}
+              onClick={() => navigate(item.link)}
             />
           ))}
         </div>

@@ -6,7 +6,7 @@ import { ClinicSearchForm } from "./ClinicSearchForm";
 import { Pagination } from "./Pagination";
 import { ClinicData } from "./ClinicData";
 
-export const ClinicsList = ({ setSelectedOption }) => {
+export const ClinicsList = () => {
   const { formatMessage: f } = useIntl();
   const [searchParams, setSearchParams] = useState<ClinicSearchReq>({
     page: 0,
@@ -28,14 +28,10 @@ export const ClinicsList = ({ setSelectedOption }) => {
     setSelectedClinicId(clinicId);
   };
 
-  const handleBackToList = () => {
-    setSelectedClinicId(null);
-  };
-
   if (isLoading) return <div>{f({ id: "loading" })}</div>;
 
   if (selectedClinicId) {
-    return <ClinicData clinicId={selectedClinicId} onBack={handleBackToList} />;
+    return <ClinicData clinicId={selectedClinicId} />;
   }
 
   return (

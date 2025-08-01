@@ -6,10 +6,13 @@ import { isDoctorRole, SidebarProps } from "../types";
 import { useSidebar } from "../hooks/useSidebar";
 import { doctorImage, assistantImage } from "../utils";
 import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
-const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
+const Sidebar: FC<SidebarProps> = ({ loggedInUser }) => {
   const { menuItems } = useSidebar(loggedInUser);
   const { formatMessage: f } = useIntl();
+  const navigate = useNavigate();
+
   return (
     <div className="sidebar">
       <div className="sidebar-user-photo-container">
@@ -31,7 +34,7 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
       </h3>
 
       <ul className="sidebar-menu">
-        <li className="sidebar-home" onClick={() => setSelectedOption("/")}>
+        <li className="sidebar-home" onClick={() => navigate("/")}>
           <FontAwesomeIcon icon={faHome} className="sidebar-home-icon" />
         </li>
 
@@ -39,7 +42,7 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser, setSelectedOption }) => {
           <li
             key={index}
             className="sidebar-item"
-            onClick={() => setSelectedOption(item.link)}
+            onClick={() => navigate(item.link)}
           >
             <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
             <span className="sidebar-link">{item.label}</span>

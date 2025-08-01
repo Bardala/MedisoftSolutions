@@ -112,7 +112,6 @@ export const PatientCharts: React.FC<Props> = ({
 
       <>
         <PatientVisitsByHourChart visits={visits} />
-
         {/* Visits */}
         {/* <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800">
           <h3 className="text-lg font-semibold mb-2">
@@ -120,22 +119,25 @@ export const PatientCharts: React.FC<Props> = ({
           </h3>
           <Bar data={visitsChartData} options={baseOptions} />
         </div> */}
-
         {/* Payments */}
-        <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800">
-          <h3 className="text-lg font-semibold mb-2">
-            {formatMessage({ id: "monthly_payments" })}
-          </h3>
-          <Bar data={paymentChartData} options={baseOptions} />
-        </div>
+        {payments.length > 0 && (
+          <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800">
+            <h3 className="text-lg font-semibold mb-2">
+              {formatMessage({ id: "monthly_payments" })}
+            </h3>
+            <Bar data={paymentChartData} options={baseOptions} />
+          </div>
+        )}
 
         {/* Procedure Types */}
-        <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800 col-span-1 md:col-span-2">
-          <h3 className="text-lg font-semibold mb-2">
-            {formatMessage({ id: "procedure_frequency" })}
-          </h3>
-          <Pie data={proceduresChartData} options={baseOptions} />
-        </div>
+        {visitDentalProcedures.length > 0 && (
+          <div className="chart-card p-4 shadow rounded bg-white dark:bg-gray-800 col-span-1 md:col-span-2">
+            <h3 className="text-lg font-semibold mb-2">
+              {formatMessage({ id: "procedure_frequency" })}
+            </h3>
+            <Pie data={proceduresChartData} options={baseOptions} />
+          </div>
+        )}
       </>
     </div>
   );

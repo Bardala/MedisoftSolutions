@@ -12,12 +12,9 @@ import { isEqual } from "lodash"; // For deep comparison
 import { useIntl } from "react-intl";
 import { Notifications } from "./Notifications";
 import { NotificationType } from "../types";
+import { useNavigate } from "react-router-dom";
 
-const Home = ({
-  setSelectedOption,
-}: {
-  setSelectedOption: (option: string) => void;
-}) => {
+const Home = () => {
   const { formatMessage: f } = useIntl();
   const { patients, visits, payments, totalPayments, isLoading, isError } =
     useDailyReportData();
@@ -28,6 +25,7 @@ const Home = ({
   const prevPatientsRef = useRef<typeof patients>([]);
   const prevVisitsRef = useRef<typeof visits>([]);
   const prevPaymentsRef = useRef<typeof payments>([]);
+  const navigate = useNavigate();
 
   // Memoize the combined data and sorted notifications
   const combinedData = useMemo(() => {
@@ -134,21 +132,18 @@ const Home = ({
         <div className="actions">
           <button
             className="action-btn"
-            onClick={() => setSelectedOption("/add-patient")}
+            onClick={() => navigate("/add-patient")}
           >
             <FontAwesomeIcon icon={faUserPlus} />
             {f({ id: "add_patient" })}
           </button>
-          <button
-            className="action-btn"
-            onClick={() => setSelectedOption("/payments")}
-          >
+          <button className="action-btn" onClick={() => navigate("/payments")}>
             <FontAwesomeIcon icon={faDollarSign} />
             {f({ id: "home.add_payment" })}
           </button>
           <button
             className="action-btn"
-            onClick={() => setSelectedOption("/record-new-visit")}
+            onClick={() => navigate("/record-new-visit")}
           >
             <FontAwesomeIcon icon={faPlusCircle} />
             {f({ id: "record_visit" })}

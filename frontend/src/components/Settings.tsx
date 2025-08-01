@@ -16,11 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { isOwnerRole } from "../types";
 
-const Settings = ({
-  setSelectedOption,
-}: {
-  setSelectedOption: (option: string) => void;
-}) => {
+const Settings = () => {
   const navigate = useNavigate();
   const { logout, loggedInUser } = useLogin();
   const { locale, switchLanguage } = useContext(LanguageContext);
@@ -43,7 +39,7 @@ const Settings = ({
             <>
               <button
                 className="action-button"
-                onClick={() => setSelectedOption("/add-assistant")}
+                onClick={() => navigate("/add-assistant")}
               >
                 <FontAwesomeIcon icon={faUserPlus} className="button-icon" />
                 <FormattedMessage
@@ -54,7 +50,7 @@ const Settings = ({
 
               <button
                 className="action-button"
-                onClick={() => setSelectedOption("/clinic-settings")}
+                onClick={() => navigate("/clinic-settings")}
               >
                 <FontAwesomeIcon icon={faBuilding} className="button-icon" />
                 <FormattedMessage
@@ -72,7 +68,7 @@ const Settings = ({
 
           <button
             className="action-button"
-            onClick={() => setSelectedOption("/update-user-info")}
+            onClick={() => navigate("/update-user-info")}
           >
             <FontAwesomeIcon icon={faEdit} className="button-icon" />
             <FormattedMessage id="editProfile" defaultMessage="Edit Profile" />

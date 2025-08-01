@@ -32,6 +32,7 @@
   align-items: center;
   gap: 6px;
   font-weight: 500;
+  box-shadow: var(--shadow-light);
 }
 
 .phone-icon {
@@ -50,7 +51,8 @@
   background: var(--white);
   border-radius: var(--border-radius);
   padding: var(--padding-small);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
+  box-shadow: var(--shadow-light);
 }
 
 .visualization-title {

@@ -204,14 +204,16 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
 
             {/* Info Cards Grid */}
             <div className="info-grid">
-              <div className="info-card age-card">
-                <div className="card-icon">{currentPhase.emoji}</div>
-                <h4 className="card-title">{f({ id: "patient_age" })}</h4>
-                <p className="card-content">
-                  {patient.age} —{" "}
-                  {f({ id: `age_phase_${currentPhase.name.toLowerCase()}` })}
-                </p>
-              </div>
+              {patient.age && (
+                <div className="info-card age-card">
+                  <div className="card-icon">{currentPhase.emoji}</div>
+                  <h4 className="card-title">{f({ id: "patient_age" })}</h4>
+                  <p className="card-content">
+                    {patient.age} —{" "}
+                    {f({ id: `age_phase_${currentPhase.name.toLowerCase()}` })}
+                  </p>
+                </div>
+              )}
 
               {/* Visits Count Card */}
               <div className="info-card visits-card">
@@ -219,7 +221,6 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                 <h4 className="card-title">{f({ id: "total_visits" })}</h4>
                 <p className="card-content">{visits?.length || 0}</p>
               </div>
-
               <div className="info-card address-card">
                 <div className="card-icon">📍</div>
                 <h4 className="card-title">{f({ id: "patient_address" })}</h4>
@@ -227,7 +228,6 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                   {patient.address || f({ id: "not_available" })}
                 </p>
               </div>
-
               <div className="info-card medical-card">
                 <div className="card-icon">💊</div>
                 <h4 className="card-title">
@@ -237,7 +237,6 @@ export const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                   {patient.medicalHistory || f({ id: "not_available" })}
                 </p>
               </div>
-
               <div className="info-card registration-card">
                 <div className="card-icon">📅</div>
                 <h4 className="card-title">

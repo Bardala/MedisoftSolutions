@@ -6,7 +6,6 @@ export interface HomePageProps {
 
 export interface SidebarProps {
   loggedInUser: HomePageProps["loggedInUser"];
-  setSelectedOption: (option: string) => void;
 }
 
 export type HeaderProps = SidebarProps;

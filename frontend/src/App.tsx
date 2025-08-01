@@ -14,7 +14,7 @@ const App = () => {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route
-                path="/"
+                path="/*"
                 element={
                   loggedInUser ? (
                     <HomePage loggedInUser={loggedInUser} />
