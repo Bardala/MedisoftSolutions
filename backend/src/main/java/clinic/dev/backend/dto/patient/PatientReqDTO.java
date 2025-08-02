@@ -17,7 +17,7 @@ public record PatientReqDTO(
     return new Patient(
         null,
         clinic,
-        fullName,
+        normalizeFullName(fullName),
         age,
         notes,
         phone,
@@ -27,7 +27,7 @@ public record PatientReqDTO(
   }
 
   public void updateEntity(Patient patient, Clinic clinic) {
-    patient.setFullName(fullName);
+    patient.setFullName(normalizeFullName(fullName));
     patient.setPhone(phone);
     patient.setAge(age);
     patient.setAddress(address);
@@ -35,4 +35,9 @@ public record PatientReqDTO(
     patient.setNotes(notes);
     patient.setClinic(clinic);
   }
+
+  private static String normalizeFullName(String name) {
+    return name == null ? null : name.trim().replaceAll("\\s+", " ");
+  }
+
 }
