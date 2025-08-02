@@ -50,6 +50,7 @@
   flex: 1;
   /* Ensures equal width distribution */
   min-width: 180px;
+  width: -webkit-fill-available;
   /* Prevents elements from becoming too small */
   text-align: center;
   /* Centers text */

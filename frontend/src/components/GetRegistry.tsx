@@ -21,7 +21,7 @@ export const GetRegistry: FC = () => {
   };
 
   return (
-    <div className="container">
+    <div className="registry-container">
       <h1>
         <FontAwesomeIcon icon={faSearch} /> {f({ id: "registry" })}
       </h1>

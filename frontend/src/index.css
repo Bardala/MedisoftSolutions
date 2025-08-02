@@ -375,6 +375,10 @@ form button:hover {
     padding: 0px;
   }
 
+  .home-content {
+    padding: 2px;
+  }
+
   .dashboard {
     flex-direction: column;
     margin: var(--padding-small);

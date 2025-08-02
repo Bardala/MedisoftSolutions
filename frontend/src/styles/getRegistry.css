@@ -1,10 +1,10 @@
-.container {
+.registry-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--padding-medium);
   background-color: var(--secondary-bg);
   color: var(--secondary-color);
-  padding: var(--padding-large);
+  /* padding: var(--padding-large); */
   border-radius: var(--border-radius);
   /* box-shadow: var(--shadow-light); */
   /* max-width: 600px; */

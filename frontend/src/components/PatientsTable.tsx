@@ -91,19 +91,25 @@ export const PatientsTable = () => {
               />
 
               <div className="pagination-buttons">
-                <button
-                  disabled={pagination.currentPage === 0}
-                  onClick={() => pagination.setPage(pagination.currentPage - 1)}
-                >
-                  {f({ id: "last_page" })}
-                </button>
+                {pagination.currentPage !== 0 && (
+                  <button
+                    onClick={() =>
+                      pagination.setPage(pagination.currentPage - 1)
+                    }
+                  >
+                    {f({ id: "last_page" })}
+                  </button>
+                )}
 
-                <button
-                  disabled={!pagination.hasMore}
-                  onClick={() => pagination.setPage(pagination.currentPage + 1)}
-                >
-                  {f({ id: "next_page" })}
-                </button>
+                {pagination.hasMore && (
+                  <button
+                    onClick={() =>
+                      pagination.setPage(pagination.currentPage + 1)
+                    }
+                  >
+                    {f({ id: "next_page" })}
+                  </button>
+                )}
               </div>
             </>
           )}
