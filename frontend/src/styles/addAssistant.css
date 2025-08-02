@@ -1,8 +1,6 @@
 .add-user-container {
   padding: var(--padding-medium);
-  box-shadow: var(--shadow-light);
   border-radius: var(--border-radius);
-  background-color: var(--primary-bg);
   margin: var(--padding-large) auto;
   max-width: 600px;
 }
