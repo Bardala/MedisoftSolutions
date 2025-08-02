@@ -4,12 +4,9 @@ import { useAddVisit } from "../hooks/useVisit";
 import PatientSearch from "./PatientSearch";
 import "../styles/addVisit.css";
 import { DoctorSelect } from "./DoctorSelect";
-import { useLogin } from "../context/loginContext";
-import { isAssistantRole } from "../types";
 
 export const AddVisit: React.FC = () => {
   const { formatMessage: f } = useIntl();
-  const { loggedInUser } = useLogin();
   const {
     setPaymentAmount,
     handlePatientSelect,

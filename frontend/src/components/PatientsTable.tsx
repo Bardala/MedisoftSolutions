@@ -6,9 +6,12 @@ import Table from "./Table";
 import { useEffect, useState } from "react";
 import { ToggleStatsData } from "./ToggleStatsData";
 import { faTable } from "@fortawesome/free-solid-svg-icons";
+import { useNavToPatient } from "../hooks/useNavToPatient";
+import { PatientResDTO } from "../dto";
 
 export const PatientsTable = () => {
   const { formatMessage: f } = useIntl();
+  const navToPatient = useNavToPatient();
 
   const { patients, error, setShowAllPatients, pagination, isLoading } =
     usePatientSearch();
@@ -21,7 +24,9 @@ export const PatientsTable = () => {
   const allPatientColumns = [
     {
       header: f({ id: "full_name" }),
-      accessor: (row) => row.fullName,
+      accessor: (row: PatientResDTO) => row.fullName,
+      clickable: true,
+      onClick: (row) => navToPatient(row.id),
     },
     {
       header: f({ id: "address" }),

@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDailyReportData } from "../hooks/useDailyReportData";
 import "../styles/financialComponents.css";
-import { linkVisitsAndPayments } from "../utils/linkVisitPayment";
+import {
+  linkVisitsAndPayments,
+  VisitWithPayment,
+} from "../utils/linkVisitPayment";
 import { dailyTimeFormate, timeFormate } from "../utils";
-import Table from "./Table";
+import Table, { Column } from "./Table";
 import {
   faExchangeAlt,
   faCalendarAlt,
@@ -17,12 +21,17 @@ import { useIntl } from "react-intl";
 import { DailyReportCharts } from "./DailyReportChart";
 import { ToggleStatsData } from "./ToggleStatsData";
 import { isOwnerRole } from "../types";
+import { useNavToPatient } from "../hooks/useNavToPatient";
+import { PatientResDTO, PaymentResDTO } from "../dto";
+import { useParams } from "react-router-dom";
 
 const DailyFinancialReport = () => {
+  const date = useParams().date;
+  const navToPatient = useNavToPatient();
   const { formatMessage: f } = useIntl();
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0],
+    date ?? new Date().toISOString().split("T")[0],
   ); // Default: Today
   const { loggedInUser } = useLogin();
 
@@ -43,24 +52,28 @@ const DailyFinancialReport = () => {
     payments || [],
   );
 
-  const linkedVisitColumns = [
+  const linkedVisitColumns: Column<any>[] = [
     {
       header: f({ id: "patientName" }),
-      accessor: (row) => row?.patientName,
+      accessor: (row: VisitWithPayment) => row?.patientName,
+      clickable: true,
+      onClick: (row: VisitWithPayment) => navToPatient(row?.patientId),
     },
     {
       header: f({ id: "phone" }),
-      accessor: (row) => row?.patientPhone,
+      accessor: (row: VisitWithPayment) => row?.patientPhone,
       expandable: true,
     },
     {
       header: f({ id: "doctorName" }),
-      accessor: (row) => row?.doctorName || f({ id: "not_available" }),
+      accessor: (row: VisitWithPayment) =>
+        row?.doctorName || f({ id: "not_available" }),
       expandable: true,
     },
     {
       header: f({ id: "visitNotes" }),
-      accessor: (row) => row?.doctorNotes || f({ id: "not_available" }),
+      accessor: (row: VisitWithPayment) =>
+        row?.doctorNotes || f({ id: "not_available" }),
       expandable: true,
     },
     {
@@ -69,14 +82,16 @@ const DailyFinancialReport = () => {
     },
     {
       header: f({ id: "visitTime" }),
-      accessor: (row) => dailyTimeFormate(row?.createdAt),
+      accessor: (row: VisitWithPayment) => dailyTimeFormate(row?.createdAt),
     },
   ];
 
-  const paymentColumns = [
+  const paymentColumns: Column<any>[] = [
     {
       header: f({ id: "patientName" }),
       accessor: (row) => row?.patientName,
+      clickable: true,
+      onClick: (row: PaymentResDTO) => navToPatient(row?.patientId),
     },
     {
       header: f({ id: "amountPaid" }),
@@ -98,8 +113,13 @@ const DailyFinancialReport = () => {
     },
   ];
 
-  const patientColumns = [
-    { header: f({ id: "patientName" }), accessor: "fullName" },
+  const patientColumns: Column<any>[] = [
+    {
+      header: f({ id: "patientName" }),
+      accessor: (row) => row.fullName,
+      clickable: true,
+      onClick: (row: PatientResDTO) => navToPatient(row?.id),
+    },
     { header: f({ id: "phone" }), accessor: "phone", expandable: true },
     {
       header: f({ id: "patientAge" }),

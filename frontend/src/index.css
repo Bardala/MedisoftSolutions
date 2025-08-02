@@ -244,6 +244,7 @@ textarea {
   background-color: inherit;
   color: inherit;
   width: -webkit-fill-available;
+  resize: none;
 }
 
 /* General form styling */
@@ -371,10 +372,6 @@ form button:hover {
   }
 
   .content {
-    padding: 0px;
-  }
-
-  .home-content {
     padding: 0px;
   }
 

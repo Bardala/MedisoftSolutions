@@ -20,9 +20,11 @@ import { callPatientForDoctor, handleSpeakName } from "../utils/speakUtils";
 import { useIntl } from "react-intl";
 import { DoctorSelect } from "./DoctorSelect";
 import { useDoctorSelection } from "../hooks/useDoctors";
+import { useNavToPatient } from "../hooks/useNavToPatient";
 
 const QueuePage: React.FC = () => {
   const { formatMessage: f } = useIntl();
+  const navToPatient = useNavToPatient();
   const { selectedDoctorId } = useDoctorSelection();
   const { queue, isLoading: isLoadingQueue } = useFetchQueue(selectedDoctorId);
   const { updateStatusMutation } = useUpdateQueueStatus(selectedDoctorId);
@@ -98,7 +100,14 @@ const QueuePage: React.FC = () => {
                     </button>
                   </div>
                 </td>
-                <td>{entry.patientName}</td>
+                <td
+                  tabIndex={index}
+                  className="clickable-cell"
+                  onClick={() => navToPatient(entry.patientId)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {entry.patientName}
+                </td>
                 <td>{dailyTimeFormate(entry.createdAt)}</td>
                 <td>
                   {entry.position === 1 && entry.status === "WAITING" && (

@@ -1,6 +1,6 @@
 import { Visit, Payment } from "../types";
 
-type VisitWithPayment = Visit & { amountPaid: number };
+export type VisitWithPayment = Visit & { amountPaid: number };
 
 export const linkVisitsAndPayments = (
   visits: Visit[],

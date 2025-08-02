@@ -18,12 +18,16 @@ import { VisitTable } from "./VisitTable";
 import { useReactToPrint } from "react-to-print";
 import { useLogin } from "../context/loginContext";
 import { isDoctorRole } from "../types";
+import { useParams } from "react-router-dom";
 
 interface PatientPageProps {
-  patientId: number;
+  patientId?: number;
 }
 
 export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
+  const { id } = useParams();
+  patientId = patientId || (id ? parseInt(id, 10) : null);
+
   const { formatMessage: f, locale } = useIntl();
   const { loggedInUser } = useLogin();
 
@@ -63,6 +67,10 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
       // expandable: true,
     },
   ];
+
+  if (!patientId) {
+    return <p>{f({ id: "no_patient_selected" })}</p>;
+  }
 
   return (
     <>

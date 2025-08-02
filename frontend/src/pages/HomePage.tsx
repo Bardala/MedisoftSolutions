@@ -19,6 +19,8 @@ import QueuePage from "../components/Queue";
 import RecordPayments from "../components/RecordPayments";
 import Settings from "../components/Settings";
 import PatientProfile from "../components/CurrentPatient";
+import { PatientPage } from "../components/PatientPage";
+import { AppRoutes } from "../constants";
 
 const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
   return (
@@ -31,28 +33,47 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
           <div className="home-content">
             <Routes>
               {/* Common routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/record-new-visit" element={<AddVisit />} />
-              <Route path="/patients" element={<QueuePage />} />
-              <Route path="/reports" element={<DailyFinancialReport />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/patient-history" element={<GetRegistry />} />
-              <Route path="/patient-profile" element={<PatientProfile />} />
-              <Route path="/add-patient" element={<AddPatient />} />
-              <Route path="/payments" element={<RecordPayments />} />
-              <Route path="/update-user-info" element={<EditUserInfo />} />
+              <Route path={AppRoutes.HOME} element={<Home />} />
+              <Route path={AppRoutes.RECORD_VISIT} element={<AddVisit />} />
+              <Route path={AppRoutes.PATIENTS} element={<QueuePage />} />
+              <Route
+                path={AppRoutes.REPORTS}
+                element={<DailyFinancialReport />}
+              />
+              <Route path={AppRoutes.SETTINGS} element={<Settings />} />
+              <Route
+                path={AppRoutes.PATIENT_HISTORY}
+                element={<GetRegistry />}
+              />
+              <Route
+                path={AppRoutes.PATIENT_PROFILE}
+                element={<PatientProfile />}
+              />
+              <Route path={AppRoutes.ADD_PATIENT} element={<AddPatient />} />
+              <Route path={AppRoutes.PAYMENTS} element={<RecordPayments />} />
+              <Route
+                path={AppRoutes.UPDATE_USER_INFO}
+                element={<EditUserInfo />}
+              />
+              <Route path={AppRoutes.PATIENT_PAGE} element={<PatientPage />} />
 
               {/* Owner-only routes */}
               {isOwnerRole(loggedInUser.role) && (
                 <>
                   <Route
-                    path="/monthly-reports"
+                    path={AppRoutes.MONTHLY_REPORTS}
                     element={<MonthlyDoctorReports />}
                   />
-                  <Route path="/add-assistant" element={<AddUserForm />} />
-                  <Route path="/clinic-settings" element={<ClinicSettings />} />
                   <Route
-                    path="/clinic-data"
+                    path={AppRoutes.ADD_ASSISTANT}
+                    element={<AddUserForm />}
+                  />
+                  <Route
+                    path={AppRoutes.CLINIC_SETTINGS}
+                    element={<ClinicSettings />}
+                  />
+                  <Route
+                    path={AppRoutes.CLINIC_DATA}
                     element={<ClinicData clinicId={loggedInUser.clinicId} />}
                   />
                 </>
@@ -61,9 +82,12 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
               {/* SuperAdmin-only routes */}
               {isSuperAdminRole(loggedInUser.role) && (
                 <>
-                  <Route path="/admin-clinics" element={<ClinicsList />} />
                   <Route
-                    path="/create-clinic"
+                    path={AppRoutes.ADMIN_CLINICS}
+                    element={<ClinicsList />}
+                  />
+                  <Route
+                    path={AppRoutes.CREATE_CLINIC}
                     element={<CreateClinicWithOwner />}
                   />
                 </>
@@ -75,4 +99,5 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
     </div>
   );
 };
+
 export default HomePage;

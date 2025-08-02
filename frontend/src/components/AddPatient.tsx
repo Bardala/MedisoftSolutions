@@ -4,6 +4,10 @@ import { useCreatePatient } from "../hooks/usePatient";
 import "../styles/cardComponents.css";
 import { isArabic, translateErrorMessage } from "../utils";
 import { useGetAllPatients } from "../hooks/usePatient";
+import { faDollarSign, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AppRoutes } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 const AddPatient: React.FC = () => {
   const {
@@ -15,7 +19,8 @@ const AddPatient: React.FC = () => {
     patient,
     dispatch,
   } = useCreatePatient();
-  const [showInfo, setShowInfo] = useState(false);
+  // const [showInfo, setShowInfo] = useState(false);
+  const nav = useNavigate();
   const { allPatients } = useGetAllPatients();
 
   const { formatMessage: f, locale } = useIntl();
@@ -77,7 +82,7 @@ const AddPatient: React.FC = () => {
             onChange={handleInputChange}
             required
           />
-          <button
+          {/* <button
             type="button"
             className="info-button"
             onClick={() => setShowInfo(!showInfo)}
@@ -89,7 +94,7 @@ const AddPatient: React.FC = () => {
             <div className="info-message arabic">
               <p>{f({ id: "arabicNameWarning" })}</p>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Phone */}
@@ -159,8 +164,7 @@ const AddPatient: React.FC = () => {
         {/* Medical History */}
         <div className="form-group">
           <div className="search-container">
-            <input
-              type="text"
+            <textarea
               name="medicalHistory"
               placeholder={f({
                 id: "medicalHistoryPlaceholder",
@@ -232,6 +236,27 @@ const AddPatient: React.FC = () => {
         >
           {isLoading ? f({ id: "savingButton" }) : f({ id: "submitButton" })}
         </button>
+
+        {success && (
+          <>
+            <button
+              className="action-btn"
+              onClick={() => nav(AppRoutes.RECORD_VISIT)}
+              disabled={isLoading}
+            >
+              <FontAwesomeIcon icon={faPlusCircle} />
+              {f({ id: "record_visit" })}
+            </button>
+            <button
+              className="action-btn"
+              onClick={() => nav(AppRoutes.PAYMENTS)}
+              disabled={isLoading}
+            >
+              <FontAwesomeIcon icon={faDollarSign} />
+              {f({ id: "home.add_payment" })}
+            </button>
+          </>
+        )}
       </form>
     </div>
   );

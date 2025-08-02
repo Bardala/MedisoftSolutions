@@ -1,5 +1,5 @@
 .queue-page {
-  background-color: var(--primary-bg);
+  /* background-color: var(--primary-bg); */
   padding: var(--padding-large);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-light);

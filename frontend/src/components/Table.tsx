@@ -9,6 +9,8 @@ export interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   expandable?: boolean;
+  clickable?: boolean;
+  onClick?: (row: T) => void;
 }
 
 interface TableProps<T> {
@@ -78,7 +80,17 @@ const Table = <T extends Record<string, unknown>>({
                 {columns
                   .filter((col) => !col.expandable)
                   .map((col, colIndex) => (
-                    <td key={colIndex}>
+                    <td
+                      key={colIndex}
+                      className={col.clickable ? "clickable-cell" : ""}
+                      tabIndex={col.clickable ? 0 : undefined}
+                      onClick={() => col.clickable && col.onClick?.(row)}
+                      onKeyDown={(e) => {
+                        if (col.clickable && e.key === "Enter")
+                          col.onClick?.(row);
+                      }}
+                      style={{ cursor: col.clickable ? "pointer" : "default" }}
+                    >
                       {typeof col.accessor === "function"
                         ? col.accessor(row)
                         : (row[col.accessor] as React.ReactNode)}

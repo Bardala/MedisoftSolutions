@@ -106,7 +106,7 @@ export const useGetQueueByPosition = (doctorId: number, position: number) => {
   };
 };
 
-export const useAddPatientToQueue = (doctorId: number) => {
+export const useAddPatientToQueue = () => {
   const queryClient = useQueryClient();
 
   return useMutation<QueueResDTO, ApiError, QueueReqDTO>(
@@ -120,7 +120,7 @@ export const useAddPatientToQueue = (doctorId: number) => {
       onSuccess: (data) => {
         // Optimistically update the queue
         queryClient.setQueryData<QueueResDTO[]>(
-          ["queue", doctorId],
+          ["queue", data.doctorId],
           (oldData = []) => [...oldData, data],
         );
 
@@ -128,7 +128,8 @@ export const useAddPatientToQueue = (doctorId: number) => {
         // queryClient.invalidateQueries(["queue", doctorId]);
 
         // Also invalidate patient-in-queue check
-        queryClient.invalidateQueries(["queue-patients", data.patientId]);
+        // queryClient.invalidateQueries(["queue-patients", data.patientId]);
+        // queryClient.invalidateQueries(["queue", data.doctorId]);
       },
       onError: (error) => {
         // Handle specific queue constraint violation

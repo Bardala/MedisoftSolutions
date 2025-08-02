@@ -8,8 +8,9 @@ import { useRecordPayment, useAddVisitPayment } from "./usePayment";
 import { useRecordVisitsProcedures } from "./useVisitDentalProcedure";
 import { useIntl } from "react-intl";
 import { LOCALS } from "../utils";
-import { VisitApi, QueueApi } from "../apis";
+import { VisitApi } from "../apis";
 import { VisitReqDTO, VisitResDTO } from "../dto";
+import { useAddPatientToQueue } from "./useQueue";
 
 export const useRecordVisit = () => {
   const [doctorNotes, setDoctorNotes] = useState<string>("");
@@ -19,13 +20,7 @@ export const useRecordVisit = () => {
     (newVisit) => VisitApi.create(newVisit),
     {
       onSuccess: (data) => {
-        QueueApi.AddPatient({
-          doctorId: data.doctorId,
-          patientId: data.patientId,
-          assistantId: data.assistantId,
-        });
         queryClient.invalidateQueries(["visits"]);
-        queryClient.invalidateQueries(["queue", data.doctorId]);
       },
     },
   );
@@ -47,6 +42,8 @@ export const useAddVisit = () => {
     setSelectedDentalProcedures,
     handleRecordVisitProcedures,
   } = useRecordVisitsProcedures();
+
+  const addPatientToQueue = useAddPatientToQueue();
   const { mutation: paymentMutation } = useRecordPayment();
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
@@ -96,6 +93,14 @@ export const useAddVisit = () => {
     try {
       const visit = await createVisitMutation.mutateAsync(newVisit);
       const visitId = visit?.id;
+
+      if (createVisitMutation.isSuccess) {
+        addPatientToQueue.mutate({
+          doctorId: visit.doctorId,
+          patientId: selectedPatient.id,
+          assistantId: visit.assistantId,
+        });
+      }
 
       await handleRecordVisitProcedures(visitId);
 

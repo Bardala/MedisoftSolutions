@@ -65,6 +65,26 @@ table td {
   color: var(--secondary-color);
 }
 
+.clickable-cell {
+  color: var(--fourth-color);
+  text-decoration: none;
+  /* removed underline */
+  transition: background-color 0.2s ease;
+}
+
+.clickable-cell:hover {
+  background-color: var(--third-bg);
+  color: var(--fourth-hover);
+  text-decoration: none;
+  /* ensure no underline on hover */
+}
+
+.clickable-cell:focus {
+  outline: 2px solid var(--fourth-hover);
+  outline-offset: 2px;
+}
+
+
 /* Responsively hide excessive columns or make sure text wraps well */
 @media (max-width: 600px) {
   .table-container {

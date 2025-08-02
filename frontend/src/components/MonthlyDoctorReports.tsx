@@ -15,6 +15,8 @@ import { useIntl } from "react-intl";
 import { MonthlyCharts } from "./MonthlyCharts";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { ToggleStatsData } from "./ToggleStatsData";
+import { useNavigate } from "react-router-dom";
+import { buildRoute } from "../utils/routeUtils";
 
 ChartJS.register(
   CategoryScale,
@@ -27,7 +29,7 @@ ChartJS.register(
 
 const MonthlyDentistReport = () => {
   const { formatMessage: f } = useIntl();
-  // todo: start year should be 2025 in production, but keep it 2020 for preview.
+  const nav = useNavigate();
   const startYear = 2025;
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -196,7 +198,20 @@ const MonthlyDentistReport = () => {
               );
 
               return (
-                <div key={day} className="calendar-day">
+                <div
+                  key={day}
+                  className="calendar-day"
+                  onClick={() =>
+                    nav(
+                      buildRoute("REPORTS", {
+                        date: `${selectedYear}-${String(selectedMonth).padStart(
+                          2,
+                          "0",
+                        )}-${String(day).padStart(2, "0")}`,
+                      }),
+                    )
+                  }
+                >
                   <div className="date">
                     {dayName} {day}
                   </div>
