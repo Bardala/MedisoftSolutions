@@ -70,6 +70,7 @@ table td {
   text-decoration: none;
   /* removed underline */
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .clickable-cell:hover {

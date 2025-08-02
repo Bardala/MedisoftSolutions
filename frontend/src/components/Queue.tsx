@@ -104,7 +104,6 @@ const QueuePage: React.FC = () => {
                   tabIndex={index}
                   className="clickable-cell"
                   onClick={() => navToPatient(entry.patientId)}
-                  style={{ cursor: "pointer" }}
                 >
                   {entry.patientName}
                 </td>

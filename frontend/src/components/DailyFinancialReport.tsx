@@ -30,6 +30,7 @@ const DailyFinancialReport = () => {
   const navToPatient = useNavToPatient();
   const { formatMessage: f } = useIntl();
   const [convertPaymentTable, setConvertPaymentTable] = useState(false);
+
   const [selectedDate, setSelectedDate] = useState(
     date ?? new Date().toISOString().split("T")[0],
   ); // Default: Today

@@ -13,6 +13,7 @@ import { useIntl } from "react-intl";
 import { Notifications } from "./Notifications";
 import { NotificationType } from "../types";
 import { useNavigate } from "react-router-dom";
+import { buildRoute } from "../utils/routeUtils";
 
 const Home = () => {
   const { formatMessage: f } = useIntl();
@@ -26,6 +27,13 @@ const Home = () => {
   const prevVisitsRef = useRef<typeof visits>([]);
   const prevPaymentsRef = useRef<typeof payments>([]);
   const navigate = useNavigate();
+  // If current time is between 12am and 6am, use yesterday's date; otherwise, use today
+  const now = new Date();
+  const isEarlyMorning = now.getHours() >= 0 && now.getHours() < 6;
+  const dateObj = isEarlyMorning
+    ? new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
+    : now;
+  const today = dateObj.toISOString().split("T")[0];
 
   // Memoize the combined data and sorted notifications
   const combinedData = useMemo(() => {
@@ -112,15 +120,24 @@ const Home = () => {
 
       {/* Dashboard Summary */}
       <section className="dashboard-summary">
-        <div className="summary-item">
+        <div
+          className="summary-item clickable-cell"
+          onClick={() => navigate(buildRoute("REPORTS", { date: today }))}
+        >
           <h3>🆕🤧{patients?.length || 0}</h3>
           <p>{f({ id: "daily_patients" })}</p>
         </div>
-        <div className="summary-item">
+        <div
+          className="summary-item clickable-cell"
+          onClick={() => navigate(buildRoute("REPORTS", { date: today }))}
+        >
           <h3>🏥{visits?.length || 0}</h3>
           <p>{f({ id: "total_visits" })}</p>
         </div>
-        <div className="summary-item">
+        <div
+          className="summary-item clickable-cell"
+          onClick={() => navigate(buildRoute("REPORTS", { date: today }))}
+        >
           <h3>💰{totalPayments || 0}</h3>
           <p>{f({ id: "total_payments" })}</p>
         </div>

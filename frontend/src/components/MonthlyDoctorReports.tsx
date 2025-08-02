@@ -201,7 +201,6 @@ const MonthlyDentistReport = () => {
                 <div
                   key={day}
                   className="calendar-day clickable-cell"
-                  style={{ cursor: "pointer" }}
                   onClick={() =>
                     nav(
                       buildRoute("REPORTS", {
