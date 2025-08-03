@@ -140,32 +140,6 @@ public class UserService {
     return userRepo.findByRoleAndClinicId(role, getClinicId()).stream().map(UserResDTO::fromEntity).toList();
   }
 
-  // @Transactional
-  // public UserResDTO update(UpdateUserReqDTO req) {
-  // Long userId = authContext.getUserId();
-  // User existing = getSecureUser(userId);
-  // if (req.password() != null && !req.password().isEmpty()) {
-  // if (req.lastPassword() == null || req.lastPassword().isEmpty()) {
-  // throw new IllegalArgumentException("Last password is required to change
-  // password");
-  // }
-  // if (!passwordEncoder.matches(req.lastPassword(), existing.getPassword())) {
-  // throw new IllegalArgumentException("Last password is incorrect");
-  // }
-  // String encodedPassword = passwordEncoder.encode(req.password());
-  // req = new UpdateUserReqDTO(
-  // req.username(),
-  // encodedPassword,
-  // req.lastPassword(),
-  // req.name(),
-  // req.phone(),
-  // req.role(),
-  // req.profilePicture());
-  // }
-  // req.updateEntity(existing, getClinicId());
-  // return UserResDTO.fromEntity(userRepo.save(existing));
-  // }
-
   @Transactional
   public UserResDTO updateUser(Long targetUserId, UpdateUserReqDTO req) {
     User currentUser = getCurrentUser();
@@ -176,15 +150,14 @@ public class UserService {
     }
 
     if (req.password() != null && !req.password().isEmpty()) {
-      handlePasswordUpdate(req, currentUser, targetUser);
+      req = handlePasswordUpdate(req, currentUser, targetUser);
     }
 
     req.updateEntity(targetUser, targetUser.getClinic().getId());
     return UserResDTO.fromEntity(userRepo.save(targetUser));
   }
 
-  private void handlePasswordUpdate(UpdateUserReqDTO req, User currentUser, User targetUser) {
-    // Skip verification for admin password resets
+  private UpdateUserReqDTO handlePasswordUpdate(UpdateUserReqDTO req, User currentUser, User targetUser) {
     if (!isAdminOperation(currentUser, targetUser)) {
       if (req.lastPassword() == null || !passwordEncoder.matches(req.lastPassword(), targetUser.getPassword())) {
         throw new IllegalArgumentException("Password change verification failed");
@@ -192,7 +165,7 @@ public class UserService {
     }
 
     String encodedPassword = passwordEncoder.encode(req.password());
-    req = req.withPassword(encodedPassword);
+    return req.withPassword(encodedPassword);
   }
 
   /** current user can update himself or his clinic owner or super admin */
