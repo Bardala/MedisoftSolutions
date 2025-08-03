@@ -27,13 +27,7 @@ const Home = () => {
   const prevVisitsRef = useRef<typeof visits>([]);
   const prevPaymentsRef = useRef<typeof payments>([]);
   const navigate = useNavigate();
-  // If current time is between 12am and 6am, use yesterday's date; otherwise, use today
-  const now = new Date();
-  const isEarlyMorning = now.getHours() >= 0 && now.getHours() < 6;
-  const dateObj = isEarlyMorning
-    ? new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
-    : now;
-  const today = dateObj.toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
   // Memoize the combined data and sorted notifications
   const combinedData = useMemo(() => {
