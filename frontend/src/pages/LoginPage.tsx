@@ -43,14 +43,6 @@ export const LoginPage: React.FC = () => {
     }
   }, [setIdentifier, setPassword, handleSubmit, loginAttempts]);
 
-  // useEffect(() => {
-  //   if (isDoctorRole(selectedRole)) {
-  //     setIdentifier(doctorUsername);
-  //   } else if (selectedRole === "Assistant") {
-  //     setIdentifier(assistantUsername);
-  //   }
-  // }, [selectedRole, setIdentifier]);
-
   return (
     <div className="login-page">
       <img

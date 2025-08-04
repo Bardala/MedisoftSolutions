@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../context/loginContext";
-import { UserRole } from "../types";
+import { isSuperAdminRole, UserRole } from "../types";
+import { AppRoutes } from "../constants";
 
 export const useLoginPage = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
@@ -9,13 +10,15 @@ export const useLoginPage = () => {
   const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
-  const { login, success, error } = useLogin();
+  const { login, success, error, loggedInUser } = useLogin();
 
   useEffect(() => {
     if (success) {
-      navigate("/", { replace: true });
+      if (isSuperAdminRole(loggedInUser?.role))
+        navigate(AppRoutes.ADMIN_CLINICS, { replace: true });
+      else navigate(AppRoutes.HOME, { replace: true });
     }
-  }, [success, navigate]);
+  }, [success, navigate, loggedInUser?.role]);
 
   const handleRoleSelection = (role: UserRole) => {
     setSelectedRole(role);
