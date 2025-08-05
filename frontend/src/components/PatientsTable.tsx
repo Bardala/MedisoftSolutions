@@ -25,7 +25,7 @@ export const PatientsTable = () => {
     {
       header: f({ id: "full_name" }),
       accessor: (row: PatientResDTO) => row.fullName,
-      clickable: true,
+      clickable: () => true,
       onClick: (row) => navToPatient(row.id),
     },
     {

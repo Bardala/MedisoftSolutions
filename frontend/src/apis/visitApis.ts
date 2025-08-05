@@ -43,10 +43,10 @@ export const VisitApi = {
       "GET",
     ),
 
-  getByDay: (date: string) =>
+  getDailyAppointments: (date: string) =>
     fetchFn<void, VisitResDTO[]>(ENDPOINT.GET_DAILY_SCHEDULE + `?date=${date}`),
 
-  getByWeek: (startDate: string) =>
+  getWeaklyAppointments: (startDate: string) =>
     fetchFn<void, VisitResDTO[]>(
       ENDPOINT.GET_WEEKLY_SCHEDULE + `?startDate=${startDate}`,
     ),

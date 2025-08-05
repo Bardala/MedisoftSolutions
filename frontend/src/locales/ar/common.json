@@ -275,8 +275,8 @@
   "notSpecified": "غير محدد",
   "noStaff": "لم يتم العثور على أعضاء في الفريق",
 
-  "addVisit.scheduledTimeLabel": "الوقت المحدد",
-  "addVisit.reasonLabel": "سبب الزيارة",
+  "addVisit.scheduledTimeLabel": "معاد الحجز (اختياري)",
+  "addVisit.reasonLabel": "سبب الزيارة (اختياري)",
   "addVisit.reasonPlaceholder": "أدخل سبب الزيارة...",
   "addVisit.doctorNotesLabel": "ملاحظات الطبيب",
   "addVisit.doctorNotesPlaceholder": "أدخل ملاحظات الطبيب...",
@@ -289,11 +289,14 @@
   "appointments": "الحجوزات",
 
   "appointments.patientName": "المريض",
-  "appointments.visitTime": "الوقت",
+  "appointments.visitTime": "معاد الحجز",
   "appointments.doctorName": "الطبيب",
   "appointments.reason": "السبب",
   "appointments.registrationTime": "تاريخ التسجيل",
   "appointments.previousWeek": "الأسبوع السابق",
   "appointments.nextWeek": "الأسبوع التالي",
-  "appointments.noAppointments": "لا توجد مواعيد"
+  "appointments.noAppointments": "لا توجد مواعيد",
+  "appointments.addToWaitList": "أضف إلى قائمة الانتظار",
+  "manage_appointments": "إدارة الحجوزات",
+  "total_appointments": "إجمالي الحجوزات"
 }

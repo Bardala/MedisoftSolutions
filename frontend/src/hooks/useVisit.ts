@@ -218,30 +218,30 @@ export const useGetDailyVisits = (date: string) => {
   return { dailyVisitsQuery };
 };
 
-export const useGetVisitsByDay = (date: Date) => {
+export const useGetAppointmentsByDay = (date: Date) => {
   const dateString = date.toISOString().split("T")[0];
-  const visitsQuery = useQuery<VisitResDTO[], ApiError>(
+  const appointmentsQuery = useQuery<VisitResDTO[], ApiError>(
     ["visits", "day", dateString],
-    () => VisitApi.getByDay(dateString),
+    () => VisitApi.getDailyAppointments(dateString),
   );
 
   return {
-    visits: visitsQuery.data || [],
-    isLoading: visitsQuery.isLoading,
-    error: visitsQuery.error,
+    appointments: appointmentsQuery.data || [],
+    isLoading: appointmentsQuery.isLoading,
+    error: appointmentsQuery.error,
   };
 };
 
-export const useGetVisitsByWeek = (startDate: Date) => {
+export const useGetAppointmentsByWeek = (startDate: Date) => {
   const dateString = startDate.toISOString().split("T")[0];
-  const visitsQuery = useQuery<VisitResDTO[], ApiError>(
+  const appointmentsQuery = useQuery<VisitResDTO[], ApiError>(
     ["visits", "week", dateString],
-    () => VisitApi.getByWeek(dateString),
+    () => VisitApi.getWeaklyAppointments(dateString),
   );
 
   return {
-    visits: visitsQuery.data || [],
-    isLoading: visitsQuery.isLoading,
-    error: visitsQuery.error,
+    appointments: appointmentsQuery.data || [],
+    isLoading: appointmentsQuery.isLoading,
+    error: appointmentsQuery.error,
   };
 };

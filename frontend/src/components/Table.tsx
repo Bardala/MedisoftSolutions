@@ -9,7 +9,7 @@ export interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   expandable?: boolean;
-  clickable?: boolean;
+  clickable?: (row: T) => boolean; // converted to a function for dynamic behavior
   onClick?: (row: T) => void;
 }
 
@@ -79,23 +79,27 @@ const Table = <T extends Record<string, unknown>>({
               <tr>
                 {columns
                   .filter((col) => !col.expandable)
-                  .map((col, colIndex) => (
-                    <td
-                      key={colIndex}
-                      className={col.clickable ? "clickable-cell" : ""}
-                      tabIndex={col.clickable ? 0 : undefined}
-                      onClick={() => col.clickable && col.onClick?.(row)}
-                      onKeyDown={(e) => {
-                        if (col.clickable && e.key === "Enter")
-                          col.onClick?.(row);
-                      }}
-                      style={{ cursor: col.clickable ? "pointer" : "default" }}
-                    >
-                      {typeof col.accessor === "function"
-                        ? col.accessor(row)
-                        : (row[col.accessor] as React.ReactNode)}
-                    </td>
-                  ))}
+                  .map((col, colIndex) => {
+                    const isClickable = col.clickable?.(row);
+
+                    return (
+                      <td
+                        key={colIndex}
+                        className={isClickable ? "clickable-cell" : ""}
+                        tabIndex={isClickable ? 0 : undefined}
+                        onClick={() => isClickable && col.onClick?.(row)}
+                        onKeyDown={(e) => {
+                          if (isClickable && e.key === "Enter")
+                            col.onClick?.(row);
+                        }}
+                        style={{ cursor: isClickable ? "pointer" : "default" }}
+                      >
+                        {typeof col.accessor === "function"
+                          ? col.accessor(row)
+                          : (row[col.accessor] as React.ReactNode)}
+                      </td>
+                    );
+                  })}
 
                 {enableActions && !expandableColumns && (
                   <td className="action-cell">
@@ -125,6 +129,7 @@ const Table = <T extends Record<string, unknown>>({
                             typeof col.accessor === "function"
                               ? col.accessor(row)
                               : (row[col.accessor] as React.ReactNode);
+                          const isClickable = col.clickable?.(row);
 
                           // Only render if there's content to show
                           if (
@@ -138,10 +143,8 @@ const Table = <T extends Record<string, unknown>>({
                           return (
                             <div
                               key={colIndex}
-                              className={col.clickable ? "clickable-cell" : ""}
-                              onClick={() =>
-                                col.clickable && col.onClick?.(row)
-                              }
+                              className={isClickable ? "clickable-cell" : ""}
+                              onClick={() => isClickable && col.onClick?.(row)}
                             >
                               <strong>{col.header}:</strong> {value}
                             </div>

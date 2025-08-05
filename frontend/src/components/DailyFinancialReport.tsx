@@ -57,7 +57,7 @@ const DailyFinancialReport = () => {
     {
       header: f({ id: "patientName" }),
       accessor: (row: VisitWithPayment) => row?.patientName,
-      clickable: true,
+      clickable: () => true,
       onClick: (row: VisitWithPayment) => navToPatient(row?.patientId),
     },
     {
@@ -101,7 +101,7 @@ const DailyFinancialReport = () => {
     {
       header: f({ id: "patientName" }),
       accessor: (row) => row?.patientName,
-      clickable: true,
+      clickable: () => true,
       onClick: (row: PaymentResDTO) => navToPatient(row?.patientId),
     },
     {
@@ -128,7 +128,7 @@ const DailyFinancialReport = () => {
     {
       header: f({ id: "patientName" }),
       accessor: (row) => row.fullName,
-      clickable: true,
+      clickable: () => true,
       onClick: (row: PatientResDTO) => navToPatient(row?.id),
     },
     { header: f({ id: "phone" }), accessor: "phone", expandable: true },

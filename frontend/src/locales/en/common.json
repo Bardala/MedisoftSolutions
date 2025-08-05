@@ -285,11 +285,14 @@
   "appointments": "Appointments",
 
   "appointments.patientName": "Patient",
-  "appointments.visitTime": "Time",
+  "appointments.visitTime": "Appointment Date",
   "appointments.doctorName": "Doctor",
   "appointments.reason": "Reason",
   "appointments.registrationTime": "Registered",
   "appointments.previousWeek": "Previous Week",
   "appointments.nextWeek": "Next Week",
-  "appointments.noAppointments": "No appointments"
+  "appointments.noAppointments": "No appointments",
+  "appointments.addToWaitList": "Add to Wait List",
+  "manage_appointments": "Manage Appointments",
+  "total_appointments": "Total Appointments"
 }

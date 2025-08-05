@@ -3,6 +3,7 @@ import {
   faUserPlus,
   faDollarSign,
   faPlusCircle,
+  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/home.css";
 import { useDailyReportData } from "../hooks/useDailyReportData";
@@ -14,11 +15,18 @@ import { Notifications } from "./Notifications";
 import { NotificationType } from "../types";
 import { useNavigate } from "react-router-dom";
 import { buildRoute } from "../utils/routeUtils";
+import { AppRoutes } from "../constants";
+import { useGetAppointmentsByWeek } from "../hooks/useVisit";
+import { isToday, startOfWeek } from "date-fns";
 
 const Home = () => {
   const { formatMessage: f } = useIntl();
   const { patients, visits, payments, totalPayments, isLoading, isError } =
     useDailyReportData();
+  const { appointments } = useGetAppointmentsByWeek(startOfWeek(new Date()));
+  const dailyAppointmentsNum = appointments.filter((a) =>
+    isToday(a.scheduledTime),
+  ).length;
 
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
@@ -125,15 +133,22 @@ const Home = () => {
           className="summary-item clickable-cell"
           onClick={() => navigate(buildRoute("REPORTS", { date: today }))}
         >
-          <h3>🏥{visits?.length || 0}</h3>
-          <p>{f({ id: "total_visits" })}</p>
+          <h3>💰{totalPayments || 0}</h3>
+          <p>{f({ id: "total_payments" })}</p>
         </div>
         <div
           className="summary-item clickable-cell"
           onClick={() => navigate(buildRoute("REPORTS", { date: today }))}
         >
-          <h3>💰{totalPayments || 0}</h3>
-          <p>{f({ id: "total_payments" })}</p>
+          <h3>🏥{visits?.length || 0}</h3>
+          <p>{f({ id: "total_visits" })}</p>
+        </div>
+        <div
+          className="summary-item clickable-cell"
+          onClick={() => navigate(AppRoutes.APPOINTMENT_CALENDER)}
+        >
+          <h3>📅{dailyAppointmentsNum || 0}</h3>
+          <p>{f({ id: "total_appointments" })}</p>
         </div>
       </section>
 
@@ -143,21 +158,29 @@ const Home = () => {
         <div className="actions">
           <button
             className="action-btn"
-            onClick={() => navigate("/add-patient")}
+            onClick={() => navigate(AppRoutes.ADD_PATIENT)}
           >
-            <FontAwesomeIcon icon={faUserPlus} />
-            {f({ id: "add_patient" })}
+            <FontAwesomeIcon icon={faUserPlus} /> {f({ id: "add_patient" })}
           </button>
-          <button className="action-btn" onClick={() => navigate("/payments")}>
-            <FontAwesomeIcon icon={faDollarSign} />
+          <button
+            className="action-btn"
+            onClick={() => navigate(AppRoutes.PAYMENTS)}
+          >
+            <FontAwesomeIcon icon={faDollarSign} />{" "}
             {f({ id: "home.add_payment" })}
           </button>
           <button
             className="action-btn"
-            onClick={() => navigate("/record-new-visit")}
+            onClick={() => navigate(AppRoutes.RECORD_VISIT)}
           >
-            <FontAwesomeIcon icon={faPlusCircle} />
-            {f({ id: "record_visit" })}
+            <FontAwesomeIcon icon={faPlusCircle} /> {f({ id: "record_visit" })}
+          </button>
+          <button
+            className="action-btn"
+            onClick={() => navigate(AppRoutes.APPOINTMENT_CALENDER)}
+          >
+            <FontAwesomeIcon icon={faCalendarAlt} />{" "}
+            {f({ id: "manage_appointments" })}
           </button>
         </div>
       </section>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDeleteVisit, useGetVisitsByWeek } from "../hooks/useVisit";
+import { useDeleteVisit, useGetAppointmentsByWeek } from "../hooks/useVisit";
 import { format, startOfWeek, addDays, isToday } from "date-fns";
 import "../styles/appointmentCalender.css";
 import Table, { Column } from "./Table";
@@ -7,11 +7,16 @@ import { useIntl } from "react-intl";
 import { Visit } from "../types";
 import { dailyTimeFormate, monthlyTimeFormate } from "../utils";
 import { useAddPatientToQueue } from "../hooks/useQueue";
+import { buildRoute } from "../utils/routeUtils";
+import { useNavigate } from "react-router-dom";
 
 export const AppointmentsCalendar: React.FC = () => {
   const { formatMessage: f } = useIntl();
+  const nav = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { visits: weeklyVisits } = useGetVisitsByWeek(startOfWeek(currentDate));
+  const { appointments: weeklyVisits } = useGetAppointmentsByWeek(
+    startOfWeek(currentDate),
+  );
   const { deleteVisitMutation } = useDeleteVisit();
   const addPatientToQueue = useAddPatientToQueue();
 
@@ -20,6 +25,10 @@ export const AppointmentsCalendar: React.FC = () => {
     {
       header: f({ id: "appointments.patientName" }),
       accessor: (v: Visit) => v.patientName,
+      clickable: () => true,
+      onClick: (v: Visit) => {
+        nav(buildRoute("PATIENT_PAGE", { id: String(v.patientId) }));
+      },
     },
     {
       header: f({ id: "appointments.visitTime" }),
@@ -40,9 +49,9 @@ export const AppointmentsCalendar: React.FC = () => {
       expandable: true,
     },
     {
-      header: "Add to Queue",
+      header: f({ id: "appointments.addToWaitList" }),
       accessor: (v: Visit) => v.patientName,
-      clickable: true,
+      clickable: (v: Visit) => isToday(v.scheduledTime),
       onClick: (v: Visit) => {
         addPatientToQueue.mutate({
           doctorId: v.doctorId,

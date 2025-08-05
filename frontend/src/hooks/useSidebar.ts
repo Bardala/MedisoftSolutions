@@ -7,11 +7,9 @@ import {
   faProcedures,
   IconDefinition,
   faPlus,
-  faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { isOwnerRole, isSuperAdminRole, User } from "../types";
 import { useIntl } from "react-intl";
-import { AppRoutes } from "../constants";
 
 export interface MenuItem {
   label: string;
@@ -50,11 +48,6 @@ export const useSidebar = (loggedInUser: User) => {
         label: f({ id: "waitList" }),
         link: "/patients",
         icon: faUsers,
-      },
-      {
-        label: f({ id: "appointments" }),
-        link: AppRoutes.APPOINTMENT_CALENDER,
-        icon: faCalendarCheck,
       },
       {
         label: f({ id: "registry" }),
