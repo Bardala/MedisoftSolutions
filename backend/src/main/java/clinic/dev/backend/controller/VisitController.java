@@ -2,7 +2,7 @@ package clinic.dev.backend.controller;
 
 import clinic.dev.backend.dto.visit.VisitReqDTO;
 import clinic.dev.backend.dto.visit.VisitResDTO;
-import clinic.dev.backend.service.impl.VisitService;
+import clinic.dev.backend.service.VisitServiceBase;
 import clinic.dev.backend.util.ApiRes;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.List;
 public class VisitController {
 
   @Autowired
-  private VisitService visitService;
+  private VisitServiceBase visitService;
 
   @PostMapping
   @PreAuthorize("@planValidation.canCreateVisit()")
@@ -68,6 +68,20 @@ public class VisitController {
   public ResponseEntity<ApiRes<List<VisitResDTO>>> getVisitsByIds(
       @RequestParam List<Long> ids) {
     List<VisitResDTO> visits = visitService.getVisitsByIds(ids);
+    return ResponseEntity.ok(new ApiRes<>(visits));
+  }
+
+  @GetMapping("/daily-schedule")
+  public ResponseEntity<ApiRes<List<VisitResDTO>>> getVisitsByDay(
+      @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    List<VisitResDTO> visits = visitService.getVisitsByDay(date);
+    return ResponseEntity.ok(new ApiRes<>(visits));
+  }
+
+  @GetMapping("/weekly-schedule")
+  public ResponseEntity<ApiRes<List<VisitResDTO>>> getVisitsByWeek(
+      @RequestParam(name = "startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+    List<VisitResDTO> visits = visitService.getVisitsByWeek(startDate);
     return ResponseEntity.ok(new ApiRes<>(visits));
   }
 }

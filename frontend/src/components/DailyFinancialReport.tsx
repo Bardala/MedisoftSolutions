@@ -67,14 +67,12 @@ const DailyFinancialReport = () => {
     },
     {
       header: f({ id: "doctorName" }),
-      accessor: (row: VisitWithPayment) =>
-        row?.doctorName || f({ id: "not_available" }),
+      accessor: (row: VisitWithPayment) => row?.doctorName,
       expandable: true,
     },
     {
       header: f({ id: "visitNotes" }),
-      accessor: (row: VisitWithPayment) =>
-        row?.doctorNotes || f({ id: "not_available" }),
+      accessor: (row: VisitWithPayment) => row?.doctorNotes,
       expandable: true,
     },
     {
@@ -82,8 +80,20 @@ const DailyFinancialReport = () => {
       accessor: (row) => `${row?.amountPaid} ${f({ id: "L.E" })}`,
     },
     {
-      header: f({ id: "visitTime" }),
+      header: f({ id: "registrationTime" }),
       accessor: (row: VisitWithPayment) => dailyTimeFormate(row?.createdAt),
+    },
+    {
+      header: f({ id: "visitReason" }),
+      accessor: (row: VisitWithPayment) =>
+        row?.reason || f({ id: "not_available" }),
+    },
+    {
+      header: f({ id: "visitScheduledTime" }),
+      accessor: (row: VisitWithPayment) =>
+        row?.scheduledTime && timeFormate(row.scheduledTime),
+
+      expandable: true,
     },
   ];
 
@@ -124,7 +134,7 @@ const DailyFinancialReport = () => {
     { header: f({ id: "phone" }), accessor: "phone", expandable: true },
     {
       header: f({ id: "patientAge" }),
-      accessor: (row) => row.age || f({ id: "not_available" }),
+      accessor: (row) => row.age,
       expandable: true,
     },
     {
@@ -133,12 +143,12 @@ const DailyFinancialReport = () => {
     },
     {
       header: f({ id: "medicalHistory" }),
-      accessor: (row) => row?.medicalHistory || f({ id: "not_available" }),
+      accessor: (row) => row?.medicalHistory,
       expandable: true,
     },
     {
       header: f({ id: "notes" }),
-      accessor: (row) => row?.notes || f({ id: "not_available" }),
+      accessor: (row) => row?.notes,
       expandable: true,
     },
     {

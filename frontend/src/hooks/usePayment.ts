@@ -41,19 +41,26 @@ export const useAddVisitPayment = () => {
 export const useUpdatePayment = () => {
   const queryClient = useQueryClient();
 
-  const updatePaymentMutation = useMutation<
-    PaymentResDTO,
-    ApiError,
-    PaymentReqDTO
-  >((payment) => PaymentApi.update(payment), {
-    onSuccess: (_, paymentVariables) => {
-      queryClient.invalidateQueries([
-        "patient-registry",
-        paymentVariables.patientId,
-      ]);
-      queryClient.invalidateQueries(["payments", "daily payments"]);
+  const updatePaymentMutation = useMutation<PaymentResDTO, ApiError, Payment>(
+    (req) =>
+      PaymentApi.update(
+        {
+          amount: req.amount,
+          patientId: req.patientId,
+          recordedById: req.recordedById,
+        },
+        req.id,
+      ),
+    {
+      onSuccess: (_, reqVariables) => {
+        queryClient.invalidateQueries([
+          "patient-registry",
+          reqVariables.patientId,
+        ]);
+        queryClient.invalidateQueries(["payments", "daily payments"]);
+      },
     },
-  });
+  );
 
   return { updatePaymentMutation };
 };

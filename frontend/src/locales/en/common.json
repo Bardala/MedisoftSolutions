@@ -13,7 +13,7 @@
   "email": "Email",
   "password": "Password",
   "enter_password": "Enter your password",
-  "not_available": "N/A",
+  "not_available": "-",
   "sunday": "Sunday",
   "monday": "Monday",
   "tuesday": "Tuesday",
@@ -270,5 +270,26 @@
 
   "clinicStaffTitle": "Clinic Staff",
   "notSpecified": "Not specified",
-  "noStaff": "No staff members found"
+  "noStaff": "No staff members found",
+
+  "addVisit.scheduledTimeLabel": "Scheduled Time",
+  "addVisit.reasonLabel": "Reason for Visit",
+  "addVisit.reasonPlaceholder": "Enter reason for visit...",
+  "addVisit.doctorNotesLabel": "Doctor Notes",
+  "addVisit.doctorNotesPlaceholder": "Enter doctor notes...",
+  "addVisit.reason": "Reason for Visit: {reason}",
+  "addVisit.scheduledTime": "Scheduled Time {scheduledTime}",
+  "visitReason": "Visit Reason",
+  "visitScheduledTime": "Visit Scheduled Time",
+
+  "appointments": "Appointments",
+
+  "appointments.patientName": "Patient",
+  "appointments.visitTime": "Time",
+  "appointments.doctorName": "Doctor",
+  "appointments.reason": "Reason",
+  "appointments.registrationTime": "Registered",
+  "appointments.previousWeek": "Previous Week",
+  "appointments.nextWeek": "Next Week",
+  "appointments.noAppointments": "No appointments"
 }

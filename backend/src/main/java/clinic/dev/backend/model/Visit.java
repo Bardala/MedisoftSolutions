@@ -3,6 +3,7 @@ package clinic.dev.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import clinic.dev.backend.constants.ErrorMsg;
 @Table(name = "visits")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Visit {
 
   public Visit(Long id) {
@@ -50,6 +52,12 @@ public class Visit {
 
   @Column(name = "duration", nullable = true)
   private Integer duration;
+
+  @Column(name = "scheduled_time")
+  private Instant scheduledTime;
+
+  @Column(name = "reason", nullable = true, length = 500)
+  private String reason; // Reason for visit
 
   @Column(name = "doctor_notes", nullable = true, length = 500)
   private String doctorNotes;

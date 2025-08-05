@@ -57,7 +57,9 @@ public interface VisitRepo extends JpaRepository<Visit, Long> {
               v.wait,
               v.duration,
               v.doctorNotes,
-              v.createdAt
+              v.createdAt,
+              v.scheduledTime,
+              v.reason
           )
           FROM Visit v
           JOIN v.patient p
@@ -89,6 +91,54 @@ public interface VisitRepo extends JpaRepository<Visit, Long> {
       "AND v.createdAt < :end " +
       "ORDER BY v.createdAt DESC")
   List<Visit> findByClinicIdAndCreatedAtBetween(
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  // Find scheduled visit for patient/doctor around specific time
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.patient.id = :patientId " +
+      "AND v.doctor.id = :doctorId " +
+      "AND v.scheduledTime BETWEEN :start AND :end")
+  Optional<Visit> findByPatientAndDoctorAndTimeRange(
+      @Param("patientId") Long patientId,
+      @Param("doctorId") Long doctorId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  // Find upcoming scheduled visits
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.scheduledTime BETWEEN :from AND :to " +
+      "ORDER BY v.scheduledTime ASC")
+  List<Visit> findUpcomingVisits(
+      @Param("from") Instant from,
+      @Param("to") Instant to);
+
+  // Find completed visits for statistics (only visits with both wait and duration
+  // set)
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.doctor.id = :doctorId " +
+      "AND v.wait IS NOT NULL " +
+      "AND v.duration IS NOT NULL " +
+      "ORDER BY v.createdAt DESC")
+  List<Visit> findCompletedVisitsByDoctor(
+      @Param("doctorId") Long doctorId);
+
+  // Additional useful query
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.doctor.id = :doctorId " +
+      "AND v.scheduledTime IS NOT NULL " +
+      "AND v.scheduledTime > :now " +
+      "ORDER BY v.scheduledTime ASC")
+  List<Visit> findFutureScheduledVisitsByDoctor(
+      @Param("doctorId") Long doctorId,
+      @Param("now") Instant now);
+
+  @Query("SELECT v FROM Visit v " +
+      "WHERE v.clinic.id = :clinicId " +
+      "AND v.scheduledTime BETWEEN :start AND :end " +
+      "ORDER BY v.scheduledTime ASC")
+  List<Visit> findByClinicIdAndScheduledTimeBetween(
       @Param("clinicId") Long clinicId,
       @Param("start") Instant start,
       @Param("end") Instant end);

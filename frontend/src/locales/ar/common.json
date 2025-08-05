@@ -13,7 +13,7 @@
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
   "enter_password": "أدخل كلمة المرور الخاصة بك",
-  "not_available": "غير متوفر",
+  "not_available": "-",
   "sunday": "الأحد",
   "monday": "الاثنين",
   "tuesday": "الثلاثاء",
@@ -273,5 +273,27 @@
 
   "clinicStaffTitle": "فريق العيادة",
   "notSpecified": "غير محدد",
-  "noStaff": "لم يتم العثور على أعضاء في الفريق"
+  "noStaff": "لم يتم العثور على أعضاء في الفريق",
+
+  "addVisit.scheduledTimeLabel": "الوقت المحدد",
+  "addVisit.reasonLabel": "سبب الزيارة",
+  "addVisit.reasonPlaceholder": "أدخل سبب الزيارة...",
+  "addVisit.doctorNotesLabel": "ملاحظات الطبيب",
+  "addVisit.doctorNotesPlaceholder": "أدخل ملاحظات الطبيب...",
+
+  "addVisit.reason": "سبب الزيارة: {reason}",
+  "addVisit.scheduledTime": "وقت الحجز {scheduledTime}",
+  "visitReason": "سبب الزيارة",
+  "visitScheduledTime": "وقت الحجز",
+
+  "appointments": "الحجوزات",
+
+  "appointments.patientName": "المريض",
+  "appointments.visitTime": "الوقت",
+  "appointments.doctorName": "الطبيب",
+  "appointments.reason": "السبب",
+  "appointments.registrationTime": "تاريخ التسجيل",
+  "appointments.previousWeek": "الأسبوع السابق",
+  "appointments.nextWeek": "الأسبوع التالي",
+  "appointments.noAppointments": "لا توجد مواعيد"
 }

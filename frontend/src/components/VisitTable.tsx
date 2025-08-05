@@ -29,14 +29,12 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
     },
     {
       header: f({ id: "doctorName" }),
-      accessor: (row: { visit: Visit }) =>
-        row.visit.doctorName || f({ id: "not_available" }),
+      accessor: (row: { visit: Visit }) => row.visit.doctorName,
       expandable: true,
     },
     {
       header: f({ id: "assistantName" }),
-      accessor: (row: { visit: Visit }) =>
-        row.visit.assistantName || f({ id: "not_available" }),
+      accessor: (row: { visit: Visit }) => row.visit.assistantName,
       expandable: true,
     },
     {
@@ -46,9 +44,8 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
     },
     {
       header: f({ id: "notes" }),
-      accessor: (row: { visit: Visit }) =>
-        row.visit.doctorNotes || f({ id: "not_available" }),
-      // expandable: true,
+      accessor: (row: { visit: Visit }) => row.visit.doctorNotes,
+      expandable: true,
     },
     {
       header: f({ id: "procedures" }),
@@ -58,14 +55,13 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
             (procedure: Procedure) =>
               procedure.serviceName + " " + procedure.arabicName,
           )
-          .join(", ") || f({ id: "not_available" }),
+          .join(", "),
       expandable: true,
     },
     {
       header: f({ id: "medicines" }),
       accessor: (row) =>
-        row.medicines?.map((medicine) => medicine.medicineName).join(", ") ||
-        f({ id: "not_available" }),
+        row.medicines?.map((medicine) => medicine.medicineName).join(", "),
       expandable: true,
     },
     {
@@ -73,6 +69,19 @@ export const VisitTable = ({ patientId, showVisits }: VisitTableProp) => {
       accessor: (row: { visit: Visit }) =>
         yearlyTimeFormate(row.visit.createdAt),
       expandable: true,
+    },
+    {
+      header: f({ id: "visitScheduledTime" }),
+      accessor: (row: { visit: Visit }) =>
+        row.visit.scheduledTime &&
+        new Date(row.visit.scheduledTime).toLocaleString(),
+      expandable: true,
+    },
+    {
+      header: f({ id: "visitReason" }),
+      accessor: (row: { visit: Visit }) =>
+        row.visit.reason || f({ id: "not_available" }),
+      // expandable: true,
     },
   ];
 

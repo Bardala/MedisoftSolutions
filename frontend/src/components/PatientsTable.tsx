@@ -48,7 +48,7 @@ export const PatientsTable = () => {
     },
     {
       header: f({ id: "medical_history" }),
-      accessor: (row) => row.medicalHistory || f({ id: "not_available" }),
+      accessor: (row) => row.medicalHistory,
       expandable: true,
     },
   ];

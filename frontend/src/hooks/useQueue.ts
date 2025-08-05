@@ -123,13 +123,6 @@ export const useAddPatientToQueue = () => {
           ["queue", data.doctorId],
           (oldData = []) => [...oldData, data],
         );
-
-        // Alternatively, invalidate to refetch fresh data
-        // queryClient.invalidateQueries(["queue", doctorId]);
-
-        // Also invalidate patient-in-queue check
-        // queryClient.invalidateQueries(["queue-patients", data.patientId]);
-        // queryClient.invalidateQueries(["queue", data.doctorId]);
       },
       onError: (error) => {
         // Handle specific queue constraint violation

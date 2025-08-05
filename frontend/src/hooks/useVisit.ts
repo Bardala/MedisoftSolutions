@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { isAssistantRole, isDoctorRole, Patient, Visit } from "../types";
+import {
+  isAssistantRole,
+  isDoctorRole,
+  Patient,
+  Payment,
+  Visit,
+} from "../types";
 import { ApiError } from "../fetch/ApiError";
 import { useLogin } from "../context/loginContext";
 import { useRecordPayment, useAddVisitPayment } from "./usePayment";
@@ -48,20 +54,15 @@ export const useAddVisit = () => {
   const { mutation: visitPaymentMutation } = useAddVisitPayment();
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [scheduledTime, setScheduledTime] = useState<string>("");
+  const [reason, setReason] = useState<string>("");
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [createdVisitDetails, setCreatedVisitDetails] = useState<{
-    visitId: number;
-    patientName: string;
-    doctorName: string;
-    visitDate: string;
-    doctorNotes: string;
-    // procedures: DentalProcedure[];
-  } | null>(null);
-  const [createdPaymentDetails, setCreatedPaymentDetails] = useState<{
-    paymentId: number;
-    amount: number;
-  } | null>(null);
+  const [createdVisitDetails, setCreatedVisitDetails] = useState<Visit | null>(
+    null,
+  );
+  const [createdPaymentDetails, setCreatedPaymentDetails] =
+    useState<Payment | null>(null);
 
   const isLoading =
     createVisitMutation.isLoading ||
@@ -88,23 +89,19 @@ export const useAddVisit = () => {
         assistantId: loggedInUser.id,
       }),
       doctorNotes,
+      reason,
+      ...(scheduledTime && {
+        scheduledTime: new Date(scheduledTime),
+      }),
     };
 
     try {
       const visit = await createVisitMutation.mutateAsync(newVisit);
       const visitId = visit?.id;
 
-      if (createVisitMutation.isSuccess) {
-        addPatientToQueue.mutate({
-          doctorId: visit.doctorId,
-          patientId: selectedPatient.id,
-          assistantId: visit.assistantId,
-        });
-      }
-
       await handleRecordVisitProcedures(visitId);
 
-      let paymentResult = null;
+      let paymentResult: Payment = null;
       if (paymentAmount > 0) {
         paymentResult = await paymentMutation.mutateAsync({
           amount: paymentAmount,
@@ -120,24 +117,17 @@ export const useAddVisit = () => {
         }
       }
 
-      // setSuccessMessage("Visit and payment recorded successfully!");
+      if (visit && scheduledTime.length === 0) {
+        await addPatientToQueue.mutateAsync({
+          doctorId: visit.doctorId,
+          patientId: selectedPatient.id,
+          assistantId: visit.assistantId,
+        });
+      }
+
       setSuccessMessage(f({ id: "success" }));
-      setCreatedVisitDetails({
-        visitId,
-        patientName: selectedPatient.fullName,
-        doctorName: loggedInUser.name,
-        visitDate: new Date().toLocaleString(),
-        doctorNotes,
-        // procedures: selectedDentalProcedures,
-      });
-      setCreatedPaymentDetails(
-        paymentResult
-          ? {
-              paymentId: paymentResult.id,
-              amount: paymentAmount,
-            }
-          : null,
-      );
+      setCreatedVisitDetails(visit);
+      setCreatedPaymentDetails(paymentResult || null);
 
       // Reset states after successful submission
       setSelectedPatient(null);
@@ -148,12 +138,16 @@ export const useAddVisit = () => {
       setSelectedDentalProcedures([]);
       setPaymentAmount(0);
       setDoctorNotes("");
+      setReason("");
+      setScheduledTime("");
 
       return visit;
     } catch (error) {
       console.error("Error recording visit or payment:", error);
 
-      alert(f({ id: "visit.payment.error" }));
+      if (error.message.includes("The combination of doctor id, patient id"))
+        console.warn(error.message);
+      else alert(f({ id: "visit.payment.error" }));
       return null;
     }
   };
@@ -161,13 +155,16 @@ export const useAddVisit = () => {
   return {
     setDoctorNotes,
     setPaymentAmount,
-    // handleDentalProcedureSelect,
+    setScheduledTime,
+    setReason,
     handlePatientSelect,
     handleSubmit,
     selectedDentalProcedures,
     selectedPatient,
     paymentAmount,
     doctorNotes,
+    scheduledTime,
+    reason,
 
     successMessage,
     createdVisitDetails,
@@ -219,4 +216,32 @@ export const useGetDailyVisits = (date: string) => {
   );
 
   return { dailyVisitsQuery };
+};
+
+export const useGetVisitsByDay = (date: Date) => {
+  const dateString = date.toISOString().split("T")[0];
+  const visitsQuery = useQuery<VisitResDTO[], ApiError>(
+    ["visits", "day", dateString],
+    () => VisitApi.getByDay(dateString),
+  );
+
+  return {
+    visits: visitsQuery.data || [],
+    isLoading: visitsQuery.isLoading,
+    error: visitsQuery.error,
+  };
+};
+
+export const useGetVisitsByWeek = (startDate: Date) => {
+  const dateString = startDate.toISOString().split("T")[0];
+  const visitsQuery = useQuery<VisitResDTO[], ApiError>(
+    ["visits", "week", dateString],
+    () => VisitApi.getByWeek(dateString),
+  );
+
+  return {
+    visits: visitsQuery.data || [],
+    isLoading: visitsQuery.isLoading,
+    error: visitsQuery.error,
+  };
 };

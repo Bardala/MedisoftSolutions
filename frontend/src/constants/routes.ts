@@ -11,6 +11,7 @@ export const AppRoutes = {
   PAYMENTS: "/payments",
   UPDATE_USER_INFO: "/update-user-info",
   PATIENT_PAGE: "/patient-page/:id",
+  APPOINTMENT_CALENDER: "/appointment-calender",
 
   // Owner-only routes
   MONTHLY_REPORTS: "/monthly-reports",

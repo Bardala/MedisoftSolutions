@@ -25,11 +25,12 @@ export const WorkdayPaymentsSummaryApi = () =>
     ENDPOINT.GET_WORKDAY_PAYMENTS_SUMMARY,
   );
 
-export const UpdatePaymentApi = (payment: PaymentReqDTO) =>
+export const UpdatePaymentApi = (payment: PaymentReqDTO, id: number) =>
   fetchFn<PaymentReqDTO, PaymentResDTO>(
     ENDPOINT.UPDATE_PAYMENT,
     "PUT",
     payment,
+    [id.toString()],
   );
 
 export const DeletePaymentApi = (paymentId: number) =>
@@ -61,11 +62,12 @@ export const PaymentApi = {
       ENDPOINT.GET_WORKDAY_PAYMENTS_SUMMARY,
     ),
 
-  update: (payment: PaymentReqDTO) =>
+  update: (payment: PaymentReqDTO, id: number) =>
     fetchFn<PaymentReqDTO, PaymentResDTO>(
       ENDPOINT.UPDATE_PAYMENT,
       "PUT",
       payment,
+      [id.toString()],
     ),
 
   delete: (paymentId: number) =>

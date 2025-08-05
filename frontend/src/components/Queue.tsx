@@ -38,12 +38,12 @@ const QueuePage: React.FC = () => {
     updateStatusMutation.mutate({ queueId, status });
 
     // Speak the patient's name when status is updated to "IN_PROGRESS"
-    if (status === "IN_PROGRESS") {
-      const queueEntry = queue?.find((entry) => entry.id === queueId);
-      if (queueEntry) {
-        callPatientForDoctor(queueEntry.patientName);
-      }
-    }
+    // if (status === "IN_PROGRESS") {
+    //   const queueEntry = queue?.find((entry) => entry.id === queueId);
+    //   if (queueEntry) {
+    //     callPatientForDoctor(queueEntry.patientName);
+    //   }
+    // }
   };
 
   const handleRemovePatient = (queueId: number) => {

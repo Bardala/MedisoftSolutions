@@ -34,12 +34,12 @@ export const MedicineTable: FC<{ visit: Visit; enableEditing: boolean }> = ({
     },
     {
       header: f({ id: "duration" }),
-      accessor: (row) => row.medicineDuration || "N/A",
+      accessor: (row) => row.medicineDuration,
       expandable: true,
     },
     {
       header: f({ id: "instructions" }),
-      accessor: (row) => row.medicineInstruction || "N/A",
+      accessor: (row) => row.medicineInstruction,
       expandable: true,
     },
   ];

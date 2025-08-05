@@ -8,9 +8,9 @@ import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.repository.VisitDentalProcedureRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
 import clinic.dev.backend.repository.VisitRepo;
+import clinic.dev.backend.service.VisitServiceBase;
 import clinic.dev.backend.util.AuthContext;
 import clinic.dev.backend.validation.PlanValidation;
-import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class VisitService {
+public class VisitService implements VisitServiceBase {
 
   @Autowired
   private VisitRepo visitRepo;
@@ -41,6 +41,7 @@ public class VisitService {
   @Autowired
   private PlanValidation planValidation;
 
+  @Override
   @Transactional
   public VisitResDTO create(VisitReqDTO req) {
     Long clinicId = authContext.getClinicId();
@@ -54,6 +55,7 @@ public class VisitService {
         .orElseThrow(() -> new RuntimeException("Visit not found after save"));
   }
 
+  @Override
   @Transactional
   public VisitResDTO update(Long id, VisitReqDTO req) {
     Long clinicId = authContext.getClinicId();
@@ -68,6 +70,7 @@ public class VisitService {
         .orElseThrow(() -> new RuntimeException("Failed to load visit after update"));
   }
 
+  @Override
   @Transactional
   public void delete(Long id) {
     visitDentalProcedureRepo.deleteByVisitId(id);
@@ -75,6 +78,7 @@ public class VisitService {
     visitRepo.deleteById(id);
   }
 
+  @Override
   public VisitResDTO getById(Long id) {
     Long clinicId = authContext.getClinicId();
 
@@ -84,6 +88,7 @@ public class VisitService {
     return visitResDto;
   }
 
+  @Override
   public List<VisitResDTO> getAll() {
     Long clinicId = authContext.getClinicId();
 
@@ -92,6 +97,7 @@ public class VisitService {
     return visits.stream().map(VisitResDTO::fromEntity).toList();
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<VisitResDTO> getVisitsForDate(LocalDate date) {
     Long clinicId = authContext.getClinicId();
@@ -139,6 +145,7 @@ public class VisitService {
     return visitRepo.findByClinicIdAndCreatedAtBetween(authContext.getClinicId(), start, end);
   }
 
+  @Override
   public List<VisitResDTO> getVisitsByIds(List<Long> ids) {
     if (ids == null || ids.isEmpty()) {
       throw new BadRequestException("Visit IDs cannot be empty");
@@ -164,16 +171,30 @@ public class VisitService {
         .collect(Collectors.toList());
 
   }
-}
 
-// todo: make getTodayVisits return this type
-@Data
-class TodayVisits {
-  String patientName;
-  String phone;
-  Double amountPaid;
-  String recordedBy;
-  Instant createdAt;
-  String doctorNotes;
-  String dentalProcedureArabicName;
+  @Override
+  @Transactional(readOnly = true)
+  public List<VisitResDTO> getVisitsByDay(LocalDate date) {
+    Long clinicId = authContext.getClinicId();
+    Instant startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
+
+    return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfDay, endOfDay)
+        .stream()
+        .map(VisitResDTO::fromEntity)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<VisitResDTO> getVisitsByWeek(LocalDate startDate) {
+    Long clinicId = authContext.getClinicId();
+    Instant startOfWeek = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    Instant endOfWeek = startOfWeek.plus(7, ChronoUnit.DAYS);
+
+    return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfWeek, endOfWeek)
+        .stream()
+        .map(VisitResDTO::fromEntity)
+        .collect(Collectors.toList());
+  }
 }

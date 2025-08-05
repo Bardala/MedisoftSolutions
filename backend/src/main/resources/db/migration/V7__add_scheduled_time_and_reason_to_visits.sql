@@ -1,0 +1,9 @@
+ALTER TABLE
+  visits
+ADD
+  COLUMN IF NOT EXISTS scheduled_time TIMESTAMP;
+
+ALTER TABLE
+  visits
+ADD
+  COLUMN IF NOT EXISTS reason VARCHAR(500);

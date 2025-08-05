@@ -9,16 +9,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
-import { isDoctorRole } from "../types";
+import { isDoctorRole, QueueEntry } from "../types";
 
 interface PatientProfileHeaderProps {
   expandedSection: string | null;
   setExpandedSection: (section: string | null) => void;
+  entry: QueueEntry | null;
 }
 
 const PatientProfileHeader = ({
   expandedSection,
   setExpandedSection,
+  entry,
 }: PatientProfileHeaderProps) => {
   const { loggedInUser } = useLogin();
   const { formatMessage: f } = useIntl();
@@ -51,7 +53,7 @@ const PatientProfileHeader = ({
         <FontAwesomeIcon icon={faFileAlt} /> <span>{f({ id: "files" })}</span>
       </div>
 
-      {isDoctorRole(loggedInUser.role) && (
+      {isDoctorRole(loggedInUser.role) && entry.status === "IN_PROGRESS" && (
         <>
           {/* <div
             className="icon"

@@ -140,6 +140,7 @@ const CurrentPatientProfile = () => {
           <PatientProfileHeader
             expandedSection={expandedSection}
             setExpandedSection={setExpandedSection}
+            entry={firstEntry}
           />
 
           <div className="expandable-sections">

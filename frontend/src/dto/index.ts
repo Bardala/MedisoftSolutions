@@ -198,6 +198,8 @@ export interface VisitReqDTO {
   waitTime?: number;
   duration?: number;
   doctorNotes?: string;
+  scheduledTime?: Date;
+  reason?: string;
 }
 
 export interface VisitResDTO {
@@ -219,6 +221,8 @@ export interface VisitResDTO {
   duration?: number;
   doctorNotes?: string;
   createdAt?: Date;
+  scheduledTime?: Date;
+  reason?: string;
 }
 
 export interface VisitMedicineReqDTO {

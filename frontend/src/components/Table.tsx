@@ -117,15 +117,36 @@ const Table = <T extends Record<string, unknown>>({
                   >
                     <div className="expanded-content">
                       {columns
-                        .filter((col) => col.expandable)
-                        .map((col, colIndex) => (
-                          <div key={colIndex}>
-                            <strong>{col.header}:</strong>{" "}
-                            {typeof col.accessor === "function"
+                        .filter((col) => {
+                          return col.expandable;
+                        })
+                        .map((col, colIndex) => {
+                          const value =
+                            typeof col.accessor === "function"
                               ? col.accessor(row)
-                              : (row[col.accessor] as React.ReactNode)}
-                          </div>
-                        ))}
+                              : (row[col.accessor] as React.ReactNode);
+
+                          // Only render if there's content to show
+                          if (
+                            value === null ||
+                            value === undefined ||
+                            value === ""
+                          ) {
+                            return null;
+                          }
+
+                          return (
+                            <div
+                              key={colIndex}
+                              className={col.clickable ? "clickable-cell" : ""}
+                              onClick={() =>
+                                col.clickable && col.onClick?.(row)
+                              }
+                            >
+                              <strong>{col.header}:</strong> {value}
+                            </div>
+                          );
+                        })}
 
                       {enableActions && (
                         <div className="action-buttons">

@@ -22,7 +22,9 @@ public record VisitResDTO(
     Integer waitTime,
     Integer duration,
     String doctorNotes,
-    Instant createdAt) {
+    Instant createdAt,
+    Instant scheduledTime,
+    String reason) {
 
   public static VisitResDTO fromEntity(Visit visit) {
     return new VisitResDTO(
@@ -43,6 +45,8 @@ public record VisitResDTO(
         visit.getWait(),
         visit.getDuration(),
         visit.getDoctorNotes(),
-        visit.getCreatedAt());
+        visit.getCreatedAt(),
+        visit.getScheduledTime(),
+        visit.getReason());
   }
 }

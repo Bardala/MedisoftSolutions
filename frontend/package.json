@@ -12,6 +12,7 @@
     "antd": "^5.26.4",
     "chart.js": "^4.4.7",
     "cra-template": "1.2.0",
+    "date-fns": "^4.1.0",
     "emoji-picker-react": "^4.12.2",
     "http-proxy-middleware": "^3.0.3",
     "i18next": "^24.2.3",

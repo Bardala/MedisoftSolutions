@@ -2,6 +2,7 @@ package clinic.dev.backend.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,7 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import clinic.dev.backend.dto.queue.QueueResDTO;
+import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.Queue;
+import clinic.dev.backend.model.Queue.Status;
+import clinic.dev.backend.model.User;
 
 public interface QueueRepo extends JpaRepository<Queue, Long> {
 
@@ -87,4 +91,14 @@ public interface QueueRepo extends JpaRepository<Queue, Long> {
       WHERE q.id = :id AND c.id = :clinicId
         """)
   Optional<QueueResDTO> findQueueDtoByIdAndClinicId(@Param("id") Long id, @Param("clinicId") Long clinicId);
+
+  @Query("SELECT CASE WHEN COUNT(q) > 0 THEN true ELSE false END " +
+      "FROM Queue q " +
+      "WHERE q.patient = :patient " +
+      "AND q.doctor = :doctor " +
+      "AND q.status IN :statuses")
+  boolean existsByPatientAndDoctorAndStatusIn(
+      @Param("patient") Patient patient,
+      @Param("doctor") User doctor,
+      @Param("statuses") Set<Status> statuses);
 }

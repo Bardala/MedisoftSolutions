@@ -1,5 +1,7 @@
 package clinic.dev.backend.dto.visit;
 
+import java.time.Instant;
+
 import clinic.dev.backend.model.Clinic;
 import clinic.dev.backend.model.Patient;
 import clinic.dev.backend.model.User;
@@ -12,19 +14,22 @@ public record VisitReqDTO(
     Long assistantId,
     Integer waitTime,
     Integer duration,
-    String doctorNotes) {
+    String doctorNotes,
+    Instant scheduledTime,
+    String reason) {
 
   public Visit toEntity(Long clinicId) {
-    return new Visit(
-        null,
-        new Patient(patientId),
-        new Clinic(clinicId),
-        new User(doctorId),
-        assistantId == null ? null : new User(assistantId),
-        waitTime,
-        duration,
-        doctorNotes,
-        null);
+    return Visit.builder()
+        .patient(new Patient(patientId))
+        .clinic(new Clinic(clinicId))
+        .doctor(new User(doctorId))
+        .assistant(assistantId == null ? null : new User(assistantId))
+        .wait(waitTime)
+        .duration(duration)
+        .doctorNotes(doctorNotes)
+        .scheduledTime(scheduledTime)
+        .reason(reason)
+        .build();
   }
 
   public void updateEntity(Visit visit, Long clinicId) {
@@ -35,5 +40,7 @@ public record VisitReqDTO(
     visit.setWait(this.waitTime());
     visit.setDuration(this.duration());
     visit.setDoctorNotes(this.doctorNotes());
+    visit.setScheduledTime(this.scheduledTime());
+    visit.setReason(this.reason());
   }
 }

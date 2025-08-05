@@ -42,4 +42,12 @@ export const VisitApi = {
       `${ENDPOINT.VISIT_BATCH}?ids=${ids.join(",")}`,
       "GET",
     ),
+
+  getByDay: (date: string) =>
+    fetchFn<void, VisitResDTO[]>(ENDPOINT.GET_DAILY_SCHEDULE + `?date=${date}`),
+
+  getByWeek: (startDate: string) =>
+    fetchFn<void, VisitResDTO[]>(
+      ENDPOINT.GET_WEEKLY_SCHEDULE + `?startDate=${startDate}`,
+    ),
 };

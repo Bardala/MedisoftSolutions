@@ -1,0 +1,96 @@
+.appointments-calendar {
+  padding: var(--padding-medium);
+  background: var(--primary-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--padding-medium);
+  padding-bottom: var(--padding-small);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.view-toggle {
+  display: flex;
+  gap: var(--padding-small);
+}
+
+.calendar-controls button {
+  padding: var(--padding-small) var(--padding-medium);
+  background: var(--secondary-bg);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.calendar-controls button:hover {
+  background: var(--primary-hover);
+  color: var(--white);
+}
+
+.calendar-controls button.active {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+}
+
+.date-navigation span {
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.week-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--padding-medium);
+}
+
+.week-day {
+  padding: var(--padding-medium);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+}
+
+.week-day.current-day {
+  background: var(--third-bg);
+  border: 1px solid var(--primary-color);
+}
+
+.week-day h3 {
+  margin-top: 0;
+  color: var(--fourth-color);
+  font-size: var(--font-size-body);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--padding-small);
+}
+
+.no-appointments {
+  color: var(--text-color);
+  text-align: center;
+  margin: var(--padding-medium) 0;
+}
+
+
+@media (max-width: 768px) {
+  .calendar-controls {
+    flex-direction: column;
+    gap: var(--padding-small);
+    align-items: flex-start;
+  }
+
+  .week-view {
+    grid-template-columns: 1fr;
+  }
+}

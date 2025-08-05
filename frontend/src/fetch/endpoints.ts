@@ -42,6 +42,8 @@ export enum ENDPOINT {
   GET_ALL_VISITS = "/visits",
   GET_WORKDAY_VISITS = "/visits/workday",
   VISIT_BATCH = "/patients/batch",
+  GET_DAILY_SCHEDULE = "/visits/daily-schedule",
+  GET_WEEKLY_SCHEDULE = "/visits/weekly-schedule",
 
   // Procedure APIs
   CREATE_DENTAL_PROCEDURE = "/services",
@@ -61,7 +63,7 @@ export enum ENDPOINT {
 
   // Payment APIs
   CREATE_PAYMENT = "/payments",
-  UPDATE_PAYMENT = "/payments",
+  UPDATE_PAYMENT = "/payments/:id",
   DELETE_PAYMENT = "/payments/:id",
   GET_PAYMENT_BY_ID = "/payments/:id",
   GET_ALL_PAYMENTS = "/payments",

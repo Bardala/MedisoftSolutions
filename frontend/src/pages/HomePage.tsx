@@ -21,6 +21,7 @@ import Settings from "../components/Settings";
 import PatientProfile from "../components/CurrentPatient";
 import { PatientPage } from "../components/PatientPage";
 import { AppRoutes } from "../constants";
+import { AppointmentsCalendar } from "../components/AppointmentCalender";
 
 const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
   return (
@@ -56,6 +57,10 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
                 element={<EditUserInfo />}
               />
               <Route path={AppRoutes.PATIENT_PAGE} element={<PatientPage />} />
+              <Route
+                path={AppRoutes.APPOINTMENT_CALENDER}
+                element={<AppointmentsCalendar />}
+              />
 
               {/* Owner-only routes */}
               {isOwnerRole(loggedInUser.role) && (
