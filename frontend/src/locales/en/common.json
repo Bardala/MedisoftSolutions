@@ -294,5 +294,8 @@
   "appointments.noAppointments": "No appointments",
   "appointments.addToWaitList": "Add to Wait List",
   "manage_appointments": "Manage Appointments",
-  "total_appointments": "Total Appointments"
+  "total_appointments": "Total Appointments",
+
+  "estimatedWaitTime": "Estimated Wait Time",
+  "minutes": "Minutes"
 }

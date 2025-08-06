@@ -1,5 +1,6 @@
 package clinic.dev.backend.service.impl;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -51,6 +52,14 @@ public class QueueService implements QueueServiceBase {
 
     Queue queue = req.toEntity(getClinicId(), nextPosition, status);
 
+    // Get recent completed queues for this doctor
+    List<Queue> previousQueues = queueRepository.findTop10ByDoctorAndStatusOrderByCreatedAtDesc(
+        queue.getDoctor(),
+        Queue.Status.COMPLETED);
+
+    // Calculate and set estimated wait time
+    queue.updateEstimatedWaitTime(previousQueues);
+
     queueRepository.save(queue);
 
     // Link with scheduled visit if exists
@@ -93,6 +102,11 @@ public class QueueService implements QueueServiceBase {
     queue.setStatus(status);
     queue.setUpdatedAt(Instant.now());
 
+    // Recalculate wait times for remaining patients
+    if (status == Queue.Status.COMPLETED || status == Queue.Status.IN_PROGRESS) {
+      updateAllWaitTimesForDoctor(queue.getDoctor());
+    }
+
     return QueueResDTO.fromEntity(queue);
   }
 
@@ -100,38 +114,38 @@ public class QueueService implements QueueServiceBase {
   @Transactional
   public QueueResDTO updateQueuePosition(Long queueId, int newPosition) {
     Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
-        .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
+        .orElseThrow(() -> new ResourceNotFoundException("Queue not found"));
 
     int oldPosition = queue.getPosition();
-    Long doctorId = queue.getDoctor().getId();
+    if (oldPosition == newPosition)
+      return QueueResDTO.fromEntity(queue);
 
-    if (oldPosition != newPosition) {
-      // Retrieve all queues for the doctor
-      List<Queue> doctorQueue = queueRepository.findByDoctorIdOrderByPositionAsc(doctorId);
+    // Get historical data for wait time calculation
+    List<Queue> completedQueues = queueRepository.findTop10ByDoctorAndStatusOrderByCreatedAtDesc(
+        queue.getDoctor(), Queue.Status.COMPLETED);
 
-      if (oldPosition < newPosition) {
-        // Move down: Shift all entries between oldPosition and newPosition up
-        for (Queue entry : doctorQueue) {
-          if (entry.getPosition() > oldPosition && entry.getPosition() <= newPosition) {
-            entry.setPosition(entry.getPosition() - 1);
-            queueRepository.save(entry);
-          }
-        }
-      } else {
-        // Move up: Shift all entries between newPosition and oldPosition down
-        for (Queue entry : doctorQueue) {
-          if (entry.getPosition() >= newPosition && entry.getPosition() < oldPosition) {
-            entry.setPosition(entry.getPosition() + 1);
-            queueRepository.save(entry);
-          }
-        }
-      }
+    // Bulk update positions
+    if (oldPosition < newPosition) {
+      queueRepository.decrementPositionsBetween(oldPosition + 1, newPosition, queue.getDoctor().getId());
+    } else {
+      queueRepository.incrementPositionsBetween(newPosition, oldPosition - 1, queue.getDoctor().getId());
     }
 
-    // Set the new position for the current queue entry
+    // Update current queue
     queue.setPosition(newPosition);
-    return queueRepository.findQueueDtoByIdAndClinicId(queue.getId(), getClinicId())
-        .orElseThrow(() -> new RuntimeException("Queue not found after saving"));
+    queue.updateEstimatedWaitTime(completedQueues);
+    queueRepository.save(queue);
+
+    // Update all wait times in single query
+    queueRepository.updateAllWaitTimesForDoctor(
+        queue.getDoctor().getId(),
+        completedQueues.stream()
+            .filter(q -> q.getCreatedAt() != null && q.getUpdatedAt() != null)
+            .mapToLong(q -> Duration.between(q.getCreatedAt(), q.getUpdatedAt()).toMinutes())
+            .average()
+            .orElse(15.0));
+
+    return QueueResDTO.fromEntity(queue);
   }
 
   @Override
@@ -245,5 +259,20 @@ public class QueueService implements QueueServiceBase {
       if (!UserRole.ASSISTANT.equals(assistant.getRole()))
         throw new BadRequestException("User with id: " + assistant.getId() + " is not an assistant");
     }
+  }
+
+  private void updateAllWaitTimesForDoctor(User doctor) {
+    List<Queue> activeQueues = queueRepository.findByDoctorAndStatusOrderByPositionAsc(
+        doctor,
+        Queue.Status.WAITING);
+
+    List<Queue> completedQueues = queueRepository.findTop10ByDoctorAndStatusOrderByCreatedAtDesc(
+        doctor,
+        Queue.Status.COMPLETED);
+
+    activeQueues.forEach(queue -> {
+      queue.updateEstimatedWaitTime(completedQueues);
+      queueRepository.save(queue);
+    });
   }
 }

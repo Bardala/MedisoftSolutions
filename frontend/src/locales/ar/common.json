@@ -298,5 +298,7 @@
   "appointments.noAppointments": "لا توجد مواعيد",
   "appointments.addToWaitList": "أضف إلى قائمة الانتظار",
   "manage_appointments": "إدارة الحجوزات",
-  "total_appointments": "إجمالي الحجوزات"
+  "total_appointments": "إجمالي الحجوزات",
+  "estimatedWaitTime": "الوقت المتوقع للانتظار",
+  "minutes": "دقائق"
 }

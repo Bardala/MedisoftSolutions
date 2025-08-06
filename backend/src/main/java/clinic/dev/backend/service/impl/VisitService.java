@@ -190,7 +190,7 @@ public class VisitService implements VisitServiceBase {
   public List<VisitResDTO> getVisitsByWeek(LocalDate startDate) {
     Long clinicId = authContext.getClinicId();
     Instant startOfWeek = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-    Instant endOfWeek = startOfWeek.plus(7, ChronoUnit.DAYS);
+    Instant endOfWeek = startOfWeek.plus(8, ChronoUnit.DAYS);
 
     return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfWeek, endOfWeek)
         .stream()

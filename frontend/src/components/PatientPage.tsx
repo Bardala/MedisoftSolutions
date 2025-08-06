@@ -9,7 +9,6 @@ import {
   translateErrorMessage,
   sortById,
   findUnlinkedPayments,
-  programLogoImage,
 } from "../utils";
 import { PatientInfo } from "./PatientInfo";
 import Table from "./Table";
@@ -76,7 +75,7 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
     <>
       {/* Patient profile page */}
       {data && (
-        <div ref={componentRef}>
+        <div ref={componentRef} className="patient-page-container">
           {!!patientId && isLoading && (
             <p>{f({ id: "loading_patient_registry" })}</p>
           )}
@@ -129,14 +128,6 @@ export const PatientPage: FC<PatientPageProps> = ({ patientId }) => {
           </div>
 
           <UserFiles patientId={patientId} />
-
-          <div className="company-logo-container-patient-page">
-            <img
-              src={programLogoImage}
-              alt="MediSoft Logo"
-              className="company-logo2"
-            />
-          </div>
         </div>
       )}
 

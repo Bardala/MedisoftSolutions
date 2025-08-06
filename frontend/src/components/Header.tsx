@@ -7,6 +7,7 @@ import { FC } from "react";
 import { useSidebar } from "../hooks/useSidebar";
 import { assistantImage, doctorImage } from "../utils";
 import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../constants";
 
 const Header: FC<HeaderProps> = ({ loggedInUser }) => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -28,7 +29,7 @@ const Header: FC<HeaderProps> = ({ loggedInUser }) => {
           <FontAwesomeIcon
             icon={faHome}
             className="header-icon"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(AppRoutes.Dashboard)}
           />
           {menuItems.map((item, index) => (
             <FontAwesomeIcon

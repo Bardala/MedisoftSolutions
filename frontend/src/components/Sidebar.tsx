@@ -7,6 +7,7 @@ import { useSidebar } from "../hooks/useSidebar";
 import { doctorImage, assistantImage } from "../utils";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../constants";
 
 const Sidebar: FC<SidebarProps> = ({ loggedInUser }) => {
   const { menuItems } = useSidebar(loggedInUser);
@@ -34,7 +35,10 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser }) => {
       </h3>
 
       <ul className="sidebar-menu">
-        <li className="sidebar-home" onClick={() => navigate("/")}>
+        <li
+          className="sidebar-home"
+          onClick={() => navigate(AppRoutes.Dashboard)}
+        >
           <FontAwesomeIcon icon={faHome} className="sidebar-home-icon" />
         </li>
 

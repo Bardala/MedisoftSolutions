@@ -1,6 +1,8 @@
 package clinic.dev.backend.model;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -76,5 +78,46 @@ public class Queue {
     WAITING,
     IN_PROGRESS,
     COMPLETED
+  }
+
+  /**
+   * Calculates estimated wait time based on historical data
+   * 
+   * @param previousQueues List of recent completed queues for this doctor
+   * @return Estimated wait time in minutes
+   */
+  public static int calculateEstimatedWaitTime(List<Queue> previousQueues) {
+    if (previousQueues == null || previousQueues.isEmpty()) {
+      return 15; // Default fallback value
+    }
+
+    // Calculate average processing time from historical data
+    double average = previousQueues.stream()
+        .filter(q -> q.getStatus() == Status.COMPLETED)
+        .filter(q -> q.getCreatedAt() != null && q.getUpdatedAt() != null)
+        .mapToLong(q -> {
+          Duration duration = Duration.between(q.getCreatedAt(), q.getUpdatedAt());
+          return duration.toMinutes();
+        })
+        .average()
+        .orElse(15.0); // Default if no valid data
+
+    // Round up to nearest 5 minutes
+    return (int) (Math.ceil(average / 5) * 5);
+  }
+
+  /**
+   * Updates the estimated wait time based on position and historical data
+   * 
+   * @param previousQueues List of recent completed queues for this doctor
+   */
+  public void updateEstimatedWaitTime(List<Queue> previousQueues) {
+    if (this.position == null || this.position <= 1) {
+      this.estimatedWaitTime = 0;
+      return;
+    }
+
+    int avgProcessingTime = calculateEstimatedWaitTime(previousQueues);
+    this.estimatedWaitTime = (this.position - 1) * avgProcessingTime;
   }
 }

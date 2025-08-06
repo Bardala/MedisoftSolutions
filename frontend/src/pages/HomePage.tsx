@@ -25,79 +25,82 @@ import { AppointmentsCalendar } from "../components/AppointmentCalender";
 
 const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
   return (
-    <div>
-      {loggedInUser && <Header loggedInUser={loggedInUser} />}
-      {loggedInUser && <Sidebar loggedInUser={loggedInUser} />}
+    <div className="content-wrapper">
+      <div className={`content ${loggedInUser ? "with-sidebar" : ""}`}>
+        {loggedInUser && <Header loggedInUser={loggedInUser} />}
+        {loggedInUser && <Sidebar loggedInUser={loggedInUser} />}
 
-      <div className="home-page-container">
-        <div className="dashboard">
-          <div className="home-content">
-            <Routes>
-              {/* Common routes */}
-              <Route path={AppRoutes.HOME} element={<Home />} />
-              <Route path={AppRoutes.RECORD_VISIT} element={<AddVisit />} />
-              <Route path={AppRoutes.PATIENTS} element={<QueuePage />} />
-              <Route
-                path={AppRoutes.REPORTS}
-                element={<DailyFinancialReport />}
-              />
-              <Route path={AppRoutes.SETTINGS} element={<Settings />} />
-              <Route
-                path={AppRoutes.PATIENT_HISTORY}
-                element={<GetRegistry />}
-              />
-              <Route
-                path={AppRoutes.PATIENT_PROFILE}
-                element={<PatientProfile />}
-              />
-              <Route path={AppRoutes.ADD_PATIENT} element={<AddPatient />} />
-              <Route path={AppRoutes.PAYMENTS} element={<RecordPayments />} />
-              <Route
-                path={AppRoutes.UPDATE_USER_INFO}
-                element={<EditUserInfo />}
-              />
-              <Route path={AppRoutes.PATIENT_PAGE} element={<PatientPage />} />
-              <Route
-                path={AppRoutes.APPOINTMENT_CALENDER}
-                element={<AppointmentsCalendar />}
-              />
-
-              {/* Owner-only routes */}
-              {isOwnerRole(loggedInUser.role) && (
-                <>
-                  <Route
-                    path={AppRoutes.MONTHLY_REPORTS}
-                    element={<MonthlyDoctorReports />}
-                  />
-                  <Route
-                    path={AppRoutes.ADD_ASSISTANT}
-                    element={<AddUserForm />}
-                  />
-                  <Route
-                    path={AppRoutes.CLINIC_SETTINGS}
-                    element={<ClinicSettings />}
-                  />
-                  <Route
-                    path={AppRoutes.CLINIC_DATA}
-                    element={<ClinicData clinicId={loggedInUser.clinicId} />}
-                  />
-                </>
-              )}
-
-              {/* SuperAdmin-only routes */}
-              {isSuperAdminRole(loggedInUser.role) && (
-                <>
-                  <Route
-                    path={AppRoutes.ADMIN_CLINICS}
-                    element={<ClinicsList />}
-                  />
-                  <Route
-                    path={AppRoutes.CREATE_CLINIC}
-                    element={<CreateClinicWithOwner />}
-                  />
-                </>
-              )}
-            </Routes>
+        <div className="home-page-container">
+          <div className="dashboard">
+            <div className="home-content">
+              <Routes>
+                {/* Common routes */}
+                <Route path={AppRoutes.Dashboard} element={<Home />} />
+                <Route path={AppRoutes.RECORD_VISIT} element={<AddVisit />} />
+                <Route path={AppRoutes.PATIENTS} element={<QueuePage />} />
+                <Route
+                  path={AppRoutes.REPORTS}
+                  element={<DailyFinancialReport />}
+                />
+                <Route path={AppRoutes.SETTINGS} element={<Settings />} />
+                <Route
+                  path={AppRoutes.PATIENT_HISTORY}
+                  element={<GetRegistry />}
+                />
+                <Route
+                  path={AppRoutes.PATIENT_PROFILE}
+                  element={<PatientProfile />}
+                />
+                <Route path={AppRoutes.ADD_PATIENT} element={<AddPatient />} />
+                <Route path={AppRoutes.PAYMENTS} element={<RecordPayments />} />
+                <Route
+                  path={AppRoutes.UPDATE_USER_INFO}
+                  element={<EditUserInfo />}
+                />
+                <Route
+                  path={AppRoutes.PATIENT_PAGE}
+                  element={<PatientPage />}
+                />
+                <Route
+                  path={AppRoutes.APPOINTMENT_CALENDER}
+                  element={<AppointmentsCalendar />}
+                />
+                {/* Owner-only routes */}
+                {isOwnerRole(loggedInUser.role) && (
+                  <>
+                    <Route
+                      path={AppRoutes.MONTHLY_REPORTS}
+                      element={<MonthlyDoctorReports />}
+                    />
+                    <Route
+                      path={AppRoutes.ADD_ASSISTANT}
+                      element={<AddUserForm />}
+                    />
+                    <Route
+                      path={AppRoutes.CLINIC_SETTINGS}
+                      element={<ClinicSettings />}
+                    />
+                    <Route
+                      path={AppRoutes.CLINIC_DATA}
+                      element={<ClinicData clinicId={loggedInUser.clinicId} />}
+                    />
+                  </>
+                )}
+                {/* SuperAdmin-only routes */}
+                {isSuperAdminRole(loggedInUser.role) && (
+                  <>
+                    <Route
+                      path={AppRoutes.ADMIN_CLINICS}
+                      element={<ClinicsList />}
+                    />
+                    <Route
+                      path={AppRoutes.CREATE_CLINIC}
+                      element={<CreateClinicWithOwner />}
+                    />
+                  </>
+                )}
+              </Routes>
+            </div>
           </div>
         </div>
       </div>

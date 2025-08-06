@@ -128,11 +128,65 @@ button:disabled {
   transition: background-color 0.3s;
 }
 
+.printable-patient-info {
+  display: none;
+}
+
 /* Print Styles */
 @media print {
   .no-print {
     display: none;
   }
+
+  .printable-patient-info {
+    text-align: right;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    opacity: 1;
+  }
+
+  .printable-patient-info p {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px;
+    padding: 0;
+    font-size: 14px;
+    background-color: var(--primary-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+  }
+
+  .patient-page-container {
+    position: relative;
+    background: none;
+    /* remove default background */
+  }
+
+  .patient-page-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../../public/mediSoftLogo2.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.2;
+    /* subtle logo effect */
+    /* background-blend-mode: multiply;
+    filter: grayscale(80%) blur(1px); */
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .patient-page-container>* {
+    position: relative;
+    z-index: 1;
+  }
+
+  .patient-info-wrapper {
+    display: none;
+  }
+
 
   .container {
     padding: 0;
@@ -188,6 +242,18 @@ button:disabled {
     width: 150px;
     height: auto;
     margin: 0 auto;
+  }
+
+  table td {
+    padding: 0;
+    border: 1px solid var(--border-color);
+    color: #0060d0;
+    font-size: 12px;
+  }
+
+  table th {
+    padding: 0;
+    border: 1px solid var(--border-color);
   }
 }
 

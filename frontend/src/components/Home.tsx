@@ -3,7 +3,6 @@ import {
   faUserPlus,
   faDollarSign,
   faPlusCircle,
-  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styles/home.css";
 import { useDailyReportData } from "../hooks/useDailyReportData";
@@ -175,13 +174,13 @@ const Home = () => {
           >
             <FontAwesomeIcon icon={faPlusCircle} /> {f({ id: "record_visit" })}
           </button>
-          <button
+          {/* <button
             className="action-btn"
             onClick={() => navigate(AppRoutes.APPOINTMENT_CALENDER)}
           >
             <FontAwesomeIcon icon={faCalendarAlt} />{" "}
             {f({ id: "manage_appointments" })}
-          </button>
+          </button> */}
         </div>
       </section>
 

@@ -15,6 +15,7 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { isOwnerRole } from "../types";
+import { AppRoutes } from "../constants";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Settings = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate(AppRoutes.WELCOME_PAGE);
   };
 
   return (

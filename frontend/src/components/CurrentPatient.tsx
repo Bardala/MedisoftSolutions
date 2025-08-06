@@ -26,6 +26,7 @@ import { useDoctorSelection } from "../hooks/useDoctors";
 import DentalChart from "./DentalChart";
 import { PatientInfo } from "./PatientInfo";
 import { VisitTable } from "./VisitTable";
+import { QueueActions } from "./QueueActions";
 
 const CurrentPatientProfile = () => {
   const { formatMessage: f } = useIntl();
@@ -127,12 +128,23 @@ const CurrentPatientProfile = () => {
   return (
     <div className="patient-profile-container">
       <div className="header-section">
-        <h1>
-          <FontAwesomeIcon icon={faProcedures} />{" "}
-          {f({ id: "sidebar.currentPatient" })}
-        </h1>
+        <div className="header-content">
+          <div className="header-title">
+            <FontAwesomeIcon icon={faProcedures} />
+            <span>{f({ id: "sidebar.currentPatient" })}</span>
+          </div>
 
-        {<DoctorSelect />}
+          <div className="header-controls">
+            <QueueActions
+              selectedDoctorId={selectedDoctorId}
+              entry={firstEntry}
+              compact
+            />
+            <DoctorSelect
+            // compact
+            />
+          </div>
+        </div>
       </div>
 
       {currPatient && (

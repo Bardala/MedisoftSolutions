@@ -101,4 +101,44 @@ public interface QueueRepo extends JpaRepository<Queue, Long> {
       @Param("patient") Patient patient,
       @Param("doctor") User doctor,
       @Param("statuses") Set<Status> statuses);
+
+  List<Queue> findTop10ByDoctorAndStatusOrderByCreatedAtDesc(
+      User doctor,
+      Queue.Status status);
+
+  List<Queue> findByDoctorAndStatusOrderByPositionAsc(
+      User doctor,
+      Queue.Status status);
+
+  @Modifying
+  @Query("UPDATE Queue q SET q.position = q.position - 1 WHERE q.position BETWEEN :start AND :end AND q.doctor.id = :doctorId")
+  void decrementPositionsBetween(@Param("start") int start, @Param("end") int end, @Param("doctorId") Long doctorId);
+
+  @Modifying
+  @Query("UPDATE Queue q SET q.position = q.position + 1 WHERE q.position BETWEEN :start AND :end AND q.doctor.id = :doctorId")
+  void incrementPositionsBetween(@Param("start") int start, @Param("end") int end, @Param("doctorId") Long doctorId);
+
+  @Modifying
+  @Query("UPDATE Queue q SET q.position = q.position - 1, " +
+      "q.estimatedWaitTime = (q.position - 1) * :avgMinutes " +
+      "WHERE q.position BETWEEN :start AND :end AND q.doctor.id = :doctorId")
+  void decrementPositionsBetween(@Param("start") int start,
+      @Param("end") int end,
+      @Param("doctorId") Long doctorId,
+      @Param("avgMinutes") double avgMinutes);
+
+  @Modifying
+  @Query("UPDATE Queue q SET q.position = q.position + 1, " +
+      "q.estimatedWaitTime = (q.position - 1) * :avgMinutes " +
+      "WHERE q.position BETWEEN :start AND :end AND q.doctor.id = :doctorId")
+  void incrementPositionsBetween(@Param("start") int start,
+      @Param("end") int end,
+      @Param("doctorId") Long doctorId,
+      @Param("avgMinutes") double avgMinutes);
+
+  @Modifying
+  @Query("UPDATE Queue q SET q.estimatedWaitTime = (q.position - 1) * :avgMinutes " +
+      "WHERE q.doctor.id = :doctorId AND q.status = 'WAITING'")
+  void updateAllWaitTimesForDoctor(@Param("doctorId") Long doctorId,
+      @Param("avgMinutes") double avgMinutes);
 }

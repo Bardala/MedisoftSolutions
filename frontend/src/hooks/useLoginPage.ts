@@ -16,7 +16,7 @@ export const useLoginPage = () => {
     if (success) {
       if (isSuperAdminRole(loggedInUser?.role))
         navigate(AppRoutes.ADMIN_CLINICS, { replace: true });
-      else navigate(AppRoutes.HOME, { replace: true });
+      else navigate(AppRoutes.Dashboard, { replace: true });
     }
   }, [success, navigate, loggedInUser?.role]);
 

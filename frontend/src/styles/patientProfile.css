@@ -49,11 +49,59 @@
 }
 
 .header-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--padding-small);
   margin-bottom: var(--padding-medium);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--padding-medium);
+  width: 100%;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+}
+
+/* Compact button styles */
+.header-controls button {
+  padding: var(--padding-small) var(--padding-medium);
+  font-size: 0.9rem;
+}
+
+.header-controls .select-container {
+  width: 180px;
+  /* Adjust as needed */
+}
+
+/* Icon sizing */
+.header-controls svg {
+  font-size: 1rem;
+}
+
+.queue-actions.compact {
+  padding: var(--padding-small);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--padding-small);
+
+}
+
+.queue-actions.compact button {
+  padding: 4px 8px;
+  font-size: 0.85rem;
 }
 
 .header-section h2 {
