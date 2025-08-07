@@ -293,6 +293,10 @@
     padding: 4px;
   }
 
+  .header-title {
+    font-size: calc(var(--font-size-title) - 4px);
+  }
+
   .profile-header .icon {
     width: 40px;
     height: 40px;

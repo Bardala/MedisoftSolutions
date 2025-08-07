@@ -28,6 +28,54 @@
   color: var(--secondary-color);
 }
 
+.dashboard-summary {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--padding-medium);
+  scrollbar-width: none;
+  /* Hide scrollbar */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+  gap: 1rem;
+  /* Dynamic gap value - adjust as needed */
+  padding: 0.5rem 0;
+  /* Add some vertical padding */
+}
+
+/* Hide scrollbar for WebKit */
+.dashboard-summary::-webkit-scrollbar {
+  display: none;
+}
+
+.summary-item {
+  background-color: var(--secondary-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  text-align: center;
+  flex: 0 0 calc(33.333% - 1rem);
+  /* 3 items accounting for gap */
+  scroll-snap-align: start;
+  box-shadow: var(--shadow-light);
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary-item {
+    flex: 0 0 calc(50% - 1rem);
+    /* 2 items on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-item {
+    flex: 0 0 calc(100% - 1rem);
+    /* 1 item on mobile */
+  }
+}
+
 .quick-actions {
   margin-bottom: var(--padding-medium);
 }

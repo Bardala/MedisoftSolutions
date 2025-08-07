@@ -2,7 +2,7 @@ import { FC } from "react";
 import "../styles/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
-import { isDoctorRole, SidebarProps } from "../types";
+import { isDoctorRole, isSuperAdminRole, SidebarProps } from "../types";
 import { useSidebar } from "../hooks/useSidebar";
 import { doctorImage, assistantImage } from "../utils";
 import { useIntl } from "react-intl";
@@ -37,7 +37,11 @@ const Sidebar: FC<SidebarProps> = ({ loggedInUser }) => {
       <ul className="sidebar-menu">
         <li
           className="sidebar-home"
-          onClick={() => navigate(AppRoutes.Dashboard)}
+          onClick={() =>
+            isSuperAdminRole(loggedInUser.role)
+              ? navigate(AppRoutes.ADMIN_CLINICS)
+              : navigate(AppRoutes.Dashboard)
+          }
         >
           <FontAwesomeIcon icon={faHome} className="sidebar-home-icon" />
         </li>

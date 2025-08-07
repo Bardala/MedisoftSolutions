@@ -175,8 +175,8 @@ export const useAddVisit = () => {
 };
 
 export const useUpdateVisit = () => {
-  const updateVisitMutation = useMutation<VisitResDTO, ApiError, VisitReqDTO>(
-    (visit) => VisitApi.update(visit),
+  const updateVisitMutation = useMutation<VisitResDTO, ApiError, Visit>(
+    (visit) => VisitApi.update(visit, visit.id),
   );
 
   return { updateVisitMutation };

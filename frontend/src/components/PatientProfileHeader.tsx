@@ -53,7 +53,7 @@ const PatientProfileHeader = ({
         <FontAwesomeIcon icon={faFileAlt} /> <span>{f({ id: "files" })}</span>
       </div>
 
-      {isDoctorRole(loggedInUser.role) && entry.status === "IN_PROGRESS" && (
+      {isDoctorRole(loggedInUser.role) && entry.status !== "WAITING" && (
         <>
           {/* <div
             className="icon"

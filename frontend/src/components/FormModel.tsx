@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Patient, Payment } from "../types";
+import { Patient, Payment, Visit } from "../types";
 import { isArabic } from "../utils";
 
 interface FormModalProps<T> {
@@ -23,6 +23,9 @@ export const FormModal = <T extends Record<string, any>>({
     } else if ("amount" in obj) {
       const { amount } = obj as unknown as Payment;
       return { amount };
+    } else if ("reason" in obj) {
+      const { reason, patientId, doctorId } = obj as unknown as Visit;
+      return { reason, patientId, doctorId };
     } else {
       return obj;
     }

@@ -15,7 +15,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useUpdatePayment, useDeletePayment } from "../hooks/usePayment";
-import { useDeleteVisit } from "../hooks/useVisit";
+import { useDeleteVisit, useUpdateVisit } from "../hooks/useVisit";
 import { useLogin } from "../context/loginContext";
 import { useIntl } from "react-intl";
 import { DailyReportCharts } from "./DailyReportChart";
@@ -40,6 +40,7 @@ const DailyFinancialReport = () => {
   const { updatePaymentMutation } = useUpdatePayment();
   const { deletePaymentMutation } = useDeletePayment();
   const [showStats, setShowStats] = useState(false);
+  const { updateVisitMutation } = useUpdateVisit();
 
   // Fetch data for the selected date
   const { patients, visits, payments, totalPayments, isError, isLoading } =
@@ -214,6 +215,7 @@ const DailyFinancialReport = () => {
                 columns={linkedVisitColumns}
                 data={linkedVisits}
                 onDelete={deleteVisitMutation.mutate}
+                onUpdate={updateVisitMutation.mutate}
                 enableActions={true}
               />
             </div>

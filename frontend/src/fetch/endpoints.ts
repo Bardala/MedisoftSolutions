@@ -36,7 +36,7 @@ export enum ENDPOINT {
 
   // Visit APIs
   CREATE_VISIT = "/visits",
-  UPDATE_VISIT = "/visits",
+  UPDATE_VISIT = "/visits/:id",
   DELETE_VISIT = "/visits/:id",
   GET_VISIT_BY_ID = "/visits/:id",
   GET_ALL_VISITS = "/visits",

@@ -80,9 +80,9 @@ export const VisitCard: FC<{
         <div className="visit-card-content">
           <div className="info-grid">
             <div className="info-card">
-              <div className="card-icon">🆔</div>
-              <h4 className="card-title">{f({ id: "visitId" })}</h4>
-              <p className="card-content">{visit.id}</p>
+              <div className="card-icon">😷</div>
+              <h4 className="card-title">{f({ id: "visitReason" })}</h4>
+              <p className="card-content">{visit?.reason || "-"}</p>
             </div>
 
             {!currVisit && (

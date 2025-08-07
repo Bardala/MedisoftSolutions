@@ -29,8 +29,10 @@ export const VisitApi = {
   getWorkday: (date: string) =>
     fetchFn<void, VisitResDTO[]>(`${ENDPOINT.GET_WORKDAY_VISITS}?date=${date}`),
 
-  update: (visit: VisitReqDTO) =>
-    fetchFn<VisitReqDTO, VisitResDTO>(ENDPOINT.UPDATE_VISIT, "PUT", visit),
+  update: (visit: VisitReqDTO, id: number) =>
+    fetchFn<VisitReqDTO, VisitResDTO>(ENDPOINT.UPDATE_VISIT, "PUT", visit, [
+      id.toString(),
+    ]),
 
   delete: (visitId: number) =>
     fetchFn<void, void>(ENDPOINT.DELETE_VISIT, "DELETE", undefined, [

@@ -5,7 +5,6 @@ import { ApiRes, RestMethod } from "../types";
 import { ApiError } from "./ApiError";
 import { ERROR_MESSAGES } from "../utils/errorMessages";
 import { AppRoutes } from "../constants";
-import { ENDPOINT } from "./endpoints";
 
 const apiVersion = "/api/v1";
 
@@ -61,11 +60,6 @@ export const fetchFn = async <Request, Response>(
             .join(", ") // Combines multiple messages
         : "Network response was not ok";
       throw new ApiError(res.status, errorMessage, jsonResponse.error);
-    }
-
-    if (endPoint.includes(ENDPOINT.GET_WEEKLY_SCHEDULE)) {
-      console.log("Req: ", endPoint);
-      console.info("Weekly schedule fetched successfully ", jsonResponse.data);
     }
 
     return jsonResponse.data as Response;

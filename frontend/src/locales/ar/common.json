@@ -300,5 +300,9 @@
   "manage_appointments": "إدارة الحجوزات",
   "total_appointments": "إجمالي الحجوزات",
   "estimatedWaitTime": "الوقت المتوقع للانتظار",
-  "minutes": "دقائق"
+  "minutes": "دقائق",
+  "hour": "ساعة",
+  "hours": "ساعات",
+  "second": "ثانية",
+  "seconds": "ثواني"
 }

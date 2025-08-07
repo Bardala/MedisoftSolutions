@@ -285,7 +285,7 @@
   "appointments": "Appointments",
 
   "appointments.patientName": "Patient",
-  "appointments.visitTime": "Appointment Date",
+  "appointments.visitTime": "Appt.",
   "appointments.doctorName": "Doctor",
   "appointments.reason": "Reason",
   "appointments.registrationTime": "Registered",
@@ -297,5 +297,9 @@
   "total_appointments": "Total Appointments",
 
   "estimatedWaitTime": "Estimated Wait Time",
-  "minutes": "Minutes"
+  "minutes": "Minutes",
+  "hour": "Hour",
+  "hours": "Hours",
+  "second": "Second",
+  "seconds": "Seconds"
 }
