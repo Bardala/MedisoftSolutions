@@ -20,6 +20,7 @@ const QueuePage: React.FC = () => {
   const { updatePositionMutation } = useUpdateQueuePosition(selectedDoctorId);
   const isLoading = isLoadingQueue || updatePositionMutation.isLoading;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const showEstimatedWaitTime = (entry: QueueEntry) =>
     !(entry.status === "IN_PROGRESS" || entry.status === "COMPLETED");
 
@@ -42,7 +43,7 @@ const QueuePage: React.FC = () => {
               <th>{f({ id: "position" })}</th>
               <th>{f({ id: "patient" })}</th>
               <th>{f({ id: "arrivedIn" })}</th>
-              <th>{f({ id: "estimatedWaitTime" })}</th>
+              {/* <th>{f({ id: "estimatedWaitTime" })}</th> */}
               <th>{f({ id: "actions" })}</th>
             </tr>
           </thead>
@@ -82,11 +83,11 @@ const QueuePage: React.FC = () => {
                   {entry.patientName}
                 </td>
                 <td>{dailyTimeFormate(entry.createdAt)}</td>
-                <td>
+                {/* <td>
                   {showEstimatedWaitTime(entry) && entry.estimatedWaitTime
                     ? `${entry.estimatedWaitTime} ${f({ id: "minutes" })}`
                     : ""}
-                </td>
+                </td> */}
                 <td>
                   <QueueActions
                     selectedDoctorId={selectedDoctorId}
