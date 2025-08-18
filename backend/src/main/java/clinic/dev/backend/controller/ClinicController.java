@@ -107,7 +107,7 @@ public class ClinicController {
   }
 
   @PostMapping("/with-owner")
-  @PreAuthorize("@auth.isSuperAdmin()")
+  // @PreAuthorize("@auth.isSuperAdmin()")
   public ResponseEntity<ApiRes<ClinicWithOwnerRes>> createClinicWithOwner(
       @Valid @RequestBody CreateClinicWithOwnerReq req) {
     ClinicWithOwnerRes response = clinicService.createClinicWithOwner(req);

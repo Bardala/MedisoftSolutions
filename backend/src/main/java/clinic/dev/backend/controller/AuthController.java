@@ -11,7 +11,10 @@ import clinic.dev.backend.dto.auth.LoginRequest;
 import clinic.dev.backend.dto.auth.LoginResponse;
 import clinic.dev.backend.dto.auth.SignupRequest;
 import clinic.dev.backend.dto.auth.SignupResponse;
+import clinic.dev.backend.dto.clinic.req.CreateClinicWithOwnerReq;
+import clinic.dev.backend.dto.clinic.res.ClinicWithOwnerRes;
 import clinic.dev.backend.service.AuthServiceBase;
+import clinic.dev.backend.service.ClinicServiceBase;
 import clinic.dev.backend.service.impl.UserService;
 import clinic.dev.backend.util.ApiRes;
 
@@ -25,12 +28,22 @@ public class AuthController {
   @Autowired
   private UserService signupService;
 
+  @Autowired
+  private ClinicServiceBase clinicService;
+
   @PostMapping("/signup")
   public ResponseEntity<ApiRes<SignupResponse>> signup(@Valid @RequestBody SignupRequest request) {
     signupService.signup(request);
     String token = authService.login(request.getUsername(), request.getPassword());
     SignupResponse res = new SignupResponse(token, request.getUsername());
     return ResponseEntity.ok(new ApiRes<>(res));
+  }
+
+  @PostMapping("/with-owner")
+  public ResponseEntity<ApiRes<ClinicWithOwnerRes>> createClinicWithOwner(
+      @Valid @RequestBody CreateClinicWithOwnerReq req) {
+    ClinicWithOwnerRes response = clinicService.createClinicWithOwner(req);
+    return ResponseEntity.ok(new ApiRes<>(response));
   }
 
   @PostMapping("/login")

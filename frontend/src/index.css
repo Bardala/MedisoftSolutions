@@ -24,11 +24,6 @@
   --fourth-hover: #1d4b87;
   /* Darker Royal Blue */
 
-  /* Success Colors */
-  --success-bg: #d4edda;
-  --success-border: #c3e6cb;
-  --success-text: #155724;
-
   /* Neutral Colors */
   --border-color: #ddd;
   --white: #fff;
@@ -65,10 +60,20 @@
   --secondary-brand-color: #e2e7e9;
   --logo-bg: var(--third-bg);
 
+  /* Success Colors */
+  --success-bg: #d4edda;
+  --success-border: #c3e6cb;
+  --success-text: #155724;
+
   /* Error Colors */
   --error-bg: #f8d7da;
   --error-border: #f5c2c7;
   --error-text: #842029;
+
+  /* Warning Colors */
+  --warn-bg: #fff3cd;
+  --warn-border: #ffeeba;
+  --warn-text: #856404;
 
   --label-color: #265a9f;
   /* Label text like "Patient ID", etc. */
@@ -95,11 +100,6 @@
   /* Primary Blue */
   --fourth-hover: #357ac4;
   /* Hover Blue */
-
-  /* Success Colors */
-  --success-bg: #112716;
-  --success-border: #155724;
-  --success-text: #d4edda;
 
   --border-color: #444;
   --white: #e6e6e6;
@@ -136,10 +136,20 @@
   --secondary-brand-color: black;
   --logo-bg: var(--fourth-bg);
 
+  /* Success Colors */
+  --success-bg: #112716;
+  --success-border: #155724;
+  --success-text: #d4edda;
+
   /* Error Colors (Dark Mode) */
   --error-bg: #2c0b0e;
   --error-border: #842029;
   --error-text: #f8d7da;
+
+  /* Warning Colors (Dark Mode) */
+  --warn-bg: #332a00;
+  --warn-border: #856404;
+  --warn-text: #fff3cd;
 }
 
 body {

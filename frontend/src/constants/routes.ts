@@ -14,6 +14,9 @@ export const AppRoutes = {
   PATIENT_PAGE: "/patient-page/:id",
   APPOINTMENT_CALENDER: "/appointment-calender",
   LOGIN: "/login",
+  SIGNUP: "/signup",
+  TERMS: "/terms",
+  PRIVACY_POLICY: "/privacy-policy",
 
   // Owner-only routes
   MONTHLY_REPORTS: "/monthly-reports",

@@ -4,6 +4,9 @@ import { LoginPage } from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import { AppRoutes } from "./constants";
 import WelcomePage from "./pages/WelcomePage";
+import { SignupPage } from "./pages/SignupPage";
+import TermsPage from "./components/TermsPage";
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 
 const App = () => {
   const { loggedInUser } = useLogin();
@@ -15,6 +18,13 @@ const App = () => {
         <Routes>
           <Route path={AppRoutes.WELCOME_PAGE} element={<WelcomePage />} />
           <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
+          <Route path={AppRoutes.SIGNUP} element={<SignupPage />} />
+          <Route path={AppRoutes.TERMS} element={<TermsPage />} />
+          <Route
+            path={AppRoutes.PRIVACY_POLICY}
+            element={<PrivacyPolicyPage />}
+          />
+
           <Route
             path="/*"
             element={

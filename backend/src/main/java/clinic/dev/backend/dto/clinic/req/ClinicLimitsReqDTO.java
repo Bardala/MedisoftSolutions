@@ -3,7 +3,9 @@ package clinic.dev.backend.dto.clinic.req;
 import clinic.dev.backend.model.ClinicLimits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record ClinicLimitsReqDTO(
     @NotNull @Min(1) Integer maxUsers,
     @NotNull @Min(1) Integer maxFileStorageMb,

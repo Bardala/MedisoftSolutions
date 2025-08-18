@@ -62,6 +62,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/v1/healthz").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/v1/clinics/with-owner").permitAll()
 
             // System Admin specific (require auth, restrict in service layer)
             .requestMatchers(HttpMethod.GET, "/api/v1/clinics/**").authenticated()

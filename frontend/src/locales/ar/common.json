@@ -304,5 +304,29 @@
   "hour": "ساعة",
   "hours": "ساعات",
   "second": "ثانية",
-  "seconds": "ثواني"
+  "seconds": "ثواني",
+
+  "create_your_account": "أنشئ حسابك",
+  "setup_your_clinic": "قم بإعداد عيادتك",
+  "account_information": "معلومات الحساب",
+  "select_your_plan": "اختر خطتك",
+  "create_account": "إنشاء حساب",
+  "privacy_policy": "سياسة الخصوصية",
+  "terms_of_service": "شروط الخدمة",
+  "by_creating_account": "بإنشاء حساب، فإنك توافق على الشروط وسياسة الخصوصية",
+
+  "clinic_name_placeholder": "أدخل اسم العيادة",
+  "clinic_address_placeholder": "أدخل عنوان العيادة",
+  "clinic_phone_placeholder": "أدخل رقم هاتف العيادة",
+  "clinic_email_placeholder": "أدخل بريد العيادة الإلكتروني",
+  "username_placeholder": "اختر اسم مستخدم",
+  "full_name_placeholder": "أدخل اسمك الكامل",
+  "password_placeholder": "أنشئ كلمة مرور",
+  "phone_placeholder": "أدخل رقم هاتفك",
+
+  "signup_successful": "تم التسجيل بنجاح",
+  "welcome_message": "مرحبًا بك في MediSoft! تم إنشاء حسابك.",
+  "account_details": "تفاصيل الحساب",
+  "continue_to_dashboard": "الانتقال إلى لوحة التحكم",
+  "continue_to_login": "الانتقال إلى تسجيل الدخول"
 }

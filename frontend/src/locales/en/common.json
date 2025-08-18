@@ -301,5 +301,29 @@
   "hour": "Hour",
   "hours": "Hours",
   "second": "Second",
-  "seconds": "Seconds"
+  "seconds": "Seconds",
+
+  "create_your_account": "Create your account",
+  "setup_your_clinic": "Set up your clinic",
+  "account_information": "Account Information",
+  "select_your_plan": "Select Your Plan",
+  "create_account": "Create Account",
+  "privacy_policy": "Privacy Policy",
+  "terms_of_service": "Terms of Service",
+  "by_creating_account": "By creating an account, you agree to our",
+
+  "clinic_name_placeholder": "Enter clinic name",
+  "clinic_address_placeholder": "Enter clinic address",
+  "clinic_phone_placeholder": "Enter clinic phone number",
+  "clinic_email_placeholder": "Enter clinic email",
+  "username_placeholder": "Choose a username",
+  "full_name_placeholder": "Enter your full name",
+  "password_placeholder": "Create a password",
+  "phone_placeholder": "Enter your phone number",
+
+  "signup_successful": "Signup Successful",
+  "welcome_message": "Welcome to MediSoft! Your account has been created.",
+  "account_details": "Account Details",
+  "continue_to_dashboard": "Continue to Dashboard",
+  "continue_to_login": "Continue to Login"
 }

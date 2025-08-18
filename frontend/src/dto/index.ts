@@ -429,6 +429,7 @@ export interface ClinicBillingPlanReq {
   yearlyPrice: number;
   status: SubscriptionStatus;
   autoRenew: boolean;
+  isTrial: boolean;
 }
 
 export interface ClinicBillingPlanRes extends ClinicBillingPlanReq {

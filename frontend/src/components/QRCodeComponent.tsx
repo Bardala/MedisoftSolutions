@@ -13,7 +13,7 @@ const QRCodeComponent: React.FC<QRCodeProps> = ({ username, password }) => {
 
   return (
     <div>
-      <h3>Let the new User scan QR-code to login automatically</h3>
+      <h3>Scan QR-code to login automatically</h3>
       <QRCodeSVG
         value={qrCodeValue}
         size={200}

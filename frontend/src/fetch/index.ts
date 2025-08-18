@@ -46,7 +46,11 @@ export const fetchFn = async <Request, Response>(
       localStorage.removeItem(LOCALS.AUTH_TOKEN);
       localStorage.removeItem(LOCALS.CURR_USER);
       const path = window.location.pathname;
-      if (path !== AppRoutes.LOGIN && path !== AppRoutes.WELCOME_PAGE) {
+      if (
+        path !== AppRoutes.LOGIN &&
+        path !== AppRoutes.WELCOME_PAGE &&
+        path !== AppRoutes.SIGNUP
+      ) {
         window.location.href = AppRoutes.WELCOME_PAGE;
       }
     }

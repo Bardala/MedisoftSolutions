@@ -1,0 +1,399 @@
+/* Signup Page Container */
+.signup-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--padding-large);
+  background-color: var(--primary-bg);
+}
+
+/* Main Signup Card */
+.signup-card {
+  /* width: 100%;
+  max-width: 900px; */
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+}
+
+/* Header Section */
+.signup-header {
+  padding: var(--padding-large) var(--padding-large) var(--padding-medium);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--fourth-bg);
+}
+
+.signup-header h1 {
+  font-size: var(--font-size-welcome);
+  color: var(--fourth-color);
+  margin-bottom: var(--padding-small);
+}
+
+.signup-header p {
+  color: var(--text-color);
+  font-size: var(--font-size-body);
+}
+
+/* Form Styling */
+.signup-form {
+  padding: var(--padding-large);
+}
+
+.form-section {
+  margin-bottom: var(--padding-large);
+  background-color: var(--section-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+}
+
+.section-title {
+  font-size: 1.2rem;
+  color: var(--fourth-color);
+  margin-bottom: var(--padding-medium);
+  padding-bottom: var(--padding-small);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--padding-medium);
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: var(--padding-medium);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--padding-small);
+  font-weight: 500;
+  color: var(--label-color);
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  /* width: 100%; */
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+  background-color: var(--white);
+  color: var(--secondary-color);
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Checkbox Styling */
+.checkbox-group {
+  grid-column: 1 / -1;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  height: 18px;
+  width: 18px;
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkbox-container:hover input~.checkmark {
+  border-color: var(--primary-color);
+}
+
+.checkbox-container input:checked~.checkmark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.checkmark:after {
+  content: "";
+  display: none;
+  width: 4px;
+  height: 8px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkbox-container input:checked~.checkmark:after {
+  display: block;
+}
+
+/* Plan Section */
+.plan-section {
+  margin-top: var(--padding-large);
+  background-color: var(--section-bg);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+}
+
+/* Form Footer */
+.form-footer {
+  margin-top: var(--padding-large);
+  text-align: center;
+}
+
+.submit-button {
+  width: 100%;
+  padding: var(--padding-medium);
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.submit-button.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.button-loader {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid var(--white);
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin-right: var(--padding-small);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.terms-notice {
+  margin-top: var(--padding-medium);
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.terms-notice a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.terms-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Error Messages */
+.error-message {
+  padding: var(--padding-medium);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--border-radius);
+  color: var(--error-text);
+  margin-bottom: var(--padding-medium);
+  font-size: 0.9rem;
+}
+
+.error-message p {
+  margin: var(--padding-small) 0;
+}
+
+/* Success Screen */
+.signup-success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--padding-large);
+  background-color: var(--primary-bg);
+}
+
+.signup-success-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  padding: var(--padding-large);
+  text-align: center;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 auto var(--padding-medium);
+  border: 2px solid var(--success-border);
+}
+
+.signup-success-card h2 {
+  font-size: var(--font-size-welcome);
+  color: var(--fourth-color);
+  margin-bottom: var(--padding-medium);
+}
+
+.success-message {
+  color: var(--text-color);
+  font-size: var(--font-size-body);
+  margin-bottom: var(--padding-large);
+}
+
+.info-card {
+  background-color: var(--section-bg);
+  border-radius: var(--border-radius);
+  padding: var(--padding-medium);
+  margin-bottom: var(--padding-medium);
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+.info-card h3 {
+  font-size: 1.1rem;
+  color: var(--info-card-header);
+  margin-bottom: var(--padding-medium);
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--padding-medium);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  margin-bottom: var(--padding-small);
+}
+
+.info-value {
+  font-weight: 500;
+  color: var(--secondary-color);
+}
+
+.credentials-card {
+  background-color: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.continue-button {
+  width: 100%;
+  padding: var(--padding-medium);
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--padding-medium);
+}
+
+.continue-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+
+  .signup-page-container,
+  .signup-success-container {
+    padding: var(--padding-medium);
+  }
+
+  .signup-card,
+  .signup-success-card {
+    padding: var(--medium);
+  }
+
+  .form-grid,
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark Mode Adjustments */
+:root.dark-mode .signup-card,
+:root.dark-mode .form-section,
+:root.dark-mode .info-card {
+  background-color: var(--secondary-bg);
+  color: var(--white);
+}
+
+:root.dark-mode .form-group input {
+  background-color: var(--fourth-bg);
+  color: var(--white);
+  border-color: var(--border-color);
+}
+
+:root.dark-mode .checkbox-container {
+  color: var(--white);
+}
+
+:root.dark-mode .terms-notice {
+  color: var(--white);
+}
+
+:root.dark-mode .credentials-card {
+  background-color: var(--success-bg);
+}

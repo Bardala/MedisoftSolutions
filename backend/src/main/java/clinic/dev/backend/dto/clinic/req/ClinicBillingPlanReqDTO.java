@@ -17,7 +17,8 @@ public record ClinicBillingPlanReqDTO(
     @NotNull @Min(0) Double monthlyPrice,
     @NotNull @Min(0) Double yearlyPrice,
     @NotNull SubscriptionStatus status,
-    @NotNull Boolean autoRenew) {
+    @NotNull Boolean autoRenew,
+    @NotNull Boolean isTrial) {
 
   public ClinicBillingPlan toEntity(Long clinicId) {
     return ClinicBillingPlan.builder()

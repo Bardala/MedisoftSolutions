@@ -52,6 +52,7 @@ export const CreateClinicWithOwner = () => {
       yearlyPrice: 0,
       status: SubscriptionStatus.ACTIVE,
       autoRenew: true,
+      isTrial: true,
     },
   });
 
@@ -140,6 +141,7 @@ export const CreateClinicWithOwner = () => {
         yearlyPrice: 0,
         status: SubscriptionStatus.ACTIVE,
         autoRenew: true,
+        isTrial: true,
       },
     });
   };

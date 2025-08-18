@@ -74,6 +74,8 @@ public class ClinicService implements ClinicServiceBase {
   private ClinicUsageRepo clinicUsageRepo;
   @Autowired
   private ClinicBillingPlanRepo clinicBillingPlanRepo;
+  @Autowired
+  private PlanConfigurationService planConfig;
 
   @Override
   public List<ClinicResDTO> getAllClinics() {
@@ -166,18 +168,21 @@ public class ClinicService implements ClinicServiceBase {
     return ClinicLimitsResDTO.fromEntity(clinicLimitsRepo.save(limits));
   }
 
+  @Override
   public ClinicLimitsResDTO getLimits() {
     return ClinicLimitsResDTO
         .fromEntity(clinicLimitsRepo.findByClinicId(authContext.getClinicId())
             .orElseThrow(() -> new ResourceNotFoundException("Clinic limits not found")));
   }
 
+  @Override
   public ClinicLimitsResDTO getLimitsById(Long clinicId) {
     return ClinicLimitsResDTO
         .fromEntity(clinicLimitsRepo.findByClinicId(clinicId)
             .orElseThrow(() -> new ResourceNotFoundException("Clinic limits not found")));
   }
 
+  @Override
   public ClinicSettingsResDTO getSettings() {
     return ClinicSettingsResDTO
         .fromEntity(clinicSettingsRepo
@@ -187,12 +192,14 @@ public class ClinicService implements ClinicServiceBase {
                 () -> new ResourceNotFoundException("Clinic settings not found")));
   }
 
+  @Override
   @Transactional(readOnly = true)
   public Page<ClinicResDTO> searchClinicsByName(String name, int page, int size) {
     return clinicRepo.findByNameContainingIgnoreCase(name, PageRequest.of(page, size))
         .map(ClinicResDTO::fromEntity);
   }
 
+  @Override
   @Transactional(readOnly = true)
   public Page<ClinicResDTO> searchClinics(ClinicSearchReq req) {
     if (req.name() == null && req.phone() == null && req.email() == null) {
@@ -207,18 +214,22 @@ public class ClinicService implements ClinicServiceBase {
         req.getPageable()).map(ClinicResDTO::fromEntity);
   }
 
+  @Override
   @Transactional
   public ClinicWithOwnerRes createClinicWithOwner(
       CreateClinicWithOwnerReq req) {
     Clinic clinic = createClinic(req.clinic());
-    ClinicLimits limits = createClinicLimits(req.limits(), clinic);
-    createClinicUsage(new ClinicUsageReqDTO(clinic.getId(), 0, 0));
-    ClinicBillingPlan plan;
 
-    if (req.plan() == null)
-      plan = createClinicBillingPlan(clinic.getId());
-    else
-      plan = clinicBillingPlanRepo.save(req.plan().toEntity(clinic.getId()));
+    PlanType planType = req.plan().planType();
+
+    Boolean isTrial = req.plan().isTrial();
+    ClinicBillingPlanReqDTO billingPlan = planConfig.getBillingPlan(planType, isTrial);
+    ClinicBillingPlan plan = clinicBillingPlanRepo.save(billingPlan.toEntity(clinic.getId()));
+
+    ClinicLimitsReqDTO createdLimits = req.limits() != null ? req.limits() : planConfig.getLimitsForPlan(planType);
+    ClinicLimits limits = createClinicLimits(createdLimits, clinic);
+
+    createClinicUsage(new ClinicUsageReqDTO(clinic.getId(), 0, 0));
 
     User owner = createOwner(req.owner(), clinic);
     createDefaultClinicSettings(clinic, owner);
@@ -228,6 +239,7 @@ public class ClinicService implements ClinicServiceBase {
         ClinicLimitsResDTO.fromEntity(limits), ClinicBillingPlanResDTO.fromEntity(plan));
   }
 
+  @Override
   @Transactional(readOnly = true)
   public ClinicWithOwnerRes getClinicWithOwner(Long id) {
     Clinic clinic = clinicRepo.findById(id)
@@ -244,23 +256,27 @@ public class ClinicService implements ClinicServiceBase {
         ClinicLimitsResDTO.fromEntity(limits), ClinicBillingPlanResDTO.fromEntity(plan));
   }
 
+  @Override
   @Transactional
   public void updateClinicBillingPlan(ClinicBillingPlanReqDTO req, Long clinicId) {
     clinicBillingPlanRepo.save(req.toEntity(clinicId));
   }
 
+  @Override
   public ClinicBillingPlanResDTO getBillingPlan(Long clinicId) {
     return ClinicBillingPlanResDTO.fromEntity(clinicBillingPlanRepo.findByClinicId(clinicId));
   }
 
+  @SuppressWarnings("unused")
   private ClinicBillingPlan createClinicBillingPlan(Long clinicId) {
     ClinicBillingPlanReqDTO planReq = new ClinicBillingPlanReqDTO(PlanType.MONTHLY,
-        Instant.now(), null, 0.0, 0.0, 0.0, SubscriptionStatus.ACTIVE, true);
+        Instant.now(), null, 0.0, 0.0, 0.0, SubscriptionStatus.ACTIVE, true, true);
 
     ClinicBillingPlan billingPlan = planReq.toEntity(clinicId);
     return clinicBillingPlanRepo.save(billingPlan);
   }
 
+  @Override
   @Transactional
   public ClinicUsage createClinicUsage(ClinicUsageReqDTO req) {
     ClinicUsage clinicUsage = req.toEntity();
@@ -275,6 +291,17 @@ public class ClinicService implements ClinicServiceBase {
 
   @Transactional
   private ClinicLimits createClinicLimits(ClinicLimitsReqDTO limitsDto, Clinic clinic) {
+    if (limitsDto == null) {
+      limitsDto = ClinicLimitsReqDTO.builder()
+          .maxUsers(5)
+          .maxFileStorageMb(500)
+          .maxPatientRecords(500)
+          .maxVisitCount(1000)
+          .allowFileUpload(true)
+          .allowMultipleBranches(false)
+          .allowBillingFeature(false)
+          .build();
+    }
     ClinicLimits limits = limitsDto.toEntity();
     limits.setClinic(clinic);
     return limitsRepo.save(limits);
@@ -287,6 +314,7 @@ public class ClinicService implements ClinicServiceBase {
     return userRepo.save(owner);
   }
 
+  @Override
   @Transactional
   public void createDefaultClinicSettings(Clinic clinic, User owner) {
     ClinicSettings settings = new ClinicSettings();
@@ -295,6 +323,7 @@ public class ClinicService implements ClinicServiceBase {
     clinicSettingsRepo.save(settings);
   }
 
+  @Override
   @Transactional
   public void initializeMedicinesForDentals(Long clinicId) {
     List<Medicine> medicines = Arrays.asList(
