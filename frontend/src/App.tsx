@@ -7,6 +7,7 @@ import WelcomePage from "./pages/WelcomePage";
 import { SignupPage } from "./pages/SignupPage";
 import TermsPage from "./components/TermsPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
+import { Analytics } from "@vercel/analytics/react";
 
 const App = () => {
   const { loggedInUser } = useLogin();
@@ -38,6 +39,8 @@ const App = () => {
         </Routes>
         {/* </div> */}
       </BrowserRouter>
+
+      <Analytics />
     </div>
   );
 };
