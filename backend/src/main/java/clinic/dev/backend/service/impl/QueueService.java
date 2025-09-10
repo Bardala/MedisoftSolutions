@@ -4,8 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,6 @@ import clinic.dev.backend.model.Queue;
 import clinic.dev.backend.model.Queue.Status;
 import clinic.dev.backend.model.enums.UserRole;
 import clinic.dev.backend.model.User;
-import clinic.dev.backend.model.Visit;
 import clinic.dev.backend.repository.QueueRepo;
 import clinic.dev.backend.repository.UserRepo;
 import clinic.dev.backend.repository.VisitRepo;
@@ -81,31 +78,8 @@ public class QueueService implements QueueServiceBase {
     Queue queue = queueRepository.findByIdAndClinicId(queueId, getClinicId())
         .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found with ID: " + queueId));
 
-    // Handle status transitions
-    switch (status) {
-      case IN_PROGRESS:
-        if (queue.getStatus() == Status.WAITING) {
-          updateVisitTiming(queue, true);
-        }
-        break;
-
-      case COMPLETED:
-        if (queue.getStatus() == Status.IN_PROGRESS) {
-          updateVisitTiming(queue, false);
-        }
-        break;
-
-      default:
-        break;
-    }
-
     queue.setStatus(status);
     queue.setUpdatedAt(Instant.now());
-
-    // Recalculate wait times for remaining patients
-    if (status == Queue.Status.COMPLETED || status == Queue.Status.IN_PROGRESS) {
-      updateAllWaitTimesForDoctor(queue.getDoctor());
-    }
 
     return QueueResDTO.fromEntity(queue);
   }
@@ -207,40 +181,6 @@ public class QueueService implements QueueServiceBase {
         });
   }
 
-  private void updateVisitTiming(Queue queue, boolean isStart) {
-    Instant now = Instant.now();
-    Optional<Visit> visitOpt = visitRepo.findByPatientAndDoctorAndTimeRange(
-        queue.getPatient().getId(),
-        queue.getDoctor().getId(),
-        now.minus(15, ChronoUnit.MINUTES),
-        now.plus(15, ChronoUnit.MINUTES));
-
-    Visit visit = visitOpt.orElseGet(() -> {
-      // Create new visit for non-scheduled patients
-      Visit newVisit = new Visit();
-      newVisit.setPatient(queue.getPatient());
-      newVisit.setClinic(queue.getClinic());
-      newVisit.setDoctor(queue.getDoctor());
-      newVisit.setAssistant(queue.getAssistant());
-      return visitRepo.save(newVisit);
-    });
-
-    if (isStart) {
-      // Set wait time (time from queue creation to IN_PROGRESS)
-      long waitMinutes = ChronoUnit.MINUTES.between(queue.getCreatedAt(), now);
-      visit.setWait((int) waitMinutes);
-    } else {
-      // Set duration (time from IN_PROGRESS to COMPLETED)
-      if (visit.getWait() != null) {
-        long durationMinutes = ChronoUnit.MINUTES.between(
-            queue.getCreatedAt().plus(visit.getWait(), ChronoUnit.MINUTES),
-            now);
-        visit.setDuration((int) durationMinutes);
-      }
-    }
-    visitRepo.save(visit);
-  }
-
   private void validateDoctor(Long doctorId) {
     User doctor = userRepo
         .findByIdAndClinicId(doctorId, getClinicId())
@@ -261,18 +201,4 @@ public class QueueService implements QueueServiceBase {
     }
   }
 
-  private void updateAllWaitTimesForDoctor(User doctor) {
-    List<Queue> activeQueues = queueRepository.findByDoctorAndStatusOrderByPositionAsc(
-        doctor,
-        Queue.Status.WAITING);
-
-    List<Queue> completedQueues = queueRepository.findTop10ByDoctorAndStatusOrderByCreatedAtDesc(
-        doctor,
-        Queue.Status.COMPLETED);
-
-    activeQueues.forEach(queue -> {
-      queue.updateEstimatedWaitTime(completedQueues);
-      queueRepository.save(queue);
-    });
-  }
 }
