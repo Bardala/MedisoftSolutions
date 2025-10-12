@@ -21,3 +21,4 @@ node_modules
 backend/src/main/resources/application-prod.properties
 
 *-test.js
+./futureUpdates.md
