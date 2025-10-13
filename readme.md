@@ -1,5 +1,3 @@
-Here's the updated README with the new entities integrated:
-
 # Dental Clinic Management System
 
 A comprehensive multi-tenant clinic management platform that enables clinic owners to manage multiple doctors, assistants, patients, services, appointments, and payments. The system provides robust tracking of patient visits, prescriptions, payments, and generates detailed statistics. With SuperAdmin oversight for system-wide management, MediSoft-Solutions offers a complete practice management solution for dental clinics of all sizes.
