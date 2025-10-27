@@ -1,0 +1,278 @@
+.registry-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--padding-medium);
+  background-color: var(--secondary-bg);
+  color: var(--secondary-color);
+  /* padding: var(--padding-large); */
+  border-radius: var(--border-radius);
+  /* box-shadow: var(--shadow-light); */
+  /* max-width: 600px; */
+  margin: 20px auto;
+}
+
+
+/* Heading Styles */
+.container h1 {
+  font-size: var(--font-size-title);
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--padding-medium);
+}
+
+/* h2,
+h3 {
+  font-size: calc(var(--font-size-title) - 8px);
+  color: var(--primary-color);
+  margin-top: var(--padding-medium);
+} */
+
+h3 {
+  font-size: calc(var(--font-size-body) + 4px);
+}
+
+input[type="text"],
+textarea {
+  padding: var(--padding-small);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-body);
+  /* background-color: var(--white); */
+  transition: box-shadow 0.3s, border-color 0.3s;
+  width: -webkit-fill-available;
+}
+
+/* Buttons */
+button {
+  margin: 2px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--padding-small) var(--padding-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button {
+  width: 100%;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+button:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+}
+
+/* Cards */
+.card {
+  /* background-color: var(--white); */
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  padding: var(--padding-medium);
+  margin-bottom: var(--padding-large);
+}
+
+/* Success Message */
+/* .success {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius);
+  margin-top: var(--padding-medium);
+} */
+
+.payment-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.payment-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.print-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--padding-medium);
+}
+
+.company-logo-container-patient-page {
+  display: none;
+}
+
+.print-button-container button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--padding-small) var(--padding-medium);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.printable-patient-info {
+  display: none;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .printable-patient-info {
+    text-align: right;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    opacity: 1;
+  }
+
+  .printable-patient-info p {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px;
+    padding: 0;
+    font-size: 14px;
+    background-color: var(--primary-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+  }
+
+  .patient-page-container {
+    position: relative;
+    background: none;
+    /* remove default background */
+  }
+
+  .patient-page-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../../../../public/mediSoftLogo2.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.2;
+    /* subtle logo effect */
+    /* background-blend-mode: multiply;
+    filter: grayscale(80%) blur(1px); */
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .patient-page-container>* {
+    position: relative;
+    z-index: 1;
+  }
+
+  .patient-info-wrapper {
+    display: none;
+  }
+
+
+  .container {
+    padding: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  button {
+    display: none;
+  }
+
+  input {
+    display: none;
+  }
+
+  .upload-image-container {
+    display: none;
+  }
+
+  .actions-column {
+    display: none;
+  }
+
+  .action-cell {
+    display: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--primary-color);
+    text-align: center;
+  }
+
+  input[type="text"],
+  textarea {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .company-logo-container-patient-page {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+
+  .company-logo-container-patient-page img {
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  table td {
+    padding: 0;
+    border: 1px solid var(--border-color);
+    color: #0060d0;
+    font-size: 12px;
+  }
+
+  table th {
+    padding: 0;
+    border: 1px solid var(--border-color);
+  }
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--padding-small);
+  }
+
+  h1 {
+    font-size: var(--font-size-welcome);
+  }
+
+  h2,
+  h3 {
+    font-size: calc(var(--font-size-body) + 4px);
+  }
+
+  /* button {
+    width: 100%;
+  } */
+}

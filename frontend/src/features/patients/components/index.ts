@@ -1,0 +1,11 @@
+export { default as PatientInfo } from "./PatientInfo";
+export { default as PatientPage } from "./PatientPage";
+export { default as PatientsCharts } from "./PatientsCharts";
+export { default as PatientProfileHeader } from "./PatientProfileHeader";
+export { default as PatientSearch } from "./PatientSearch";
+export { default as AddPatient } from "./AddPatient";
+export { default as PatientCharts } from "./PatientCharts";
+export { default as PatientList } from "./PatientList";
+export { default as PatientRegistrationTrendChart } from "../../charts/components/PatientRegistrationTrendChart";
+export { default as PatientsTable } from "./PatientsTable";
+export { default as CurrentPatientProfile } from "./CurrentPatient";

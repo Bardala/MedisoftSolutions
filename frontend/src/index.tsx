@@ -1,30 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
+import "./core/theme/index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { customRetry, ThemeProvider, LoginProvider, App } from "./app";
+import IntlProviderWrapper from "./core/localization/IntlProviderWrapper";
+import { ApiError } from "./shared";
 import reportWebVitals from "./reportWebVitals";
-import { LoginProvider } from "./context/loginContext";
-import { ThemeProvider } from "./context/ThemeContext";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import IntlProviderWrapper from "./IntlProviderWrapper";
-import { ApiError } from "./fetch/ApiError";
-import { customRetry } from "./utils";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-
-// Register service worker
-// if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
-//   window.addEventListener("load", () => {
-//     navigator.serviceWorker
-//       .register("/service-worker.js")
-//       .then((registration) => {
-//         console.log("SW registered:", registration);
-//       })
-//       .catch((registrationError) => {
-//         console.log("SW registration failed:", registrationError);
-//       });
-//   });
-// }
 
 const queryClient = new QueryClient({
   defaultOptions: {

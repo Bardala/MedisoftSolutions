@@ -1,10 +1,14 @@
-// Base types
-
-import { Pageable, QueueStatus } from "../types";
-import { PlanType, SubscriptionStatus, UserRole } from "../types/types";
-
+// todo: move each type to its own feature folder later
 // type Nullable<T> = T | null;
 // type Date = Date | string; // Depending on how you handle dates
+
+import {
+  QueueStatus,
+  UserRole,
+  Pageable,
+  PlanType,
+  SubscriptionStatus,
+} from "@/shared";
 
 export interface LoginRes {
   token: string;
