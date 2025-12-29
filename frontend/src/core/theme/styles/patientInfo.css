@@ -178,7 +178,8 @@
 /* Info Cards Grid */
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  /* grid-template-columns: repeat(4, 1fr); */
   gap: var(--padding-small);
   margin-bottom: var(--padding-medium);
 }
@@ -319,31 +320,23 @@
 }
 
 /* For dark mode */
-:root.dark-mode .patient-phone-chip {
+/* :root.dark-mode .patient-phone-chip {
   background: rgba(79, 70, 229, 0.1);
   color: var(--third-color);
 }
 
 :root.dark-mode .patient-phone-chip:hover {
   background: rgba(79, 70, 229, 0.2);
-}
+} */
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .visualizations-row {
     flex-direction: column;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
   }
 }
 
 /* Dark mode specific adjustments */
 :root.dark-mode {
-  /* .patient-info-wrapper {
-    box-shadow: var(--shadow-light);
-  } */
 
   .visualization-card,
   .visits-visualization,

@@ -1,0 +1,469 @@
+.current-patient-widget .current-patient-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-medium);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--padding-medium);
+}
+
+.current-patient-widget .patient-header {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-medium);
+}
+
+.current-patient-widget .patient-info {
+  flex: 1;
+}
+
+.current-patient-widget .patient-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--fourth-color);
+}
+
+.current-patient-widget .patient-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.current-patient-widget .patient-visit-info {
+  background: var(--fourth-bg);
+  border-radius: calc(var(--border-radius) * 1.25);
+  padding: var(--padding-small);
+}
+
+.current-patient-widget .visit-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.current-patient-widget .status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current-patient-widget .status-badge.in-progress {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.current-patient-widget .visit-time {
+  font-size: 12px;
+  color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.current-patient-widget .visit-reason {
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.current-patient-widget .current-patient-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-medium);
+}
+
+
+.current-patient-widget .patient-header {
+  border-bottom: none;
+  /* إزالة الخط التقليدي */
+  background: var(--fourth-bg);
+  /* إعطاء الرأس خلفية متميزة قليلاً */
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--padding-small);
+}
+
+.current-patient-widget .patient-info {
+  flex: 1;
+}
+
+.current-patient-widget .patient-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--fourth-color);
+  line-height: 1.2;
+}
+
+.current-patient-widget .patient-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--secondary-color);
+}
+
+.current-patient-widget .patient-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.current-patient-widget .patient-meta svg {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Patient Visits Container */
+.current-patient-widget .patient-visits-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--padding-small);
+}
+
+/* Visit Card Styles */
+.current-patient-widget .visit-card {
+  background: var(--fourth-bg);
+  border-radius: calc(var(--border-radius) * 1.25);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.current-patient-widget .visit-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.current-patient-widget .visit-card.current-visit {
+  border-left: 4px solid var(--primary-color);
+}
+
+.current-patient-widget .visit-card.last-visit {
+  border-left: 4px solid var(--third-color);
+}
+
+/* Visit Card Header */
+.current-patient-widget .visit-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+  padding: var(--padding-small) var(--padding-medium);
+  background: var(--third-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.current-patient-widget .visit-card-header h5 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--label-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.current-patient-widget .visit-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--primary-color);
+}
+
+.current-patient-widget .current-visit .visit-icon {
+  background: rgba(var(--primary-color-rgb, 74, 144, 226), 0.1);
+  color: var(--primary-color);
+}
+
+.current-patient-widget .last-visit .visit-icon {
+  background: rgba(var(--third-color-rgb, 128, 191, 255), 0.1);
+  color: var(--third-color);
+}
+
+.current-patient-widget .visit-time {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--secondary-color);
+  background: var(--secondary-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* Visit Card Body */
+.current-patient-widget .visit-card-body {
+  padding: var(--padding-small) var(--padding-medium);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.current-patient-widget .visit-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.current-patient-widget .visit-label {
+  color: var(--secondary-color);
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.current-patient-widget .visit-value {
+  color: var(--text-color);
+  font-weight: 500;
+  text-align: right;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.current-patient-widget .visit-notes {
+  white-space: normal;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: left;
+  flex: 1;
+  margin-left: 8px;
+}
+
+/* Visit Status Badge */
+.current-patient-widget .visit-status-badge {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current-patient-widget .visit-status-badge.in-progress {
+  background: linear-gradient(135deg, var(--success-border), var(--success-text));
+  color: white;
+  box-shadow: 0 2px 4px rgba(var(--success-text-rgb, 21, 87, 36), 0.2);
+}
+
+.current-patient-widget .visit-status-badge.completed {
+  background: linear-gradient(135deg, var(--third-color), var(--primary-color));
+  color: white;
+}
+
+/* No Last Visit State */
+.current-patient-widget .no-last-visit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-medium);
+  background: var(--fourth-bg);
+  border-radius: calc(var(--border-radius) * 1.25);
+  border: 2px dashed var(--border-color);
+  color: var(--secondary-color);
+  text-align: center;
+  gap: 8px;
+}
+
+.current-patient-widget .no-last-visit .no-visit-icon {
+  font-size: 24px;
+  opacity: 0.3;
+}
+
+.current-patient-widget .no-last-visit span {
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Medical History Summary */
+.current-patient-widget .medical-history-summary {
+  background: var(--success-bg);
+  border-radius: calc(var(--border-radius) * 1.25);
+  padding: var(--padding-small);
+  border: 1px solid var(--success-border);
+  margin-top: var(--padding-small);
+}
+
+.current-patient-widget .summary-header {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+  margin-bottom: 6px;
+}
+
+.current-patient-widget .summary-header svg {
+  font-size: 14px;
+  color: var(--success-text);
+}
+
+.current-patient-widget .summary-header span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current-patient-widget .summary-text {
+  margin: 0;
+  font-size: 12px;
+  color: var(--success-text);
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Empty State Enhancement */
+.current-patient-widget .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-large) var(--padding-medium);
+  gap: var(--padding-small);
+}
+
+.current-patient-widget .empty-state .empty-icon {
+  font-size: 48px;
+  color: var(--secondary-color);
+  opacity: 0.2;
+  margin-bottom: var(--padding-small);
+}
+
+.current-patient-widget .empty-state p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.current-patient-widget .empty-state small {
+  font-size: 13px;
+  color: var(--secondary-color);
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .current-patient-widget .visit-value {
+    text-align: left;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .current-patient-widget .visit-notes {
+    margin-left: 0;
+    max-height: 60px;
+    -webkit-line-clamp: 3;
+  }
+
+  .current-patient-widget .patient-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* Animation for status badge */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.current-patient-widget .visit-status-badge.in-progress {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Progress indicator for current visit */
+.current-patient-widget .current-visit {
+  position: relative;
+  overflow: hidden;
+}
+
+.current-patient-widget .current-visit::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+      var(--primary-color),
+      var(--third-color),
+      var(--primary-color));
+  background-size: 200% 100%;
+  animation: progressSlide 3s linear infinite;
+}
+
+@keyframes progressSlide {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Hover effects for visit cards */
+.current-patient-widget .visit-card {
+  cursor: pointer;
+}
+
+.current-patient-widget .visit-card:hover .visit-card-header {
+  background: var(--primary-bg);
+}
+
+.current-patient-widget .visit-card:hover .visit-icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Compact layout for small screens */
+@media (max-width: 480px) {
+  .current-patient-widget .patient-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--padding-small);
+  }
+
+  .current-patient-widget .patient-info {
+    text-align: center;
+  }
+
+  .current-patient-widget .visit-card-body {
+    padding: var(--padding-small);
+  }
+
+  .current-patient-widget .visit-card-header {
+    padding: 10px;
+  }
+
+  .current-patient-widget .medical-history-summary {
+    padding: 10px;
+  }
+}

@@ -39,15 +39,16 @@
 }
 
 /* Info Grid */
-.info-grid {
+.visit-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
 
-.info-card {
-  background: var(--third-bg);
+.visit-info-card {
+  border-left: 4px solid;
+  border-left-color: var(--widget-color, var(--primary-color));
   border-radius: var(--border-radius);
   padding: 16px;
   position: relative;
@@ -250,11 +251,11 @@
     color: var(--white);
   }
 
-  .info-card,
+  /* .visit-info-card,
   .notes-content,
   .procedure-item {
     background: var(--third-bg);
-  }
+  } */
 
   .notes-textarea {
     background: var(--fourth-bg);

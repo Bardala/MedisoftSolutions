@@ -13,8 +13,8 @@ import { QueuePage } from "@/features/queue";
 
 import { AddVisit } from "@/features/visits";
 import { AppointmentsCalendar } from "@/features/visits/components/AppointmentCalender";
-import { HomePageProps, isOwnerRole, isSuperAdminRole } from "@/shared";
-import { FC } from "react";
+import { HomePageProps, isOwnerRole, isSuperAdminRole, User } from "@/shared";
+import { FC, ReactNode } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import DailyFinancialReport from "@/features/reports/components/DailyFinancialReport";
@@ -26,88 +26,81 @@ import ClinicsList from "@/features/clinic-management/components/ClinicsList";
 import CreateClinicWithOwner from "@/features/clinic-management/components/CreateClinicWithOwner";
 import EditUserInfo from "@/features/clinic-management/components/EditUserInfo";
 
-const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
-  return (
-    <div className="content-wrapper">
-      <div className={`content ${loggedInUser ? "with-sidebar" : ""}`}>
-        {loggedInUser && <Header loggedInUser={loggedInUser} />}
-        {loggedInUser && <Sidebar loggedInUser={loggedInUser} />}
+const commonRoutes = [
+  { path: AppRoutes.Dashboard, element: <Home /> },
+  { path: AppRoutes.RECORD_VISIT, element: <AddVisit /> },
+  { path: AppRoutes.PATIENTS, element: <QueuePage /> },
+  { path: AppRoutes.REPORTS, element: <DailyFinancialReport /> },
+  { path: AppRoutes.SETTINGS, element: <Settings /> },
+  { path: AppRoutes.PATIENT_HISTORY, element: <GetRegistry /> },
+  { path: AppRoutes.PATIENT_PROFILE, element: <CurrentPatientProfile /> },
+  { path: AppRoutes.ADD_PATIENT, element: <AddPatient /> },
+  { path: AppRoutes.PAYMENTS, element: <RecordPayments /> },
+  { path: AppRoutes.UPDATE_USER_INFO, element: <EditUserInfo /> },
+  { path: AppRoutes.PATIENT_PAGE, element: <PatientPage /> },
+  { path: AppRoutes.APPOINTMENT_CALENDER, element: <AppointmentsCalendar /> },
+];
 
-        <div className="home-page-container">
-          <div className="dashboard">
-            <div className="home-content">
-              <Routes>
-                {/* Common routes */}
-                <Route path={AppRoutes.Dashboard} element={<Home />} />
-                <Route path={AppRoutes.RECORD_VISIT} element={<AddVisit />} />
-                <Route path={AppRoutes.PATIENTS} element={<QueuePage />} />
-                <Route
-                  path={AppRoutes.REPORTS}
-                  element={<DailyFinancialReport />}
-                />
-                <Route path={AppRoutes.SETTINGS} element={<Settings />} />
-                <Route
-                  path={AppRoutes.PATIENT_HISTORY}
-                  element={<GetRegistry />}
-                />
-                <Route
-                  path={AppRoutes.PATIENT_PROFILE}
-                  element={<CurrentPatientProfile />}
-                />
-                <Route path={AppRoutes.ADD_PATIENT} element={<AddPatient />} />
-                <Route path={AppRoutes.PAYMENTS} element={<RecordPayments />} />
-                <Route
-                  path={AppRoutes.UPDATE_USER_INFO}
-                  element={<EditUserInfo />}
-                />
-                <Route
-                  path={AppRoutes.PATIENT_PAGE}
-                  element={<PatientPage />}
-                />
-                <Route
-                  path={AppRoutes.APPOINTMENT_CALENDER}
-                  element={<AppointmentsCalendar />}
-                />
-                {/* Owner-only routes */}
-                {isOwnerRole(loggedInUser.role) && (
-                  <>
-                    <Route
-                      path={AppRoutes.MONTHLY_REPORTS}
-                      element={<MonthlyDoctorReports />}
-                    />
-                    <Route
-                      path={AppRoutes.ADD_ASSISTANT}
-                      element={<AddUserForm />}
-                    />
-                    <Route
-                      path={AppRoutes.CLINIC_SETTINGS}
-                      element={<ClinicSettings />}
-                    />
-                    <Route
-                      path={AppRoutes.CLINIC_DATA}
-                      element={<ClinicData clinicId={loggedInUser.clinicId} />}
-                    />
-                  </>
-                )}
-                {/* SuperAdmin-only routes */}
-                {isSuperAdminRole(loggedInUser.role) && (
-                  <>
-                    <Route
-                      path={AppRoutes.ADMIN_CLINICS}
-                      element={<ClinicsList />}
-                    />
-                    <Route
-                      path={AppRoutes.CREATE_CLINIC}
-                      element={<CreateClinicWithOwner />}
-                    />
-                  </>
-                )}
-              </Routes>
-            </div>
-          </div>
+const ownerRoutes = (clinicId: number) => [
+  { path: AppRoutes.MONTHLY_REPORTS, element: <MonthlyDoctorReports /> },
+  { path: AppRoutes.ADD_ASSISTANT, element: <AddUserForm /> },
+  { path: AppRoutes.CLINIC_SETTINGS, element: <ClinicSettings /> },
+  {
+    path: AppRoutes.CLINIC_DATA,
+    element: <ClinicData clinicId={clinicId} />,
+  },
+];
+
+const superAdminRoutes = [
+  { path: AppRoutes.ADMIN_CLINICS, element: <ClinicsList /> },
+  { path: AppRoutes.CREATE_CLINIC, element: <CreateClinicWithOwner /> },
+];
+
+interface AuthLayoutProps {
+  user: User;
+  children: ReactNode;
+}
+
+const AuthLayout: FC<AuthLayoutProps> = ({ user, children }) => (
+  <div className="content-wrapper">
+    <div className={`content with-sidebar`}>
+      <Header loggedInUser={user} />
+      <Sidebar loggedInUser={user} />
+      <div className="home-page-container">
+        <div className="dashboard">
+          <div className="home-content">{children}</div>
         </div>
       </div>
     </div>
+  </div>
+);
+
+// todo: Rename this component
+const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
+  if (!loggedInUser) return null;
+
+  const CommonRoutes = commonRoutes.map(({ path, element }) => (
+    <Route key={path} path={path} element={element} />
+  ));
+  const OwnerRoutes =
+    isOwnerRole(loggedInUser.role) &&
+    ownerRoutes(loggedInUser.clinicId).map(({ path, element }) => (
+      <Route key={path} path={path} element={element} />
+    ));
+  const SuperAdminRoutes =
+    isSuperAdminRole(loggedInUser.role) &&
+    superAdminRoutes.map(({ path, element }) => (
+      <Route key={path} path={path} element={element} />
+    ));
+
+  return (
+    <AuthLayout user={loggedInUser}>
+      <Routes>
+        {CommonRoutes}
+        {OwnerRoutes}
+        {SuperAdminRoutes}
+      </Routes>
+    </AuthLayout>
   );
 };
 

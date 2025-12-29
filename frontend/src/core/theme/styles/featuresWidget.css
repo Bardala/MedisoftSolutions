@@ -1,0 +1,120 @@
+.feature-widgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--padding-medium);
+  align-items: start;
+}
+
+.feature-widget {
+  background: var(--secondary-bg);
+  border-radius: calc(var(--border-radius) * 1.5);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: -webkit-fill-available;
+}
+
+
+.feature-widget:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--primary-color);
+}
+
+.feature-widget .widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-medium);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--third-bg);
+}
+
+.feature-widget .widget-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+}
+
+.feature-widget .widget-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.feature-widget h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.feature-widget .widget-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.feature-widget .widget-action {
+  color: var(--secondary-color);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.feature-widget.clickable:hover .widget-action {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+.feature-widget .widget-body {
+  padding: var(--padding-small);
+}
+
+.feature-widget {
+  position: relative;
+  border-top: 4px solid;
+  border-top-color: var(--widget-color, var(--primary-color));
+}
+
+@media (min-width: 992px) {
+  .feature-widgets-grid> :first-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-widget {
+    padding: var(--padding-small);
+  }
+}
+
+.feature-widget::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+      var(--widget-color, var(--primary-color)),
+      rgba(var(--widget-color-rgb, 74, 144, 226), 0.2));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-widget:hover::before {
+  opacity: 1;
+}

@@ -1,0 +1,133 @@
+/* @styles/card-utilities.css */
+/* Card Elevation Levels */
+.card-elevation-1 {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-elevation-2 {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card-elevation-3 {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Colors by Type */
+.card-primary {
+  border-color: var(--primary-color);
+}
+
+.card-primary .card-title {
+  color: var(--primary-color);
+}
+
+.card-secondary {
+  border-color: var(--secondary-color);
+}
+
+.card-secondary .card-title {
+  color: var(--secondary-color);
+}
+
+.card-success {
+  border-color: var(--success-border);
+}
+
+.card-success .card-title {
+  color: var(--success-text);
+}
+
+.card-warning {
+  border-color: var(--warn-border);
+}
+
+.card-warning .card-title {
+  color: var(--warn-text);
+}
+
+.card-error {
+  border-color: var(--error-border);
+}
+
+.card-error .card-title {
+  color: var(--error-text);
+}
+
+/* Card Sizes */
+.card-sm {
+  padding: var(--padding-small);
+}
+
+.card-md {
+  padding: var(--padding-medium);
+}
+
+.card-lg {
+  padding: var(--padding-large);
+}
+
+/* Card Layouts */
+.card-horizontal {
+  display: flex;
+  align-items: center;
+}
+
+.card-horizontal .card-body {
+  flex: 1;
+}
+
+.card-compact .card-body {
+  padding: 0;
+}
+
+.card-expandable .card-header {
+  cursor: pointer;
+}
+
+.card-expandable .card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.card-expandable.expanded .card-body {
+  max-height: 1000px;
+}
+
+/* Card Badges */
+.card-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, var(--primary-color), var(--third-color));
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 10;
+}
+
+/* Card Groups */
+.card-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+.card-group-stacked .card {
+  border-radius: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.card-group-stacked .card:first-child {
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.card-group-stacked .card:last-child {
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  border-bottom: 1px solid var(--border-color);
+}

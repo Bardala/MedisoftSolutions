@@ -165,7 +165,7 @@ const SignupPage = () => {
 
           <div className="info-card">
             <h3>{f({ id: "clinic_information" })}</h3>
-            <div className="info-grid">
+            <div className="signup-info-grid">
               <div className="info-item">
                 <span className="info-label">{f({ id: "name" })}:</span>
                 <span className="info-value">{data.clinic.name}</span>
@@ -183,7 +183,7 @@ const SignupPage = () => {
 
           <div className="info-card credentials-card">
             <h3>{f({ id: "account_details" })}</h3>
-            <div className="info-grid">
+            <div className="signup-info-grid">
               <div className="info-item">
                 <span className="info-label">{f({ id: "username" })}:</span>
                 <span className="info-value">{data.owner.username}</span>

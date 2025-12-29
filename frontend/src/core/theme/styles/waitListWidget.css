@@ -1,0 +1,75 @@
+.waitlist-widget .waitlist-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+.waitlist-widget .queue-item {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+  padding: var(--padding-small);
+  background: var(--fourth-bg);
+  border-radius: calc(var(--border-radius) * 1.25);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.waitlist-widget .queue-item:hover {
+  background: var(--third-bg);
+  transform: translateX(4px);
+}
+
+.waitlist-widget .queue-position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.waitlist-widget .position-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--third-color));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.waitlist-widget .queue-patient-info {
+  flex: 1;
+}
+
+.waitlist-widget .patient-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  color: var(--text-color);
+}
+
+.waitlist-widget .queue-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--secondary-color);
+}
+
+.waitlist-widget .arrival-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.waitlist-widget .wait-time {
+  padding: 2px 6px;
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border-radius: 10px;
+  font-weight: 500;
+  border: 1px solid var(--warn-border);
+}

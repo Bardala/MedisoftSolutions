@@ -288,7 +288,7 @@
   margin-bottom: var(--padding-large);
 }
 
-.info-card {
+.signup-success-container .info-card {
   background-color: var(--section-bg);
   border-radius: var(--border-radius);
   padding: var(--padding-medium);
@@ -297,14 +297,14 @@
   border: 1px solid var(--border-color);
 }
 
-.info-card h3 {
+.signup-success-container .info-card h3 {
   font-size: 1.1rem;
   color: var(--info-card-header);
   margin-bottom: var(--padding-medium);
   text-align: center;
 }
 
-.info-grid {
+.signup-info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--padding-medium);
@@ -363,7 +363,7 @@
   }
 
   .form-grid,
-  .info-grid {
+  .signup-info-grid {
     grid-template-columns: 1fr;
   }
 
@@ -375,7 +375,7 @@
 /* Dark Mode Adjustments */
 :root.dark-mode .signup-card,
 :root.dark-mode .form-section,
-:root.dark-mode .info-card {
+:root.dark-mode .signup-success-container .info-card {
   background-color: var(--secondary-bg);
   color: var(--white);
 }

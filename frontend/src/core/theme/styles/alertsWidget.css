@@ -1,0 +1,63 @@
+.alerts-widget .alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+}
+
+.alerts-widget .alert-item {
+  display: flex;
+  align-items: center;
+  gap: var(--padding-small);
+  padding: var(--padding-small);
+  border-radius: calc(var(--border-radius) * 1.25);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.alerts-widget .alert-item:hover {
+  transform: translateX(4px);
+}
+
+.alerts-widget .alert-item.loading {
+  background: var(--fourth-bg);
+  color: var(--secondary-color);
+}
+
+.alerts-widget .alert-item.error {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+.alerts-widget .alert-item.warning {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+}
+
+.alerts-widget .alert-item.info {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.alerts-widget .alert-icon {
+  font-size: 16px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.alerts-widget .alert-loading {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--secondary-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -328,5 +328,18 @@
   "welcome_message": "مرحبًا بك في MediSoft! تم إنشاء حسابك.",
   "account_details": "تفاصيل الحساب",
   "continue_to_dashboard": "الانتقال إلى لوحة التحكم",
-  "continue_to_login": "الانتقال إلى تسجيل الدخول"
+  "continue_to_login": "الانتقال إلى تسجيل الدخول",
+
+  "first_visit": "أول زيارة",
+
+  "alerts": "التنبيهات",
+  "errorLoadingData": "حدث خطأ أثناء تحميل البيانات",
+  "appointmentsToday": "مواعيد اليوم",
+  "newPatientsToday": "مرضى جدد اليوم",
+
+  "upcomingAppointments": "المواعيد القادمة",
+  "noAppointmentsToday": "لا توجد مواعيد مجدولة لهذا اليوم",
+  "doctor": "الطبيب",
+  "appointments.inQueue": "في قائمة الانتظار",
+  "appointments.patientInQueue": "المريض موجود بالفعل في قائمة الانتظار"
 }

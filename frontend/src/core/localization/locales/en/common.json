@@ -325,5 +325,17 @@
   "welcome_message": "Welcome to MediSoft! Your account has been created.",
   "account_details": "Account Details",
   "continue_to_dashboard": "Continue to Dashboard",
-  "continue_to_login": "Continue to Login"
+  "continue_to_login": "Continue to Login",
+
+  "first_visit": "First visit",
+
+  "alerts": "Alerts",
+  "errorLoadingData": "Error loading data",
+  "appointmentsToday": "appointments today",
+  "newPatientsToday": "new patients today",
+
+  "upcomingAppointments": "Upcoming Appointments",
+  "noAppointmentsToday": "No appointments scheduled for today",
+  "appointments.inQueue": "In Queue",
+  "appointments.patientInQueue": "Patient is already in the queue"
 }

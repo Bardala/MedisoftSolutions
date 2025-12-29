@@ -78,22 +78,22 @@ const VisitCard: FC<{
 
       {showVisit && (
         <div className="visit-card-content">
-          <div className="info-grid">
-            <div className="info-card">
+          <div className="visit-info-grid">
+            <div className="visit-info-card">
               <div className="card-icon">😷</div>
               <h4 className="card-title">{f({ id: "visitReason" })}</h4>
               <p className="card-content">{visit?.reason || "-"}</p>
             </div>
 
             {!currVisit && (
-              <div className="info-card">
+              <div className="visit-info-card">
                 <div className="card-icon">📅</div>
                 <h4 className="card-title">{f({ id: "visitDate" })}</h4>
                 <p className="card-content">{dateFormate(visit.createdAt)}</p>
               </div>
             )}
 
-            <div className="info-card">
+            <div className="visit-info-card">
               <div className="card-icon">🕒</div>
               <h4 className="card-title">{f({ id: "arrived_at" })}</h4>
               <p className="card-content">

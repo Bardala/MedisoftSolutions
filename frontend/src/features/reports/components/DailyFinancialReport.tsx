@@ -27,6 +27,7 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 import { useDailyReportData } from "../hooks";
 import "@styles/financialComponents.css";
+import { DailyStats } from "./DailyStats";
 
 const DailyFinancialReport = () => {
   const date = useParams().date;
@@ -45,8 +46,7 @@ const DailyFinancialReport = () => {
   const [showStats, setShowStats] = useState(false);
   const { updateVisitMutation } = useUpdateVisit();
 
-  // Fetch data for the selected date
-  const { patients, visits, payments, totalPayments, isError, isLoading } =
+  const { patients, visits, payments, isError, isLoading } =
     useDailyReportData(selectedDate);
 
   if (isLoading) return <p>{f({ id: "loading" })}</p>;
@@ -191,7 +191,7 @@ const DailyFinancialReport = () => {
         <DailyReportCharts date={selectedDate} />
       ) : (
         <>
-          <div className="stats">
+          {/* <div className="stats">
             <p>
               {f({ id: "totalRevenue" })}:{" "}
               <strong>
@@ -209,7 +209,8 @@ const DailyFinancialReport = () => {
               {f({ id: "newPatients" })}:{" "}
               <strong>{patients?.length || 0}</strong>
             </p>
-          </div>
+          </div> */}
+          <DailyStats selectedDate={selectedDate} />
 
           <div className="tables">
             <div className="visits-section">

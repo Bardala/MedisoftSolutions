@@ -1,0 +1,62 @@
+import { useMonthlySummary } from "@/features/reports";
+import {
+  faChartLine,
+  faUserPlus,
+  faHospital,
+  faDollarSign,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FC } from "react";
+import { useIntl } from "react-intl";
+import { FeatureWidget } from "./FeatureWidget";
+import "@styles/monthlySummaryWidget.css";
+import { AppRoutes } from "@/app/constants";
+
+export const MonthlySummaryWidget: FC = () => {
+  const { formatMessage: f } = useIntl();
+  const { data, isLoading } = useMonthlySummary();
+
+  if (isLoading) return <div>Loading...</div>;
+
+  const { totalNewPatients, totalRevenue, totalVisits } = data;
+
+  return (
+    <FeatureWidget
+      title={f({ id: "monthly_summary" })}
+      icon={faChartLine}
+      color="var(--success-text)"
+      className="stats-widget monthly-summary-widget"
+      route={AppRoutes.MONTHLY_REPORTS}
+    >
+      <div className="quick-stats-grid">
+        <div className="quick-stat">
+          <div className="stat-icon">
+            <FontAwesomeIcon icon={faUserPlus} />
+          </div>
+          <div className="stat-info">
+            <span className="stat-value">+{totalNewPatients}</span>
+            <span className="stat-label">{f({ id: "new_patients" })}</span>
+          </div>
+        </div>
+        <div className="quick-stat">
+          <div className="stat-icon">
+            <FontAwesomeIcon icon={faHospital} />
+          </div>
+          <div className="stat-info">
+            <span className="stat-value">{totalVisits}</span>
+            <span className="stat-label">{f({ id: "visits" })}</span>
+          </div>
+        </div>
+        <div className="quick-stat">
+          <div className="stat-icon">
+            <FontAwesomeIcon icon={faDollarSign} />
+          </div>
+          <div className="stat-info">
+            <span className="stat-value">{totalRevenue}</span>
+            <span className="stat-label">{f({ id: "L.E" })}</span>
+          </div>
+        </div>
+      </div>
+    </FeatureWidget>
+  );
+};

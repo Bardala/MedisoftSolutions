@@ -1,0 +1,509 @@
+/* Appointment Widget - Full Width Row */
+.appointment-widget {
+  grid-column: 1 / -1;
+}
+
+/* Scrollable Container with Custom Scrollbar */
+.appointment-widget .appointments-list {
+  display: flex;
+  flex-direction: row;
+  gap: var(--padding-small);
+  overflow-x: auto;
+  padding: var(--padding-small);
+  margin: calc(var(--padding-small) * -1);
+  padding-bottom: calc(var(--padding-small) + 8px);
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar Styling */
+.appointment-widget .appointments-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.appointment-widget .appointments-list::-webkit-scrollbar-track {
+  background: var(--secondary-bg);
+  border-radius: 10px;
+  margin: 0 var(--padding-small);
+}
+
+.appointment-widget .appointments-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-color), var(--third-color));
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.appointment-widget .appointments-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-hover), var(--third-color));
+  box-shadow: 0px 0px 8px rgba(74, 144, 226, 0.4);
+}
+
+/* Firefox Scrollbar */
+.appointment-widget .appointments-list {
+  scrollbar-color: var(--primary-color) var(--secondary-bg);
+  scrollbar-width: thin;
+}
+
+/* Individual Appointment Card */
+.appointment-widget .appointment-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--padding-small);
+  padding: var(--padding-medium);
+  min-width: 280px;
+  max-width: 320px;
+  flex-shrink: 0;
+
+  background: linear-gradient(135deg, var(--fourth-bg) 0%, var(--third-bg) 100%);
+  border-radius: calc(var(--border-radius) * 1.5);
+  border: 1.5px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Appointment Card Pseudo-element for Background Accent */
+.appointment-widget .appointment-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--third-color));
+}
+
+.appointment-widget .appointment-item:hover {
+  background: linear-gradient(135deg, var(--third-bg) 0%, var(--primary-bg) 100%);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0px 12px 30px rgba(74, 144, 226, 0.25);
+  border-color: var(--primary-color);
+}
+
+/* Index Badge with Creative Design */
+.appointment-widget .appointment-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appointment-widget .index-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--third-color) 100%);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0px 4px 12px rgba(74, 144, 226, 0.35);
+  position: relative;
+}
+
+.appointment-widget .index-badge::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  border: 2px solid var(--primary-color);
+  opacity: 0.3;
+}
+
+/* Appointment Info Content */
+.appointment-widget .appointment-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-small);
+  flex: 1;
+}
+
+/* Header Section */
+.appointment-widget .appointment-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appointment-widget .patient-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-color);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.appointment-widget .appointment-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, var(--warn-bg), rgba(255, 243, 205, 0.5));
+  color: var(--warn-text);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--warn-border);
+  white-space: nowrap;
+  width: fit-content;
+  box-shadow: 0px 2px 6px rgba(133, 100, 4, 0.15);
+}
+
+.appointment-widget .appointment-time svg {
+  font-size: 12px;
+}
+
+/* Details Section */
+.appointment-widget .appointment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--secondary-color);
+  padding: var(--padding-small);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+}
+
+.appointment-widget .detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.appointment-widget .detail-item svg {
+  font-size: 13px;
+  color: var(--primary-color);
+  min-width: 16px;
+}
+
+.appointment-widget .detail-item .label {
+  font-weight: 600;
+  color: var(--fourth-color);
+  min-width: fit-content;
+  margin-right: 4px;
+}
+
+/* Appointment Reason */
+.appointment-widget .appointment-reason {
+  padding: 8px 10px;
+  background: linear-gradient(135deg, var(--primary-bg), rgba(230, 242, 255, 0.6));
+  border-left: 3px solid var(--primary-color);
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.appointment-widget .appointment-reason p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--primary-color);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Add to WaitList Button */
+.appointment-widget .add-to-waitlist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--primary-color), var(--third-color));
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0px 4px 12px rgba(74, 144, 226, 0.25);
+}
+
+.appointment-widget .add-to-waitlist-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-hover), var(--third-hover));
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 16px rgba(74, 144, 226, 0.35);
+}
+
+.appointment-widget .add-to-waitlist-btn:active:not(:disabled) {
+  transform: translateY(0px);
+  box-shadow: 0px 2px 8px rgba(74, 144, 226, 0.25);
+}
+
+/* In Queue State */
+.appointment-widget .add-to-waitlist-btn.in-queue {
+  background: linear-gradient(135deg, var(--success-text), #0fa05e);
+  box-shadow: 0px 4px 12px rgba(21, 87, 36, 0.3);
+}
+
+.appointment-widget .add-to-waitlist-btn.in-queue:hover:not(:disabled) {
+  background: linear-gradient(135deg, #155724, #0d8847);
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 16px rgba(21, 87, 36, 0.4);
+}
+
+.appointment-widget .add-to-waitlist-btn.in-queue:active:not(:disabled) {
+  transform: translateY(0px);
+  box-shadow: 0px 2px 8px rgba(21, 87, 36, 0.25);
+}
+
+.appointment-widget .add-to-waitlist-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.appointment-widget .add-to-waitlist-btn svg {
+  font-size: 13px;
+}
+
+/* Empty State */
+.appointment-widget .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-large) var(--padding-medium);
+  background: linear-gradient(135deg, var(--fourth-bg), var(--third-bg));
+  border-radius: var(--border-radius);
+  text-align: center;
+  min-height: 200px;
+  border: 2px dashed var(--border-color);
+}
+
+.appointment-widget .empty-state svg {
+  font-size: 56px;
+  color: var(--third-color);
+  margin-bottom: var(--padding-medium);
+  opacity: 0.5;
+  animation: float 3s ease-in-out infinite;
+}
+
+.appointment-widget .empty-state p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+  .appointment-widget .appointment-item {
+    min-width: 260px;
+    max-width: 300px;
+  }
+
+  .appointment-widget .add-to-waitlist-btn {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .appointment-widget .appointments-list {
+    gap: var(--padding-small);
+    padding: var(--padding-small);
+  }
+
+  .appointment-widget .appointment-item {
+    min-width: 240px;
+    max-width: 280px;
+    padding: var(--padding-small) var(--padding-medium);
+  }
+
+  .appointment-widget .index-badge {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .appointment-widget .patient-name {
+    font-size: 15px;
+  }
+
+  .appointment-widget .appointment-time {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .appointment-widget .appointment-details {
+    padding: var(--padding-small);
+    gap: 6px;
+  }
+
+  .appointment-widget .detail-item {
+    font-size: 11px;
+  }
+
+  .appointment-widget .empty-state {
+    min-height: 180px;
+    padding: var(--padding-medium);
+  }
+
+  .appointment-widget .empty-state svg {
+    font-size: 48px;
+  }
+
+  .appointment-widget .empty-state p {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .appointment-widget .appointments-list {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .appointment-widget .appointment-item {
+    min-width: 200px;
+    max-width: 220px;
+    padding: var(--padding-small);
+  }
+
+  .appointment-widget .index-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .appointment-widget .patient-name {
+    font-size: 14px;
+  }
+
+  .appointment-widget .appointment-time {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .appointment-widget .add-to-waitlist-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .appointment-widget .add-to-waitlist-btn svg {
+    font-size: 11px;
+  }
+
+  .appointment-widget .appointment-details {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .appointment-widget .detail-item {
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .appointment-widget .detail-item svg {
+    font-size: 11px;
+  }
+
+  .appointment-widget .appointment-reason {
+    padding: 6px 8px;
+  }
+
+  .appointment-widget .appointment-reason p {
+    font-size: 10px;
+  }
+
+  .appointment-widget .empty-state {
+    min-height: 160px;
+    padding: var(--padding-medium) var(--padding-small);
+  }
+
+  .appointment-widget .empty-state svg {
+    font-size: 40px;
+    margin-bottom: var(--padding-small);
+  }
+
+  .appointment-widget .empty-state p {
+    font-size: 13px;
+  }
+}
+
+/* Dark Mode Support */
+:root.dark-mode .appointment-widget .appointments-list::-webkit-scrollbar-track {
+  background: var(--fourth-bg);
+}
+
+:root.dark-mode .appointment-widget .appointments-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-color), var(--third-color));
+}
+
+:root.dark-mode .appointment-widget .appointment-item {
+  background: linear-gradient(135deg, var(--fourth-bg), var(--third-bg));
+  box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .appointment-widget .appointment-item:hover {
+  box-shadow: 0px 12px 30px rgba(128, 191, 255, 0.3);
+}
+
+:root.dark-mode .appointment-widget .index-badge {
+  box-shadow: 0px 4px 12px rgba(128, 191, 255, 0.45);
+}
+
+:root.dark-mode .appointment-widget .empty-state {
+  background: linear-gradient(135deg, var(--fourth-bg), var(--third-bg));
+  border-color: var(--border-color);
+}
+
+:root.dark-mode .appointment-widget .empty-state svg {
+  opacity: 0.4;
+}
+
+:root.dark-mode .appointment-widget .appointment-reason {
+  background: linear-gradient(135deg, var(--primary-bg), rgba(30, 42, 58, 0.8));
+}
+
+:root.dark-mode .appointment-widget .appointment-reason p {
+  color: var(--third-color);
+}
+
+:root.dark-mode .appointment-widget .appointment-time {
+  background: linear-gradient(135deg, var(--warn-bg), rgba(51, 42, 0, 0.3));
+}
+
+:root.dark-mode .appointment-widget .appointment-details {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+:root.dark-mode .appointment-widget .add-to-waitlist-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--third-color));
+  box-shadow: 0px 4px 12px rgba(128, 191, 255, 0.3);
+}
+
+:root.dark-mode .appointment-widget .add-to-waitlist-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-hover), var(--third-hover));
+  box-shadow: 0px 6px 16px rgba(128, 191, 255, 0.45);
+}
+
+:root.dark-mode .appointment-widget .add-to-waitlist-btn.in-queue {
+  background: linear-gradient(135deg, #0fa05e, #087d4a);
+  box-shadow: 0px 4px 12px rgba(15, 160, 94, 0.4);
+}
+
+:root.dark-mode .appointment-widget .add-to-waitlist-btn.in-queue:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d8847, #0a6835);
+  box-shadow: 0px 6px 16px rgba(15, 160, 94, 0.5);
+}

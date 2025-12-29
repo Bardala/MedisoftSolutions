@@ -469,6 +469,10 @@ form button:hover {
   width: calc(100% - 250px);
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 /* Mobile-first sidebar approach */
 @media screen and (max-width: 992px) {
   .content.with-sidebar {
