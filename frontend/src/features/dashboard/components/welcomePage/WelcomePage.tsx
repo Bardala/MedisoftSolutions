@@ -5,6 +5,7 @@ import { AppRoutes } from "@/app/constants";
 import { useLogin } from "@/app";
 import { isSuperAdminRole } from "@/shared";
 import { useIntl } from "react-intl";
+import { ENDPOINT, getFetchFn } from "@/core/api";
 
 import Header from "./Header";
 import HeroSection from "./HeroSection";
@@ -42,6 +43,23 @@ const WelcomePage: FC = () => {
       }
     }
   }, [loggedInUser, navigate]);
+
+  // Warm up serverless backend on page load
+  useEffect(() => {
+    const warmupBackend = async () => {
+      try {
+        await getFetchFn<null, string>(ENDPOINT.HEALTHZ);
+        console.log("Backend warmed up successfully");
+      } catch (error) {
+        console.warn(
+          "Backend warmup request failed (expected for serverless):",
+          error,
+        );
+      }
+    };
+
+    warmupBackend();
+  }, []);
 
   // Demo login handler
   const handleDemoLogin = async () => {

@@ -78,3 +78,25 @@ export const fetchFn = async <Request, Response>(
 
   return res as Response;
 };
+
+export const getFetchFn = <Request, Response>(
+  endPoint: string,
+  params: string[] = null,
+) => fetchFn<Request, Response>(endPoint, "GET", null, params);
+
+export const postFetchFn = <Request, Response>(
+  endPoint: string,
+  req: Request,
+  params: string[] = null,
+) => fetchFn<Request, Response>(endPoint, "POST", req, params);
+
+export const putFetchFn = <Request, Response>(
+  endPoint: string,
+  req: Request,
+  params: string[] = null,
+) => fetchFn<Request, Response>(endPoint, "PUT", req, params);
+
+export const deleteFetchFn = <Request, Response>(
+  endPoint: string,
+  params: string[] = null,
+) => fetchFn<Request, Response>(endPoint, "DELETE", null, params);
