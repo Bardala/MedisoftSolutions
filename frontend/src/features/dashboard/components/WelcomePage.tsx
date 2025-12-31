@@ -397,10 +397,10 @@ const WelcomePage: React.FC = () => {
               {f({ id: "welcome_description" })}
             </p>
             <div className="hero-stats">
-              <div className="stat">
+              {/* <div className="stat">
                 <div className="stat-number">500+</div>
                 <div className="stat-label">Clinics Trust Us</div>
-              </div>
+              </div> */}
               <div className="stat">
                 <div className="stat-number">99%</div>
                 <div className="stat-label">Satisfaction</div>
