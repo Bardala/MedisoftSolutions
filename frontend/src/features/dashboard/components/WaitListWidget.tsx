@@ -6,7 +6,7 @@ import {
   faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FC } from "react";
+import { FC, useRef, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { FeatureWidget } from "./FeatureWidget";
 import "@styles/waitListWidget.css";
@@ -15,8 +15,23 @@ import { buildRoute } from "@/shared";
 
 export const WaitListWidget: FC<{ queue: QueueResDTO[] }> = ({ queue }) => {
   const { formatMessage: f } = useIntl();
-  const topPatients = queue?.slice(0, 3) || [];
+  const topPatients = queue || [];
   const nav = useNavigate();
+  const waitlistContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to show new patients in queue
+  useEffect(() => {
+    if (waitlistContainerRef.current && topPatients.length > 0) {
+      const scrollDelay = setTimeout(() => {
+        const container = waitlistContainerRef.current;
+        if (container) {
+          // Scroll to the top to show the first patient in queue
+          container.scrollTop = 0;
+        }
+      }, 300);
+      return () => clearTimeout(scrollDelay);
+    }
+  }, [topPatients.length]);
 
   return (
     <FeatureWidget
@@ -28,7 +43,7 @@ export const WaitListWidget: FC<{ queue: QueueResDTO[] }> = ({ queue }) => {
       className="waitlist-widget"
     >
       {topPatients.length > 0 ? (
-        <div className="waitlist-content">
+        <div className="waitlist-content" ref={waitlistContainerRef}>
           {topPatients.map((patient, index) => (
             <div
               key={patient.id}

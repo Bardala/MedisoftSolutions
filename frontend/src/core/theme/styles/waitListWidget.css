@@ -1,7 +1,43 @@
+/* .waitlist-widget {
+  max-height: 220px;
+
+} */
+
 .waitlist-widget .waitlist-content {
   display: flex;
   flex-direction: column;
   gap: var(--padding-small);
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar Styling */
+.waitlist-widget .waitlist-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.waitlist-widget .waitlist-content::-webkit-scrollbar-track {
+  background: var(--secondary-bg);
+  border-radius: 10px;
+}
+
+.waitlist-widget .waitlist-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-color), var(--third-color));
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.waitlist-widget .waitlist-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-hover), var(--third-color));
+  box-shadow: 0px 0px 8px rgba(74, 144, 226, 0.4);
+}
+
+/* Firefox Scrollbar */
+.waitlist-widget .waitlist-content {
+  scrollbar-color: var(--primary-color) var(--secondary-bg);
+  scrollbar-width: thin;
 }
 
 .waitlist-widget .queue-item {
@@ -72,4 +108,10 @@
   border-radius: 10px;
   font-weight: 500;
   border: 1px solid var(--warn-border);
+}
+
+@media (max-width: 640px) {
+  .waitlist-widget .waitlist-content {
+    max-height: 220px;
+  }
 }

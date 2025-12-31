@@ -4,10 +4,12 @@ import { Visit, Payment } from "@/shared";
 import { dailyTimeFormate, monthlyTimeFormate } from "@/utils";
 import { useIntl } from "react-intl";
 import { useAddVisit } from "../hooks";
+import { useRef, useEffect } from "react";
 import "@styles/addVisit.css";
 
 const AddVisit: React.FC = () => {
   const { formatMessage: f } = useIntl();
+  const successCardRef = useRef<HTMLDivElement>(null);
   const {
     setPaymentAmount,
     handlePatientSelect,
@@ -24,6 +26,19 @@ const AddVisit: React.FC = () => {
     reason,
   } = useAddVisit();
 
+  // Auto-scroll to success card when it appears
+  useEffect(() => {
+    if (successMessage && successCardRef.current) {
+      const scrollDelay = setTimeout(() => {
+        successCardRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 500);
+      return () => clearTimeout(scrollDelay);
+    }
+  }, [successMessage]);
+
   return (
     <div className="add-visit-container">
       <h2>
@@ -31,12 +46,6 @@ const AddVisit: React.FC = () => {
 
         <DoctorSelect />
       </h2>
-
-      <SuccessVisitCreatedCard
-        successMessage={successMessage}
-        createdVisitDetails={createdVisitDetails}
-        createdPaymentDetails={createdPaymentDetails}
-      />
 
       <form onSubmit={handleSubmit}>
         <PatientSearch onSelect={handlePatientSelect} />
@@ -93,6 +102,14 @@ const AddVisit: React.FC = () => {
           {f({ id: "addVisit.recordVisitButton" })}
         </button>
       </form>
+
+      <div ref={successCardRef}>
+        <SuccessVisitCreatedCard
+          successMessage={successMessage}
+          createdVisitDetails={createdVisitDetails}
+          createdPaymentDetails={createdPaymentDetails}
+        />
+      </div>
     </div>
   );
 };
