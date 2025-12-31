@@ -341,5 +341,11 @@
   "noAppointmentsToday": "لا توجد مواعيد مجدولة لهذا اليوم",
   "doctor": "الطبيب",
   "appointments.inQueue": "في قائمة الانتظار",
-  "appointments.patientInQueue": "المريض موجود بالفعل في قائمة الانتظار"
+  "appointments.patientInQueue": "المريض موجود بالفعل في قائمة الانتظار",
+
+  "waiting_for_patient": "في انتظار المريض",
+  "noPatientsInQueue": "لا يوجد مرضى في قائمة الانتظار",
+
+  "status": "الحالة",
+  "IN_PROGRESS": "قيد التنفيذ"
 }

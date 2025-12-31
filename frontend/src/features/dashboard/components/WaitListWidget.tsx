@@ -17,7 +17,6 @@ export const WaitListWidget: FC<{ queue: QueueResDTO[] }> = ({ queue }) => {
   const { formatMessage: f } = useIntl();
   const topPatients = queue?.slice(0, 3) || [];
   const nav = useNavigate();
-  console.log(topPatients);
 
   return (
     <FeatureWidget

@@ -61,7 +61,7 @@ export const CurrentPatientWidget: FC<{
               <div className="patient-meta">
                 <span className="patient-age">
                   <FontAwesomeIcon icon={faCalendarAlt} />{" "}
-                  {currentPatient.age || "--"} {f({ id: "years" })}
+                  {currentPatient.age || "--"}
                 </span>
                 <span className="patient-phone">
                   <FontAwesomeIcon icon={faPhone} /> {currentPatient.phone}
@@ -88,13 +88,13 @@ export const CurrentPatientWidget: FC<{
                     {f({ id: "visitReason" })}:
                   </span>
                   <span className="visit-value">
-                    {currentPatient.currentVisit?.reason || "-"}
+                    {currentPatient.currentVisit?.reason || "--"}
                   </span>
                 </div>
                 <div className="visit-info">
                   <span className="visit-label">{f({ id: "status" })}:</span>
                   <span className="visit-status-badge in-progress">
-                    {f({ id: "in_progress" })}
+                    {f({ id: "IN_PROGRESS" })}
                   </span>
                 </div>
                 <div className="visit-info">
@@ -102,7 +102,7 @@ export const CurrentPatientWidget: FC<{
                     {f({ id: "doctorName" })}:
                   </span>
                   <span className="visit-value">
-                    {currentPatient.currentVisit?.doctorName || "-"}
+                    {currentPatient.currentVisit?.doctorName || "--"}
                   </span>
                 </div>
               </div>
@@ -119,7 +119,7 @@ export const CurrentPatientWidget: FC<{
                   <span className="visit-time">
                     {lastVisit.createdAt
                       ? new Date(lastVisit.createdAt).toLocaleDateString()
-                      : "-"}
+                      : "--"}
                   </span>
                 </div>
                 <div className="visit-card-body">
@@ -129,7 +129,7 @@ export const CurrentPatientWidget: FC<{
                       {lastVisit.doctorNotes
                         ? lastVisit.doctorNotes?.substring(0, 50) +
                           (lastVisit.doctorNotes?.length > 50 ? "..." : "")
-                        : "-"}
+                        : "--"}
                     </span>
                   </div>
                   <div className="visit-info">
@@ -137,7 +137,7 @@ export const CurrentPatientWidget: FC<{
                       {f({ id: "visitReason" })}:
                     </span>
                     <span className="visit-value">
-                      {lastVisit.reason || f({ id: "not_recorded" })}
+                      {lastVisit.reason || "--"}
                     </span>
                   </div>
                   <div className="visit-info">

@@ -507,3 +507,120 @@
   background: linear-gradient(135deg, #0d8847, #0a6835);
   box-shadow: 0px 6px 16px rgba(15, 160, 94, 0.5);
 }
+
+/* Add these styles to your existing appointmentWidget.css */
+
+/* In Queue Appointment Styles */
+.appointment-widget .appointment-item.in-queue {
+  background: linear-gradient(135deg, var(--success-bg), rgba(212, 237, 218, 0.3));
+  border-color: var(--success-border);
+  opacity: 0.9;
+}
+
+.appointment-widget .appointment-item.in-queue .index-badge.in-queue {
+  background: linear-gradient(135deg, var(--success-text), #0fa05e);
+  color: white;
+}
+
+.appointment-widget .appointment-item.highlighted {
+  position: relative;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  animation: pulseHighlight 2s ease-in-out infinite;
+}
+
+@keyframes pulseHighlight {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    transform: translateY(-4px);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(74, 144, 226, 0.3);
+    transform: translateY(-6px);
+  }
+}
+
+/* Queue Status Badge */
+.appointment-widget .queue-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 8px;
+  border: 1px solid var(--success-border);
+}
+
+.appointment-widget .queue-status-badge svg {
+  font-size: 9px;
+}
+
+.appointment-widget .patient-header-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* Auto Scroll Indicator */
+.appointment-widget .auto-scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--padding-small);
+  padding-top: var(--padding-small);
+  border-top: 1px solid var(--border-color);
+}
+
+.appointment-widget .auto-scroll-notice {
+  font-size: 10px;
+  color: var(--secondary-color);
+  text-align: center;
+  font-style: italic;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  20%,
+  80% {
+    opacity: 1;
+  }
+}
+
+/* Scroll Navigation Controls */
+.appointment-widget .scroll-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: var(--padding-small);
+  padding: var(--padding-small);
+}
+
+/* Dark mode adjustments */
+:root.dark-mode .appointment-widget .appointment-item.in-queue {
+  background: linear-gradient(135deg, var(--success-bg), rgba(17, 39, 22, 0.3));
+}
+
+:root.dark-mode .appointment-widget .queue-status-badge {
+  background: rgba(21, 87, 36, 0.3);
+  color: var(--success-text);
+}
+
+:root.dark-mode .appointment-widget .appointment-item.highlighted {
+  border-color: var(--third-color);
+  box-shadow: 0 0 0 3px rgba(128, 191, 255, 0.2);
+}

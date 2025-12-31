@@ -337,5 +337,11 @@
   "upcomingAppointments": "Upcoming Appointments",
   "noAppointmentsToday": "No appointments scheduled for today",
   "appointments.inQueue": "In Queue",
-  "appointments.patientInQueue": "Patient is already in the queue"
+  "appointments.patientInQueue": "Patient is already in the queue",
+
+  "waiting_for_patient": "Waiting for patient",
+  "noPatientsInQueue": "No patients in the queue",
+
+  "status": "Status",
+  "IN_PROGRESS": "In Progress"
 }

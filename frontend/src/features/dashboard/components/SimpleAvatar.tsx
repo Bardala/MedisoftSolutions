@@ -9,9 +9,8 @@ export const SimpleAvatar: FC<{ name: string; size?: "sm" | "md" | "lg" }> = ({
     return name
       .split(" ")
       .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
+      .join(" ")
+      .toUpperCase();
   };
 
   const sizeClass = {

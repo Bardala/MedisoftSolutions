@@ -61,7 +61,7 @@ h4 {
 }
 
 @media screen and (max-width: 768px) {
-  h4 {
+  .terms-container h4 {
     text-align: left;
   }
 }
