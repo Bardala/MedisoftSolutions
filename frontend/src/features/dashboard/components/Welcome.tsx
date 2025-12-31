@@ -1,4 +1,4 @@
-import "@styles/welcomePage.css";
+// import "@styles/welcomePage.css";
 
 const DentalManagementWelcome = () => {
   return (

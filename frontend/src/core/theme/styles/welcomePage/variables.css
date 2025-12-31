@@ -1,0 +1,87 @@
+/* Shared variables and common styles for Welcome Page components */
+
+.welcome-container {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 25px 80px rgba(0, 0, 0, 0.2);
+  --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .glass-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .nav-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-section {
+    padding: 3rem 1rem;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .cta-primary,
+  .cta-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .features-section,
+  .advanced-section,
+  .cta-section {
+    padding: 3rem 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+  .feature-tile:hover {
+    transform: none;
+  }
+
+  .nav-btn:hover {
+    transform: none;
+  }
+
+  .cta-button:hover {
+    transform: none;
+  }
+}
+
+/* Dark Mode Support */
+:root.dark-mode .welcome-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+:root.dark-mode .glass-header {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-mode.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+}
