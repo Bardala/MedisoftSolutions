@@ -1,20 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "@styles/welcomePage.css";
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMoon,
+  faSun,
+  faChevronRight,
+  faPlay,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AppRoutes } from "@/app/constants";
 import { programLogoImage } from "@/utils";
 import { useTheme } from "@/app/providers";
 import { useLogin } from "@/app";
 import { isSuperAdminRole } from "@/shared";
+import { useIntl } from "react-intl";
+import { LanguageContext } from "@/core/localization";
 
 const WelcomePage: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const { loggedInUser } = useLogin();
+  const { loggedInUser, login } = useLogin();
+  const { formatMessage: f, locale } = useIntl();
+  const { switchLanguage } = useContext(LanguageContext);
   const [activeFeature, setActiveFeature] = useState<number>(0);
   const [isHovering, setIsHovering] = useState<boolean>(false);
+  const [isLoggingInDemo, setIsLoggingInDemo] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const isRTL = locale === "ar";
 
   // Navigate to dashboard if user is already authenticated
   useEffect(() => {
@@ -27,6 +42,18 @@ const WelcomePage: React.FC = () => {
     }
   }, [loggedInUser, navigate]);
 
+  // Demo login handler
+  const handleDemoLogin = async () => {
+    setIsLoggingInDemo(true);
+    try {
+      await login("numberone", "Islam0101");
+    } catch (error) {
+      console.error("Demo login failed:", error);
+    } finally {
+      setIsLoggingInDemo(false);
+    }
+  };
+
   // Auto-rotate features
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,340 +64,538 @@ const WelcomePage: React.FC = () => {
     return () => clearInterval(interval);
   }, [isHovering]);
 
-  const features = [
+  // Track scroll progress for parallax effects
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Mouse movement effect for interactive elements
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Features Data
+  const enFeatures = [
     {
       title: "Patient Management",
       icon: "🧑‍⚕️",
+      color: "#FF6B6B",
+      gradient: "linear-gradient(135deg, #c03f3fff, #FF6B6B)",
       description:
-        "Comprehensive tools for patient registration, visit logging, and queue management with real-time updates.",
+        "Comprehensive tools for patient registration and queue management",
       details: [
-        "Add new patients with essential details",
-        "Record patient visits with timestamps",
-        "Track waiting list with real-time updates",
-        "Call patients by name with one click",
-        "Access complete patient history instantly",
+        "Add new patients with details",
+        "Real-time queue updates",
+        "Complete patient history",
       ],
     },
     {
-      title: "Document Management",
-      icon: "📁",
-      description:
-        "Effortlessly handle all patient documents and medical files.",
+      title: "Queue Management",
+      icon: "📋",
+      color: "#4ECDC4",
+      gradient: "linear-gradient(135deg, #289d95ff, #4ECDC4)",
+      description: "Smart patient queue management with notifications",
       details: [
-        "Upload patient files (reports, scans, documents)",
-        "Organize documents by patient and visit",
-        "Quick access to all patient records",
-        "Secure cloud storage for all files",
-        "No need for physical paperwork",
+        "Visual queue dashboard",
+        "Auto-call system",
+        "Priority management",
       ],
     },
     {
-      title: "Payment Tracking",
-      icon: "💳",
-      description:
-        "Easily log payments, generate financial reports, and track clinic performance metrics.",
-    },
-    {
-      title: "Appointment Scheduling",
+      title: "Appointments",
       icon: "📅",
-      description:
-        "Intuitive booking system to organize and manage patient appointments efficiently.",
-    },
-    {
-      title: "Reporting & Analytics",
-      icon: "📊",
-      description:
-        "Detailed daily and monthly reports to analyze clinic activity and financial trends.",
-    },
-    {
-      title: "Real-Time Notifications",
-      icon: "🔔",
-      description:
-        "Instant alerts for new visits, payments, and bookings to keep staff informed.",
+      color: "#45B7D1",
+      gradient: "linear-gradient(135deg, #2598b7ff, #45B7D1)",
+      description: "Intuitive booking and appointment management",
+      details: ["Calendar view", "Automated reminders", "Time optimization"],
     },
     {
       title: "Smart Prescriptions",
       icon: "💊",
-      description:
-        "Automated prescription generation with intelligent features.",
-      details: [
-        "Generate prescriptions automatically",
-        "Access medication history instantly",
-        "Template system for common prescriptions",
-        "Print or email prescriptions directly",
-        "Medication interaction warnings",
-      ],
+      color: "#FFEAA7",
+      gradient: "linear-gradient(135deg, #a68e2bff, #FFEAA7)",
+      description: "Automated prescription generation with AI",
+      details: ["Auto prescriptions", "Medication history", "Print & email"],
     },
     {
-      title: "Doctor's Dashboard",
-      icon: "👨‍⚕️",
-      description: "Everything a doctor needs at their fingertips.",
+      title: "Payments",
+      icon: "💳",
+      color: "#DDA0DD",
+      gradient: "linear-gradient(135deg, #DDA0DD, #DDA0DD)",
+      description: "Easy payment tracking and invoicing",
       details: [
-        "View all last visits with one click",
-        "Patient history timeline",
-        "System remembers all details automatically",
-        "Minimal typing required",
-        "Customizable quick-access buttons",
+        "Multiple payment methods",
+        "Auto invoices",
+        "Revenue analytics",
       ],
     },
   ];
 
-  return (
-    <div className="welcome-container">
-      {/* Animated Background */}
-      <div className="animated-background"></div>
+  const enAdvancedFeatures = [
+    {
+      icon: "✨",
+      title: "Zero Paperwork",
+      description: "No repetitive data entry needed",
+    },
+    {
+      icon: "📂",
+      title: "Document Management",
+      description: "Secure cloud storage for all files",
+    },
+    {
+      icon: "📞",
+      title: "Personalized Interaction",
+      description: "Call patients by name instantly",
+    },
+    {
+      icon: "⏱️",
+      title: "Time Saving",
+      description: "Save hours each week with automation",
+    },
+    {
+      icon: "👁️",
+      title: "Complete Visibility",
+      description: "See all details with one click",
+    },
+    {
+      icon: "♿",
+      title: "Accessibility",
+      description: "Designed for all users",
+    },
+  ];
 
-      {/* Header Section */}
-      {/* Header Section */}
-      <header className="welcome-header">
-        <div className="logo-container">
-          <div className="logo-wrapper">
-            <img
-              src={programLogoImage}
-              alt="MediSoft Logo"
-              className="program-logo"
-            />
-            <div className="logo-text">
-              <h1 className="logo">MediSoft Solutions</h1>
-              <span className="tagline">Your Clinic's Smart Companion</span>
-            </div>
+  const arFeatures = [
+    {
+      title: "إدارة المرضى",
+      icon: "🧑‍⚕️",
+      color: "#FF6B6B",
+      gradient: "linear-gradient(135deg, #FF6B6B, #c03f3fff)",
+      description: "أدوات شاملة لتسجيل المرضى وإدارة قوائم الانتظار",
+      details: [
+        "إضافة مرضى جدد مع التفاصيل",
+        "تحديثات قائمة الانتظار في الوقت الفعلي",
+        "السجل الطبي الكامل للمريض",
+      ],
+    },
+    {
+      title: "إدارة قوائم الانتظار",
+      icon: "📋",
+      color: "#4ECDC4",
+      gradient: "linear-gradient(135deg, #4ECDC4, #289d95ff)",
+      description: "إدارة ذكية لقوائم انتظار المرضى مع نظام إشعارات",
+      details: [
+        "لوحة تحكم مرئية لقائمة الانتظار",
+        "نظام استدعاء تلقائي",
+        "إدارة الأولويات",
+      ],
+    },
+    {
+      title: "المواعيد",
+      icon: "📅",
+      color: "#45B7D1",
+      gradient: "linear-gradient(135deg, #45B7D1, #2598b7ff)",
+      description: "نظام حجز وإدارة مواعيد بديهي",
+      details: ["عرض تقويمي", "تذكيرات آلية", "تحسين الأوقات"],
+    },
+    {
+      title: "الوصفات الذكية",
+      icon: "💊",
+      color: "#FFEAA7",
+      gradient: "linear-gradient(135deg, #FFEAA7, #a68e2bff)",
+      description: "إنشاء وصفت طبية تلقائي باستخدام الذكاء الاصطناعي",
+      details: ["وصفات تلقائية", "سجل الأدوية", "طباعة وإرسال بريد إلكتروني"],
+    },
+    {
+      title: "المدفوعات",
+      icon: "💳",
+      color: "#DDA0DD",
+      gradient: "linear-gradient(135deg, #DDA0DD, #9b5a9bff)",
+      description: "تتبع سهل للمدفوعات وإدارة الفواتير",
+      details: ["طرق دفع متعددة", "فواتير آلية", "تحليلات الإيرادات"],
+    },
+  ];
+
+  const arAdvancedFeatures = [
+    {
+      icon: "✨",
+      title: "لا أوراق",
+      description: "لا حاجة لإدخال بيانات متكرر",
+    },
+    {
+      icon: "📂",
+      title: "إدارة المستندات",
+      description: "تخزين سحابي آمن لجميع الملفات",
+    },
+    {
+      icon: "📞",
+      title: "تفاعل شخصي",
+      description: "استدعاء المرضى بالاسم فوراً",
+    },
+    {
+      icon: "⏱️",
+      title: "توفير الوقت",
+      description: "وفر ساعات أسبوعياً مع الأتمتة",
+    },
+    {
+      icon: "👁️",
+      title: "رؤية كاملة",
+      description: "عرض جميع التفاصيل بنقرة واحدة",
+    },
+    { icon: "♿", title: "سهولة الوصول", description: "مصمم لجميع المستخدمين" },
+  ];
+
+  const features = isRTL ? arFeatures : enFeatures;
+  const advancedFeatures = isRTL ? arAdvancedFeatures : enAdvancedFeatures;
+
+  return (
+    <div className="welcome-container" dir={isRTL ? "rtl" : "ltr"}>
+      {/* Animated Background with Particles */}
+      <div className="particles-background">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              transform: `translateY(${scrollProgress * 0.5}px)`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Elements */}
+      <div
+        className="floating-element floating-1"
+        style={{
+          transform: `translate(${mousePosition.x * 0.1}px, ${
+            mousePosition.y * 0.1
+          }px)`,
+        }}
+      >
+        🏥
+      </div>
+      <div
+        className="floating-element floating-2"
+        style={{
+          transform: `translate(${-mousePosition.x * 0.05}px, ${
+            -mousePosition.y * 0.05
+          }px)`,
+        }}
+      >
+        💊
+      </div>
+      <div
+        className="floating-element floating-3"
+        style={{
+          transform: `translate(${mousePosition.x * 0.08}px, ${
+            mousePosition.y * -0.08
+          }px)`,
+        }}
+      >
+        📊
+      </div>
+
+      {/* Progress Indicator */}
+      <div
+        className="scroll-progress"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      {/* Header */}
+      <header className="glass-header">
+        <div className="header-content">
+          <div className="logo-animation">
+            <div className="logo-pulse" />
+            <img src={programLogoImage} alt="MediSoft" className="logo-image" />
+          </div>
+          <div className="logo-text">
+            <h1 className="logo-glow">MediSoft</h1>
+            <span className="tagline-slide">{f({ id: "tagline" })}</span>
           </div>
         </div>
 
-        <nav className="auth-nav">
+        <nav className="nav-buttons">
           <button
-            className="auth-btn login-btn"
+            className="nav-btn login-btn"
             onClick={() => navigate(AppRoutes.LOGIN)}
           >
-            Login
+            <span className="btn-text">{f({ id: "login" })}</span>
+            <FontAwesomeIcon icon={faChevronRight} className="btn-icon" />
           </button>
           <button
-            className="auth-btn signup-btn"
+            className="nav-btn signup-btn pulse-animation"
             onClick={() => navigate(AppRoutes.SIGNUP)}
           >
-            Sign Up
+            <span className="btn-text">{f({ id: "signup" })}</span>
+            <FontAwesomeIcon icon={faStar} className="btn-icon" />
           </button>
-          <button className="theme-toggle-button" onClick={toggleTheme}>
-            <FontAwesomeIcon
-              icon={isDarkMode ? faMoon : faSun}
-              className="theme-icon"
-            />
+          <button
+            className="nav-btn demo-btn"
+            onClick={handleDemoLogin}
+            disabled={isLoggingInDemo}
+          >
+            {isLoggingInDemo ? (
+              <div className="spinner" />
+            ) : (
+              <>
+                <span className="btn-text">{f({ id: "tryDemo" })}</span>
+                <FontAwesomeIcon icon={faPlay} className="btn-icon" />
+              </>
+            )}
+          </button>
+          <button
+            className="language-btn"
+            onClick={() => switchLanguage(locale === "en" ? "ar" : "en")}
+            title={
+              locale === "en" ? "Switch to Arabic" : "التبديل إلى الإنجليزية"
+            }
+          >
+            {locale === "en" ? "العربية" : "EN"}
+          </button>
+          <button className="theme-btn" onClick={toggleTheme}>
+            <div className="theme-toggle">
+              <FontAwesomeIcon
+                icon={isDarkMode ? faMoon : faSun}
+                className={`theme-icon ${isDarkMode ? "dark" : "light"}`}
+              />
+            </div>
           </button>
         </nav>
       </header>
 
-      <div className="welcome-main-content">
-        {/* Hero Section */}
-        <section className="hero-section">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-grid">
           <div className="hero-content">
-            <h2>Streamline Your Clinic Operations</h2>
+            <div className="badge">🚀 {f({ id: "badge_new" })}</div>
+            <h1 className="hero-title">
+              <span className="gradient-text">
+                {f({ id: "welcome_title" })}
+              </span>
+              <div className="typing-cursor" />
+            </h1>
             <p className="hero-description">
-              MediSoft is a comprehensive clinic management system designed to
-              enhance patient care, simplify financial tracking, and boost
-              operational efficiency.
+              {f({ id: "welcome_description" })}
             </p>
-
-            <div className="cta-buttons">
+            <div className="hero-stats">
+              <div className="stat">
+                <div className="stat-number">500+</div>
+                <div className="stat-label">Clinics Trust Us</div>
+              </div>
+              <div className="stat">
+                <div className="stat-number">99%</div>
+                <div className="stat-label">Satisfaction</div>
+              </div>
+              <div className="stat">
+                <div className="stat-number">24/7</div>
+                <div className="stat-label">Support</div>
+              </div>
+            </div>
+            <div className="hero-actions">
               <button
-                className="primary-cta"
+                className="cta-primary"
                 onClick={() => navigate(AppRoutes.SIGNUP)}
               >
-                Get Started
+                <span>{f({ id: "get_started" })}</span>
+                <div className="cta-glow" />
               </button>
               <button
-                className="secondary-cta"
+                className="cta-secondary"
                 onClick={() =>
                   document
                     .getElementById("features")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Learn More
+                <span>{f({ id: "learn_more" })}</span>
+                <div className="arrow-icon">↓</div>
               </button>
             </div>
           </div>
-
-          <div className="hero-image">
+          <div className="hero-visual">
             <div className="dashboard-preview">
-              {/* This would be an animated SVG or image of the dashboard */}
-              <div className="preview-card">
-                <div className="preview-header">
-                  <span>Today's Summary</span>
+              <div className="screen-frame">
+                <div className="screen-content">
+                  <div className="screen-header">
+                    <div className="screen-dots">
+                      <div className="dot red" />
+                      <div className="dot yellow" />
+                      <div className="dot green" />
+                    </div>
+                    <div className="screen-title">MediSoft Dashboard</div>
+                  </div>
+                  <div className="screen-body">
+                    <div className="data-row">
+                      <div className="data-cell active">
+                        <div className="cell-icon">👥</div>
+                        <div className="cell-data">24 Active Patients</div>
+                      </div>
+                      <div className="data-cell">
+                        <div className="cell-icon">💰</div>
+                        <div className="cell-data">$3,450 Revenue</div>
+                      </div>
+                    </div>
+                    <div className="data-row">
+                      <div className="data-cell">
+                        <div className="cell-icon">📅</div>
+                        <div className="cell-data">8 Appointments</div>
+                      </div>
+                      <div className="data-cell">
+                        <div className="cell-icon">⏰</div>
+                        <div className="cell-data">3 Waiting</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="preview-stats">
-                  <div className="stat-item">
-                    <span>🆕</span>
-                    <span>12 New</span>
-                  </div>
-                  <div className="stat-item">
-                    <span>💰</span>
-                    <span>$3,450</span>
-                  </div>
-                  <div className="stat-item">
-                    <span>🏥</span>
-                    <span>24 Visits</span>
-                  </div>
-                  <div className="stat-item">
-                    <span>📅</span>
-                    <span>8 Bookings</span>
-                  </div>
-                </div>
+                <div className="screen-reflection" />
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Features Section */}
-        <section id="features" className="features-section">
-          <h3>Key Features</h3>
-          <div className="features-container">
-            <div className="feature-carousel">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className={`feature-card ${
-                    activeFeature === index ? "active" : ""
-                  }`}
-                  onMouseEnter={() => {
-                    setActiveFeature(index);
-                    setIsHovering(true);
-                  }}
-                  onMouseLeave={() => setIsHovering(false)}
-                >
-                  <div className="feature-icon">{feature.icon}</div>
-                  <h4>{feature.title}</h4>
-                  <p>{feature.description}</p>
+      {/* Features Carousel */}
+      <section id="features" className="features-section">
+        <div className="section-header">
+          <h2 className="section-title">{f({ id: "key_features" })}</h2>
+          <p className="section-subtitle">{f({ id: "features_subtitle" })}</p>
+        </div>
+        <div className="features-carousel">
+          <div className="carousel-track">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className={`feature-card ${
+                  activeFeature === index ? "active" : ""
+                }`}
+                onClick={() => setActiveFeature(index)}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                style={{
+                  background: feature.gradient,
+                  transform:
+                    activeFeature === index ? "scale(1.1)" : "scale(0.9)",
+                  opacity: activeFeature === index ? 1 : 0.7,
+                }}
+              >
+                <div className="feature-icon-wrapper">
+                  <div
+                    className="feature-icon-bg"
+                    style={{ backgroundColor: `${feature.color}20` }}
+                  >
+                    <span className="feature-icon">{feature.icon}</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            <div className="feature-details">
-              <div className="detail-content">
-                <h4>{features[activeFeature].title}</h4>
-                <p>{features[activeFeature].description}</p>
-                <ul className="feature-benefits">
-                  {features[activeFeature].details?.map((detail, index) => (
-                    <li key={index}>{detail}</li>
+                <h3 className="feature-title">{feature.title}</h3>
+                <p className="feature-desc">{feature.description}</p>
+                <ul className="feature-list">
+                  {feature.details.map((detail, i) => (
+                    <li key={i}>{detail}</li>
                   ))}
                 </ul>
+                <div className="feature-indicator" />
               </div>
-            </div>
+            ))}
           </div>
-        </section>
-
-        {/* Advanced Features Section */}
-        <section className="advanced-features">
-          <h3>Why Clinics Love MediSoft</h3>
-          <div className="feature-grid">
-            <div className="feature-item">
-              <div className="feature-badge">✨</div>
-              <h4>Zero Paperwork</h4>
-              <p>
-                Our system remembers everything - no need for repetitive data
-                entry
-              </p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-badge">📂</div>
-              <h4>Complete Document Management</h4>
-              <p>Upload and organize all patient files in one secure place</p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-badge">📞</div>
-              <h4>Personalized Patient Interaction</h4>
-              <p>
-                Call patients by name and access their full history instantly
-              </p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-badge">⏱️</div>
-              <h4>Time-Saving Automation</h4>
-              <p>
-                Automatic prescriptions and visit summaries save hours each week
-              </p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-badge">👁️</div>
-              <h4>Complete Visibility</h4>
-              <p>
-                Doctors see all last visits and patient details with one click
-              </p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-badge">♿</div>
-              <h4>Accessibility Focused</h4>
-              <p>Designed for all users with minimal typing requirements</p>
-            </div>
+          <div className="carousel-controls">
+            {features.map((_, index) => (
+              <button
+                key={index}
+                className={`control-dot ${
+                  activeFeature === index ? "active" : ""
+                }`}
+                onClick={() => setActiveFeature(index)}
+              />
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Dashboard Preview Section */}
-        <section className="dashboard-section">
-          <h3>Dashboard Overview</h3>
-          <div className="dashboard-highlights">
-            <div className="highlight-card">
-              <div className="highlight-icon">🧑‍⚕️</div>
-              <h4>Quick Actions</h4>
-              <p>
-                Add patients, log visits, record payments, and manage bookings
-                with one click
-              </p>
-            </div>
-            <div className="highlight-card">
-              <div className="highlight-icon">📊</div>
-              <h4>Summary Cards</h4>
-              <p>
-                Get a snapshot of your clinic's activity with key metrics at a
-                glance
-              </p>
-            </div>
-            <div className="highlight-card">
-              <div className="highlight-icon">⚙️</div>
-              <h4>Customization</h4>
-              <p>
-                Configure system preferences, user roles, and localization
-                options
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Call to Action Section */}
-        <section className="cta-section">
-          <h3>Ready to Transform Your Clinic?</h3>
-          <p>
-            {/* Join hundreds of healthcare professionals who trust MediSoft for their
-          practice management needs. */}
-            Start your journey with MediSoft — designed to simplify and empower
-            your clinic
+      {/* Advanced Features Grid */}
+      <section className="advanced-section">
+        <div className="section-header">
+          <h2 className="section-title">{f({ id: "why_clinics_love" })}</h2>
+          <p className="section-subtitle">
+            {f({ id: "clinics_choose_subtitle" })}
           </p>
-          <div className="cta-buttons">
+        </div>
+        <div className="features-grid">
+          {advancedFeatures.map((feature, index) => (
+            <div
+              key={index}
+              className="feature-tile"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="tile-icon">{feature.icon}</div>
+              <h3 className="tile-title">{feature.title}</h3>
+              <p className="tile-desc">{feature.description}</p>
+              <div className="tile-hover" />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="cta-content">
+          <div className="cta-text">
+            <h2 className="cta-title">{f({ id: "ready_to_transform" })}</h2>
+            <p className="cta-subtitle">{f({ id: "start_journey" })}</p>
+          </div>
+          <div className="cta-actions">
             <button
-              className="primary-cta"
+              className="cta-button"
               onClick={() => navigate(AppRoutes.SIGNUP)}
             >
-              Start Free Trial
+              {f({ id: "start_free_trial" })}
+              <div className="button-sparkle">✨</div>
             </button>
-            {/* <button
-            className="secondary-cta"
-            onClick={() => navigate(AppRoutes.LOGIN)}
-          >
-            Schedule Demo
-          </button> */}
           </div>
-        </section>
-      </div>
+        </div>
+        <div className="cta-ornament">⚕️</div>
+      </section>
 
       {/* Footer */}
-      <footer className="welcome-footer">
-        <p>
-          © {new Date().getFullYear()} MediSoft Clinic Management System. All
-          rights reserved.
-        </p>
-        <div className="footer-links">
-          {/* <a href="#">Privacy Policy</a> */}
-          <a href={AppRoutes.TERMS}>Terms of Service</a>
-          {/* <a href="#">Contact Us</a> */}
+      <footer className="glass-footer">
+        <div className="footer-content">
+          <div className="footer-logo">
+            <img
+              src={programLogoImage}
+              alt="MediSoft"
+              className="footer-logo-img"
+            />
+            <div className="footer-logo-text">
+              <div className="footer-logo-title">MediSoft</div>
+              <div className="footer-tagline">{f({ id: "tagline" })}</div>
+            </div>
+          </div>
+          <div className="footer-links">
+            <a href={AppRoutes.TERMS} className="footer-link">
+              {f({ id: "terms_of_service" })}
+            </a>
+            <div className="footer-copyright">
+              © {new Date().getFullYear()} {f({ id: "footer_copyright" })}
+            </div>
+          </div>
         </div>
       </footer>
     </div>
