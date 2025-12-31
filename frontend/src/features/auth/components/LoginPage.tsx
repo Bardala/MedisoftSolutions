@@ -1,4 +1,9 @@
-import { isDoctorRole, UserRole, isAssistantRole } from "@/shared";
+import {
+  isDoctorRole,
+  UserRole,
+  isAssistantRole,
+  isSuperAdminRole,
+} from "@/shared";
 import {
   programLogoImage,
   doctorImage,
@@ -8,12 +13,17 @@ import {
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { useLoginPage } from "../hooks";
+import { useNavigate } from "react-router-dom";
+import { useLogin } from "@/app";
+import { AppRoutes } from "@/app/constants";
 import "@styles/login.css";
 
 const LoginPage: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const maxAttempts = 3;
   const { formatMessage: f, locale } = useIntl();
+  const navigate = useNavigate();
+  const { loggedInUser } = useLogin();
 
   const {
     selectedRole,
@@ -25,6 +35,17 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     error,
   } = useLoginPage();
+
+  // Navigate to dashboard if user is already authenticated
+  useEffect(() => {
+    if (loggedInUser) {
+      if (isSuperAdminRole(loggedInUser.role)) {
+        navigate(AppRoutes.ADMIN_CLINICS, { replace: true });
+      } else {
+        navigate(AppRoutes.Dashboard, { replace: true });
+      }
+    }
+  }, [loggedInUser, navigate]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

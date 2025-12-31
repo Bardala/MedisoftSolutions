@@ -6,12 +6,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AppRoutes } from "@/app/constants";
 import { programLogoImage } from "@/utils";
 import { useTheme } from "@/app/providers";
+import { useLogin } from "@/app";
+import { isSuperAdminRole } from "@/shared";
 
 const WelcomePage: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { loggedInUser } = useLogin();
   const [activeFeature, setActiveFeature] = useState<number>(0);
   const [isHovering, setIsHovering] = useState<boolean>(false);
+
+  // Navigate to dashboard if user is already authenticated
+  useEffect(() => {
+    if (loggedInUser) {
+      if (isSuperAdminRole(loggedInUser.role)) {
+        navigate(AppRoutes.ADMIN_CLINICS, { replace: true });
+      } else {
+        navigate(AppRoutes.Dashboard, { replace: true });
+      }
+    }
+  }, [loggedInUser, navigate]);
 
   // Auto-rotate features
   useEffect(() => {
