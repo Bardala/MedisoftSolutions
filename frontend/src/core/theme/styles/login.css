@@ -1,12 +1,71 @@
 .login-page {
   text-align: center;
   padding: var(--padding-large);
-  background: linear-gradient(to bottom, var(--secondary-bg), var(--primary-bg));
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated particles background */
+.login-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 50px 50px, 80px 80px, 100px 100px;
+  animation: drift 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Floating gradient orbs */
+.login-page::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle at 30% 30%, rgba(240, 147, 251, 0.2), transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb 15s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes floatOrb {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-50px) translateX(-30px);
+  }
+}
+
+.login-page>* {
+  position: relative;
+  z-index: 1;
 }
 
 .logo {
@@ -14,15 +73,33 @@
   height: auto;
   margin-bottom: var(--padding-medium);
   border-radius: 50%;
-  /* box-shadow: 0px 10px 15px -5px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, var(--primary-bg) 0%, var(--primary-color) 100%); */
+  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
+  animation: logoFloat 3s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+}
+
+@keyframes logoFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 .title {
   font-size: var(--font-size-title);
   font-weight: bold;
-  color: var(--secondary-color);
+  color: white;
   margin-bottom: var(--padding-large);
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
 .roles {
@@ -35,36 +112,51 @@
 }
 
 .role-card {
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
   padding: var(--padding-medium);
   text-align: center;
   cursor: pointer;
-  background: var(--white);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   width: 320px;
   height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.role-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
 }
 
 .role-card.selected {
-  border-color: var(--primary-color);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-medium);
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.3) 0%, rgba(245, 87, 108, 0.3) 100%);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.05) translateY(-15px);
+  box-shadow: 0 20px 60px rgba(245, 87, 108, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+.role-card h2 {
+  color: white;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-top: 15px;
 }
 
 .role-icon {
   width: 50%;
-  /* Adjusted to take full width of the container */
   height: 100%;
-  /* Adjusted to take full height of the container */
   object-fit: cover;
-  /* Ensures the image covers the area without distortion */
-  border-radius: var(--border-radius);
-  /* Optional: if you want rounded corners */
+  border-radius: 15px;
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.2));
 }
 
 .password-section {
@@ -72,31 +164,95 @@
   text-align: center;
   width: 100%;
   max-width: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.password-section h3 {
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  margin-top: 0;
 }
 
 .password-input {
   width: 100%;
-  padding: 15px;
-  font-size: 18px;
+  padding: 15px 20px;
+  font-size: 16px;
   margin-bottom: 20px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
   box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.password-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.password-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
 }
 
 .submit-button {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
   border: none;
-  padding: 12px 25px;
-  font-size: 18px;
-  border-radius: var(--border-radius);
+  padding: 14px 35px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .submit-button:hover {
-  background-color: var(--primary-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 45px rgba(245, 87, 108, 0.5);
+}
+
+.submit-button:active {
+  transform: translateY(-1px);
+}
+
+/* Error message styling */
+.password-section .error {
+  color: #ff6b9d;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  padding: 12px;
+  background: rgba(255, 107, 157, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #ff6b9d;
 }
 
 /* Not good at table Samsung A7 */
@@ -120,14 +276,48 @@
   }
 } */
 
+@media (max-width: 768px) {
+  .logo {
+    width: 150px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .roles {
+    gap: 30px;
+  }
+
+  .role-card {
+    width: 240px;
+    height: 300px;
+    padding: 15px;
+  }
+
+  .role-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .password-section {
+    max-width: 90%;
+    padding: 30px 20px;
+  }
+}
+
 @media (max-width: 480px) {
   .title {
     font-size: var(--font-size-welcome);
   }
 
+  .roles {
+    gap: 20px;
+  }
+
   .role-card {
     width: 140px;
     height: 180px;
+    padding: 10px;
   }
 
   .role-icon {
@@ -135,12 +325,26 @@
     height: 100%;
   }
 
+  .role-card h2 {
+    font-size: 1rem;
+  }
+
   .password-input {
     font-size: var(--font-size-body);
+    padding: 12px 15px;
   }
 
   .submit-button {
     font-size: var(--font-size-body);
     padding: 10px 20px;
   }
+
+  .password-section {
+    padding: 20px 15px;
+    max-width: 95%;
+  }
+}
+
+:root.dark-mode .login-page {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
