@@ -72,9 +72,9 @@ const SignupPage = () => {
         pricePerVisit: selectedPlan === PlanType.VISIT_BASED ? 5 : 0,
         monthlyPrice:
           selectedPlan === PlanType.MONTHLY
-            ? 300
+            ? 500
             : selectedPlan === PlanType.FREE
-            ? 100
+            ? 300
             : 0,
         yearlyPrice: selectedPlan === PlanType.YEARLY ? 2500 : 0,
         status: SubscriptionStatus.ACTIVE,

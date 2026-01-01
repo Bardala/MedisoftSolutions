@@ -33,7 +33,7 @@ const PlanSelector = ({
     {
       type: PlanType.FREE,
       title: "Hobby",
-      price: "100 L.E/month",
+      price: "300 L.E/month",
       features: {
         feature: [
           "Record visits & patients",
@@ -62,7 +62,7 @@ const PlanSelector = ({
     {
       type: PlanType.MONTHLY,
       title: isTrialPeriod ? "Pro (Trial)" : "Pro",
-      price: isTrialPeriod ? "Free for 30 days" : "300 L.E/month",
+      price: isTrialPeriod ? "Free for 30 days" : "500 L.E/month",
       features: {
         feature: [
           "Record visits & patients",
@@ -198,7 +198,7 @@ const PlanSelector = ({
               </p>
               <p>
                 After {daysRemaining} days, your trial will automatically
-                convert to the Monthly Pro plan at 300 L.E/month unless you
+                convert to the Monthly Pro plan at 500 L.E/month unless you
                 choose to downgrade.
               </p>
               <p>

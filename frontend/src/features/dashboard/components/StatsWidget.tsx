@@ -1,4 +1,4 @@
-import { faChartLine, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,11 +39,11 @@ export const StatsWidget: FC<StatsWidgetProps> = ({
         <h3 className="widget-value">{value}</h3>
         <p className="widget-title">{title}</p>
       </div>
-      {route && (
+      {/* {route && (
         <div className="widget-action">
           <FontAwesomeIcon icon={faChartLine} />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
