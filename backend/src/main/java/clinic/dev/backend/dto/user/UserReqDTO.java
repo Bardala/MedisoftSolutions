@@ -33,7 +33,15 @@ public record UserReqDTO(
     String profilePicture) {
 
   public User toEntity(Long clinicId) {
-    return new User(null, new Clinic(clinicId), username, password, name, phone, role, profilePicture, null);
+    return User.builder()
+        .username(username)
+        .password(password)
+        .name(name)
+        .phone(phone)
+        .role(role)
+        .profilePicture(profilePicture)
+        .clinic(new Clinic(clinicId))
+        .build();
   }
 
   public void updateEntity(User user, Long clinicId) {

@@ -8,18 +8,13 @@ import clinic.dev.backend.model.Payment;
 import clinic.dev.backend.repository.PaymentRepo;
 import clinic.dev.backend.repository.VisitPaymentRepo;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.util.WorkdayWindowUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,43 +80,10 @@ public class PaymentService {
 
   public List<PaymentResDTO> getPaymentsForWorkday() {
     Long clinicId = authContext.getClinicId();
-    Instant now = Instant.now();
-    ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
+    LocalDate today = LocalDate.now();
+    WorkdayWindowUtil.TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(today);
 
-    // Get workday start (6 AM today in local time)
-    ZonedDateTime workdayStartZoned = zonedNow.with(LocalTime.of(6, 0));
-    Instant workdayStart = workdayStartZoned.toInstant();
-    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
-
-    if (now.isBefore(workdayStart)) {
-      // Current time is between midnight and 6 AM
-      ZonedDateTime midnightZoned = zonedNow.with(LocalTime.MIN);
-      Instant midnight = midnightZoned.toInstant();
-      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
-
-      // Get payments from midnight to 6 AM today
-      List<Payment> paymentsMorning = paymentRepo.findPaymentsBetween(
-          midnight, sixAm, clinicId);
-
-      // Get payments from 6 AM yesterday to midnight today
-      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
-      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
-
-      List<Payment> paymentsYesterday = paymentRepo.findPaymentsBetween(
-          yesterdaySixAm, midnight, clinicId);
-
-      // Combine results
-      List<Payment> combined = new ArrayList<>();
-      combined.addAll(paymentsMorning);
-      combined.addAll(paymentsYesterday);
-
-      return combined.stream()
-          .map(PaymentResDTO::fromEntity)
-          .collect(Collectors.toList());
-    }
-
-    // Normal case - current time is after 6 AM
-    return paymentRepo.findPaymentsBetween(workdayStart, workdayEnd, clinicId)
+    return paymentRepo.findByClinicIdAndCreatedAtBetween(clinicId, window.start(), window.end())
         .stream()
         .map(PaymentResDTO::fromEntity)
         .collect(Collectors.toList());
@@ -129,43 +91,9 @@ public class PaymentService {
 
   public List<PaymentResDTO> getPaymentsForDate(LocalDate date) {
     Long clinicId = authContext.getClinicId();
-    Instant now = Instant.now();
+    WorkdayWindowUtil.TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(date);
 
-    // Convert date to workday start (6 AM in local time)
-    ZonedDateTime workdayStartZoned = date.atTime(6, 0).atZone(ZoneId.systemDefault());
-    Instant workdayStart = workdayStartZoned.toInstant();
-    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
-
-    ZonedDateTime nowZoned = now.atZone(ZoneId.systemDefault());
-    if (date.equals(nowZoned.toLocalDate()) && now.isBefore(workdayStart)) {
-      // For today before 6 AM
-      ZonedDateTime midnightZoned = date.atStartOfDay(ZoneId.systemDefault());
-      Instant midnight = midnightZoned.toInstant();
-      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
-
-      // Get payments from midnight to 6 AM today
-      List<Payment> paymentsMorning = paymentRepo.findPaymentsBetween(
-          midnight, sixAm, clinicId);
-
-      // Get payments from 6 AM yesterday to midnight today
-      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
-      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
-
-      List<Payment> paymentsYesterday = paymentRepo.findPaymentsBetween(
-          yesterdaySixAm, midnight, clinicId);
-
-      // Combine results
-      List<Payment> combined = new ArrayList<>();
-      combined.addAll(paymentsMorning);
-      combined.addAll(paymentsYesterday);
-
-      return combined.stream()
-          .map(PaymentResDTO::fromEntity)
-          .collect(Collectors.toList());
-    }
-
-    // Normal case
-    return paymentRepo.findPaymentsBetween(workdayStart, workdayEnd, clinicId)
+    return paymentRepo.findPaymentsBetween(window.start(), window.end(), clinicId)
         .stream()
         .map(PaymentResDTO::fromEntity)
         .collect(Collectors.toList());
@@ -173,68 +101,18 @@ public class PaymentService {
 
   public long countPaymentsForToday() {
     Long clinicId = authContext.getClinicId();
-    Instant now = Instant.now();
-    ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
+    LocalDate today = LocalDate.now();
+    WorkdayWindowUtil.TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(today);
 
-    ZonedDateTime workdayStartZoned = zonedNow.with(LocalTime.of(6, 0));
-    Instant workdayStart = workdayStartZoned.toInstant();
-    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
-
-    if (now.isBefore(workdayStart)) {
-      // Current time is between midnight and 6 AM
-      ZonedDateTime midnightZoned = zonedNow.with(LocalTime.MIN);
-      Instant midnight = midnightZoned.toInstant();
-      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
-
-      // Count payments from midnight to 6 AM today
-      long morningCount = paymentRepo.countPaymentsBetween(
-          midnight, sixAm, clinicId);
-
-      // Count payments from 6 AM yesterday to midnight today
-      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
-      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
-
-      long yesterdayCount = paymentRepo.countPaymentsBetween(
-          yesterdaySixAm, midnight, clinicId);
-
-      return morningCount + yesterdayCount;
-    }
-
-    // Normal case - current time is after 6 AM
-    return paymentRepo.countPaymentsBetween(workdayStart, workdayEnd, clinicId);
+    return paymentRepo.countPaymentsBetween(window.start(), window.end(), clinicId);
   }
 
   public double calculateMoneyCollectedToday() {
     Long clinicId = authContext.getClinicId();
-    Instant now = Instant.now();
-    ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
+    LocalDate today = LocalDate.now();
+    WorkdayWindowUtil.TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(today);
 
-    ZonedDateTime workdayStartZoned = zonedNow.with(LocalTime.of(6, 0));
-    Instant workdayStart = workdayStartZoned.toInstant();
-    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
-
-    if (now.isBefore(workdayStart)) {
-      // Current time is between midnight and 6 AM
-      ZonedDateTime midnightZoned = zonedNow.with(LocalTime.MIN);
-      Instant midnight = midnightZoned.toInstant();
-      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
-
-      // Sum payments from midnight to 6 AM today
-      double morningSum = paymentRepo.sumPaymentsBetween(
-          midnight, sixAm, clinicId);
-
-      // Sum payments from 6 AM yesterday to midnight today
-      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
-      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
-
-      double yesterdaySum = paymentRepo.sumPaymentsBetween(
-          yesterdaySixAm, midnight, clinicId);
-
-      return morningSum + yesterdaySum;
-    }
-
-    // Normal case - current time is after 6 AM
-    return paymentRepo.sumPaymentsBetween(workdayStart, workdayEnd, clinicId);
+    return paymentRepo.sumPaymentsBetween(window.start(), window.end(), clinicId);
   }
 
   public List<PaymentResDTO> getPaymentsByIds(List<Long> ids) {

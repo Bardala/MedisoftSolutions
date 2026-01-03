@@ -8,7 +8,7 @@ import {
   IconDefinition,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { isOwnerRole, isSuperAdminRole, User } from "@/shared/types";
+import { isDoctorOrOwnerRole, isSuperAdminRole, User } from "@/shared/types";
 import { useIntl } from "react-intl";
 
 export interface MenuItem {
@@ -19,61 +19,61 @@ export interface MenuItem {
 
 const useSidebar = (loggedInUser: User) => {
   const { formatMessage: f } = useIntl();
-  const isOwner = isOwnerRole(loggedInUser.role);
   const isSuperAdmin = isSuperAdminRole(loggedInUser.role);
 
   const menuItems: MenuItem[] = [];
+  const superAdminItems = [
+    {
+      label: f({ id: "create_new_clinic" }),
+      link: "/create-clinic",
+      icon: faPlus,
+    },
+    {
+      label: f({ id: "settings" }),
+      link: "/settings",
+      icon: faCog,
+    },
+  ];
 
-  if (isSuperAdmin)
-    menuItems.push(
-      {
-        label: f({ id: "create_new_clinic" }),
-        link: "/create-clinic",
-        icon: faPlus,
-      },
-      {
-        label: f({ id: "settings" }),
-        link: "/settings",
-        icon: faCog,
-      },
-    );
-  else
-    menuItems.push(
-      {
-        label: f({ id: "sidebar.currentPatient" }),
-        link: "/patient-profile",
-        icon: faProcedures,
-      },
-      {
-        label: f({ id: "waitList" }),
-        link: "/patients",
-        icon: faUsers,
-      },
-      {
-        label: f({ id: "registry" }),
-        link: "/patient-history",
-        icon: faSearch,
-      },
-      {
-        label: f({ id: "dailyReports" }),
-        link: "/reports",
-        icon: faFileArchive,
-      },
-      ...(isOwner
-        ? [
-            {
-              label: f({ id: "monthlyReports" }),
-              link: "/monthly-reports",
-              icon: faCalendarAlt,
-            },
-          ]
-        : []),
-      {
-        label: f({ id: "settings" }),
-        link: "/settings",
-        icon: faCog,
-      },
-    );
+  const clinicRoutes = [
+    {
+      label: f({ id: "sidebar.currentPatient" }),
+      link: "/patient-profile",
+      icon: faProcedures,
+    },
+    {
+      label: f({ id: "waitList" }),
+      link: "/patients",
+      icon: faUsers,
+    },
+    {
+      label: f({ id: "registry" }),
+      link: "/patient-history",
+      icon: faSearch,
+    },
+    {
+      label: f({ id: "dailyReports" }),
+      link: "/reports",
+      icon: faFileArchive,
+    },
+    ...(isDoctorOrOwnerRole(loggedInUser.role)
+      ? [
+          {
+            label: f({ id: "monthlyReports" }),
+            link: "/monthly-reports",
+            icon: faCalendarAlt,
+          },
+        ]
+      : []),
+    {
+      label: f({ id: "settings" }),
+      link: "/settings",
+      icon: faCog,
+    },
+  ];
+
+  if (isSuperAdmin) menuItems.push(...superAdminItems);
+  else menuItems.push(...clinicRoutes);
 
   return { menuItems };
 };

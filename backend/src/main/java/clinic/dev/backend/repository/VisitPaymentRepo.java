@@ -1,5 +1,6 @@
 package clinic.dev.backend.repository;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -62,4 +63,29 @@ public interface VisitPaymentRepo extends JpaRepository<VisitPayment, Long> {
       """)
   Optional<VisitPaymentResDTO> findVisitPaymentDtoByIdAndClinicId(@Param("id") Long id,
       @Param("clinicId") Long clinicId);
+
+  List<VisitPayment> findByVisitDoctorIdAndClinicIdAndVisitCreatedAtBetween(
+      Long doctorId,
+      Long clinicId,
+      Instant start,
+      Instant end);
+
+  @Query("SELECT SUM(p.amount) " +
+      "FROM VisitPayment vp " +
+      "JOIN vp.payment p " +
+      "JOIN vp.visit v " +
+      "WHERE v.doctor.id = :doctorId " +
+      "AND vp.clinic.id = :clinicId " +
+      "AND p.createdAt BETWEEN :start AND :end")
+  Double sumPaymentsByDoctorAndClinicAndCreatedAtBetween(
+      @Param("doctorId") Long doctorId,
+      @Param("clinicId") Long clinicId,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  List<VisitPayment> findByVisitDoctorIdAndClinicIdAndPaymentCreatedAtBetween(
+      Long doctorId,
+      Long clinicId,
+      Instant monthStart,
+      Instant monthEnd);
 }

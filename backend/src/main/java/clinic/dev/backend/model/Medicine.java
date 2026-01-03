@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -20,6 +23,7 @@ import clinic.dev.backend.constants.ErrorMsg;
 })
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Medicine {
 
   public Medicine(Long id) {
@@ -58,4 +62,8 @@ public class Medicine {
   @Column(nullable = false, updatable = false, name = "created_at")
   @CreationTimestamp
   private Instant createdAt;
+
+  @OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitMedicine> visitMedicines = new ArrayList<>();
 }

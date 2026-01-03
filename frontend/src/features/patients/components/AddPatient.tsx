@@ -229,10 +229,7 @@ const AddPatient: React.FC = () => {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading || !patient.fullName || !patient.phone}
-        >
+        <button type="submit" disabled={isLoading}>
           {isLoading ? f({ id: "savingButton" }) : f({ id: "submitButton" })}
         </button>
 

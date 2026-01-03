@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -65,4 +67,16 @@ public class Visit {
   @Column(name = "created_at", updatable = false)
   @CreationTimestamp
   private Instant createdAt;
+
+  @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitDentalProcedure> visitProcedures = new ArrayList<>();
+
+  @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitMedicine> visitMedicines = new ArrayList<>();
+
+  @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitPayment> visitPayments = new ArrayList<>();
 }

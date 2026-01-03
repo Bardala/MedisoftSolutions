@@ -22,3 +22,4 @@ backend/src/main/resources/application-prod.properties
 
 *-test.js
 ./futureUpdates.md
+ENTITY_RELATIONSHIPS.md

@@ -14,14 +14,14 @@ public record MedicineReqDTO(
     String instructions) {
 
   public Medicine toEntity(Long clinicId) {
-    return new Medicine(null,
-        new Clinic(clinicId),
-        medicineName,
-        dosage,
-        frequency,
-        duration,
-        instructions,
-        null);
+    return Medicine.builder()
+        .medicineName(medicineName)
+        .dosage(dosage)
+        .frequency(frequency)
+        .duration(duration)
+        .instructions(instructions)
+        .clinic(new Clinic(clinicId))
+        .build();
   }
 
   public void updateEntity(Medicine medicine) {

@@ -8,6 +8,7 @@ import { useNavToPatient } from "@/features/patients";
 import {
   Column,
   dailyTimeFormate,
+  isNotDoctorRole,
   isOwnerRole,
   linkVisitsAndPayments,
   Table,
@@ -191,25 +192,6 @@ const DailyFinancialReport = () => {
         <DailyReportCharts date={selectedDate} />
       ) : (
         <>
-          {/* <div className="stats">
-            <p>
-              {f({ id: "totalRevenue" })}:{" "}
-              <strong>
-                {totalPayments || 0} {f({ id: "L.E" })}
-              </strong>
-            </p>
-            <p>
-              {f({ id: "totalPayments" })}:{" "}
-              <strong>{payments?.length || 0}</strong>
-            </p>
-            <p>
-              {f({ id: "totalVisits" })}: <strong>{visits?.length || 0}</strong>
-            </p>
-            <p>
-              {f({ id: "newPatients" })}:{" "}
-              <strong>{patients?.length || 0}</strong>
-            </p>
-          </div> */}
           <DailyStats selectedDate={selectedDate} />
 
           <div className="tables">
@@ -267,14 +249,16 @@ const DailyFinancialReport = () => {
               )}
             </div>
 
-            <div className="new-patients-section">
-              <h3>{f({ id: "dailyNewPatients" })}</h3>
-              <Table
-                columns={patientColumns}
-                data={patients || []}
-                enableActions={true}
-              />
-            </div>
+            {isNotDoctorRole(loggedInUser.role) && (
+              <div className="new-patients-section">
+                <h3>{f({ id: "dailyNewPatients" })}</h3>
+                <Table
+                  columns={patientColumns}
+                  data={patients || []}
+                  enableActions={true}
+                />
+              </div>
+            )}
           </div>
         </>
       )}

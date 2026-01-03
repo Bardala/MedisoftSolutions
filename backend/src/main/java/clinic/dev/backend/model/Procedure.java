@@ -3,8 +3,12 @@ package clinic.dev.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * We used DentalProcedure word instead of Service to prevent errors whiling
@@ -12,6 +16,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
+@Builder
 @Table(name = "services", uniqueConstraints = { // todo: add uniqueness (servicename, clinicId)
     @UniqueConstraint(columnNames = "service_name")
 })
@@ -51,4 +56,8 @@ public class Procedure { // todo: Add createdAt
     this.description = description;
     this.cost = cost;
   }
+
+  @OneToMany(mappedBy = "dentalProcedure", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitDentalProcedure> visitProcedures = new ArrayList<>();
 }

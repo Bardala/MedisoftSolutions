@@ -46,6 +46,7 @@ public class PaymentController {
     return ResponseEntity.ok(new ApiRes<>(payment));
   }
 
+  // todo: Remove all unused APIs methods
   @GetMapping
   public ResponseEntity<ApiRes<List<PaymentResDTO>>> getAllPayments() {
     List<PaymentResDTO> payments = paymentService.getAll();

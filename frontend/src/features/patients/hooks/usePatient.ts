@@ -22,7 +22,9 @@ import {
   ApiError,
   PatientSearchParams,
   PatientStatistics,
+  isNotDoctorRole,
 } from "@/shared";
+import { useLogin } from "@/app";
 
 type PatientAction =
   | { type: "SET_FULL_NAME"; payload: string }
@@ -251,12 +253,20 @@ export const useGetPatient = (patientId: number) => {
 };
 
 export const useGetDailyPatients = (date: string) => {
+  const { loggedInUser } = useLogin();
   const dailyNewPatientsQuery = useQuery<PatientResDTO[], ApiError>(
     ["patients", "daily new", date],
     () => PatientApi.getDaily(date),
+    {
+      enabled: isNotDoctorRole(loggedInUser?.role) && !!date,
+    },
   );
 
-  return { dailyNewPatientsQuery };
+  return {
+    dailyNewPatientsQuery,
+    isLoading: dailyNewPatientsQuery.isLoading,
+    isError: dailyNewPatientsQuery.isError,
+  };
 };
 
 export const useGetPatientStatistics = () => {

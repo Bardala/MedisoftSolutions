@@ -14,16 +14,15 @@ public record PatientReqDTO(
     String notes) {
 
   public Patient toEntity(Clinic clinic) {
-    return new Patient(
-        null,
-        clinic,
-        normalizeFullName(fullName),
-        age,
-        notes,
-        phone,
-        address,
-        medicalHistory,
-        null);
+    return Patient.builder()
+        .fullName(normalizeFullName(fullName))
+        .phone(phone)
+        .age(age)
+        .address(address)
+        .medicalHistory(medicalHistory)
+        .notes(notes)
+        .clinic(clinic)
+        .build();
   }
 
   public void updateEntity(Patient patient, Clinic clinic) {

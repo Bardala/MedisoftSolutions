@@ -4,7 +4,7 @@ import clinic.dev.backend.dto.patient.PatientRegistryRes;
 import clinic.dev.backend.dto.patient.PatientReqDTO;
 import clinic.dev.backend.dto.patient.PatientResDTO;
 import clinic.dev.backend.dto.patient.statistics.PatientStatisticsDTO;
-import clinic.dev.backend.service.impl.PatientService;
+import clinic.dev.backend.service.PatientServiceBase;
 import clinic.dev.backend.util.ApiRes;
 import jakarta.validation.Valid;
 
@@ -26,7 +26,7 @@ import org.springframework.data.domain.Page;
 public class PatientController {
 
   @Autowired
-  private PatientService patientService;
+  private PatientServiceBase patientService;
 
   @PostMapping
   @PreAuthorize("@planValidation.canCreatePatient()")
@@ -75,6 +75,7 @@ public class PatientController {
   }
 
   @GetMapping("/dailyNew")
+  @PreAuthorize("!hasRole('DOCTOR')")
   public ResponseEntity<ApiRes<List<PatientResDTO>>> getDailyNewPatients(
       @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
     // If no date is provided, use the current date

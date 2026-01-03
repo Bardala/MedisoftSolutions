@@ -15,13 +15,12 @@ public record PaymentReqDTO(
     @NotNull(message = "Recorded by user ID is required") Long recordedById) {
 
   public Payment toEntity(Long clinicId) {
-    return new Payment(
-        null,
-        new Clinic(clinicId),
-        amount,
-        new Patient(patientId),
-        new User(recordedById),
-        null);
+    return Payment.builder()
+        .amount(this.amount())
+        .clinic(new Clinic(clinicId))
+        .patient(new Patient(patientId))
+        .recordedBy(new User(recordedById))
+        .build();
   }
 
   public void updateEntity(Payment payment, Long clinicId) {

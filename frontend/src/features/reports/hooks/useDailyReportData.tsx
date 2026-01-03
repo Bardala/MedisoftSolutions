@@ -1,11 +1,14 @@
+import { useLogin } from "@/app";
 import { useGetDailyPayments } from "@/features/billing";
 import { useGetDailyPatients } from "@/features/patients";
 import { useGetDailyVisits } from "@/features/visits";
+import { isNotDoctorRole } from "@/shared";
 import { sortById } from "@/utils";
 
 export const useDailyReportData = (
   date = new Date().toISOString().split("T")[0],
 ) => {
+  const { loggedInUser } = useLogin();
   const { dailyPaymentQuery } = useGetDailyPayments(date);
   const { dailyVisitsQuery } = useGetDailyVisits(date);
   const { dailyNewPatientsQuery } = useGetDailyPatients(date);
@@ -18,7 +21,9 @@ export const useDailyReportData = (
 
   // Combined loading states
   const isLoadingBasic =
-    dailyNewPatientsQuery.isLoading ||
+    (isNotDoctorRole(loggedInUser.role)
+      ? dailyNewPatientsQuery.isLoading
+      : false) ||
     dailyPaymentQuery.isLoading ||
     dailyVisitsQuery.isLoading;
 
@@ -29,7 +34,9 @@ export const useDailyReportData = (
     totalPayments,
     isLoading: isLoadingBasic,
     isError:
-      dailyNewPatientsQuery.isError ||
+      (isNotDoctorRole(loggedInUser.role)
+        ? dailyNewPatientsQuery.isError
+        : false) ||
       dailyPaymentQuery.isError ||
       dailyVisitsQuery.isError,
   };

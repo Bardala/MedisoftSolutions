@@ -14,9 +14,34 @@ import { AppRoutes } from "@/app/constants";
 
 export const MonthlySummaryWidget: FC = () => {
   const { formatMessage: f } = useIntl();
-  const { data, isLoading } = useMonthlySummary();
+  const { data, isLoading, isError } = useMonthlySummary();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <FeatureWidget
+        title={f({ id: "monthly_summary" })}
+        icon={faChartLine}
+        color="var(--success-text)"
+        className="stats-widget monthly-summary-widget"
+        route={AppRoutes.MONTHLY_REPORTS}
+      >
+        <div>Loading...</div>
+      </FeatureWidget>
+    );
+  if (isError)
+    return (
+      <FeatureWidget
+        title={f({ id: "monthly_summary" })}
+        icon={faChartLine}
+        color="var(--success-text)"
+        className="stats-widget monthly-summary-widget"
+        route={AppRoutes.MONTHLY_REPORTS}
+      >
+        <div className="error">
+          <span>{f({ id: "errorLoadingData" })}</span>
+        </div>
+      </FeatureWidget>
+    );
 
   const { totalNewPatients, totalRevenue, totalVisits } = data;
 

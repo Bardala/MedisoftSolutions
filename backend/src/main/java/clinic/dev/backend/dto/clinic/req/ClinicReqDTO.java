@@ -12,20 +12,15 @@ public record ClinicReqDTO(
     String workingHours,
     @NotNull Boolean phoneSupportsWhatsapp) {
   public Clinic toEntity() {
-    return new Clinic(
-        null,
-        name,
-        address,
-        phoneNumber,
-        email,
-        logoUrl,
-        workingHours,
-        phoneSupportsWhatsapp,
-        null,
-        null,
-        null,
-        null,
-        null);
+    return Clinic.builder()
+        .name(name)
+        .address(address)
+        .phoneNumber(phoneNumber)
+        .email(email)
+        .logoUrl(logoUrl)
+        .workingHours(workingHours)
+        .phoneSupportsWhatsapp(phoneSupportsWhatsapp)
+        .build();
   }
 
   public void updateEntity(Clinic clinic) {

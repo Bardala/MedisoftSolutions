@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,6 +18,7 @@ import clinic.dev.backend.constants.ErrorMsg;
 
 @Entity
 @Data
+@Builder
 @Table(name = "payments")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,4 +50,8 @@ public class Payment {
   @Column(nullable = false, updatable = false, name = "created_at")
   @CreationTimestamp
   private Instant createdAt;
+
+  @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private List<VisitPayment> visitPayments = new ArrayList<>();
 }

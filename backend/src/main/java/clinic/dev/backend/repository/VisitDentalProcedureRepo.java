@@ -67,6 +67,12 @@ public interface VisitDentalProcedureRepo extends JpaRepository<VisitDentalProce
       @Param("start") Instant start,
       @Param("end") Instant end);
 
+  List<VisitDentalProcedure> findByVisitDoctorIdAndClinicIdAndVisitCreatedAtBetween(
+      Long doctorId,
+      Long clinicId,
+      Instant start,
+      Instant end);
+
   // Optional: Add count version if needed
   @Query("SELECT COUNT(vdp) FROM VisitDentalProcedure vdp " +
       "WHERE vdp.clinic.id = :clinicId " +

@@ -13,13 +13,13 @@ public record ProcedureReqDTO(
     Double cost) {
 
   public Procedure toEntity(Long clinicId) {
-    return new Procedure(
-        null,
-        new Clinic(clinicId),
-        serviceName,
-        arabicName,
-        description,
-        cost);
+    return Procedure.builder()
+        .serviceName(serviceName)
+        .arabicName(arabicName)
+        .description(description)
+        .cost(cost)
+        .clinic(new Clinic(clinicId))
+        .build();
   }
 
   public void updateEntity(Procedure dp, Long clinicId) {

@@ -10,6 +10,8 @@ import clinic.dev.backend.repository.VisitPaymentRepo;
 import clinic.dev.backend.repository.VisitRepo;
 import clinic.dev.backend.service.VisitServiceBase;
 import clinic.dev.backend.util.AuthContext;
+import clinic.dev.backend.util.WorkdayWindowUtil;
+import clinic.dev.backend.util.WorkdayWindowUtil.TimeWindow;
 import clinic.dev.backend.validation.PlanValidation;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class VisitService implements VisitServiceBase {
@@ -102,40 +102,19 @@ public class VisitService implements VisitServiceBase {
   public List<VisitResDTO> getVisitsForDate(LocalDate date) {
     Long clinicId = authContext.getClinicId();
 
-    // Convert LocalDate to Instant at 6:00 AM in system default timezone
-    ZonedDateTime workdayStartZoned = date.atTime(6, 0).atZone(ZoneId.systemDefault());
-    Instant workdayStart = workdayStartZoned.toInstant();
-    Instant workdayEnd = workdayStart.plus(24, ChronoUnit.HOURS);
+    TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(date);
 
-    ZonedDateTime nowZoned = Instant.now().atZone(ZoneId.systemDefault());
-    if (date.equals(nowZoned.toLocalDate()) && Instant.now().isBefore(workdayStart)) {
-      // For today before 6 AM
-      ZonedDateTime midnightZoned = date.atStartOfDay(ZoneId.systemDefault());
-      Instant midnight = midnightZoned.toInstant();
-      Instant sixAm = midnight.plus(6, ChronoUnit.HOURS);
-
-      // Get visits from midnight to 6 AM today
-      List<Visit> visitsMorning = visitRepo.findByClinicIdAndCreatedAtBetween(
-          clinicId, midnight, sixAm);
-
-      // Get visits from 6 AM yesterday to midnight today
-      ZonedDateTime yesterdaySixAmZoned = workdayStartZoned.minusDays(1);
-      Instant yesterdaySixAm = yesterdaySixAmZoned.toInstant();
-
-      List<Visit> visitsYesterday = visitRepo.findByClinicIdAndCreatedAtBetween(
-          clinicId, yesterdaySixAm, midnight);
-
-      // Combine and convert to DTOs
-      return Stream.concat(
-          visitsMorning.stream(),
-          visitsYesterday.stream())
-          .map(VisitResDTO::fromEntity)
-          .collect(Collectors.toList());
+    List<Visit> visits;
+    if (authContext.isDoctor()) {
+      Long doctorId = authContext.getUserId();
+      visits = visitRepo.findByClinicIdAndDoctorIdAndCreatedAtBetween(
+          clinicId, doctorId, window.start(), window.end());
+    } else {
+      visits = visitRepo.findByClinicIdAndCreatedAtBetween(
+          clinicId, window.start(), window.end());
     }
 
-    // Normal case
-    return visitRepo.findByClinicIdAndCreatedAtBetween(clinicId, workdayStart, workdayEnd)
-        .stream()
+    return visits.stream()
         .map(VisitResDTO::fromEntity)
         .collect(Collectors.toList());
   }
@@ -174,27 +153,42 @@ public class VisitService implements VisitServiceBase {
 
   @Override
   @Transactional(readOnly = true)
-  public List<VisitResDTO> getVisitsByDay(LocalDate date) {
+  public List<VisitResDTO> getAppointmentsByDay(LocalDate date) {
     Long clinicId = authContext.getClinicId();
-    Instant startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
-    Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
+    TimeWindow window = WorkdayWindowUtil.resolveWorkdayWindow(date);
 
-    return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfDay, endOfDay)
-        .stream()
-        .map(VisitResDTO::fromEntity)
-        .collect(Collectors.toList());
+    if (authContext.isDoctor()) {
+      Long doctorId = authContext.getUserId();
+      return visitRepo.findByClinicIdAndDoctorIdAndScheduledTimeBetween(
+          clinicId, doctorId, window.start(), window.end())
+          .stream()
+          .map(VisitResDTO::fromEntity)
+          .collect(Collectors.toList());
+    } else
+      return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, window.start(), window.end())
+          .stream()
+          .map(VisitResDTO::fromEntity)
+          .collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<VisitResDTO> getVisitsByWeek(LocalDate startDate) {
+  public List<VisitResDTO> getAppointmentsByWeek(LocalDate startDate) {
     Long clinicId = authContext.getClinicId();
     Instant startOfWeek = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
     Instant endOfWeek = startOfWeek.plus(8, ChronoUnit.DAYS);
 
-    return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfWeek, endOfWeek)
-        .stream()
-        .map(VisitResDTO::fromEntity)
-        .collect(Collectors.toList());
+    if (authContext.isDoctor()) {
+      Long doctorId = authContext.getUserId();
+      return visitRepo.findByClinicIdAndDoctorIdAndScheduledTimeBetween(
+          clinicId, doctorId, startOfWeek, endOfWeek)
+          .stream()
+          .map(VisitResDTO::fromEntity)
+          .collect(Collectors.toList());
+    } else
+      return visitRepo.findByClinicIdAndScheduledTimeBetween(clinicId, startOfWeek, endOfWeek)
+          .stream()
+          .map(VisitResDTO::fromEntity)
+          .collect(Collectors.toList());
   }
 }

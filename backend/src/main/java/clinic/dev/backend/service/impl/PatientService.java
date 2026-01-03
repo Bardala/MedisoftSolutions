@@ -17,6 +17,7 @@ import clinic.dev.backend.exceptions.BadRequestException;
 import clinic.dev.backend.exceptions.UnauthorizedAccessException;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
+import clinic.dev.backend.service.PatientServiceBase;
 import clinic.dev.backend.util.AuthContext;
 import clinic.dev.backend.validation.PlanValidation;
 import jakarta.persistence.criteria.Predicate;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class PatientService {
+public class PatientService implements PatientServiceBase {
 
   @Autowired
   private PatientRepo patientRepo;
@@ -75,6 +76,7 @@ public class PatientService {
   @Autowired
   private PlanValidation planValidation;
 
+  @Override
   @Transactional
   public PatientResDTO create(PatientReqDTO request) {
     Long clinicId = authContext.getClinicId();
@@ -87,6 +89,7 @@ public class PatientService {
     return PatientResDTO.fromEntity(patientRepo.save(patient));
   }
 
+  @Override
   @Transactional
   public PatientResDTO update(Long id, PatientReqDTO req) {
     Long clinicId = authContext.getClinicId();
@@ -99,6 +102,7 @@ public class PatientService {
     return PatientResDTO.fromEntity(patientRepo.save(existing));
   }
 
+  @Override
   @Transactional
   public void delete(Long id) {
     Long clinicId = authContext.getClinicId();
@@ -120,6 +124,7 @@ public class PatientService {
   }
 
   // Simplified getter using DTO
+  @Override
   @Transactional(readOnly = true)
   public PatientResDTO getClinicPatientById(Long id) {
     Long clinicId = authContext.getClinicId();
@@ -128,11 +133,13 @@ public class PatientService {
         .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
   }
 
+  @Override
   public List<Patient> getAll() {
     Long clinicId = authContext.getClinicId();
     return patientRepo.findAllByClinicId(clinicId);
   }
 
+  @Override
   @Transactional
   public void deleteAllByClinicId(Long clinicId) {
     if (!authContext.getClinicId().equals(clinicId)) {
@@ -141,6 +148,7 @@ public class PatientService {
     patientRepo.deleteAllByClinicId(clinicId);
   }
 
+  @Override
   @Transactional(readOnly = true)
   public PatientRegistryRes getPatientRegistry(Long id) {
     Long clinicId = authContext.getClinicId();
@@ -161,6 +169,7 @@ public class PatientService {
     return dto;
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<PatientRegistryRes> AllPatientsRegistry() {
     Long clinicId = authContext.getClinicId();
@@ -170,6 +179,7 @@ public class PatientService {
         .collect(Collectors.toList());
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<PatientResDTO> dailyNewPatients() {
     Long clinicId = authContext.getClinicId();
@@ -213,6 +223,7 @@ public class PatientService {
         .collect(Collectors.toList());
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<PatientResDTO> getDailyNewPatientsForDate(LocalDate date) {
     Long clinicId = authContext.getClinicId();
@@ -256,6 +267,7 @@ public class PatientService {
         .collect(Collectors.toList());
   }
 
+  @Override
   @Transactional(readOnly = true)
   public Page<PatientResDTO> searchPatients(Map<String, String> searchParams, int page, int size) {
     Long clinicId = authContext.getClinicId();
@@ -307,11 +319,13 @@ public class PatientService {
     return patientPage.map(PatientResDTO::fromEntity);
   }
 
+  @Override
   @Transactional(readOnly = true)
   public List<Patient> getPatientsAtThisPeriod(Instant start, Instant end, Long clinicId) {
     return patientRepo.findPatientsBetween(start, end, clinicId);
   }
 
+  @Override
   public List<PatientResDTO> getPatientsByIds(List<Long> ids) {
     // Validate input
     if (ids == null || ids.isEmpty()) {
@@ -341,6 +355,7 @@ public class PatientService {
 
   }
 
+  @Override
   public PatientStatisticsDTO getPatientStatistics() {
     Long clinicId = authContext.getClinicId();
 
@@ -413,6 +428,7 @@ public class PatientService {
   private Clock clock = Clock.systemDefaultZone();
 
   // For testing
+  @Override
   public void setClock(Clock clock) {
     this.clock = clock;
   }

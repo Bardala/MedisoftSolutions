@@ -6,7 +6,6 @@ import clinic.dev.backend.exceptions.*;
 import clinic.dev.backend.model.*;
 import clinic.dev.backend.repository.*;
 import clinic.dev.backend.service.impl.PatientFileService;
-import clinic.dev.backend.service.impl.PatientService;
 import clinic.dev.backend.util.AuthContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class PatientServiceTest {
   private ClinicLimitsRepo clinicLimitsRepo;
 
   @InjectMocks
-  private PatientService patientService;
+  private PatientServiceBase patientService;
 
   private final Long clinicId = 1L;
   private final ZoneId zoneId = ZoneId.systemDefault();

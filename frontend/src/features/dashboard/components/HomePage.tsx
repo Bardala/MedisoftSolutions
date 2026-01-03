@@ -13,7 +13,13 @@ import { QueuePage } from "@/features/queue";
 
 import { AddVisit } from "@/features/visits";
 import { AppointmentsCalendar } from "@/features/visits/components/AppointmentCalender";
-import { HomePageProps, isOwnerRole, isSuperAdminRole, User } from "@/shared";
+import {
+  HomePageProps,
+  isDoctorRole,
+  isOwnerRole,
+  isSuperAdminRole,
+  User,
+} from "@/shared";
 import { FC, ReactNode } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./Home";
@@ -41,14 +47,18 @@ const commonRoutes = [
   { path: AppRoutes.APPOINTMENT_CALENDER, element: <AppointmentsCalendar /> },
 ];
 
-const ownerRoutes = (clinicId: number) => [
+const doctorRoutes = [
   { path: AppRoutes.MONTHLY_REPORTS, element: <MonthlyDoctorReports /> },
+];
+
+const ownerRoutes = (clinicId: number) => [
   { path: AppRoutes.ADD_ASSISTANT, element: <AddUserForm /> },
   { path: AppRoutes.CLINIC_SETTINGS, element: <ClinicSettings /> },
   {
     path: AppRoutes.CLINIC_DATA,
     element: <ClinicData clinicId={clinicId} />,
   },
+  { path: AppRoutes.MONTHLY_REPORTS, element: <MonthlyDoctorReports /> },
 ];
 
 const superAdminRoutes = [
@@ -87,6 +97,11 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
     ownerRoutes(loggedInUser.clinicId).map(({ path, element }) => (
       <Route key={path} path={path} element={element} />
     ));
+  const DoctorRoutes =
+    isDoctorRole(loggedInUser.role) &&
+    doctorRoutes.map(({ path, element }) => (
+      <Route key={path} path={path} element={element} />
+    ));
   const SuperAdminRoutes =
     isSuperAdminRole(loggedInUser.role) &&
     superAdminRoutes.map(({ path, element }) => (
@@ -98,6 +113,7 @@ const HomePage: FC<HomePageProps> = ({ loggedInUser }) => {
       <Routes>
         {CommonRoutes}
         {OwnerRoutes}
+        {DoctorRoutes}
         {SuperAdminRoutes}
       </Routes>
     </AuthLayout>

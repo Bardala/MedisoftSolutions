@@ -22,8 +22,8 @@ public interface VisitServiceBase {
 
   List<VisitResDTO> getVisitsByIds(List<Long> ids);
 
-  List<VisitResDTO> getVisitsByDay(LocalDate date);
+  List<VisitResDTO> getAppointmentsByDay(LocalDate date);
 
-  List<VisitResDTO> getVisitsByWeek(LocalDate startDate);
+  List<VisitResDTO> getAppointmentsByWeek(LocalDate startDate);
 
 }

@@ -12,11 +12,13 @@ import clinic.dev.backend.model.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
 @Table(name = "users", indexes = {
     @Index(name = "idx_username", columnList = "username"),
     @Index(name = "idx_phone", columnList = "phone"),
@@ -34,9 +36,13 @@ public class User implements UserDetails {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "clinic_id", nullable = true) // SuperAdmin can have null
   private Clinic clinic;
+
+  @OneToMany(mappedBy = "recordedBy", fetch = FetchType.LAZY)
+  @Builder.Default
+  private java.util.List<Payment> recordedPayments = new java.util.ArrayList<>();
 
   @NotBlank
   @Pattern(regexp = "^[\\S]+$", message = "Username must not contain spaces")

@@ -74,14 +74,14 @@ public class VisitController {
   @GetMapping("/daily-schedule")
   public ResponseEntity<ApiRes<List<VisitResDTO>>> getDailyAppointments(
       @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-    List<VisitResDTO> appointments = visitService.getVisitsByDay(date);
+    List<VisitResDTO> appointments = visitService.getAppointmentsByDay(date);
     return ResponseEntity.ok(new ApiRes<>(appointments));
   }
 
   @GetMapping("/weekly-schedule")
   public ResponseEntity<ApiRes<List<VisitResDTO>>> getWeaklyAppointments(
       @RequestParam(name = "startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
-    List<VisitResDTO> appointments = visitService.getVisitsByWeek(startDate);
+    List<VisitResDTO> appointments = visitService.getAppointmentsByWeek(startDate);
     return ResponseEntity.ok(new ApiRes<>(appointments));
   }
 }

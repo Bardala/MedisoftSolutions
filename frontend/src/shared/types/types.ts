@@ -267,6 +267,12 @@ export function isDoctorRole(role: UserRole): boolean {
   return doctorLikeRoles.includes(role);
 }
 
+export const isDoctorOrOwnerRole = (role: UserRole): boolean =>
+  role === UserRole.DOCTOR || role === UserRole.OWNER;
+
+export const isNotDoctorRole = (role: UserRole): boolean =>
+  role !== UserRole.DOCTOR;
+
 export const isAssistantRole = (role: UserRole): boolean =>
   role === UserRole.ASSISTANT;
 
