@@ -2,7 +2,7 @@ import { useIntl } from "react-intl";
 import "@styles/home.css";
 import { DashboardSummary } from "./DashboardSummary";
 
-const Home = () => {
+export const Home = () => {
   const { formatMessage: f } = useIntl();
 
   return (
@@ -13,5 +13,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

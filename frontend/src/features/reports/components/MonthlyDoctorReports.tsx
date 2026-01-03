@@ -17,6 +17,8 @@ import { useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import { useMonthlyReport } from "../hooks";
 import { ToggleStatsData } from "./ToggleStatsData";
+import { isNotDoctorRole, isOwnerRole } from "@/shared";
+import { useLogin } from "@/app";
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +31,7 @@ ChartJS.register(
 
 const MonthlyDentistReport = () => {
   const { formatMessage: f } = useIntl();
+  const { loggedInUser: user } = useLogin();
   const nav = useNavigate();
   const startYear = 2025;
   const currentYear = new Date().getFullYear();
@@ -165,12 +168,20 @@ const MonthlyDentistReport = () => {
               {f({ id: "most_common_procedure" })}:{" "}
               <strong>{summary?.mostCommonProcedure || "-"}</strong>
             </p>
-            <p>
-              {f({ id: "total_revenue" })}:{" "}
-              <strong>
-                {summary?.totalRevenue || "-"} {f({ id: "L.E" })}
-              </strong>
-            </p>
+            {isNotDoctorRole(user.role) && (
+              <>
+                <p>
+                  {f({ id: "total_revenue" })}:{" "}
+                  <strong>
+                    {summary?.totalRevenue || "-"} {f({ id: "L.E" })}
+                  </strong>
+                </p>
+                <p>
+                  {f({ id: "new_patients" })}:{" "}
+                  <strong>{summary?.totalNewPatients || "-"}</strong>
+                </p>
+              </>
+            )}
             <p>
               {f({ id: "most_crowded_weekday" })}:{" "}
               <strong>{mostCrowdedWeekday || "-"}</strong>
@@ -178,10 +189,6 @@ const MonthlyDentistReport = () => {
             <p>
               {f({ id: "least_crowded_weekday" })}:{" "}
               <strong>{leastCrowdedWeekday || "-"}</strong>
-            </p>
-            <p>
-              {f({ id: "new_patients" })}:{" "}
-              <strong>{summary?.totalNewPatients || "-"}</strong>
             </p>
           </div>
 
@@ -220,9 +227,11 @@ const MonthlyDentistReport = () => {
                     <p className="small-text">
                       {dayInfo?.mostProcedure || "-"}
                     </p>
-                    <p>
-                      {dayInfo?.totalRevenue || "0"} {f({ id: "L.E" })}
-                    </p>
+                    {isOwnerRole(user.role) && (
+                      <p>
+                        {dayInfo?.totalRevenue || "0"} {f({ id: "L.E" })}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
@@ -230,26 +239,28 @@ const MonthlyDentistReport = () => {
           </div>
 
           {/* Advice Section */}
-          <div className="advice-card">
-            <h3>{f({ id: "advice_management" })}</h3>
-            <p>
-              <strong>{f({ id: "focus_on" })}:</strong> {mostCrowdedWeekday}{" "}
-              {f({ id: "better_scheduling" })}
-            </p>
-            <p>
-              <strong>{f({ id: "promote_appointments" })}:</strong>{" "}
-              {leastCrowdedWeekday} {f({ id: "balance_load" })}
-            </p>
-            <p>
-              <strong>{f({ id: "popular_procedure" })}:</strong>{" "}
-              {summary?.mostCommonProcedure || "None"}.{" "}
-              {f({ id: "consider_promotions" })}
-            </p>
-            <p>
-              <strong>{f({ id: "staffing_advice" })}:</strong>{" "}
-              {f({ id: "ensure_staff" })} {mostCrowdedWeekday}.
-            </p>
-          </div>
+          {isOwnerRole(user.role) && (
+            <div className="advice-card">
+              <h3>{f({ id: "advice_management" })}</h3>
+              <p>
+                <strong>{f({ id: "focus_on" })}:</strong> {mostCrowdedWeekday}{" "}
+                {f({ id: "better_scheduling" })}
+              </p>
+              <p>
+                <strong>{f({ id: "promote_appointments" })}:</strong>{" "}
+                {leastCrowdedWeekday} {f({ id: "balance_load" })}
+              </p>
+              <p>
+                <strong>{f({ id: "popular_procedure" })}:</strong>{" "}
+                {summary?.mostCommonProcedure || "None"}.{" "}
+                {f({ id: "consider_promotions" })}
+              </p>
+              <p>
+                <strong>{f({ id: "staffing_advice" })}:</strong>{" "}
+                {f({ id: "ensure_staff" })} {mostCrowdedWeekday}.
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>

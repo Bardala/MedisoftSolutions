@@ -11,8 +11,11 @@ import { useIntl } from "react-intl";
 import { FeatureWidget } from "./FeatureWidget";
 import "@styles/monthlySummaryWidget.css";
 import { AppRoutes } from "@/app/constants";
+import { useLogin } from "@/app";
+import { isOwnerRole } from "@/shared";
 
 export const MonthlySummaryWidget: FC = () => {
+  const { loggedInUser: user } = useLogin();
   const { formatMessage: f } = useIntl();
   const { data, isLoading, isError } = useMonthlySummary();
 
@@ -54,15 +57,28 @@ export const MonthlySummaryWidget: FC = () => {
       route={AppRoutes.MONTHLY_REPORTS}
     >
       <div className="quick-stats-grid">
-        <div className="quick-stat">
-          <div className="stat-icon">
-            <FontAwesomeIcon icon={faUserPlus} />
-          </div>
-          <div className="stat-info">
-            <span className="stat-value">+{totalNewPatients}</span>
-            <span className="stat-label">{f({ id: "new_patients" })}</span>
-          </div>
-        </div>
+        {isOwnerRole(user.role) && (
+          <>
+            <div className="quick-stat">
+              <div className="stat-icon">
+                <FontAwesomeIcon icon={faUserPlus} />
+              </div>
+              <div className="stat-info">
+                <span className="stat-value">+{totalNewPatients}</span>
+                <span className="stat-label">{f({ id: "new_patients" })}</span>
+              </div>
+            </div>
+            <div className="quick-stat">
+              <div className="stat-icon">
+                <FontAwesomeIcon icon={faDollarSign} />
+              </div>
+              <div className="stat-info">
+                <span className="stat-value">{totalRevenue}</span>
+                <span className="stat-label">{f({ id: "L.E" })}</span>
+              </div>
+            </div>
+          </>
+        )}
         <div className="quick-stat">
           <div className="stat-icon">
             <FontAwesomeIcon icon={faHospital} />
@@ -70,15 +86,6 @@ export const MonthlySummaryWidget: FC = () => {
           <div className="stat-info">
             <span className="stat-value">{totalVisits}</span>
             <span className="stat-label">{f({ id: "visits" })}</span>
-          </div>
-        </div>
-        <div className="quick-stat">
-          <div className="stat-icon">
-            <FontAwesomeIcon icon={faDollarSign} />
-          </div>
-          <div className="stat-info">
-            <span className="stat-value">{totalRevenue}</span>
-            <span className="stat-label">{f({ id: "L.E" })}</span>
           </div>
         </div>
       </div>

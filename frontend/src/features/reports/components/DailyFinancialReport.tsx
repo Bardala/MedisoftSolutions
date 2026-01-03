@@ -8,8 +8,8 @@ import { useNavToPatient } from "@/features/patients";
 import {
   Column,
   dailyTimeFormate,
+  isDoctorOrOwnerRole,
   isNotDoctorRole,
-  isOwnerRole,
   linkVisitsAndPayments,
   Table,
   timeFormate,
@@ -66,11 +66,6 @@ const DailyFinancialReport = () => {
       onClick: (row: VisitWithPayment) => navToPatient(row?.patientId),
     },
     {
-      header: f({ id: "phone" }),
-      accessor: (row: VisitWithPayment) => row?.patientPhone,
-      expandable: true,
-    },
-    {
       header: f({ id: "doctorName" }),
       accessor: (row: VisitWithPayment) => row?.doctorName,
       expandable: true,
@@ -80,10 +75,19 @@ const DailyFinancialReport = () => {
       accessor: (row: VisitWithPayment) => row?.doctorNotes,
       expandable: true,
     },
-    {
-      header: f({ id: "amountPaid" }),
-      accessor: (row) => `${row?.amountPaid} ${f({ id: "L.E" })}`,
-    },
+    ...(isNotDoctorRole(loggedInUser.role)
+      ? [
+          {
+            header: f({ id: "phone" }),
+            accessor: (row: VisitWithPayment) => row?.patientPhone,
+            expandable: true,
+          },
+          {
+            header: f({ id: "amountPaid" }),
+            accessor: (row) => `${row?.amountPaid} ${f({ id: "L.E" })}`,
+          },
+        ]
+      : []),
     {
       header: f({ id: "registrationTime" }),
       accessor: (row: VisitWithPayment) => dailyTimeFormate(row?.createdAt),
@@ -162,9 +166,61 @@ const DailyFinancialReport = () => {
     },
   ];
 
+  const PaymentSectionTable = isNotDoctorRole(loggedInUser.role) && (
+    <div className="payment-section">
+      {/* Header for Table */}
+      <div className="payment-header-container">
+        <h3>
+          {convertPaymentTable
+            ? f({ id: "allPayments" })
+            : f({ id: "unlinkedPayments" })}
+        </h3>
+        <button
+          onClick={() => setConvertPaymentTable(!convertPaymentTable)}
+          className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+        >
+          <FontAwesomeIcon icon={faExchangeAlt} />
+        </button>
+      </div>
+
+      {/* Toggle Between Tables */}
+      {convertPaymentTable ? (
+        <Table
+          columns={paymentColumns}
+          data={payments}
+          onUpdate={updatePaymentMutation.mutate}
+          onDelete={deletePaymentMutation.mutate}
+          enableActions={true}
+        />
+      ) : (
+        <>
+          {updatePaymentMutation.isError && (
+            <p className="error">{updatePaymentMutation?.error?.message}</p>
+          )}
+          <Table
+            columns={paymentColumns}
+            data={unlinkedPayments}
+            onUpdate={updatePaymentMutation.mutate}
+            onDelete={deletePaymentMutation.mutate}
+            enableActions={true}
+          />
+        </>
+      )}
+    </div>
+  );
+  const NewPatientsTable = isNotDoctorRole(loggedInUser.role) && (
+    <div className="new-patients-section">
+      <h3>{f({ id: "dailyNewPatients" })}</h3>
+      <Table
+        columns={patientColumns}
+        data={patients || []}
+        enableActions={true}
+      />
+    </div>
+  );
+
   return (
     <div className="card-container">
-      {/* <h2>{f({ id: "dailyReport" })}</h2> */}
       <ToggleStatsData
         header={f({ id: "dailyReports" })}
         dataIcon={faFileArchive}
@@ -173,7 +229,7 @@ const DailyFinancialReport = () => {
       />
 
       {/* Date Picker */}
-      {isOwnerRole(loggedInUser.role) && (
+      {isDoctorOrOwnerRole(loggedInUser.role) && (
         <div className="date-picker-container">
           <label htmlFor="report-date">
             <FontAwesomeIcon icon={faCalendarAlt} /> {f({ id: "selectDate" })}:
@@ -206,59 +262,8 @@ const DailyFinancialReport = () => {
               />
             </div>
 
-            <div className="payment-section">
-              {/* Header for Table */}
-              <div className="payment-header-container">
-                <h3>
-                  {convertPaymentTable
-                    ? f({ id: "allPayments" })
-                    : f({ id: "unlinkedPayments" })}
-                </h3>
-                <button
-                  onClick={() => setConvertPaymentTable(!convertPaymentTable)}
-                  className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                >
-                  <FontAwesomeIcon icon={faExchangeAlt} />
-                </button>
-              </div>
-
-              {/* Toggle Between Tables */}
-              {convertPaymentTable ? (
-                <Table
-                  columns={paymentColumns}
-                  data={payments}
-                  onUpdate={updatePaymentMutation.mutate}
-                  onDelete={deletePaymentMutation.mutate}
-                  enableActions={true}
-                />
-              ) : (
-                <>
-                  {updatePaymentMutation.isError && (
-                    <p className="error">
-                      {updatePaymentMutation?.error?.message}
-                    </p>
-                  )}
-                  <Table
-                    columns={paymentColumns}
-                    data={unlinkedPayments}
-                    onUpdate={updatePaymentMutation.mutate}
-                    onDelete={deletePaymentMutation.mutate}
-                    enableActions={true}
-                  />
-                </>
-              )}
-            </div>
-
-            {isNotDoctorRole(loggedInUser.role) && (
-              <div className="new-patients-section">
-                <h3>{f({ id: "dailyNewPatients" })}</h3>
-                <Table
-                  columns={patientColumns}
-                  data={patients || []}
-                  enableActions={true}
-                />
-              </div>
-            )}
+            {PaymentSectionTable}
+            {NewPatientsTable}
           </div>
         </>
       )}

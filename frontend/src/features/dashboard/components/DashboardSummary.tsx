@@ -1,25 +1,24 @@
-import { useGetAppointmentsByWeek } from "@/features/visits";
-import { isNotDoctorRole, sortById } from "@/shared";
-import { startOfWeek, isToday } from "date-fns";
+import { useGetAppointmentsByDay } from "@/features/visits";
+import { isDoctorOrOwnerRole, isNotDoctorRole, sortById } from "@/shared";
 import "@styles/dashboardSummary.css";
 import { useCurrentPatientCard } from "@/shared/hooks/useCurrentPatientCard";
 import { useDoctorSelection } from "@/features/clinic-management";
 import { useFetchQueue } from "@/features/queue";
-import { WaitListWidget } from "./WaitListWidget";
-import { CurrentPatientWidget } from "./CurrentPatientWidget";
-import { MonthlySummaryWidget } from "./MonthlySummaryWidget";
-import { AlertsWidget } from "./AlertsWidget";
-import { QuickActions } from "./QuickActions";
-import { AppointmentWidget } from "./AppointmentWidget";
+import {
+  AlertsWidget,
+  AppointmentWidget,
+  CurrentPatientWidget,
+  MonthlySummaryWidget,
+  QuickActions,
+  StatsWidgets,
+  WaitListWidget,
+} from ".";
 import { useGetDailyPatients } from "@/features/patients";
-import { StatsWidgets } from "./StatsWidgets";
 import { useLogin } from "@/app";
 
 export const DashboardSummary = () => {
-  const { appointments } = useGetAppointmentsByWeek(startOfWeek(new Date()));
-  const dailyAppointmentsNum = appointments.filter((a) =>
-    isToday(a.scheduledTime),
-  ).length;
+  const { appointments } = useGetAppointmentsByDay(new Date());
+  const dailyAppointmentsNum = appointments.length;
   const { dailyNewPatientsQuery, isLoading, isError } = useGetDailyPatients(
     new Date().toISOString().split("T")[0],
   );
@@ -30,11 +29,15 @@ export const DashboardSummary = () => {
   const { currentPatient, lastVisit } = useCurrentPatientCard();
   const { selectedDoctorId } = useDoctorSelection();
   const { queue } = useFetchQueue(selectedDoctorId);
+  const MonthlySummaryFC = isDoctorOrOwnerRole(loggedInUser.role) && (
+    <MonthlySummaryWidget />
+  );
+  const QuickActionsFC = isNotDoctorRole(loggedInUser.role) && <QuickActions />;
 
   return (
     <div className="dashboard-widgets-container">
       <StatsWidgets />
-      {isNotDoctorRole(loggedInUser.role) && <QuickActions />}
+      {QuickActionsFC}
 
       <div className="feature-widgets-grid">
         <CurrentPatientWidget
@@ -42,10 +45,8 @@ export const DashboardSummary = () => {
           lastVisit={lastVisit}
         />
         <WaitListWidget queue={queue} />
-
         <AppointmentWidget />
-
-        <MonthlySummaryWidget />
+        {MonthlySummaryFC}
         <AlertsWidget
           isLoading={isLoading}
           isError={isError}

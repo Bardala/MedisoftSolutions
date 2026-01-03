@@ -1,9 +1,9 @@
-import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import { Analytics } from "@vercel/analytics/react";
 import { AppRoutes } from "@/app/constants";
 import { LoginPage, SignupPage, TermsPage } from "@/features/auth";
-import { WelcomePage, HomePage } from "@/features/dashboard/components";
+import { WelcomePage, AuthLayout } from "@/features/dashboard/components";
 import { PrivacyPolicyPage } from "@/features/auth/components/PrivacyPolicyPage";
 import { LoginProvider, ThemeProvider, useLogin } from "../providers";
 import IntlProviderWrapper from "@/core/localization/IntlProviderWrapper";
@@ -12,10 +12,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApiError } from "@/shared";
 import { customRetry } from "../utils";
 import ErrorBoundary from "./ErrorBoundary";
+import { AuthRoutes } from "./AuthRoutes";
 
 function AppContent() {
-  const { loggedInUser } = useLogin();
-
+  const { loggedInUser: user } = useLogin();
   return (
     <div className="main-app">
       <BrowserRouter>
@@ -32,11 +32,9 @@ function AppContent() {
           <Route
             path="/*"
             element={
-              loggedInUser ? (
-                <HomePage loggedInUser={loggedInUser} />
-              ) : (
-                <Navigate to={AppRoutes.WELCOME_PAGE} replace={true} />
-              )
+              <AuthLayout user={user}>
+                <AuthRoutes user={user} />
+              </AuthLayout>
             }
           />
         </Routes>
@@ -66,8 +64,8 @@ const App = () => {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <LoginProvider>
             <React.StrictMode>
@@ -78,8 +76,8 @@ const App = () => {
             </React.StrictMode>
           </LoginProvider>
         </ThemeProvider>
-      </ErrorBoundary>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

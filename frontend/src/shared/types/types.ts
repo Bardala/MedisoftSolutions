@@ -261,6 +261,13 @@ export enum UserRole {
   OWNER = "Owner",
 }
 
+export const CLINIC_STAFF_ROLES: UserRole[] = [
+  UserRole.OWNER,
+  UserRole.ASSISTANT,
+  UserRole.DOCTOR,
+];
+
+// todo: update it to be just contains doctor role and use isDoctorOrOwnerRole where needed
 const doctorLikeRoles = [UserRole.DOCTOR, UserRole.OWNER];
 
 export function isDoctorRole(role: UserRole): boolean {

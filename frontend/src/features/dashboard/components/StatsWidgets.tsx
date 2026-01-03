@@ -37,14 +37,16 @@ export const StatsWidgets: FC = () => {
           trend={patientsTrend}
         />
       )}
-      <StatsWidget
-        title={f({ id: "total_payments" })}
-        value={`${totalPayments || 0} ${f({ id: "L.E" })}`}
-        icon={faDollarSign}
-        color="var(--success-text)"
-        route={buildRoute("REPORTS", { date: today })}
-        trend={revenueTrend}
-      />
+      {isNotDoctorRole(loggedInUser.role) && (
+        <StatsWidget
+          title={f({ id: "total_payments" })}
+          value={`${totalPayments || 0} ${f({ id: "L.E" })}`}
+          icon={faDollarSign}
+          color="var(--success-text)"
+          route={buildRoute("REPORTS", { date: today })}
+          trend={revenueTrend}
+        />
+      )}
       <StatsWidget
         title={f({ id: "total_visits" })}
         value={visits?.length || 0}

@@ -8,7 +8,12 @@ import {
   IconDefinition,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { isDoctorOrOwnerRole, isSuperAdminRole, User } from "@/shared/types";
+import {
+  isDoctorOrOwnerRole,
+  isNotDoctorRole,
+  isSuperAdminRole,
+  User,
+} from "@/shared/types";
 import { useIntl } from "react-intl";
 
 export interface MenuItem {
@@ -46,11 +51,15 @@ const useSidebar = (loggedInUser: User) => {
       link: "/patients",
       icon: faUsers,
     },
-    {
-      label: f({ id: "registry" }),
-      link: "/patient-history",
-      icon: faSearch,
-    },
+    ...(isNotDoctorRole(loggedInUser.role)
+      ? [
+          {
+            label: f({ id: "registry" }),
+            link: "/patient-history",
+            icon: faSearch,
+          },
+        ]
+      : []),
     {
       label: f({ id: "dailyReports" }),
       link: "/reports",

@@ -18,21 +18,24 @@ export const DailyStats: FC<DailyStatsProps> = ({ selectedDate }) => {
   return (
     <div className="stats">
       <p>
-        {f({ id: "totalRevenue" })}:{" "}
-        <strong>
-          {totalPayments || 0} {f({ id: "L.E" })}
-        </strong>
-      </p>
-      <p>
-        {f({ id: "totalPayments" })}: <strong>{payments?.length || 0}</strong>
-      </p>
-      <p>
         {f({ id: "totalVisits" })}: <strong>{visits?.length || 0}</strong>
       </p>
       {isNotDoctorRole(loggedInUser.role) && (
-        <p>
-          {f({ id: "newPatients" })}: <strong>{patients?.length || 0}</strong>
-        </p>
+        <>
+          <p>
+            {f({ id: "totalRevenue" })}:{" "}
+            <strong>
+              {totalPayments || 0} {f({ id: "L.E" })}
+            </strong>
+          </p>
+          <p>
+            {f({ id: "totalPayments" })}:{" "}
+            <strong>{payments?.length || 0}</strong>
+          </p>
+          <p>
+            {f({ id: "newPatients" })}: <strong>{patients?.length || 0}</strong>
+          </p>
+        </>
       )}
     </div>
   );

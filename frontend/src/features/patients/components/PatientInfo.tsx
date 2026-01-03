@@ -22,6 +22,7 @@ import {
   isArabic,
   isDoctorRole,
   UpdateModel,
+  isNotDoctorRole,
 } from "@/shared";
 import { useDeletePatient, useUpdatePatient } from "../hooks";
 
@@ -41,7 +42,7 @@ interface PatientInfoProps {
 
 const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
   const { formatMessage: f } = useIntl();
-  const { loggedInUser } = useLogin();
+  const { loggedInUser: user } = useLogin();
   const { patient, visits, payments, visitDentalProcedure } = patientRegistry;
   const { deletePatientMutation } = useDeletePatient();
   const [patientNotes, setPatientNotes] = useState("");
@@ -122,20 +123,24 @@ const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
           <strong>{f({ id: "patient_name" })}: </strong>
           {patient.fullName}
         </p>
-        <p>
-          <strong>{f({ id: "phonePlaceholder" })}: </strong>
-          {patient.phone}
-        </p>
+        {isNotDoctorRole(user.role) && (
+          <p>
+            <strong>{f({ id: "phonePlaceholder" })}: </strong>
+            {patient.phone}
+          </p>
+        )}
         {patient.medicalHistory && (
           <p>
             <strong>Medical History: </strong> {patient.medicalHistory || "N/A"}
           </p>
         )}
-        <p>
-          <strong>{f({ id: "total_amount_paid" })}: </strong>
-          {paidAmount || 0} {f({ id: "L.E" })}
-        </p>
-        {patient.address && (
+        {isNotDoctorRole(user.role) && (
+          <p>
+            <strong>{f({ id: "total_amount_paid" })}: </strong>
+            {paidAmount || 0} {f({ id: "L.E" })}
+          </p>
+        )}
+        {isNotDoctorRole(user.role) && patient.address && (
           <p>
             <strong>{f({ id: "patient_address" })}: </strong>
             {patient.address}
@@ -172,77 +177,81 @@ const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                 <h2 className="patient-id">
                   {f({ id: "patient_id" }, { id: patient.id })}
                 </h2>
-                <a
-                  href={`tel:${patient.phone}`}
-                  className="patient-phone-chip"
-                  onClick={(e) => {
-                    // Prevent default if you need to handle it differently on web
-                    if (!/Mobi|Android/i.test(navigator.userAgent)) {
-                      e.preventDefault();
-                      alert(
-                        f(
-                          { id: "call_phone_on_mobile" },
-                          { phone: patient.phone },
-                        ),
-                      );
-                    }
-                  }}
-                  aria-label={f(
-                    { id: "call_patient" },
-                    { phone: patient.phone },
-                  )}
-                >
-                  {f({ id: "patient_phone" }, { phone: patient.phone })}
-                </a>
+                {isNotDoctorRole(user.role) && (
+                  <a
+                    href={`tel:${patient.phone}`}
+                    className="patient-phone-chip"
+                    onClick={(e) => {
+                      // Prevent default if you need to handle it differently on web
+                      if (!/Mobi|Android/i.test(navigator.userAgent)) {
+                        e.preventDefault();
+                        alert(
+                          f(
+                            { id: "call_phone_on_mobile" },
+                            { phone: patient.phone },
+                          ),
+                        );
+                      }
+                    }}
+                    aria-label={f(
+                      { id: "call_patient" },
+                      { phone: patient.phone },
+                    )}
+                  >
+                    {f({ id: "patient_phone" }, { phone: patient.phone })}
+                  </a>
+                )}
               </div>
 
               {/* Visualizations Row */}
-              <div className="visualizations-row">
-                {/* Balance Visualization */}
-                <div className="visualization-card balance-visualization">
-                  {totalDeal ? (
-                    <>
-                      <h3 className="visualization-title">
-                        {f(
-                          { id: "remaining_balance" },
-                          { balance: totalDeal - paidAmount || 0 },
-                        )}
-                      </h3>
-                      <div className="battery-container">
-                        <div className="battery">
-                          <div
-                            className="battery-level"
-                            style={{
-                              width: `${balancePercentage}%`,
-                              backgroundColor:
-                                balancePercentage > 70
-                                  ? "#4CAF50"
-                                  : balancePercentage > 30
-                                  ? "#FFC107"
-                                  : "#F44336",
-                            }}
-                          ></div>
+              {isNotDoctorRole(user.role) && (
+                <div className="visualizations-row">
+                  {/* Balance Visualization */}
+                  <div className="visualization-card balance-visualization">
+                    {totalDeal ? (
+                      <>
+                        <h3 className="visualization-title">
+                          {f(
+                            { id: "remaining_balance" },
+                            { balance: totalDeal - paidAmount || 0 },
+                          )}
+                        </h3>
+                        <div className="battery-container">
+                          <div className="battery">
+                            <div
+                              className="battery-level"
+                              style={{
+                                width: `${balancePercentage}%`,
+                                backgroundColor:
+                                  balancePercentage > 70
+                                    ? "#4CAF50"
+                                    : balancePercentage > 30
+                                    ? "#FFC107"
+                                    : "#F44336",
+                              }}
+                            ></div>
+                          </div>
+                          <div className="battery-cap"></div>
+                          <span className="balance-text">
+                            {paidAmount || 0} {f({ id: "L.E" })} /{" "}
+                            {totalDeal || 0} {f({ id: "L.E" })}
+                          </span>
                         </div>
-                        <div className="battery-cap"></div>
-                        <span className="balance-text">
-                          {paidAmount || 0} {f({ id: "L.E" })} /{" "}
-                          {totalDeal || 0} {f({ id: "L.E" })}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="card-icon">💰</div>
-                      <h4 className="card-title">
-                        {f({ id: "total_amount_paid" })}
-                      </h4>
-                      <p className="card-content">
-                        {paidAmount || 0} {f({ id: "L.E" })}
-                      </p>
-                    </>
-                  )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="card-icon">💰</div>
+                        <h4 className="card-title">
+                          {f({ id: "total_amount_paid" })}
+                        </h4>
+                        <p className="card-content">
+                          {paidAmount || 0} {f({ id: "L.E" })}
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Info Cards Grid */}
               <div className="info-grid">
@@ -265,13 +274,17 @@ const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                   <h4 className="card-title">{f({ id: "total_visits" })}</h4>
                   <p className="card-content">{visits?.length || 0}</p>
                 </div>
-                <div className="info-card address-card">
-                  <div className="card-icon">📍</div>
-                  <h4 className="card-title">{f({ id: "patient_address" })}</h4>
-                  <p className="card-content">
-                    {patient.address || f({ id: "not_available" })}
-                  </p>
-                </div>
+                {isNotDoctorRole(user.role) && (
+                  <div className="info-card address-card">
+                    <div className="card-icon">📍</div>
+                    <h4 className="card-title">
+                      {f({ id: "patient_address" })}
+                    </h4>
+                    <p className="card-content">
+                      {patient.address || f({ id: "not_available" })}
+                    </p>
+                  </div>
+                )}
                 <div className="info-card medical-card">
                   <div className="card-icon">💊</div>
                   <h4 className="card-title">
@@ -304,27 +317,26 @@ const PatientInfo: FC<PatientInfoProps> = ({ patientRegistry }) => {
                   onChange={(e) => setPatientNotes(e.target.value)}
                   rows={4}
                   placeholder={f({ id: "notes" })}
-                  disabled={loggedInUser.role === "Assistant"}
+                  disabled={user.role === "Assistant"}
                 />
-                {isDoctorRole(loggedInUser.role) &&
-                  patientNotes !== patient.notes && (
-                    <div className="notes-buttons">
-                      <button
-                        className="save-button"
-                        onClick={handleSavePatientNotes}
-                        disabled={isLoading}
-                      >
-                        {f({ id: "save_notes" })}
-                      </button>
-                      <button
-                        className="cancel-button"
-                        onClick={() => setPatientNotes(patient?.notes || "")}
-                        disabled={isLoading}
-                      >
-                        {f({ id: "cancel" })}
-                      </button>
-                    </div>
-                  )}
+                {isDoctorRole(user.role) && patientNotes !== patient.notes && (
+                  <div className="notes-buttons">
+                    <button
+                      className="save-button"
+                      onClick={handleSavePatientNotes}
+                      disabled={isLoading}
+                    >
+                      {f({ id: "save_notes" })}
+                    </button>
+                    <button
+                      className="cancel-button"
+                      onClick={() => setPatientNotes(patient?.notes || "")}
+                      disabled={isLoading}
+                    >
+                      {f({ id: "cancel" })}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

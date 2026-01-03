@@ -21,7 +21,7 @@ import {
   arAdvancedFeatures,
 } from "./featuresData";
 
-const WelcomePage: FC = () => {
+export const WelcomePage: FC = () => {
   const navigate = useNavigate();
   const { loggedInUser, login } = useLogin();
   const { locale } = useIntl();
@@ -141,5 +141,3 @@ const WelcomePage: FC = () => {
     </div>
   );
 };
-
-export default WelcomePage;
